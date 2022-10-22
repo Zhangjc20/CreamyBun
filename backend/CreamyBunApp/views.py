@@ -5,3 +5,6 @@ from django.shortcuts import render,HttpResponse
 #######
 def index(request):
     return HttpResponse("zfhsb")
+
+def jb(request):
+    return HttpResponse('zfhjb')
