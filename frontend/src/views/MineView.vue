@@ -29,16 +29,54 @@
             <span class="user-center" @click="clickUser">个人中心</span>
         </span>
       </el-header>
-      <el-main class="main-style">
-  
-      </el-main>
+      <el-container>
+        <el-aside class="left-menu-area">
+            <el-menu
+              active-text-color="#FBE484"
+              background-color="#FFFFFF"
+              class="el-menu-vertical-demo"
+              default-active="1"
+              text-color="#4E5969"
+              @open="handleOpen"
+              @close="handleClose"
+            >
+              <el-menu-item index="1">
+                <el-icon><icon-menu /></el-icon>
+                <span>个人信息</span>
+              </el-menu-item>
+              <el-menu-item index="2">
+                <el-icon><icon-menu /></el-icon>
+                <span>已领取任务</span>
+              </el-menu-item>
+              <el-menu-item index="3">
+                <el-icon><document /></el-icon>
+                <span>已发布任务</span>
+              </el-menu-item>
+              <el-menu-item index="4">
+                <el-icon><setting /></el-icon>
+                <span>设置</span>
+              </el-menu-item>
+            </el-menu>
+        </el-aside>
+        <el-main class="main-style">
+          <component :is="show_content"></component>
+        </el-main>
+      </el-container>
     </el-container>
   </template>
   
   <script>
-  
+  import MineInfoView from '@/components/MineInfoView.vue';
   export default{
     name: 'MineView',
+    components:{
+      MineInfoView
+    },
+    data(){
+      return {
+        show_content:"MineInfoView",
+      }
+    },
     methods:{
         clickUser(){
             this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -65,6 +103,23 @@
   .container {
     margin:0;
     height:100%;
+  }
+  .left-menu-area {
+    padding-top: 100px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .el-aside .el-menu {
+    border-right: 0;
+  }
+  .el-aside .el-menu .el-menu-item {
+    border-radius: 20px;
+  }
+  .el-aside .el-menu .el-menu-item:hover {
+    background-color: #F2F2F2;
+  }
+  .el-aside .el-menu .el-menu-item.is-active {
+    background-color: #5EABBF;
   }
   .el-button--primary {
     background: #FBE484 !important;

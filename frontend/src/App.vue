@@ -11,6 +11,10 @@
   font-family: "YouSheBlack";
   src: url(@/assets/fonts/优设标题黑.ttf);
 }
+@font-face {
+  font-family: "QianTuBlack";
+  src: url(@/assets/fonts/千图厚黑体.ttf);
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
