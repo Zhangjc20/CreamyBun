@@ -9,10 +9,12 @@ module.exports = {
   ],
   parserOptions: {
     parser: '@babel/eslint-parser',
-    "requireConfigFile": false
+    "requireConfigFile": false,
   },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off'
-  }
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    "no-self-assign": "off",
+    "no-redeclare": "off",
+  },
 }
