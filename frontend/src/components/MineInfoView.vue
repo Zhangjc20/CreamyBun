@@ -8,11 +8,10 @@
                 <el-col :span="20">
                     <el-row :span="14" class="info-row-one">
                         <el-col :span="8"><span class="info-row-font">用户名 : test-admin</span></el-col>
-                        <el-col :span="8"><span class="info-row-font">手机号 : 13823849322</span></el-col>
+                        <el-col :span="8"><span class="info-row-font">手机号 : 13823849322</span><el-link type="primary" class="change-link">修改</el-link></el-col>
                     </el-row>
                     <el-row :span="20" class="info-right-row">
-                        <el-col :span="8"><span class="info-row-font">昵称 : 你猜我是谁</span></el-col>
-                        <el-col :span="8"><span class="info-row-font">邮箱 : baidu@123.com</span></el-col>
+                        <el-col :span="8"><span class="info-row-font">邮箱 : baidu@123.com</span><el-link type="primary" class="change-link">修改</el-link></el-col>
                     </el-row>
                     <el-row :span="20" class="info-right-row">
                         <el-col :span="3"><span class="info-row-font">等级 LV : 1</span></el-col>
@@ -34,13 +33,12 @@
                 <el-form :model="form" label-width="120px" class="change-form">
                     <el-form-item label="用户名" :required="true">
                     <el-input v-model="form.name" />
-                    </el-form-item>
-                    <el-form-item label="昵称" :required="true">
-                    <el-input v-model="form.name" />
+                    <el-button type="primary" @click="onSubmit" style="float:right;right:-90px;position:absolute;">保存</el-button>
                     </el-form-item>
                     <el-form-item>
-                    <el-button type="primary" @click="onSubmit">保存</el-button>
-                    <el-button type="info">重置</el-button>
+                    </el-form-item>
+                    <el-form-item>
+                    <el-button type="info" style="margin-left:50px;">修改密码</el-button>
                     </el-form-item>
                 </el-form>
             </el-row>
@@ -66,6 +64,9 @@
   
   <!-- Add "scoped" attribute to limit CSS to this component only -->
   <style scoped lang="scss">
+  .change-link {
+    margin-left: -40px;
+  }
   .change-title {
     width: 80%;
     text-align: center;

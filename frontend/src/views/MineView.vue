@@ -1,33 +1,7 @@
 <template>
     <el-container class="container">
       <el-header class="header-style">
-        <div class="nav-title">
-          <el-image 
-            :src="require('@/assets/images/logo.png')"
-            class="logo"
-          >
-          </el-image>
-          <span class="nav-title-font">奶黄包</span>
-        </div>
-        <div class="menu-out">
-          <el-menu
-            default-active="1"
-            class="el-nav-menu"
-            mode="horizontal"
-            background-color="#ffffff"
-            text-color="#6C6C6C"
-            active-text-color="#5EABBF">
-            <el-menu-item index="1">首页</el-menu-item>
-            <el-menu-item index="2">任务</el-menu-item>
-            <el-menu-item index="3">发布</el-menu-item>
-            <el-menu-item index="4">我的</el-menu-item>
-            <el-menu-item index="5">帮助</el-menu-item>
-          </el-menu>
-        </div>
-        <el-avatar :src="require('@/assets/images/avatar.jpeg')" class="avatar"></el-avatar>
-        <span class="user-area">
-            <span class="user-center" @click="clickUser">个人中心</span>
-        </span>
+        <NavBar :login="true" activeItem="4"></NavBar>
       </el-header>
       <el-container>
         <el-aside class="left-menu-area">
@@ -67,10 +41,12 @@
   
   <script>
   import MineInfoView from '@/components/MineInfoView.vue';
+  import NavBar from '@/components/NavBar.vue';
   export default{
     name: 'MineView',
     components:{
-      MineInfoView
+      MineInfoView,
+      NavBar,
     },
     data(){
       return {
@@ -163,33 +139,6 @@
     border-radius: 40px;
     margin-top: 10px;
     display: flex;
-  }
-  .user-area {
-    float: right;
-    position: absolute;
-    top:0;
-    right: 0;
-    height: 60px;
-    margin-right: 90px;
-  }
-  .avatar {
-    float: right;
-    position: absolute;
-    top:0;
-    right: 0;
-    margin-right: 180px;
-    margin-top: 10px;
-  }
-  .user-center {
-    line-height: 60px;
-    margin-bottom: 20px;
-    font-size: 22px;
-    color:#f8f8f8;
-    font-family: YouSheBlack;
-    cursor: pointer;
-  }
-  .user-center:hover {
-    opacity: 0.6;
   }
   .main-style {
     background-color:transparent;
