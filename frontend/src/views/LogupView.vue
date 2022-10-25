@@ -60,6 +60,7 @@
                         >注册</el-button
                     >
                 </el-form-item>
+                <el-link type="primary" class="login-link" @click="clickLogin">已有账号，立即登录</el-link>
         </el-form>
         </div>
     </el-container>
