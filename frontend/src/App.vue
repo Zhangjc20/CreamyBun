@@ -1,15 +1,43 @@
 <template>
-  <router-view />
+  <router-view/>
 </template>
 
 <style lang="scss">
+@font-face {
+  font-family: "YouSheRound";
+  src: url(@/assets/fonts/优设标题圆.otf);
+}
+@font-face {
+  font-family: "YouSheBlack";
+  src: url(@/assets/fonts/优设标题黑.ttf);
+}
+@font-face {
+  font-family: "QianTuBlack";
+  src: url(@/assets/fonts/千图厚黑体.ttf);
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  height: auto;
+  height: 100%;
+  padding:0;
+  margin:0;
+}
+
+html {
+  height: 100%;
+  margin: 0;
+  padding:0;
+}
+
+/*重置body属性*/
+body {
+  padding: 0;
+  margin: 0;
+  /*继承html*/
+  height: 100%;
 }
 
 nav {
@@ -23,22 +51,5 @@ nav {
       color: #42b983;
     }
   }
-}
-
-html {
-  height: auto;
-}
-
-/*重置body属性*/
-body {
-  padding: 0;
-  margin: 0;
-  /*继承html*/
-  height: auto;
-}
-
-/*全局链接标签去下划线*/
-a {
-  text-decoration: none;
 }
 </style>
