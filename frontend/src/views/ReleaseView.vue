@@ -6,42 +6,42 @@
       <el-container>
         <el-aside class="left-menu-area">
           <el-menu
-            :default-active="activeIndex"
-            class="el-menu-demo"
-            mode="vertical"
-            @select="handleSelect"
+            default-active="2"
+            active-text-color="#5EABBF"
+            class="el-menu-vertical-demo"
+            @open="handleOpen"
+            @close="handleClose"
           >
-            <el-menu-item index="1">Processing Center</el-menu-item>
-            <el-sub-menu index="2">
-              <template #title>Workspace</template>
-              <el-menu-item index="2-1">item one</el-menu-item>
-              <el-menu-item index="2-2">item two</el-menu-item>
-              <el-menu-item index="2-3">item three</el-menu-item>
-              <el-sub-menu index="2-4">
-                <template #title>item four</template>
-                <el-menu-item index="2-4-1">item one</el-menu-item>
-                <el-menu-item index="2-4-2">item two</el-menu-item>
-                <el-menu-item index="2-4-3">item three</el-menu-item>
-              </el-sub-menu>
+            <el-sub-menu index="1">
+              
+              <template #title>
+                <el-icon><icon-menu /></el-icon>
+                <span>任务选择</span>
+              </template>
+              <el-menu-item index="1-1">图像</el-menu-item>
+              <el-menu-item index="1-2">文本</el-menu-item>
+              <el-menu-item index="1-3">视频</el-menu-item>
             </el-sub-menu>
-            <el-menu-item index="3" disabled>Info</el-menu-item>
-            <el-menu-item index="4">Orders</el-menu-item>
           </el-menu>
         </el-aside>
         <el-main class="main-style">
-          <component :is="show_content"></component>
+          <!-- <component :is="show_content"></component> -->
+          <el-header class="main-header-style">
+            
+          </el-header>
         </el-main>
       </el-container>
     </el-container>
 </template>
   
   <script>
-  import MineInfoView from '@/components/MineInfoView.vue';
+//   import {
+//   Menu as IconMenu,
+// } from '@element-plus/icons-vue'
   import NavBar from '@/components/NavBar.vue';
   export default{
     name: 'MineView',
     components:{
-      MineInfoView,
       NavBar,
     },
     data(){
@@ -84,15 +84,19 @@
   .el-aside .el-menu {
     border-right: 0;
   }
-  .el-aside .el-menu .el-menu-item {
-    border-radius: 20px;
+  .el-aside {
+    /* border-right: 1px solid; */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 5px 0 rgba(0, 0, 0, 0.19);
   }
+  /* .el-aside .el-menu .el-menu-item {
+    border-radius: 20px;
+  } */
   .el-aside .el-menu .el-menu-item:hover {
     background-color: #F2F2F2;
   }
-  .el-aside .el-menu .el-menu-item.is-active {
+  /* .el-aside .el-menu .el-menu-item.is-active {
     background-color: #5EABBF;
-  }
+  } */
   .el-button--primary {
     background: #FBE484 !important;
     border-color: #FBE484 !important;
@@ -127,6 +131,12 @@
     box-shadow: 0 0px 8px 0;
     display: flex;
   }
+  .main-header-style{
+    border-radius: 5px;
+    box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
+    height: 100px;
+  }
+
   .menu-out {
     margin-left: 80px;
     background-color: #ffffff;
