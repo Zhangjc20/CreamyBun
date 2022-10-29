@@ -51,10 +51,20 @@ export default {
   data(){
       return {
           form:{
-              name: '',
-              region: '',
+              username: '',
+              password: '',
           }
       }
+  },
+  methods:{
+    clickLogup(){
+      this.$router.push({
+            name: 'logup',
+        });
+    },
+    clickLogreset(){
+      
+    }
   }
 }
 </script>
@@ -87,7 +97,7 @@ export default {
   overflow: hidden;
 }
 .logo {
-  width: 100px;
+  width: 110px;
   height: 100px;
   text-align: center;
   background: url(../assets/images/logo.png);

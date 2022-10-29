@@ -14,19 +14,23 @@
               @open="handleOpen"
               @close="handleClose"
             >
-              <el-menu-item index="1">
+              <el-menu-item index="1" @click="clickLeftMenu(1)">
                 <el-icon><icon-menu /></el-icon>
                 <span>个人信息</span>
               </el-menu-item>
-              <el-menu-item index="2">
+              <el-menu-item index="2" @click="clickLeftMenu(2)">
                 <el-icon><icon-menu /></el-icon>
                 <span>已领取任务</span>
               </el-menu-item>
-              <el-menu-item index="3">
+              <el-menu-item index="3" @click="clickLeftMenu(3)">
                 <el-icon><document /></el-icon>
                 <span>已发布任务</span>
               </el-menu-item>
-              <el-menu-item index="4">
+              <el-menu-item index="4" @click="clickLeftMenu(4)">
+                <el-icon><setting /></el-icon>
+                <span>奖励中心</span>
+              </el-menu-item>
+              <el-menu-item index="5" @click="clickLeftMenu(5)">
                 <el-icon><setting /></el-icon>
                 <span>设置</span>
               </el-menu-item>
@@ -42,11 +46,15 @@
   <script>
   import MineInfoView from '@/components/MineInfoView.vue';
   import NavBar from '@/components/NavBar.vue';
+  import GiftCenter from '@/components/GiftCenter.vue';
+  import SettingView from '@/components/SettingView.vue';
   export default{
     name: 'MineView',
     components:{
       MineInfoView,
       NavBar,
+      GiftCenter,
+      SettingView
     },
     data(){
       return {
@@ -54,23 +62,20 @@
       }
     },
     methods:{
-        clickUser(){
-            this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-            }).then(() => {
-                this.$message({
-                    type: 'success',
-                    message: '删除成功!'
-                });
-            }).catch(() => {
-                this.$message({
-                    type: 'info',
-                    message: '已取消删除'
-                });          
-                });
-            }
+      clickLeftMenu(number){
+        switch(number){
+          case 1:
+            this.show_content = "MineInfoView";
+            break;
+          case 4:
+            this.show_content = "GiftCenter";
+            break;
+          case 5:
+            this.show_content = "SettingView";
+            break;
+          default:
+        }
+      }
     }
   }
   </script>
