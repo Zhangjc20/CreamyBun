@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue';
 import MineView from '../views/MineView.vue';
+import ReleaseView from '../views/ReleaseView.vue';
 import LogupView from '@/views/LogupView.vue';
 
 const routes = [
@@ -35,6 +36,11 @@ const routes = [
     path: "/Mine",
     name: "mine",
     component: MineView
+  },
+  {
+    path: "/Release",
+    name: "release",
+    component: ReleaseView
   },
 ]
 
