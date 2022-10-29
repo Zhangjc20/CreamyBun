@@ -5,21 +5,50 @@
       <el-switch class="darkmode-switch" v-model="darkmode" />
     </div>
     <div class="logout-button-outer">
-      <el-button class="logout-button" color="#626aef" :dark="isDark">退出登录</el-button>
+      <CustomButton title="退出登录" fontColor="#ffffff" normalColor="#5EABBF" focusColor="#4E98AB" hoverColor="#4E98AB" :clickBack="handleClickLogout"/>
     </div>
   </div>
 </template>
 
 <script>
+import CustomButton from "@/components/CustomButton.vue";
+import { ElMessage, ElMessageBox } from 'element-plus';
 export default {
   name: "SettingView",
+  components:{
+    CustomButton
+  },
   props: {},
   data() {
     return {
       darkmode: false,
     };
   },
-  methods: {},
+  methods: {
+    handleClickLogout(){//退出登录按钮触发函数
+      ElMessageBox.confirm(
+        '确定要退出登录吗？',
+        '提示',
+        {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'info',
+        }
+      )
+        .then(() => {
+          ElMessage({
+            type: 'success',
+            message: '退出登录成功',
+          })
+        })
+        .catch(() => {
+          ElMessage({
+            type: 'info',
+            message: '取消',
+          })
+        })
+    }
+  },
 };
 </script>
 
