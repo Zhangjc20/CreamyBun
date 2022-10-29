@@ -15,6 +15,10 @@
   font-family: "QianTuBlack";
   src: url(@/assets/fonts/千图厚黑体.ttf);
 }
+@font-face {
+  font-family: "YiPinChuangXiang";
+  src: url(@/assets/fonts/一品创享体.ttf);
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
