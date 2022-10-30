@@ -1,7 +1,33 @@
 <template>
-  <el-header class="main-header-style">
-    
+  <el-header class="header-style">
+    <el-breadcrumb separator="/" class="header-breadcrumb">
+      <el-breadcrumb-item :to="{ path: '/' }">奶黄包</el-breadcrumb-item>
+      <!-- <el-breadcrumb-item
+        ><a href="/">promotion management</a></el-breadcrumb-item
+      > -->
+      <el-breadcrumb-item>任务选择</el-breadcrumb-item>
+      <el-breadcrumb-item>图像</el-breadcrumb-item>
+    </el-breadcrumb>
+    <span class="header-title">
+      图像任务
+    </span>
   </el-header>
+  <el-main class="main-style">
+    <el-row style="height: 50px;">
+      <span class="header-title">
+        基本信息
+      </span>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-row style="height: 100px;"></el-row>
+      </el-col>
+      <el-col :span="12" style="border-left: 1px solid #999999;">
+        <el-row style="height: 50px;"></el-row>
+      </el-col>
+    </el-row>
+
+  </el-main>
 </template>
 
 <script>
@@ -20,26 +46,6 @@ export default {
       this.$router.push({
             name: 'home',
         });
-    },
-    clickLogin(){
-        this.$router.push({
-            name: 'login',
-        });
-    },
-    clickLogup(){
-        this.$router.push({
-            name: 'logup',
-        });
-    },
-    clickMine(){
-        this.$router.push({
-            name: 'mine',
-        });
-    },
-    clickRelease(){
-        this.$router.push({
-            name: 'release',
-        });
     }
   }
 }
@@ -47,10 +53,25 @@ export default {
 
 <style scoped>
 
-.main-header-style{
+  .header-style{
     border-radius: 5px;
     box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
     height: 100px;
+    padding: 20px 20px 20px 40px;
+  }
+  .header-breadcrumb{
+    margin:0 0 10px 0;
+  }
+  .header-title{
+    float:left;
+    font-size:20px;
+    font-weight:bold;
+  }
+  .main-style{
+    padding: 20px 20px 20px 40px;
+    margin-top: 20px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
   }
 /* 
   .user-area {

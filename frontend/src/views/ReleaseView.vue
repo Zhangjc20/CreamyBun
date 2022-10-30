@@ -15,7 +15,7 @@
             <el-sub-menu index="1">
               
               <template #title>
-                <el-icon><icon-menu /></el-icon>
+                <span class="iconfont icon-menu"></span>
                 <span>任务选择</span>
               </template>
               <el-menu-item index="1-1">图像</el-menu-item>
@@ -78,7 +78,7 @@
     height:100%;
   }
   .left-menu-area {
-    padding-top: 100px;
+    padding-top: 50px;
     padding-left: 10px;
     padding-right: 10px;
   }
@@ -92,6 +92,9 @@
   /* .el-aside .el-menu .el-menu-item {
     border-radius: 20px;
   } */
+.icon-menu{
+  font-size:30px;
+}
   .el-aside .el-menu .el-menu-item:hover {
     background-color: #F2F2F2;
   }
@@ -156,6 +159,9 @@
     height: 50px;
     font-size: 16px;
     padding-top: 4px;
+  }
+  .el-menu-item.is-active{
+    border-left: 5px solid #5EABBF;
   }
   .el-menu--horizontal .el-menu-item:not(.is-disabled):focus{
     background-color: transparent;
