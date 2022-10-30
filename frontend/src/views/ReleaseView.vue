@@ -26,9 +26,8 @@
         </el-aside>
         <el-main class="main-style">
           <!-- <component :is="show_content"></component> -->
-          <el-header class="main-header-style">
-            
-          </el-header>
+          <ReleasePicture :login="true" activeItem="3"></ReleasePicture>
+          
         </el-main>
       </el-container>
     </el-container>
@@ -39,10 +38,12 @@
 //   Menu as IconMenu,
 // } from '@element-plus/icons-vue'
   import NavBar from '@/components/NavBar.vue';
+  import ReleasePicture from '@/components/ReleasePicture.vue';
   export default{
     name: 'MineView',
     components:{
       NavBar,
+      ReleasePicture,
     },
     data(){
       return {
@@ -130,11 +131,6 @@
     height: 60px;
     box-shadow: 0 0px 8px 0;
     display: flex;
-  }
-  .main-header-style{
-    border-radius: 5px;
-    box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
-    height: 100px;
   }
 
   .menu-out {
