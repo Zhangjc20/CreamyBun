@@ -33,6 +33,11 @@ const routes = [
     component: LogupView,
   },
   {
+    path: "/logreset",
+    name: "logreset",
+    component: LogresetView,
+  },
+  {
     path: "/Mine",
     name: "mine",
     component: MineView
