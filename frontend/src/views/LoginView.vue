@@ -33,7 +33,7 @@
                   </div>
                 </el-form-item>
                 <el-form-item>
-                    <el-button class="login-button"
+                    <el-button class="login-button" @click="clickLogin"
                         >登录</el-button
                     >
                 </el-form-item>
@@ -65,6 +65,11 @@ export default {
     clickLogreset(){
       this.$router.push({
             name: 'logreset',
+        });
+    },
+    clickLogin(){
+      this.$router.push({
+            name: 'home',
         });
     }
   }

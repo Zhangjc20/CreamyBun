@@ -81,7 +81,7 @@
           >
         </el-form-item>
         <el-form-item class="logup-outer">
-          <el-button class="logup-button">注册</el-button>
+          <el-button class="logup-button" @click="clickLogup">注册</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -108,6 +108,11 @@ export default {
         name: "login",
       });
     },
+    clickLogup(){
+      this.$router.push({
+        name: "login",
+      });
+    }
   },
 };
 </script>

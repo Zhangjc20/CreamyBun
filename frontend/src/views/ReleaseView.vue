@@ -13,7 +13,6 @@
             @close="handleClose"
           >
             <el-sub-menu index="1">
-              
               <template #title>
                 <span class="iconfont icon-menu"></span>
                 <span>任务选择</span>

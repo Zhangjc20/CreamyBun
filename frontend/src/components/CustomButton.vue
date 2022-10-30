@@ -1,6 +1,6 @@
 <template>
     <span>
-        <el-button :round="isRound" class="button-class" @click="clickBack">{{title}}</el-button>
+        <el-button :round="isRound" class="button-class" @click="clickBack" :style="style">{{title}}</el-button>
     </span>
 </template>
   
@@ -8,6 +8,22 @@
   export default {
     name: 'CustomButton',
     props: {
+        width:{
+            type:String,
+            default:""
+        },
+        height:{
+            type:String,
+            default:""
+        },
+        marginRight:{
+            type:String,
+            default:"0"
+        },
+        marginLeft:{
+            type:String,
+            default:"0"
+        },
         fontColor:{//字体颜色
             type:String,
             default:"#606266"
@@ -15,6 +31,10 @@
         fontSize:{//字体大小
             type:Number,
             default:12
+        },
+        fontWeight:{
+            type:String,
+            default:"normal"
         },
         title:{//按钮中心的文字
             type:String,
@@ -57,6 +77,11 @@
     border-color: v-bind(normalColor);
     font-size: v-bind(fontSize);
     color:v-bind(fontColor);
+    font-weight:v-bind(fontWeight);
+    margin-right:v-bind(marginRight);
+    margin-left:v-bind(marginLeft);
+    width: v-bind(width);
+    height: v-bind(height);
   }
   .button-class:focus {
     background-color: v-bind(focusColor);
