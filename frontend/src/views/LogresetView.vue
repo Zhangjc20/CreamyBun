@@ -87,7 +87,7 @@
                     passwordAgain:"",
                     email:"",
                     verifyCode:"",
-                    isUsername:0,
+                    isUsername:false,
                 }
             }
         },
@@ -105,7 +105,7 @@
     }
   .logreset-button {
     color:#ffffff;
-    width: 90%;
+    width: 100%;
     font-size: 18px;
     background-color: #FBE484;
     border-color: #FBE484;

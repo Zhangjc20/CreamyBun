@@ -63,7 +63,9 @@ export default {
         });
     },
     clickLogreset(){
-      
+      this.$router.push({
+            name: 'logreset',
+        });
     }
   }
 }
