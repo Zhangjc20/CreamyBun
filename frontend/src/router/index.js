@@ -3,7 +3,8 @@ import HomeView from '../views/HomeView.vue';
 import MineView from '../views/MineView.vue';
 import ReleaseView from '../views/ReleaseView.vue';
 import LogupView from '@/views/LogupView.vue';
-import LogresetView from "@/views/LogresetView";
+import LogresetView from "@/views/LogresetView.vue";
+import TaskCenterView from "@/views/TaskCenterView.vue";
 
 const routes = [
   {
@@ -47,6 +48,11 @@ const routes = [
     path: "/Release",
     name: "release",
     component: ReleaseView
+  },
+  {
+    path: "/taskcenter",
+    name: "taskcenter",
+    component: TaskCenterView
   },
 ]
 

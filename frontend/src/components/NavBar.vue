@@ -16,7 +16,7 @@
         text-color="#6C6C6C"
         active-text-color="#5EABBF">
         <el-menu-item index="1" @click="clickHome">首页</el-menu-item>
-        <el-menu-item index="2">任务</el-menu-item>
+        <el-menu-item index="2" @click="clickTask">任务</el-menu-item>
         <el-menu-item index="3" @click="clickRelease">发布</el-menu-item>
         <el-menu-item index="4" @click="clickMine">我的</el-menu-item>
         <el-menu-item index="5">帮助</el-menu-item>
@@ -49,6 +49,11 @@ export default {
     clickHome(){
       this.$router.push({
             name: 'home',
+        });
+    },
+    clickTask(){
+      this.$router.push({
+            name: 'taskcenter',
         });
     },
     clickLogin(){

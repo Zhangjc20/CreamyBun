@@ -66,8 +66,8 @@
                 </el-form-item>
                 
                 <el-form-item class="logreset-outer">
-                    <el-button class="logreset-button"
-                        >注册</el-button
+                    <el-button class="logreset-button" @click="clickLogup"
+                        >重置密码</el-button
                     >
                 </el-form-item>
                 
@@ -93,7 +93,14 @@
         },
         methods:{
             clickLogin(){
-                this.$router
+                this.$router.push({
+                    name: 'login',
+                });
+            },
+            clickLogup(){
+                this.$router.push({
+                    name: 'logup',
+                }); 
             }
         }
     }

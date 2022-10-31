@@ -41,6 +41,26 @@
           </el-col>
         </el-row>
       </div>
+      <div class="basic-types-area">
+        <span class="basic-types-title">参与众包 互利共赢</span>
+        <div class="basic-types-content"> 
+          <el-carousel height="280px">
+            <el-carousel-item key="1">
+              <el-image style="width: 360px; height: 280px" :src="require('@/assets/images/pet1.jpeg')" fit="contain" />
+            </el-carousel-item>
+            <el-carousel-item key="2">
+              <el-image style="width: 360px; height: 280px" :src="require('@/assets/images/pet2.jpeg')" fit="contain" />
+            </el-carousel-item>
+            <el-carousel-item key="3">
+              <el-image style="width: 360px; height: 280px" :src="require('@/assets/images/pet3.jpeg')" fit="contain" />
+            </el-carousel-item>
+            <el-carousel-item key="4">
+              <el-image style="width: 360px; height: 280px" :src="require('@/assets/images/pet4.jpeg')" fit="contain" />
+            </el-carousel-item>
+        </el-carousel>
+        </div>
+        <span style="float:right;top:-260px;right:520px;position: relative; font-size: 28px;font-family: YouSheRound;">图片识别</span>
+      </div>
     </el-main>
   </el-container>
 </template>
@@ -55,7 +75,11 @@ export default {
   },
   data(){
     return {
-
+      itemList:['@/assets/images/pet1.jpeg',
+      '@/assets/images/pet2.jpeg',
+      '@/assets/images/pet3.jpeg',
+      '@/assets/images/pet4.jpeg'
+      ],
     }
   }
 }
@@ -66,6 +90,20 @@ export default {
 .container {
   margin:0;
   height:100%;
+}
+.basic-types-area {
+  margin-top: 60px;
+  width:100%;
+}
+.basic-types-title {
+  font-family: YouSheBlack;
+  color: #5EABBF;
+  font-size: 32px;
+}
+.basic-types-content {
+  width:480px;
+  margin-top: 50px;
+  margin-left: 240px;
 }
 .icon {
   width: 3em;
