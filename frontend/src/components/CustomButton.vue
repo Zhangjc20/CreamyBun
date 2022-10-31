@@ -10,7 +10,7 @@
     props: {
         fontColor:{//字体颜色
             type:String,
-            default:"#606266"
+            default:"#ffffff"
         },
         fontSize:{//字体大小
             type:Number,
@@ -22,11 +22,11 @@
         },
         normalColor:{//正常按钮颜色
             type:String,
-            default:"#409eff"
+            default:"#5EABBF"
         },
         focusColor:{//选中状态颜色
             type:String,
-            default:"#337ecc"
+            default:"#5EABBF"
         },
         hoverColor:{//悬停颜色
             type:String,
