@@ -1,14 +1,40 @@
 <template>
   <el-main class="main-style" >
-    <el-row style="height: 30px;">
-      <span class="header-title" style="margin: auto,auto,auto,20px;">题目设置：单选题</span>
+    <!-- <el-row style="height: 50px;">
+      <span class="header-title" style="margin: auto,auto,auto,20px;" v-if="multiple == 0">题目设置：单选题</span>
+      <span class="header-title" style="margin: auto,auto,auto,20px;" v-if="multiple == 1">题目设置：多选题</span>
       <CustomButton @click="clickAddOption" isRound="true" style="float: right; right: 20px; position: absolute" title="新增选项"/>
     </el-row>
-    <!-- <el-row v-for="option in optionList">
-      <el-header>
-        <span class="header-title" style="margin: auto,auto,auto,20px;">{{option.content}}</span>
-      </el-header>
-    </el-row> -->
+    <el-row style="height: 50px;" v-if="multiple == 1">
+      <el-form-item label="选项数量" :required="true">
+        <el-col :span="11">
+          <el-input
+            v-model="minOptionNum"
+            :rows="1"
+            type="textarea"
+            placeholder="最小数量"
+            resize="none"
+            style="width: 100px;height: 40px;"
+          />
+        </el-col>
+        <el-col :span="2" class="text-center">
+        </el-col>
+        <el-col :span="11">
+          <el-input
+            v-model="maxOptionNum"
+            :rows="1"
+            type="textarea"
+            placeholder="最大数量"
+            resize="none"
+            style="width: 100px;height: 40px;"
+          />
+        </el-col>
+        
+        
+      </el-form-item>
+    </el-row>
+    
+
     <el-table
         :data="optionList"
         height="200"
@@ -17,12 +43,12 @@
         class="customer-table">
         <el-table-column
           prop="name"
-          label="选项"
+          label="题号"
           width="100">
         </el-table-column>
         <el-table-column
           prop="content"
-          label="选项内容"
+          label="题目"
           width="200">
           <template v-slot="scope">
             <div v-if="scope.row.index == currentOption">
@@ -44,7 +70,7 @@
           width="">
           <span class="iconfont icon-menu"></span>
         </el-table-column>
-      </el-table>
+      </el-table> -->
 
       <!-- <el-dialog
         v-model="dialogVisible"
@@ -74,9 +100,12 @@ import CustomButton from './CustomButton.vue';
 //   }
 // }
 export default {
-  name: 'ReleaseSingleChoice',
+  name: 'ReleaseBlank',
   components: {
     CustomButton
+  },
+  props: {
+    multiple:Boolean,
   },
   data(){
     return {
@@ -84,7 +113,9 @@ export default {
       currentOption:'26',
       // dialogVisible: false,
       optionList:[],
-      idRef:['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
+      idRef:['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],
+      minOptionNum:'',
+      maxOptionNum:'',
     }
   },
   methods:{

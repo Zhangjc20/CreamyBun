@@ -45,6 +45,7 @@
             <el-form-item label="题型" :required="true" style="margin-top: 10px;">
               <el-select v-model="form.questionType" class="m-2" placeholder="请选择题型">
                 <el-option
+                  @click="showQuestionPage(item)"
                   v-for="item in options"
                   :key="item.value"
                   :label="item.label"
@@ -60,15 +61,16 @@
                 >保存</CustomButton> -->
             </el-form-item>
           </el-row>
-          <el-row style="height: 300px;">
-            <ReleaseSingleChoice ></ReleaseSingleChoice>
+          <el-row >
+            <component :is="componentName" :multiple="multiple"></component>
+            <!-- <ReleaseChoice multiple="1"></ReleaseChoice> -->
           </el-row>
         </el-form>
       </el-col>
       
       
       <el-col :span="12" style="border-left: 1px solid #999999;">
-        <el-row style="height: 50px;"></el-row>
+        <el-row style="height: 50px;">上传图像和任务文件</el-row>
       </el-col>
     </el-row>
 
@@ -83,7 +85,7 @@
 
       <el-row style="height: 50px;">
         <el-form-item label="任务星级" :required="true">
-          <el-select v-model="form.questionType" class="m-2" placeholder="请选择星级">
+          <el-select v-model="form.taskLevel" class="m-2" placeholder="请选择星级">
             <el-option
               v-for="item in levels"
               :key="item.value"
@@ -172,21 +174,23 @@
 <script>
 
 // import CustomButton from './CustomButton.vue';
-import ReleaseSingleChoice from '@/components/ReleaseSingleChoice.vue';
+import ReleaseChoice from '@/components/ReleaseChoice.vue';
 export default {
   name: 'ReleasePicture',
   // components: {
   //   CustomButton
   // },
   components:{
-      ReleaseSingleChoice,
-    },
+    ReleaseChoice,
+  },
   props: {
     login:Boolean,
     activeItem:String,
   },
   data(){
     return {
+      componentName:'',
+      multiple:0,
       options:[
         {
           value: 'singleChoice',
@@ -234,6 +238,7 @@ export default {
         questionNum: "",
         releaseMode: "",
         singleBonus: "",
+        taskLevel: "",
         startLine1: "",
         startLine2: "",
         deadLine1: "",
@@ -246,6 +251,23 @@ export default {
       this.$router.push({
             name: 'home',
         });
+    },
+    showQuestionPage(selected){
+      let value = selected.value
+      if(value == 'singleChoice'){
+        this.componentName = 'ReleaseChoice'
+        this.multiple = 0
+      }else if(value == 'multipleChoice'){
+        this.componentName = 'ReleaseChoice'
+        this.multiple = 1
+      }else if(value == 'fillBlank'){
+        this.componentName = 'ReleaseBlank'
+        this.multiple = 1
+      }else if(value == 'frameSelection'){
+        this.componentName = 'ReleaseChoice'
+        this.multiple = 1
+      }
+      console.log("jbijolhukyivukyi",value)
     }
   }
 }
