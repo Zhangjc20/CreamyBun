@@ -62,8 +62,74 @@
             </el-form-item>
           </el-row>
           <el-row >
-            <component :is="componentName" :multiple="multiple"></component>
+            <component :is="componentName" :multiple="multiple" @questionSubmit="addQuestion"></component>
             <!-- <ReleaseChoice multiple="1"></ReleaseChoice> -->
+          </el-row>
+          <el-row>
+            <el-main class="main-style" style="margin-right: 40px;">
+              <el-row style="height: 50px;">
+                <span class="header-title" style="margin: auto,auto,auto,20px;">当前题目列表</span>
+              </el-row>
+              <el-table
+                  :data="questionList"
+                  height="200"
+                  :style="table"
+                  class="customer-table">
+                  <el-table-column
+                    prop="index"
+                    label="题号"
+                    width="75">
+                  </el-table-column>
+                  <el-table-column
+                    prop="questionType"
+                    label="题类"
+                    width="75">
+                  </el-table-column>
+                  <el-table-column
+                    prop="questionDescription"
+                    label="题目描述"
+                    width="150">
+                    <!-- <template v-slot="scope">
+                      <div v-if="scope.row.index == currentOption">
+                        <el-input v-model="scope.row.content" placeholder="请输入选项内容"/>
+                      </div>
+                      <div v-else>{{ (scope.row.content) }}</div>
+                    </template> -->
+                  </el-table-column>
+                  
+                  <el-table-column
+                    prop=""
+                    label=""
+                    width="">
+                  </el-table-column>
+                  
+                  <el-table-column
+                    prop=""
+                    label="操作"
+                    width="150">
+                    <template v-slot="scope">
+                      <el-button type="text" 
+                        style="padding:0" 
+                        :disabled="scope.$index == 0" 
+                        @click="moveUpward(scope.row, scope.$index)">
+                        上移
+                      </el-button>
+                      <el-button type="text" 
+                        style="padding:0" 
+                        :disabled="(scope.$index + 1) == questionList.length" 
+                        @click="moveDown(scope.row, scope.$index)">
+                        下移
+                      </el-button>
+                      <el-button type="text" 
+                        style="padding:0" 
+                        @click="deleteQuestion(scope.row, scope.$index)">
+                        <span class="iconfont icon-menu"></span>
+                      </el-button>
+                      
+                    </template>
+                  </el-table-column>
+                </el-table>
+            </el-main>
           </el-row>
         </el-form>
       </el-col>
@@ -175,6 +241,7 @@
 
 // import CustomButton from './CustomButton.vue';
 import ReleaseChoice from '@/components/ReleaseChoice.vue';
+import ReleaseBlank from '@/components/ReleaseBlank.vue';
 export default {
   name: 'ReleasePicture',
   // components: {
@@ -182,6 +249,7 @@ export default {
   // },
   components:{
     ReleaseChoice,
+    ReleaseBlank,
   },
   props: {
     login:Boolean,
@@ -244,6 +312,7 @@ export default {
         deadLine1: "",
         deadLine2: "",
       },
+      questionList:[]
     }
   },
   methods:{
@@ -267,7 +336,53 @@ export default {
         this.componentName = 'ReleaseChoice'
         this.multiple = 1
       }
-      console.log("jbijolhukyivukyi",value)
+    },
+    addQuestion(newQuestion){
+      console.log("新的题目：",newQuestion)
+      var len = this.questionList.length
+      newQuestion['index'] = len + 1
+      this.questionList.push(newQuestion)
+    },
+    moveUpward(row, index) {
+      if (index > 0) {
+        let upData = this.questionList[index - 1];
+        this.questionList[index - 1]['index'] ++
+        this.questionList[index]['index'] --
+        console.log("aaaaaaaaaaaaaaaaa",index)
+        this.questionList.splice(index - 1, 1);
+        this.questionList.splice(index, 0, upData);
+      } else {
+        this.$message({
+          message: '已经是第一条，上移失败',
+          type: 'warning'
+        });
+      }
+    },
+    moveDown(row, index) {
+      if ((index + 1) == this.questionList.length) {
+        this.$message({
+          message: '已经是最后一条，下移失败',
+          type: 'warning'
+        });
+      } else {
+        this.questionList[index + 1]['index'] --
+        this.questionList[index]['index'] ++
+        let downData = this.questionList[index + 1];
+        this.questionList.splice(index + 1, 1);
+        this.questionList.splice(index, 0, downData);
+      }
+    },
+    deleteQuestion(row, index){
+      var deleteTarget = index + 1
+      console.log(deleteTarget)
+      this.questionList.forEach(function (item,index,arr){
+          if (item.index == deleteTarget) {
+              arr.splice(index,1);
+          }
+      });
+      for(let i = 0; i<this.questionList.length;i++){
+        this.questionList[i]['index'] = i + 1
+      }
     }
   }
 }

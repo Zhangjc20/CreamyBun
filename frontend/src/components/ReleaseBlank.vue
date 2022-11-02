@@ -1,18 +1,17 @@
 <template>
   <el-main class="main-style" >
-    <!-- <el-row style="height: 50px;">
-      <span class="header-title" style="margin: auto,auto,auto,20px;" v-if="multiple == 0">题目设置：单选题</span>
-      <span class="header-title" style="margin: auto,auto,auto,20px;" v-if="multiple == 1">题目设置：多选题</span>
-      <CustomButton @click="clickAddOption" isRound="true" style="float: right; right: 20px; position: absolute" title="新增选项"/>
+    <el-row style="height: 50px;">
+      <span class="header-title" style="margin: auto,auto,auto,20px;">题目设置：填空题</span>
+      <CustomButton @click="clickSubmit" isRound="true" style="float: right; right: 20px; position: absolute" title="提交题目"/>
     </el-row>
-    <el-row style="height: 50px;" v-if="multiple == 1">
-      <el-form-item label="选项数量" :required="true">
+    <el-row style="height: 50px;">
+      <el-form-item label="答案字数" :required="true">
         <el-col :span="11">
           <el-input
             v-model="minOptionNum"
             :rows="1"
             type="textarea"
-            placeholder="最小数量"
+            placeholder="最小字数"
             resize="none"
             style="width: 100px;height: 40px;"
           />
@@ -24,7 +23,7 @@
             v-model="maxOptionNum"
             :rows="1"
             type="textarea"
-            placeholder="最大数量"
+            placeholder="最大字数"
             resize="none"
             style="width: 100px;height: 40px;"
           />
@@ -33,59 +32,23 @@
         
       </el-form-item>
     </el-row>
-    
-
-    <el-table
-        :data="optionList"
-        height="200"
-        :style="table"
-        @row-click="rowClick"
-        class="customer-table">
-        <el-table-column
-          prop="name"
-          label="题号"
-          width="100">
-        </el-table-column>
-        <el-table-column
-          prop="content"
-          label="题目"
-          width="200">
-          <template v-slot="scope">
-            <div v-if="scope.row.index == currentOption">
-              <el-input v-model="scope.row.content" placeholder="请输入选项内容"/>
-            </div>
-            <div v-else>{{ (scope.row.content) }}</div>
-          </template>
-        </el-table-column>
-        
-        <el-table-column
-          prop=""
-          label=""
-          width="">
-        </el-table-column>
-        
-        <el-table-column
-          prop=""
-          label="删除"
-          width="">
-          <span class="iconfont icon-menu"></span>
-        </el-table-column>
-      </el-table> -->
-
-      <!-- <el-dialog
-        v-model="dialogVisible"
-        title="请设置选项内容"
-        width="30%"
-      >
-        <el-input v-model="currentContent" placeholder="请输入选项内容"/>
-        <template #footer>
-          <span class="dialog-footer">
-            <CustomButton @click="dialogVisible = false" isRound="true" normalColor="#eeeeee" fontColor="#000000" title="取消"/>
-            <CustomButton @click="clickContentSet" isRound="true" title="确定修改"/>
-
-          </span>
-        </template>
-      </el-dialog> -->
+    <el-row style="height: 60px;">
+      <el-form-item label="题目描述" :required="true">
+        <el-input
+          v-model="description"
+          :rows="2"
+          type="textarea"
+          placeholder="请输入任务描述"
+          resize="none"
+          style="width: 300px;"
+        />
+      </el-form-item>
+    </el-row>
+    <el-row>
+      <el-form-item label="必做">
+        <el-switch v-model="mustDo" active-color="#5EABBF"/>
+      </el-form-item>
+    </el-row>
 
   </el-main>
 </template>
@@ -93,99 +56,32 @@
 <script>
 
 import CustomButton from './CustomButton.vue';
-// class Option {
-//   constructor(id, content) {
-//     this.id = id;
-//     this.content = content;
-//   }
-// }
 export default {
   name: 'ReleaseBlank',
   components: {
     CustomButton
   },
-  props: {
-    multiple:Boolean,
-  },
   data(){
     return {
-      currentContent:'',
-      currentOption:'26',
-      // dialogVisible: false,
+      description:'',
       optionList:[],
-      idRef:['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],
       minOptionNum:'',
       maxOptionNum:'',
+      mustDo:true,
     }
   },
   methods:{
-    clickAddOption(){
-      var tempOption = {}
-      var len = this.optionList.length
-      if(len < 26){
-        tempOption['index'] = len
-        tempOption['name'] = this.idRef[len]
-        tempOption['content'] = ''
-        this.optionList.push(tempOption)
-        console.log(this.optionList)
-      }
-      
+    clickSubmit(){
+      let tempType = '填空'
+      this.$emit("questionSubmit", 
+      { questionType:tempType,
+        questionDescription:this.description, 
+        optionList:[],
+        minOptionNum:this.minOptionNum,
+        maxOptionNum:this.maxOptionNum,
+        mustDo:this.mustDo
+      })
     },
-    rowClick(row,column){
-      if(column.label == "选项内容"){
-        this.currentOption = row.index
-        console.log(row,column)
-        // this.dialogVisible = true //这句话一旦执行必然马上触发对话框
-      }else if(column.label == "删除"){//删除特定行的内容
-        var deleteTarget = row.index
-        console.log(deleteTarget)
-        this.optionList.forEach(function (item,index,arr){
-            if (item.index == deleteTarget) {
-                arr.splice(index,1);
-            }
-        });
-        for(let i = 0; i<this.optionList.length;i++){
-          this.optionList[i]['index'] = i
-          this.optionList[i]['name'] = this.idRef[i]
-        }
-        // let newOptionList = []
-        
-        // var i = 0
-        // console.log("kaishi ")
-        // console.log(this.optionList)
-        // console.log("开始的newOptionList",newOptionList)
-        // for(let j = 0; j < this.optionList.length; j++){
-        //   console.log("i",i)
-        //   console.log("this.optionList[j]",this.optionList[j])
-        //   console.log("this.optionList[j].index",this.optionList[j].index)
-        //   if(deleteTarget == this.optionList[j].index){
-        //     continue
-        //   }
-        //   var tempOption = {}
-          
-        //   tempOption['index'] = i
-        //   tempOption['name'] = this.idRef[i]
-        //   tempOption['content'] = this.optionList[j].content
-        //   newOptionList.push(tempOption)
-        //   console.log("可以保留，tempOption：",tempOption)
-        //   console.log("现在的newOptionList",newOptionList)
-        //   i++
-        // }
-        // console.log("结束 ",newOptionList)
-
-        // this.optionList = newOptionList
-        console.log(row,column)
-      }
-      
-    },
-    clickContentSet(){
-
-      this.dialogVisible = false
-    }
-    // clickAddOption(){
-    //   this.optionList.push({id:"1",content:"16511653"})
-    //   console.log("this.optionList")
-    // },
   }
 }
 </script>

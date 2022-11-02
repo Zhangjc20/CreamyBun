@@ -3,7 +3,8 @@
     <el-row style="height: 50px;">
       <span class="header-title" style="margin: auto,auto,auto,20px;" v-if="multiple == 0">题目设置：单选题</span>
       <span class="header-title" style="margin: auto,auto,auto,20px;" v-if="multiple == 1">题目设置：多选题</span>
-      <CustomButton @click="clickAddOption" isRound="true" style="float: right; right: 20px; position: absolute" title="新增选项"/>
+      <CustomButton @click="clickAddOption" isRound="true" style="float: right; right: 120px; position: absolute" title="新增选项"/>
+      <CustomButton @click="clickSubmit" isRound="true" style="float: right; right: 20px; position: absolute" title="提交题目"/>
     </el-row>
     <el-row style="height: 50px;" v-if="multiple == 1">
       <el-form-item label="选项数量" :required="true">
@@ -33,7 +34,23 @@
         
       </el-form-item>
     </el-row>
-    
+    <el-row style="height: 60px;">
+      <el-form-item label="题目描述" :required="true">
+        <el-input
+          v-model="description"
+          :rows="2"
+          type="textarea"
+          placeholder="请输入任务描述"
+          resize="none"
+          style="width: 300px;"
+        />
+      </el-form-item>
+    </el-row>
+    <el-row>
+      <el-form-item label="必做">
+        <el-switch v-model="mustDo" active-color="#5EABBF"/>
+      </el-form-item>
+    </el-row>
     <!-- <el-row v-for="option in optionList">
       <el-header>
         <span class="header-title" style="margin: auto,auto,auto,20px;">{{option.content}}</span>
@@ -113,13 +130,14 @@ export default {
   },
   data(){
     return {
-      currentContent:'',
       currentOption:'26',
       // dialogVisible: false,
+      description:'',
       optionList:[],
       idRef:['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],
       minOptionNum:'',
       maxOptionNum:'',
+      mustDo:true,
     }
   },
   methods:{
@@ -134,6 +152,20 @@ export default {
         console.log(this.optionList)
       }
       
+    },
+    clickSubmit(){
+      let tempType = '单选'
+      if(this.multiple){
+        tempType = '多选'
+      }
+      this.$emit("questionSubmit", 
+      { questionType:tempType,
+        questionDescription:this.description, 
+        optionList:this.optionList,
+        minOptionNum:this.minOptionNum,
+        maxOptionNum:this.maxOptionNum,
+        mustDo:this.mustDo
+      })
     },
     rowClick(row,column){
       if(column.label == "选项内容"){
