@@ -62,7 +62,14 @@
             </el-form-item>
           </el-row>
           <el-row >
-            <component :is="componentName" :multiple="multiple" @questionSubmit="addQuestion"></component>
+            <component 
+              :is="componentName" 
+              :multiple="multiple" 
+              :editingQuestion="editingQuestion" 
+              :questionList="questionList" 
+              :newOrEdit="newOrEdit"
+              @questionSubmit="addQuestion">
+            </component>
             <!-- <ReleaseChoice multiple="1"></ReleaseChoice> -->
           </el-row>
           <el-row>
@@ -78,16 +85,16 @@
                   <el-table-column
                     prop="index"
                     label="题号"
-                    width="75">
+                    width="60">
                   </el-table-column>
                   <el-table-column
-                    prop="questionType"
-                    label="题类"
-                    width="75">
+                    prop="questionTypeName"
+                    label="题型"
+                    width="60">
                   </el-table-column>
                   <el-table-column
                     prop="questionDescription"
-                    label="题目描述"
+                    label="题干"
                     width="150">
                     <!-- <template v-slot="scope">
                       <div v-if="scope.row.index == currentOption">
@@ -106,9 +113,21 @@
                   <el-table-column
                     prop=""
                     label="操作"
-                    width="150">
+                    width="60">
                     <template v-slot="scope">
-                      <el-button type="text" 
+                      <el-dropdown>
+                        <span class="iconfont icon-menu"></span>
+                        <template #dropdown>
+                          <el-dropdown-menu>
+                            <el-dropdown-item icon="el-icon-s-order" @click="moveQuestionUpward(scope.row, scope.$index)">上移</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-remove" @click="moveQuestionDown(scope.row, scope.$index)">下移</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-remove" @click="editQuestion(scope.row, scope.$index)">编辑</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-download" @click="deleteQuestion(scope.row, scope.$index)">删除</el-dropdown-item>
+                          </el-dropdown-menu>
+                        </template>
+                        
+                      </el-dropdown>
+                      <!-- <el-button type="text" 
                         style="padding:0" 
                         :disabled="scope.$index == 0" 
                         @click="moveUpward(scope.row, scope.$index)">
@@ -124,7 +143,7 @@
                         style="padding:0" 
                         @click="deleteQuestion(scope.row, scope.$index)">
                         <span class="iconfont icon-menu"></span>
-                      </el-button>
+                      </el-button> -->
                       
                     </template>
                   </el-table-column>
@@ -240,16 +259,14 @@
 <script>
 
 // import CustomButton from './CustomButton.vue';
-import ReleaseChoice from '@/components/ReleaseChoice.vue';
-import ReleaseBlank from '@/components/ReleaseBlank.vue';
+import ReleaseBasicQuestion from '@/components/ReleaseBasicQuestion.vue';
 export default {
   name: 'ReleasePicture',
   // components: {
   //   CustomButton
   // },
   components:{
-    ReleaseChoice,
-    ReleaseBlank,
+    ReleaseBasicQuestion,
   },
   props: {
     login:Boolean,
@@ -312,7 +329,9 @@ export default {
         deadLine1: "",
         deadLine2: "",
       },
-      questionList:[]
+      questionList:[],
+      editingQuestion:'',
+      newOrEdit:0,
     }
   },
   methods:{
@@ -322,19 +341,20 @@ export default {
         });
     },
     showQuestionPage(selected){
+      this.newOrEdit = 0
       let value = selected.value
       if(value == 'singleChoice'){
-        this.componentName = 'ReleaseChoice'
+        this.componentName = 'ReleaseBasicQuestion'
         this.multiple = 0
       }else if(value == 'multipleChoice'){
-        this.componentName = 'ReleaseChoice'
+        this.componentName = 'ReleaseBasicQuestion'
         this.multiple = 1
       }else if(value == 'fillBlank'){
-        this.componentName = 'ReleaseBlank'
-        this.multiple = 1
+        this.componentName = 'ReleaseBasicQuestion'
+        this.multiple = 2
       }else if(value == 'frameSelection'){
-        this.componentName = 'ReleaseChoice'
-        this.multiple = 1
+        this.componentName = 'ReleaseBasicQuestion'
+        this.multiple = 3
       }
     },
     addQuestion(newQuestion){
@@ -343,12 +363,11 @@ export default {
       newQuestion['index'] = len + 1
       this.questionList.push(newQuestion)
     },
-    moveUpward(row, index) {
+    moveQuestionUpward(row, index) {
       if (index > 0) {
         let upData = this.questionList[index - 1];
         this.questionList[index - 1]['index'] ++
         this.questionList[index]['index'] --
-        console.log("aaaaaaaaaaaaaaaaa",index)
         this.questionList.splice(index - 1, 1);
         this.questionList.splice(index, 0, upData);
       } else {
@@ -358,7 +377,7 @@ export default {
         });
       }
     },
-    moveDown(row, index) {
+    moveQuestionDown(row, index) {
       if ((index + 1) == this.questionList.length) {
         this.$message({
           message: '已经是最后一条，下移失败',
@@ -372,6 +391,20 @@ export default {
         this.questionList.splice(index, 0, downData);
       }
     },
+    editQuestion(row, index){
+      this.editingQuestion = index
+      this.newOrEdit = 1
+      // var deleteTarget = index + 1
+      // console.log(deleteTarget)
+      // this.questionList.forEach(function (item,index,arr){
+      //     if (item.index == deleteTarget) {
+      //         arr.splice(index,1);
+      //     }
+      // });
+      // for(let i = 0; i<this.questionList.length;i++){
+      //   this.questionList[i]['index'] = i + 1
+      // }
+    },
     deleteQuestion(row, index){
       var deleteTarget = index + 1
       console.log(deleteTarget)
@@ -383,6 +416,10 @@ export default {
       for(let i = 0; i<this.questionList.length;i++){
         this.questionList[i]['index'] = i + 1
       }
+      this.$message({
+        message: '删除题目成功',
+        type: 'success'
+      });
     }
   }
 }
