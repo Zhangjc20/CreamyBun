@@ -15,11 +15,11 @@
               @close="handleClose"
             >
               <el-menu-item index="1" @click="clickLeftMenu(1)">
-                <el-icon><icon-menu /></el-icon>
+                <el-icon><Menu /></el-icon>
                 <span>个人信息</span>
               </el-menu-item>
               <el-menu-item index="2" @click="clickLeftMenu(2)">
-                <el-icon><icon-menu /></el-icon>
+                <el-icon><Menu /></el-icon>
                 <span>已领取任务</span>
               </el-menu-item>
               <el-menu-item index="3" @click="clickLeftMenu(3)">

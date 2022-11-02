@@ -1,95 +1,190 @@
 <template>
-  <el-container>
-    <div class="basic-info-box">
-      <el-row :span="12">
-        <el-col :span="4">
+  <div class="basic-info-box">
+    <el-row class="basic-info-box-inner">
+      <el-col :span="6" class="left-info-box">
+        <div class="avatar-box">
           <el-avatar
-            class="big-avatar"
             :size="100"
             :src="require('@/assets/images/avatar.jpeg')"
           ></el-avatar>
-        </el-col>
-        <el-col :span="20">
-          <el-row :span="8" class="info-row-one">
-            <el-col :span="8"
-              ><span class="info-row-font">用户名 : test-admin</span></el-col
-            >
-            <el-col :span="8"
-              ><span class="info-row-font">手机号 : 13823849322</span
-              ><el-link type="primary" class="change-link"
-                >修改</el-link
-              ></el-col
-            >
-          </el-row>
-          <el-row :span="20" class="info-right-row">
-            <el-col :span="8"
-              ><span class="info-row-font">邮箱 : baidu@123.com</span
-              ><el-link type="primary" class="change-link"
-                >修改</el-link
-              ></el-col
-            >
-            <el-col :span="8"
-              ><span class="info-row-font">
-                甜甜圈
-                <svg class="icon" aria-hidden="true">
-                  <use xlink:href="#icon-tiantianquan"></use>
-                </svg>
-                 = 666</span
-              ></el-col
-            >
-          </el-row>
-          <el-row :span="20" class="info-right-row">
-            <el-col :span="3"
-              ><span class="info-row-font">等级 LV : 1</span></el-col
-            >
-            <el-col :span="5">
-              <el-progress
-                :text-inside="true"
-                :stroke-width="18"
-                :percentage="80"
-                color="#FFF82C"
-                class="exp-bar"
-              />
-            </el-col>
-            <el-col :span="3"><span class="exp-ratio">400/500</span></el-col>
-          </el-row>
-        </el-col>
-      </el-row>
-      <el-row :span="12">
-        <div class="change-title">修改信息</div>
-        <el-form :model="form" label-width="120px" class="change-form">
-          <el-form-item label="用户名" :required="true">
-            <el-input v-model="form.name" />
-            <el-button
-              type="primary"
-              @click="onSubmit"
-              style="float: right; right: -90px; position: absolute"
-              >保存</el-button
-            >
+        </div>
+      </el-col>
+      <el-col class="right-info-box" :span="18">
+        <div class="describe-inner">
+          <el-descriptions class="margin-top" :column="2" border>
+            <el-descriptions-item :span="1">
+              <template #label>
+                <div class="cell-item">
+                  <el-icon>
+                    <user />
+                  </el-icon>
+                  用户名
+                </div>
+              </template>
+              helloworld
+            </el-descriptions-item>
+            <el-descriptions-item :span="1">
+              <template #label>
+                <div class="cell-item">
+                  <el-icon>
+                    <iphone />
+                  </el-icon>
+                  手机号
+                </div>
+              </template>
+              18100000000
+            </el-descriptions-item>
+            <el-descriptions-item :span="1">
+              <template #label>
+                <div class="cell-item">
+                  <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-tiantianquan"></use>
+                  </svg>
+                  甜甜圈
+                </div>
+              </template>
+              6660
+            </el-descriptions-item>
+            <el-descriptions-item :span="1">
+              <template #label>
+                <div class="cell-item">
+                  <el-icon>
+                    <office-building />
+                  </el-icon>
+                  邮箱
+                </div>
+              </template>
+              baidu.com
+            </el-descriptions-item>
+          </el-descriptions>
+          <div class="level-box">
+            <span>信誉等级 LV 5</span>
+            <el-progress
+              class="level-progress"
+              :text-inside="true"
+              :stroke-width="22"
+              :percentage="80"
+              status="warning"
+            />
+            <span>400/500</span>
+          </div>
+        </div>
+      </el-col>
+    </el-row>
+  </div>
+  <div class="change-form-area">
+    <div class="change-title">修改信息</div>
+    <el-row>
+      <el-col :span="12">
+        <el-form :model="changeForm" label-width="120px" class="change-form">
+          <el-form-item label="用户名">
+            <el-input v-model="changeForm.username" class="info-input" />
           </el-form-item>
-          <el-form-item> </el-form-item>
-          <el-form-item>
-            <el-button type="info" style="margin-left: 50px"
-              >修改密码</el-button
-            >
+          <el-form-item label="">
+            <CustomButton title="修改用户名" :props="normalProps" @click="handleChangeName"></CustomButton>
+          </el-form-item>
+          <el-form-item label="邮箱">
+            <el-input v-model="changeForm.email" class="info-input" />
+          </el-form-item>
+          <el-form-item label="">
+            <CustomButton title="修改邮箱" :props="normalProps" @click="handleChangeEmail"></CustomButton>
+          </el-form-item>
+          <el-form-item label="手机号">
+            <el-input v-model="changeForm.phone" class="info-input" />
+          </el-form-item>
+          <el-form-item label="">
+            <CustomButton title="修改手机号" :props="normalProps" @click="handleChangePhone"></CustomButton>
           </el-form-item>
         </el-form>
-      </el-row>
-    </div>
-  </el-container>
+      </el-col>
+      <el-col :span="12">
+        <CustomButton :props="changePassProps" title="忘记密码" @click="handleChangePass"></CustomButton>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
+import CustomButton from './CustomButton.vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
 export default {
   name: "MineInfoView",
-  props: {},
+  components:{
+    CustomButton
+  },
   data() {
     return {
-      form: {
-        name: "",
-        region: "",
+      normalProps:{
+        width:'110px',
+        height:'32px',
+        normalColor:'#5EABBF',
+        fontSize:'14px',
+        fontColor:'#ffffff',
+        hoverColor:'#5299AB',
+        focusColor:"#5299AB"
+      },
+      changePassProps:{
+        width:'100px',
+        height:'36px',
+        normalColor:'#5EABBF',
+        fontSize:'15px',
+        fontColor:'#ffffff',
+        hoverColor:'#5299AB',
+        focusColor:"#5299AB"
+      },
+      changeForm: {
+        username: "",
+        email: "",
+        phone:"",
       },
     };
+  },
+  methods:{
+    handleChangePass(){
+      this.$router.push({
+            name: 'logreset',
+        });
+    },
+    handleChangeName(){
+      // axios.get()
+      // .then(function (response) {
+      //   console.log(response);//考虑重名
+      // })
+      // .catch(function (error) {
+      //   console.log(error);
+      // });
+    },
+    handleChangeEmail(){
+      // axios.get()
+      // .then(function (response) {
+      //   console.log(response);//考虑是否和当前邮箱一样
+      // })
+      // .catch(function (error) {
+      //   console.log(error);
+      // });
+      ElMessageBox.prompt('请输入发送到某邮箱的验证码（请勿关闭当前窗口）', '修改邮箱', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        inputPattern:
+          /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
+        inputErrorMessage: '邮箱格式无效',
+      })
+        .then(({ value }) => {
+          ElMessage({
+            type: 'success',
+            message: `您的邮箱成功修改成:${value}`,
+          })
+        })
+        .catch(() => {
+          ElMessage({
+            type: 'info',
+            message: '取消修改邮箱',
+          })
+        })
+    },
+    handleChangePhone(){
+      //留待接口
+    }
   },
 };
 </script>
@@ -103,61 +198,63 @@ export default {
   fill: currentColor;
   overflow: hidden;
 }
-.el-row {
-  margin-bottom: 20px;
-}
-.change-link {
-  margin-left: -40px;
-}
-.change-title {
-  width: 80%;
-  text-align: center;
-  font-family: YouSheRound;
-  font-size: 22px;
-  margin-bottom: 20px;
-}
-.exp-ratio {
-  line-height: 22px;
-}
-.el-button--primary {
-  background-color: #5eabbf;
-  border-color: #5eabbf;
-  margin-left: 20px;
-  margin-right: 10px;
-}
-
-.el-button--info {
-  background-color: #fbe484;
-  border-color: #fbe484;
-  color: #4e5969;
+.info-input {
+  width: 300px;
 }
 .change-form {
-  margin-left: 20%;
+  padding: 0 100px 0 40px;
 }
-.info-row-one {
-  margin-top: 12%;
-  padding-left: 60px;
+.change-title {
+  font-family: YouSheRound;
+  font-size: 24px;
+  padding: 20px 0 20px 0;
 }
-::v-deep .el-progress-bar__innerText {
-  color: #54501d;
+.change-form-area {
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 40px;
+  box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
+  padding: 0 0 20px 0;
 }
-.exp-bar {
-  margin-top: 2px;
+.avatar-box {
+  border-radius: 10px;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.info-row-font {
-  float: left;
+.avatar-box:hover {
+  background-color: #f8f8f8;
 }
-.info-right-row {
-  margin-top: 1%;
-  padding-left: 60px;
-  color: #4e5969;
+.level-progress {
+  width: 200px;
+  margin: 0 10px 0 10px;
 }
-.big-avatar {
-  margin-left: 50px;
-  margin-top: 50%;
-  margin-bottom: 50%;
+.level-box {
+  margin-top: 20px;
+  display: flex;
+}
+.describe-inner {
+  margin: 0 30px 0 10px;
+}
+.basic-info-box-inner {
+  height: 200px;
+}
+.left-info-box {
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+.right-info-box {
+  flex-direction: column;
+  justify-content: center;
+  display: flex;
 }
 .basic-info-box {
   width: 100%;
+  border-radius: 10px;
+  box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
+  margin-top: 30px;
 }
 </style>

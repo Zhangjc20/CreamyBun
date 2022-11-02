@@ -40,7 +40,7 @@ const routes = [
     component: LogresetView,
   },
   {
-    path: "/Mine",
+    path: "/mine",
     name: "mine",
     component: MineView
   },
