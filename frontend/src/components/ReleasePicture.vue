@@ -24,7 +24,7 @@
         <el-form :model="form" label-width="100px" class="change-form">
           <el-row style="height: 50px;">
             <el-form-item label="名称" :required="true">
-              <el-input v-model="form.username" placeholder="请输入任务名字"/>
+              <el-input v-model="form.poster" placeholder="请输入任务名字"/>
               <!-- <CustomButton
                 >保存</CustomButton> -->
             </el-form-item>
@@ -56,7 +56,7 @@
           </el-row>
           <el-row style="height: 50px;">
             <el-form-item label="题目数量" :required="true" style="margin-top: 10px;">
-              <el-input v-model="form.questionNum" placeholder="请输入题目数量"/>
+              <el-input v-model="form.promblemTotalNum" placeholder="请输入题目数量"/>
               <!-- <CustomButton
                 >保存</CustomButton> -->
             </el-form-item>
@@ -170,7 +170,7 @@
 
       <el-row style="height: 50px;">
         <el-form-item label="任务星级" :required="true">
-          <el-select v-model="form.taskLevel" class="m-2" placeholder="请选择星级">
+          <el-select v-model="form.starRank" class="m-2" placeholder="请选择星级">
             <el-option
               v-for="item in levels"
               :key="item.value"
@@ -275,7 +275,7 @@ export default {
   data(){
     return {
       componentName:'',
-      multiple:0,
+
       options:[
         {
           value: 'singleChoice',
@@ -316,22 +316,25 @@ export default {
           label: '5',
         },
       ],
-      form: {
-        username: "",
+      form: {//questionNum taskLevel username
+        poster: "",
         description: "",
         questionType: "",
-        questionNum: "",
+        promblemTotalNum: "",
         releaseMode: "",
         singleBonus: "",
-        taskLevel: "",
+        starRank: "",
         startLine1: "",
         startLine2: "",
         deadLine1: "",
         deadLine2: "",
       },
+      //传回后端的题目列表，需要复制一百万次给每个problem都一个
       questionList:[],
+      multiple:0,
       editingQuestion:'',
       newOrEdit:0,
+
     }
   },
   methods:{
