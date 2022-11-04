@@ -5,6 +5,7 @@ import ReleaseView from '../views/ReleaseView.vue';
 import LogupView from '@/views/LogupView.vue';
 import LogresetView from "@/views/LogresetView.vue";
 import TaskCenterView from "@/views/TaskCenterView.vue";
+import HelpView from '@/views/HelpView.vue';
 
 const routes = [
   {
@@ -40,7 +41,12 @@ const routes = [
     component: LogresetView,
   },
   {
-    path: "/Mine",
+    path: "/help",
+    name: "help",
+    component: HelpView,
+  },
+  {
+    path: "/mine",
     name: "mine",
     component: MineView
   },

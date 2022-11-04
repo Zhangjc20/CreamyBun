@@ -1,6 +1,21 @@
 <template>
+  <el-config-provider :locale="locale">
   <router-view/>
+</el-config-provider>
 </template>
+
+<script>
+import zhCn from 'element-plus/lib/locale/lang/zh-cn'
+export default {
+  components:{
+  },
+  data(){
+    return{
+      locale : zhCn
+    }
+  }
+}
+</script>
 
 <style lang="scss">
 @font-face {
@@ -18,6 +33,10 @@
 @font-face {
   font-family: "YiPinChuangXiang";
   src: url(@/assets/fonts/一品创享体.ttf);
+}
+@font-face {
+  font-family: "XiaWuManHei";
+  src: url(@/assets/fonts/霞鹜漫黑.ttf);
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
