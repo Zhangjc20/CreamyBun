@@ -77,8 +77,10 @@ export default {
             },
         });
       axios.get('http://localhost:8000/log_in',{
-        username:this.username,
-        password:this.password
+        params:{
+          username:this.username,
+          password:this.password
+        }
       })
       .then(function(res){
         console.log(res);
