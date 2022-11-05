@@ -48,6 +48,7 @@
     data(){
       return {
         show_content:"MineInfoView",
+        materialType:0
       }
     },
     methods:{
@@ -67,7 +68,10 @@
                     message: '已取消删除'
                 });          
                 });
-            }
+            },
+        setMaterialType(input){
+
+        }
     }
   }
   </script>
