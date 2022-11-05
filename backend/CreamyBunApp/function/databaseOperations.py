@@ -4,7 +4,18 @@ from ..classDefination.userClass import *
 from ..classDefination.questionClass import *
 
 def add_a_user(username,password,email):
-    User.objects.create(username=username,password=password,email=email)
+    try:
+        User.objects.create(username=username,password=password,email=email)
+        return True
+    except:
+        return False
+
+def exist_user(username):
+    try:
+        User.objects.get(username=username)
+        return True
+    except:
+        return False
 
 def delete_a_user(username):
     User.objects.filter(username=username).delete()

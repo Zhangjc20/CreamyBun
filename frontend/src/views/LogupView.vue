@@ -7,12 +7,19 @@
           >已有账号，立即登录</el-link
         >
       </div>
-      <el-form class="form-box" label-width="120px" status-icon>
-        <el-form-item label="" required>
+      <el-form
+        :model="form"
+        class="form-box"
+        label-width="120px"
+        status-icon
+        :rules="rules"
+      >
+        <el-form-item label="" prop="username">
           <el-input
             clearable
             v-model="form.username"
-            placeholder="设置用户名称"
+            placeholder="设置5-12位用户名"
+            maxlength="12"
           >
             <template #prefix>
               <svg class="icon" aria-hidden="true">
@@ -21,7 +28,7 @@
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item label="" required>
+        <el-form-item label="" required prop="password">
           <el-input
             clearable
             v-model="form.password"
@@ -35,7 +42,7 @@
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item label="" required>
+        <el-form-item label="" required prop="passwordAgain">
           <el-input
             clearable
             v-model="form.passwordAgain"
@@ -49,7 +56,7 @@
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item label="">
+        <el-form-item label="" prop="email">
           <el-input
             clearable
             v-model="form.email"
@@ -63,7 +70,7 @@
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item label="" required class="verify-button">
+        <el-form-item label="" required class="verify-button" prop="verifyCode">
           <el-col :span="14"
             ><el-input
               clearable
@@ -77,7 +84,9 @@
               </template> </el-input
           ></el-col>
           <el-col :span="10"
-            ><el-button class="get-verify">获取验证码</el-button></el-col
+            ><el-button class="get-verify" @click="getVerifyCode"
+              >获取验证码</el-button
+            ></el-col
           >
         </el-form-item>
         <el-form-item class="logup-outer">
@@ -90,10 +99,65 @@
 
 <script>
 import axios from "axios";
-import { ElMessage } from 'element-plus';
+import { ElMessage } from "element-plus";
 export default {
   name: "LogupView",
   data() {
+    const validateUsername = (rule, value, callback) => {
+      if (value === "") {
+        this.usernameRight = false;
+        callback(new Error("用户名不能为空"));
+      } else if (value.search(/[a-z\d]{5,12}/g) == -1) {
+        this.usernameRight = false;
+        callback(new Error("请输入5-12位字母和数字的组合"));
+      } else {
+        this.usernameRight = true;
+        callback();
+      }
+    };
+    const validatePassword = (rule, value, callback) => {
+      if (value === "") {
+        this.passwordRight = false;
+        callback(new Error("密码不能为空"));
+      } else if (value.search(/[a-z\d]{6,18}/g) == -1) {
+        this.passwordRight = false;
+        callback(new Error("请输入6-18位字母和数字的组合"));
+      } else {
+        this.passwordRight = true;
+        callback();
+      }
+    };
+    const validatePasswordAgain = (rule, value, callback) => {
+      if (value != this.form.password) {
+        this.passwordAgainRight = false;
+        callback(new Error("两次输入的密码不一致"));
+      } else {
+        this.passwordAgainRight = true;
+        callback();
+      }
+    };
+    const validateEmail = (rule, value, callback) => {
+      if (
+        value.search(
+          /[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+/
+        ) == -1
+      ) {
+        this.emailRight = false;
+        callback(new Error("邮箱格式不合法"));
+      } else {
+        this.emailRight = true;
+        callback();
+      }
+    };
+    const validateVerifyCode = (rule, value, callback) => {
+      if (!Number.isInteger(value) && value.length != 6) {
+        this.verifyCodeRight = false;
+        callback(new Error("请输入六位数字验证码"));
+      } else {
+        this.verifyCodeRight = true;
+        callback();
+      }
+    };
     return {
       form: {
         username: "",
@@ -102,37 +166,163 @@ export default {
         email: "",
         verifyCode: "",
       },
+      correctCode: "",
+      usernameRight: false,
+      passwordRight: false,
+      passwordAgainRight: false,
+      emailRight: false,
+      verifyCodeRight: false,
+      emailing: false,
+      codeEmail:"",
+      emailingSeconds: 0,
+      rules: {
+        username: [
+          {
+            validator: validateUsername,
+            required: true,
+            trigger: ["blur", "change"],
+          },
+        ],
+        password: [
+          {
+            validator: validatePassword,
+            required: true,
+            trigger: ["blur", "change"],
+          },
+        ],
+        passwordAgain: [
+          {
+            validator: validatePasswordAgain,
+            required: true,
+            trigger: ["blur", "change"],
+          },
+        ],
+        email: [
+          {
+            validator: validateEmail,
+            required: true,
+            trigger: ["blur", "change"],
+          },
+        ],
+        verifyCode: [
+          {
+            validator: validateVerifyCode,
+            required: true,
+            trigger: ["blur", "change"],
+          },
+        ],
+      },
     };
   },
   methods: {
+    getVerifyCode() {
+      if (!this.emailRight) {
+        ElMessage({
+          type: "error",
+          message: "邮箱格式错误，请进行修改",
+        });
+        return;
+      }
+      if (this.emailing) {
+        ElMessage({
+          type: "info",
+          message: `验证码已发送，${60 - this.emailingSeconds}s后可以重新发送`,
+        });
+        return;
+      }
+      this.codeEmail = this.form.verifyCode;
+      this.emailing = true;
+      this.emailingSeconds = 0;
+      let timerI = setInterval(() => {
+        this.emailingSeconds += 1;
+      }, 1000);
+      let timerT = setTimeout(() => {
+        this.emailing = false;
+        clearTimeout(timerT);
+        clearInterval(timerI);
+      }, 60000);
+      axios
+        .get("/log_up", {
+          params: {
+            type: "getEmail",
+            username: this.form.username,
+            password: this.form.password,
+            email: this.codeEmail,
+          },
+        })
+        .then(res => {
+          if (res.data["status"] === "ok") {
+            ElMessage({
+              type: "success",
+              message: "验证码发送成功，请在对应邮箱查收",
+            });
+            this.correctCode = res.data["verifyCode"];
+            return;
+          } else {
+            console.log("error");
+          }
+        })
+        .catch(function (err) {
+          console.log(err);
+        });
+    },
     clickLogin() {
       this.$router.push({
         name: "login",
       });
     },
-    clickLogup(){
-      if(this.password!=this.passwordAgain){
+    clickLogup() {
+      if (
+        !(
+          this.usernameRight &&
+          this.passwordRight &&
+          this.passwordAgainRight &&
+          this.emailRight &&
+          this.verifyCodeRight
+        )
+      ) {
         ElMessage({
-            type: 'error',
-            message: '两次输入的密码不一致',
-          })
-      }
-      axios.get('http://localhost:8000/log_up',{
-        username:this.username,
-        password:this.password,
-        email:this.email,
-        verifyCode:this.verifyCode
-      })
-      .then(function(res){
-        console.log(res);
-        this.$router.push({
-          name: "login",
+          type: "error",
+          message: "填写信息格式错误，请进行修改",
         });
-      })
-      .catch(function(err){
-        console.log(err);
-      });
-    }
+        return;
+      }
+      if (this.verifyCode != this.correctCode) {
+        ElMessage({
+          type: "error",
+          message: "验证码错误",
+        });
+        return;
+      }
+      axios
+        .get("/log_up", {
+          params: {
+            username: this.form.username,
+            password: this.form.password,
+            email: this.form.email,
+            verifyCode: this.form.verifyCode,
+          },
+        })
+        .then(function (res) {
+          if (res.data["status"] === "ok") {
+            ElMessage({
+              type: "success",
+              message: "注册成功",
+            });
+            return;
+          } else {
+            if (res.data["type"] === "sameName") {
+              ElMessage({
+                type: "error",
+                message: "该用户名已注册，请选择其他用户名",
+              });
+            }
+          }
+        })
+        .catch(function (err) {
+          console.log(err);
+        });
+    },
   },
 };
 </script>

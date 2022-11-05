@@ -132,9 +132,6 @@
       
       <el-col :span="12" style="border-left: 1px solid #999999;">
         <el-row>
-          <ImageUpload title="请上传任务封面">
-
-          </ImageUpload>
         </el-row>
         <el-row>
           <MaterialUpload>
@@ -247,6 +244,7 @@
 import ReleaseBasicQuestion from '@/components/ReleaseBasicQuestion.vue';
 import ImageUpload from '@/components/ImageUpload.vue';
 import MaterialUpload from '@/components/MaterialUpload.vue';
+
 export default {
   name: 'ReleasePicture',
   // components: {
