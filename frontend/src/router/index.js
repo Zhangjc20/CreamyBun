@@ -68,7 +68,7 @@ const routes = [
     meta:{
       // 必须登录才可以查看
       requireAuth: true
-  },
+    },
     path: "/taskcenter",
     name: "taskcenter",
     component: TaskCenterView
