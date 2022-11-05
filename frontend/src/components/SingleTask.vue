@@ -1,6 +1,10 @@
 <template>
-    <div class="task-container">
+    <div class="task-container" v-if="isSpace">
       <div class="task-container-inner">
+      </div>
+    </div>
+    <div class="task-container" v-else>
+      <div class="task-container-inner" style="border: 2px solid #e9e9e9;">
         <el-image :src="require('@/assets/images/recognize.jpeg')" style="width:180px;height:180px;"></el-image>
         <div class="color-bg-box">
           <div class="title-font">{{props.taskName}}</div>
@@ -39,6 +43,7 @@
     data(){
       return {
         starNum: this.props.starNum,
+        isSpace: this.props.isSpace
       }
     },
     methods:{
@@ -68,7 +73,6 @@
   }
   .task-container-inner {
     width: 180px;
-    border: 2px solid #e9e9e9;
     border-radius: 6px;
   }
   .color-bg-box {
