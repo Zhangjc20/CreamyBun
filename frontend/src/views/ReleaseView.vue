@@ -69,9 +69,7 @@
                 });          
                 });
             },
-        setMaterialType(input){
 
-        }
     }
   }
   </script>
