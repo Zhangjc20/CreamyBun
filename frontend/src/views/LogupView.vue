@@ -89,6 +89,8 @@
 </template>
 
 <script>
+import axios from "axios";
+import { ElMessage } from 'element-plus';
 export default {
   name: "LogupView",
   data() {
@@ -109,8 +111,26 @@ export default {
       });
     },
     clickLogup(){
-      this.$router.push({
-        name: "login",
+      if(this.password!=this.passwordAgain){
+        ElMessage({
+            type: 'error',
+            message: '两次输入的密码不一致',
+          })
+      }
+      axios.get('http://localhost:8000/log_up',{
+        username:this.username,
+        password:this.password,
+        email:this.email,
+        verifyCode:this.verifyCode
+      })
+      .then(function(res){
+        console.log(res);
+        this.$router.push({
+          name: "login",
+        });
+      })
+      .catch(function(err){
+        console.log(err);
       });
     }
   },

@@ -13,6 +13,9 @@ export default {
     return{
       locale : zhCn
     }
+  },
+  beforeUnmount(){
+    sessionStorage.setItem("token", 'false');
   }
 }
 </script>

@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: 'MineInfoView',
   props: {
@@ -68,11 +69,25 @@ export default {
         });
     },
     clickLogin(){
+      sessionStorage.setItem("token", 'true');
       this.$router.push({
             name: 'home',
+            query:{
+              username:this.form.username
+            },
         });
-    }
-  }
+      axios.get('http://localhost:8000/log_in',{
+        username:this.username,
+        password:this.password
+      })
+      .then(function(res){
+        console.log(res);
+      })
+      .catch(function(err){
+        console.log(err);
+      });
+    },
+  },
 }
 </script>
 

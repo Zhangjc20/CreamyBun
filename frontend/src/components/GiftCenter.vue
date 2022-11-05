@@ -1,11 +1,16 @@
 <template>
-    <div>
+    <div class="gift-box">
       <div class="gift-title">奖励中心</div>
       <div class="exchange-rate-title">当前汇率: 120
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-tiantianquan"></use>
         </svg>
-        = 1 元
+        => 1 元
+      </div>
+      <div class="exchange-rate-title reverse-title">1 元 => 100
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-tiantianquan"></use>
+        </svg>
       </div>
       <div class="own-font">
         拥有
@@ -14,11 +19,15 @@
         </svg> = 240
       </div>
       <div class="exchange-area">
-        兑换 ： 
+        兑换甜甜圈 ： 
+        <el-input class="value-input" v-model="donutInput" placeholder="请输入金额" clearable />
+        &nbsp;&nbsp;元
+        <el-button class="confirm-exchange-btn" @click="handleClickExchange">确认兑换</el-button>
+      </div>
+      <div class="exchange-area">
+        兑换现金 ： 
         <el-input class="value-input" v-model="valueInput" placeholder="请输入金额" clearable />
         &nbsp;&nbsp;元
-      </div>
-      <div class="confirm-exchange-area">
         <el-button class="confirm-exchange-btn" @click="handleClickExchange">确认兑换</el-button>
       </div>
     </div>
@@ -69,10 +78,15 @@
   
   <!-- Add "scoped" attribute to limit CSS to this component only -->
   <style scoped lang="scss">
+  .gitf-box {
+    display: flex;
+    flex-direction: column;
+  }
   .confirm-exchange-btn {
     background-color: #FBE484;
     border-color: #FBE484;
     color: #606266;
+    margin-left:20px;
   }
   .confirm-exchange-btn:focus {
     background-color: #e8d175;
@@ -118,6 +132,9 @@
     font-family: YouSheBlack;
     color: #5EABBF;
     font-size: 22px;
+  }
+  .reverse-title {
+    margin-top: 0px;
   }
   </style>
   

@@ -64,7 +64,6 @@
               :text-inside="true"
               :stroke-width="22"
               :percentage="80"
-              status="warning"
             />
             <span>400/500</span>
           </div>
@@ -198,11 +197,14 @@ export default {
   fill: currentColor;
   overflow: hidden;
 }
+:deep .el-progress-bar__inner {
+  background-color: #f8d45e;
+}
 .info-input {
   width: 300px;
 }
 .change-form {
-  padding: 0 100px 0 40px;
+  padding: 0 0 0 40px;
 }
 .change-title {
   font-family: YouSheRound;

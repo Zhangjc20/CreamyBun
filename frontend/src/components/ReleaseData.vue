@@ -24,7 +24,7 @@
         <el-form :model="form" label-width="100px" class="change-form">
           <el-row style="height: 50px;">
             <el-form-item label="名称" :required="true">
-              <el-input v-model="form.username" placeholder="请输入任务名字"/>
+              <el-input v-model="form.poster" placeholder="请输入任务名字"/>
               <!-- <CustomButton
                 >保存</CustomButton> -->
             </el-form-item>
@@ -56,7 +56,7 @@
           </el-row>
           <el-row style="height: 50px;">
             <el-form-item label="题目数量" :required="true" style="margin-top: 10px;">
-              <el-input v-model="form.questionNum" placeholder="请输入题目数量"/>
+              <el-input v-model="form.promblemTotalNum" placeholder="请输入题目数量"/>
               <!-- <CustomButton
                 >保存</CustomButton> -->
             </el-form-item>
@@ -96,12 +96,6 @@
                     prop="questionDescription"
                     label="题干"
                     width="150">
-                    <!-- <template v-slot="scope">
-                      <div v-if="scope.row.index == currentOption">
-                        <el-input v-model="scope.row.content" placeholder="请输入选项内容"/>
-                      </div>
-                      <div v-else>{{ (scope.row.content) }}</div>
-                    </template> -->
                   </el-table-column>
                   
                   <el-table-column
@@ -127,24 +121,6 @@
                         </template>
                         
                       </el-dropdown>
-                      <!-- <el-button type="text" 
-                        style="padding:0" 
-                        :disabled="scope.$index == 0" 
-                        @click="moveUpward(scope.row, scope.$index)">
-                        上移
-                      </el-button>
-                      <el-button type="text" 
-                        style="padding:0" 
-                        :disabled="(scope.$index + 1) == questionList.length" 
-                        @click="moveDown(scope.row, scope.$index)">
-                        下移
-                      </el-button>
-                      <el-button type="text" 
-                        style="padding:0" 
-                        @click="deleteQuestion(scope.row, scope.$index)">
-                        <span class="iconfont icon-menu"></span>
-                      </el-button> -->
-                      
                     </template>
                   </el-table-column>
                 </el-table>
@@ -155,7 +131,11 @@
       
       
       <el-col :span="12" style="border-left: 1px solid #999999;">
-        <el-row style="height: 50px;">上传图像和任务文件</el-row>
+        <el-row>
+          <ImageUpload>
+
+          </ImageUpload>
+        </el-row>
       </el-col>
     </el-row>
 
@@ -170,7 +150,7 @@
 
       <el-row style="height: 50px;">
         <el-form-item label="任务星级" :required="true">
-          <el-select v-model="form.taskLevel" class="m-2" placeholder="请选择星级">
+          <el-select v-model="form.starRank" class="m-2" placeholder="请选择星级">
             <el-option
               v-for="item in levels"
               :key="item.value"
@@ -260,6 +240,7 @@
 
 // import CustomButton from './CustomButton.vue';
 import ReleaseBasicQuestion from '@/components/ReleaseBasicQuestion.vue';
+import ImageUpload from '@/components/ImageUpload.vue';
 export default {
   name: 'ReleasePicture',
   // components: {
@@ -267,6 +248,7 @@ export default {
   // },
   components:{
     ReleaseBasicQuestion,
+    ImageUpload,
   },
   props: {
     login:Boolean,
@@ -275,7 +257,7 @@ export default {
   data(){
     return {
       componentName:'',
-      multiple:0,
+
       options:[
         {
           value: 'singleChoice',
@@ -316,22 +298,25 @@ export default {
           label: '5',
         },
       ],
-      form: {
-        username: "",
+      form: {//questionNum taskLevel username
+        poster: "",
         description: "",
         questionType: "",
-        questionNum: "",
+        promblemTotalNum: "",
         releaseMode: "",
         singleBonus: "",
-        taskLevel: "",
+        starRank: "",
         startLine1: "",
         startLine2: "",
         deadLine1: "",
         deadLine2: "",
       },
+      //传回后端的题目列表，需要复制一百万次给每个problem都一个
       questionList:[],
+      multiple:0,
       editingQuestion:'',
       newOrEdit:0,
+
     }
   },
   methods:{
