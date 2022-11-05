@@ -13,6 +13,8 @@
     "core-js": "^3.8.3",
     "element-plus": "^2.2.19",
     "vue": "^3.2.13",
+    "vue-advanced-cropper": "^2.8.6",
+    "vue-cropper": "^1.0.5",
     "vue-router": "^4.0.3"
   },
   "devDependencies": {

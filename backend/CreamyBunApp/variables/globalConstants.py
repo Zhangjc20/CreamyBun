@@ -26,5 +26,11 @@ MAX_CHOICE_NUMBER = 26
 # 答案字符串最长长度
 MAX_ANSWER_LENGTH = 10000
 
-# 问题描述最长长度
+# 小题题干和任务描述最长长度
 MAX_DESCRIPTION_LENGTH = 500
+
+# 任务名最长长度
+MAX_TASK_NAME_LENGTH = 40
+
+# 时间字符串长度上限
+MAX_TIME_STRING_LENGTH = 25

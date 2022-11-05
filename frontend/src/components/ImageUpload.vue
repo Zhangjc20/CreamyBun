@@ -1,103 +1,100 @@
 <template>
   <el-main class="main-style" >
     <el-row style="height: 50px;">
-      <span class="header-title" style="margin: auto,auto,auto,20px;" v-if="questionType == 0">题目设置：单选题</span>
-      <span class="header-title" style="margin: auto,auto,auto,20px;" v-if="questionType == 1">题目设置：多选题</span>
-      <span class="header-title" style="margin: auto,auto,auto,20px;" v-if="questionType == 2">题目设置：填空题</span>
-      <CustomButton @click="clickAddOption" isRound="true" style="float: right; right: 120px; position: absolute" v-if="questionType == 0 || questionType == 1" title="新增选项"/>
-      <CustomButton @click="clickEdit" isRound="true" style="float: right; right: 20px; position: absolute" v-if="newOrEdit" title="提交修改"/>
-      <CustomButton @click="clickSubmit" isRound="true" style="float: right; right: 20px; position: absolute" v-if="!newOrEdit" title="提交题目"/>
-    </el-row>
-    <el-row style="height: 50px;" v-if="questionType == 1">
-      <el-form-item label="选项数量" :required="true">
-        <el-col :span="11">
-          <el-input
-            v-model="minOptionNum"
-            :rows="1"
-            type="textarea"
-            placeholder="最小数量"
-            resize="none"
-            style="width: 100px;height: 40px;"
-          />
-        </el-col>
-        <el-col :span="2" class="text-center">
-        </el-col>
-        <el-col :span="11">
-          <el-input
-            v-model="maxOptionNum"
-            :rows="1"
-            type="textarea"
-            placeholder="最大数量"
-            resize="none"
-            style="width: 100px;height: 40px;"
-          />
-        </el-col>
-      </el-form-item>
+      <span class="header-title" style="margin: auto,auto,auto,20px;">{{title}}</span>
+      <CustomButton @click="clickAddOption" isRound="true" style="float: right; right: 120px; position: absolute" title="新增选项"/>
     </el-row>
 
-    <el-row style="height: 50px;" v-if="questionType == 2">
-      <el-form-item label="答案字数" :required="true">
-        <el-col :span="11">
-          <el-input
-            v-model="minOptionNum"
-            :rows="1"
-            type="textarea"
-            placeholder="最小字数"
-            resize="none"
-            style="width: 100px;height: 40px;"
-          />
-        </el-col>
-        <el-col :span="2" class="text-center">
-        </el-col>
-        <el-col :span="11">
-          <el-input
-            v-model="maxOptionNum"
-            :rows="1"
-            type="textarea"
-            placeholder="最大字数"
-            resize="none"
-            style="width: 100px;height: 40px;"
-          />
-        </el-col>
-      </el-form-item>
-    </el-row>
+    <template v-if="!isPreview">
+        <el-upload
+          class="upload-demo"
+          action=""
+          drag
+          :auto-upload="false"
+          :show-file-list="false"
+          :on-change="handleChangeUpload"
+        >
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text">点击上传</div>
+          <div class="el-upload__tip">
+            支持绝大多数图片格式，单张图片最大支持5MB
+          </div>
+        </el-upload>
+      </template>
+      <div class="pre-box" v-else>
+        <img :src="previewImg" alt="裁剪图片" />
+        <el-upload
+          class="upload-demo"
+          action=""
+          :auto-upload="false"
+          :show-file-list="false"
+          :on-change="handleChangeUpload"
+        >
+          <el-button type="primary" plain>更换图片</el-button>
+        </el-upload>
+      </div>
 
-    <el-row style="height: 60px;">
-      <el-form-item label="题干" :required="true">
-        <el-input
-          v-model="description"
-          :rows="2"
-          type="textarea"
-          placeholder="请输入任务描述"
-          resize="none"
-          style="width: 300px;"
-        />
-      </el-form-item>
-    </el-row>
-    <el-row>
-      <el-form-item label="必做">
-        <el-switch v-model="mustDo" active-color="#5EABBF"/>
-      </el-form-item>
-    </el-row >
+      <el-dialog
+        v-model="dialogVisible"
+        title="Tips"
+        width="60%"
+        :before-close="handleClose"
+      >
+        <div class="cut">
+          <VueCropper ref="cropper" 
+            img="https://avatars2.githubusercontent.com/u/15681693?s=460&v=4" 
+            :output-size="option.size" 
+            :output-type="option.outputType" 
+            :info="true" 
+            :full="option.full" 
+            :fixed="fixed" 
+            :fixed-number="fixedNumber"
+            :can-move="option.canMove" 
+            :can-move-box="option.canMoveBox" 
+            :fixed-box="option.fixedBox" 
+            :original="option.original"
+            :auto-crop="option.autoCrop" 
+            :auto-crop-width="option.autoCropWidth" 
+            :auto-crop-height="option.autoCropHeight" 
+            :center-box="option.centerBox"
+            @real-time="realTime" 
+            :high="option.high"
+            @img-load="imgLoad" 
+            mode="cover" 
+            :max-img-size="option.max" 
+            @crop-moving="cropMoving">
+          </VueCropper>
+        </div>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="isPreview = true">Cancel</el-button>
+            <el-button type="primary" @click="dialogVisible = false">
+              Confirm
+            </el-button>
+          </span>
+        </template>
+      </el-dialog>
+
+
+      
   </el-main>
 </template>
 
 <script>
-
+import { VueCropper } from 'vue-cropper'
 import CustomButton from './CustomButton.vue';
 export default {
   name: 'ImageUpload',
   components: {
-    CustomButton
+    CustomButton,
+    VueCropper,
   },
-  // props: {
-  //   multiple:Number,
-  //   editingQuestion:Number,
-  //   questionList:Array,
-  //   newOrEdit:Boolean,
-  // },
+  props: {
+    title:String,
+  },
   data(){
     return {
+      dialogVisible:false,
       questionType: this.multiple,
       currentOption:'26',
       description:'',
@@ -107,6 +104,27 @@ export default {
       maxOptionNum:'',
       mustDo:true,
       tempQuestion:{},
+      isPreview:false,
+      option: {
+        img: 'https://avatars2.githubusercontent.com/u/15681693?s=460&v=4',
+        size: 1,
+        full: false,
+        outputType: 'png',
+        canMove: true,
+        fixedBox: false,
+        original: false,
+        canMoveBox: true,
+        autoCrop: true,
+        // 只有自动截图开启 宽度高度才生效
+        autoCropWidth: "180px",
+        autoCropHeight: "180px",
+        centerBox: false,
+        high: true,
+        max: 99999,
+      },
+      show: true,
+      fixed: true,
+      fixedNumber: [16, 9],
     }
   },
   methods:{
@@ -122,13 +140,46 @@ export default {
       }
       
     },
+    handleChangeUpload(file){
+      const isJPG =
+        file.raw.type === "image/jpeg" || file.raw.type === "image/png";
+      const isLt2M = file.size / 1024 / 1024 < 5;
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG/PNG 格式!");
+        return false;
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+        return false;
+      }
+      this.$nextTick(async () => {
+        // base64方式
+        this.option.img = URL.createObjectURL(file.raw);
+        console.log("suhadbouhfdaibvailuhfba",this.option.img)
+        this.loading = false;
+        this.dialogVisible = true;
+      });
+    },
+    cropMoving(data) {
+            // 截图框的左上角 x，y和右下角坐标x，y
+      let cropAxis = [data.axis.x1, data.axis.y1, data.axis.x2, data.axis.y2]
+      console.log(cropAxis)
+    },
   }
 }
 
 </script>
 
 <style scoped>
-
+  .cut {
+    width: 500px;
+    height: 500px;
+    margin: 30px auto;
+  }
+  .cropper-box .cropper {
+    width: 700px;
+    height: 30px;
+  }
   .header-style{
     border-radius: 5px;
     box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
