@@ -133,6 +133,11 @@
       <el-col :span="12" style="border-left: 1px solid #999999;">
         <el-row>
         </el-row>
+        <el-row>
+          <MaterialUpload>
+
+          </MaterialUpload>
+        </el-row>
       </el-col>
     </el-row>
 
@@ -237,6 +242,9 @@
 
 // import CustomButton from './CustomButton.vue';
 import ReleaseBasicQuestion from '@/components/ReleaseBasicQuestion.vue';
+import ImageUpload from '@/components/ImageUpload.vue';
+import MaterialUpload from '@/components/MaterialUpload.vue';
+
 export default {
   name: 'ReleasePicture',
   // components: {
@@ -244,6 +252,8 @@ export default {
   // },
   components:{
     ReleaseBasicQuestion,
+    ImageUpload,
+    MaterialUpload,
   },
   props: {
     login:Boolean,
