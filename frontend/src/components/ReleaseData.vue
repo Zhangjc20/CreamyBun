@@ -96,12 +96,6 @@
                     prop="questionDescription"
                     label="题干"
                     width="150">
-                    <!-- <template v-slot="scope">
-                      <div v-if="scope.row.index == currentOption">
-                        <el-input v-model="scope.row.content" placeholder="请输入选项内容"/>
-                      </div>
-                      <div v-else>{{ (scope.row.content) }}</div>
-                    </template> -->
                   </el-table-column>
                   
                   <el-table-column
@@ -127,24 +121,6 @@
                         </template>
                         
                       </el-dropdown>
-                      <!-- <el-button type="text" 
-                        style="padding:0" 
-                        :disabled="scope.$index == 0" 
-                        @click="moveUpward(scope.row, scope.$index)">
-                        上移
-                      </el-button>
-                      <el-button type="text" 
-                        style="padding:0" 
-                        :disabled="(scope.$index + 1) == questionList.length" 
-                        @click="moveDown(scope.row, scope.$index)">
-                        下移
-                      </el-button>
-                      <el-button type="text" 
-                        style="padding:0" 
-                        @click="deleteQuestion(scope.row, scope.$index)">
-                        <span class="iconfont icon-menu"></span>
-                      </el-button> -->
-                      
                     </template>
                   </el-table-column>
                 </el-table>
@@ -155,7 +131,11 @@
       
       
       <el-col :span="12" style="border-left: 1px solid #999999;">
-        <el-row style="height: 50px;">上传图像和任务文件</el-row>
+        <el-row>
+          <ImageUpload>
+
+          </ImageUpload>
+        </el-row>
       </el-col>
     </el-row>
 
@@ -260,6 +240,7 @@
 
 // import CustomButton from './CustomButton.vue';
 import ReleaseBasicQuestion from '@/components/ReleaseBasicQuestion.vue';
+import ImageUpload from '@/components/ImageUpload.vue';
 export default {
   name: 'ReleasePicture',
   // components: {
@@ -267,6 +248,7 @@ export default {
   // },
   components:{
     ReleaseBasicQuestion,
+    ImageUpload,
   },
   props: {
     login:Boolean,

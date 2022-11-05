@@ -20,12 +20,13 @@
               <el-menu-item index="1-1">图像</el-menu-item>
               <el-menu-item index="1-2">文本</el-menu-item>
               <el-menu-item index="1-3">视频</el-menu-item>
+              <el-menu-item index="1-4">音频</el-menu-item>
             </el-sub-menu>
           </el-menu>
         </el-aside>
         <el-main class="main-style">
           <!-- <component :is="show_content"></component> -->
-          <ReleasePicture :login="true" activeItem="3"></ReleasePicture>
+          <ReleaseData :login="true" activeItem="3"></ReleaseData>
           
         </el-main>
       </el-container>
@@ -37,12 +38,12 @@
 //   Menu as IconMenu,
 // } from '@element-plus/icons-vue'
   import NavBar from '@/components/NavBar.vue';
-  import ReleasePicture from '@/components/ReleasePicture.vue';
+  import ReleaseData from '@/components/ReleaseData.vue';
   export default{
     name: 'MineView',
     components:{
       NavBar,
-      ReleasePicture,
+      ReleaseData,
     },
     data(){
       return {
