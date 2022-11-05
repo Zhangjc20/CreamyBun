@@ -36,10 +36,12 @@ export default {
         }
       )
         .then(() => {
+          sessionStorage.setItem("token", 'false');
           ElMessage({
             type: 'success',
             message: '退出登录成功',
-          })
+          });
+          this.$router.push({name:"home"});
         })
         .catch(() => {
           ElMessage({

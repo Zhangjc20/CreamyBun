@@ -46,16 +46,29 @@ const routes = [
     component: HelpView,
   },
   {
+    //元数据
+    meta:{
+      // 必须登录才可以查看
+      requireAuth: true
+    },
     path: "/mine",
     name: "mine",
     component: MineView
   },
   {
+    meta:{
+      // 必须登录才可以查看
+      requireAuth: true
+    },
     path: "/Release",
     name: "release",
     component: ReleaseView
   },
   {
+    meta:{
+      // 必须登录才可以查看
+      requireAuth: true
+    },
     path: "/taskcenter",
     name: "taskcenter",
     component: TaskCenterView
@@ -66,5 +79,27 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
+
+// 登录之后才能访问
+router.beforeEach((to, from, next) => {
+  //to:即将要进入的目标路由对象； 
+  //2、from:当前导航即将要离开的路由对象； 
+  //3、next ：调用该方法后，才能进入下一个钩子函数(afterEach)。 next()
+  //直接进to 所指路由 next(false) 
+  //中断当前路由 next('route') 
+  //跳转指定路由 next('error') 
+  if (to.meta.requireAuth) { // 判断该路由是否需要登录权限
+    if (sessionStorage.getItem("token") == 'true') { // 判断本地是否存在token
+      next()
+    } else {
+      // 未登录,跳转到登陆页面
+      next({
+        path: '/login'
+      })
+    }
+  } else {
+    next();
+  }
+});
 
 export default router

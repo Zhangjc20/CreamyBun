@@ -68,11 +68,15 @@ export default {
         });
     },
     clickLogin(){
+      sessionStorage.setItem("token", 'true');
       this.$router.push({
             name: 'home',
+            query:{
+              username:this.form.username
+            },
         });
-    }
-  }
+    },
+  },
 }
 </script>
 

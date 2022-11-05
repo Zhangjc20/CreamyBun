@@ -1,7 +1,7 @@
 <template>
   <el-container class="container">
     <el-header class="header-style">
-      <NavBar :login="false" activeItem="1"></NavBar>
+      <NavBar :login='this.username!=""' activeItem="1"></NavBar>
     </el-header>
     <el-main class="main-style">
       <div class="custom-box">
@@ -80,7 +80,11 @@ export default {
       '@/assets/images/pet3.jpeg',
       '@/assets/images/pet4.jpeg'
       ],
+      username:"",
     }
+  },
+  mounted(){
+    this.username = this.$route.query.username;
   }
 }
 </script>
