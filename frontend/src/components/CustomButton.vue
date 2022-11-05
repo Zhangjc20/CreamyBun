@@ -54,15 +54,19 @@
         },
         focusColor:{//选中状态颜色
             type:String,
-            default:"#5EABBF"
+            default:"#5fa3b4"
         },
         hoverColor:{//悬停颜色
             type:String,
-            default:"#79bbff"
+            default:"#5fa3b4"
         },
         disabledColor:{
             type:String,
-            default:"#6cb7ca",
+            default:"#98ddef",
+        },
+        disabledFontColor:{
+            type:String,
+            default:'#555555'
         },
         isRound:{//是否圆角
             type:Boolean,
@@ -90,7 +94,8 @@
           rborderWidth:this.props.hasBorder?"1px":"0",
           rborderColor:this.props.borderColor,
           rdisabled:this.props.disabled,
-          rdisabledColor:this.props.disabledColor
+          rdisabledColor:this.props.disabledColor,
+          rdisabledFontColor:this.props.disabledFontColor
         }
       }
       else{
@@ -109,7 +114,8 @@
           rborderWidth:this.hasBorder?"1px":"0",
           rborderColor:this.borderColor,
           rdisabled:this.disabled,
-          rdisabledColor:this.disabledColor
+          rdisabledColor:this.disabledColor,
+          rdisabledFontColor:this.disabledFontColor
         }
       }
     },
@@ -132,6 +138,7 @@
         this.rborderColor=this.props.borderColor;
         this.rdisabled=this.props.disabled;
         this.rdisabledColor=this.props.disabledColor;
+        this.rdisabledFontColor=this.props.disabledFontColor;
       }
       else{
         this.rwidth =this.width;
@@ -149,13 +156,14 @@
         this.rborderColor=this.borderColor;
         this.rdisabled=this.disabled;
         this.rdisabledColor=this.disabledColor;
+        this.rdisabledFontColor=this.disabledFontColor;
       }
     }
   }
   </script>
   
   <style scoped lang="scss">
-  .el-button.is-disabled, .el-button.is-disabled:focus, .el-button.is-disabled:hover {
+  .button-class.is-disabled, .button-class.is-disabled:focus, .button-class.is-disabled:hover {
     background-color: v-bind(rdisabledColor);
   }
   .button-class {

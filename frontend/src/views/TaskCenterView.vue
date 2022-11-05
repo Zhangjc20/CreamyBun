@@ -17,18 +17,55 @@
         </div>
         <div class="over-area">
           <div class="sort-title-line">
+            <span class="sort-title-area">按甜甜圈排序</span>
+          </div>
+          <div class="button-area">
+            <CustomButton
+              title="所有"
+              :props="donutType === 1? activeProps : normalProps"
+              @click="handleClickBtn(4, 1)"
+            ></CustomButton>
+            <CustomButton
+              title="从多到少"
+              :props="donutType === 2? activeProps : normalProps"
+              @click="handleClickBtn(4, 2)"
+            ></CustomButton>
+          </div>
+          <div class="button-area second-line">
+            <CustomButton
+              title="从少到多"
+              :props="donutType === 3? activeProps : normalProps"
+              @click="handleClickBtn(4, 3)"
+            ></CustomButton>
+            <CustomButton
+              :props="disabledProps"
+            ></CustomButton>
+          </div>
+        </div>
+        <div class="later-area">
+          <div class="sort-title-line">
             <span class="sort-title-area">是否结束</span>
           </div>
           <div class="button-area">
             <CustomButton
-              title="未结束"
-              :props="isNotOver ? activeProps : normalProps"
+              title="所有"
+              :props="overType === 1? activeProps : normalProps"
               @click="handleClickBtn(1, 1)"
             ></CustomButton>
             <CustomButton
-              title="所有"
-              :props="isNotOver ? normalProps : activeProps"
-              @click="handleClickBtn(1, 0)"
+              title="未结束"
+              :props="overType === 2? activeProps : normalProps"
+              @click="handleClickBtn(1, 2)"
+            ></CustomButton>
+          </div>
+          <div class="button-area second-line">
+            <CustomButton
+              title="已结束"
+              :props="overType === 3? activeProps : normalProps"
+              @click="handleClickBtn(1, 3)"
+            ></CustomButton>
+            <CustomButton
+              :props="disabledProps"
             ></CustomButton>
           </div>
         </div>
@@ -38,14 +75,24 @@
           </div>
           <div class="button-area">
             <CustomButton
-              title="最新发布"
-              :props="isNewest ? activeProps : normalProps"
+              title="所有"
+              :props="newType === 1? activeProps : normalProps"
               @click="handleClickBtn(2, 1)"
             ></CustomButton>
             <CustomButton
+              title="最新发布"
+              :props="newType === 2? activeProps : normalProps"
+              @click="handleClickBtn(2, 2)"
+            ></CustomButton>
+          </div>
+          <div class="button-area second-line">
+            <CustomButton
               title="最早结束"
-              :props="isNewest ? normalProps : activeProps"
-              @click="handleClickBtn(2, 0)"
+              :props="newType === 3? activeProps : normalProps"
+              @click="handleClickBtn(2, 3)"
+            ></CustomButton>
+            <CustomButton
+              :props="disabledProps"
             ></CustomButton>
           </div>
         </div>
@@ -55,31 +102,24 @@
           </div>
           <div class="button-area">
             <CustomButton
-              title="从难到易"
-              :props="hardest ? activeProps : normalProps"
+              title="所有"
+              :props="hardType === 1? activeProps : normalProps"
               @click="handleClickBtn(3, 1)"
             ></CustomButton>
             <CustomButton
+              title="从难到易"
+              :props="hardType === 2? activeProps : normalProps"
+              @click="handleClickBtn(3, 2)"
+            ></CustomButton>
+          </div>
+          <div class="button-area second-line">
+            <CustomButton
               title="从易到难"
-              :props="hardest ? normalProps : activeProps"
-              @click="handleClickBtn(3, 0)"
-            ></CustomButton>
-          </div>
-        </div>
-        <div class="later-area">
-          <div class="sort-title-line">
-            <span class="sort-title-area">按甜甜圈排序</span>
-          </div>
-          <div class="button-area">
-            <CustomButton
-              title="从多到少"
-              :props="donutMost ? activeProps : normalProps"
-              @click="handleClickBtn(4, 1)"
+              :props="hardType === 3? activeProps : normalProps"
+              @click="handleClickBtn(3, 3)"
             ></CustomButton>
             <CustomButton
-              title="从少到多"
-              :props="donutMost ? normalProps : activeProps"
-              @click="handleClickBtn(4, 0)"
+              :props="disabledProps"
             ></CustomButton>
           </div>
         </div>
@@ -237,10 +277,10 @@ export default {
         focusColor: "#EAE9E9",
       },
       onlyLevel: false,
-      isNotOver: true,
-      isNewest: true,
-      hardest: true,
-      donutMost: true,
+      overType: 1,
+      newType: 1,
+      hardType: 1,
+      donutType: 1,
       chosenDataType: 1,
       chosenQuestionType: 1,
       searchInput: "",
@@ -293,17 +333,17 @@ export default {
   methods: {
     handleClickBtn(btn, val) {
       switch (btn) {
-        case 1: //调整isNotOver即是否结束
-          this.isNotOver = val ? true : false;
+        case 1: //调整overType即是否结束
+          this.overType = val;
           break;
-        case 2: //调整isNewest即按时间排序
-          this.isNewest = val ? true : false;
+        case 2: //调整newType即按时间排序
+          this.newType = val;
           break;
-        case 3: //调整hardest即按难度排序
-          this.hardest = val ? true : false;
+        case 3: //调整hardType即按难度排序
+          this.hardType = val;
           break;
-        case 4: //调整donutMost即按甜甜圈排序
-          this.donutMost = val ? true : false;
+        case 4: //调整donutType即按甜甜圈排序
+          this.donutType = val;
           break;
         case 5: //调整chosenDataType即数据类型
           this.chosenDataType = val;

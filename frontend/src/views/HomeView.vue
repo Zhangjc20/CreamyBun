@@ -44,22 +44,77 @@
       <div class="basic-types-area">
         <span class="basic-types-title">参与众包 互利共赢</span>
         <div class="basic-types-content"> 
-          <el-carousel height="280px">
+          <div class="radio-area">
+            <el-radio-group v-model="selectedItem" @change="handleClickItem">
+              <el-radio-button label="0">图片分类</el-radio-button>
+              <el-radio-button label="1">图片框图</el-radio-button>
+              <el-radio-button label="2">邮件识别</el-radio-button>
+              <el-radio-button label="3">音频分析</el-radio-button>
+            </el-radio-group>
+          </div>
+          <el-carousel height="300px" ref="carousel" @change="carouselChange" initial-index="0">
+            <el-carousel-item key="0">
+              <el-row>
+                <el-col :span="12">
+                  <el-image style="width: 360px; height: 280px" :src="require('@/assets/images/pet1.jpeg')" fit="contain" />
+                </el-col>
+                <el-col :span="12">
+                  <div class="carousel-item-title">图片分类</div>
+                  <div class="tag-area">
+                    <el-tag style="margin-right:10px;">图片</el-tag>
+                    <el-tag type="success">单选题</el-tag>
+                  </div>
+                  <div class="carousel-item-content">&emsp;&emsp;对发布者提供的图片进行分类，选择正确的选项。图片类别可能涉及动物、植物、人物等领域。  </div>
+                </el-col>
+              </el-row>
+            </el-carousel-item>
             <el-carousel-item key="1">
-              <el-image style="width: 360px; height: 280px" :src="require('@/assets/images/pet1.jpeg')" fit="contain" />
+              <el-row>
+                <el-col :span="12">
+                  <el-image style="width: 360px; height: 280px" :src="require('@/assets/images/pet2.jpeg')" fit="contain" />
+                </el-col>
+                <el-col :span="12">
+                  <div class="carousel-item-title">图片框图</div>
+                  <div class="tag-area">
+                    <el-tag style="margin-right:10px;">图片</el-tag>
+                    <el-tag type="success">框图题</el-tag>
+                  </div>
+                  <div class="carousel-item-content">&emsp;&emsp;根据发布者的要求框选出图片中合适的范围。图片类别可能涉及动物、植物、人物等领域。</div>
+                </el-col>
+              </el-row>
             </el-carousel-item>
             <el-carousel-item key="2">
-              <el-image style="width: 360px; height: 280px" :src="require('@/assets/images/pet2.jpeg')" fit="contain" />
+              <el-row>
+                <el-col :span="12">
+                  <el-image style="width: 360px; height: 280px" :src="require('@/assets/images/pet3.jpeg')" fit="contain" />
+                </el-col>
+                <el-col :span="12">
+                  <div class="carousel-item-title">邮件识别</div>
+                  <div class="tag-area">
+                    <el-tag style="margin-right:10px;">文本</el-tag>
+                    <el-tag type="success">单选题</el-tag>
+                  </div>
+                  <div class="carousel-item-content">&emsp;&emsp;对发布者给出的邮件进行主观判断，确定其是否属于垃圾邮件的范畴。</div>
+                </el-col>
+              </el-row>
             </el-carousel-item>
             <el-carousel-item key="3">
-              <el-image style="width: 360px; height: 280px" :src="require('@/assets/images/pet3.jpeg')" fit="contain" />
+              <el-row>
+                <el-col :span="12">
+                  <el-image style="width: 360px; height: 280px" :src="require('@/assets/images/pet4.jpeg')" fit="contain" />
+                </el-col>
+                <el-col :span="12">
+                  <div class="carousel-item-title">音频情感</div>
+                  <div class="tag-area">
+                    <el-tag style="margin-right:10px;">音频</el-tag>
+                    <el-tag type="success">单选题</el-tag>
+                  </div>
+                  <div class="carousel-item-content">&emsp;&emsp;分析一段音频的情感，属于所给选项中的哪个。可能是判断情感的强烈、倾向</div>
+                </el-col>
+              </el-row>
             </el-carousel-item>
-            <el-carousel-item key="4">
-              <el-image style="width: 360px; height: 280px" :src="require('@/assets/images/pet4.jpeg')" fit="contain" />
-            </el-carousel-item>
-        </el-carousel>
+          </el-carousel>
         </div>
-        <span style="float:right;top:-260px;right:520px;position: relative; font-size: 28px;font-family: YouSheRound;">图片识别</span>
       </div>
     </el-main>
   </el-container>
@@ -81,6 +136,15 @@ export default {
       '@/assets/images/pet4.jpeg'
       ],
       username:"",
+      selectedItem:"0",
+    }
+  },
+  methods:{
+    handleClickItem(label){
+      this.$refs.carousel.setActiveItem(label);
+    },
+    carouselChange(cur){
+      this.selectedItem = cur;
     }
   },
   mounted(){
@@ -95,9 +159,31 @@ export default {
   margin:0;
   height:100%;
 }
+.tag-area {
+  display: flex;
+  margin: 20px 0 0 15px;
+  justify-content: flex-start;
+}
+.carousel-item-content {
+  text-align: left;
+  margin: 30px 70px 0 10px;
+}
+.carousel-item-title {
+  text-align: left;
+  font-size: 24px;
+  font-family: XiaWuManHei;
+  font-weight: bold;
+  margin: 40px 0 0 20px;
+}
+.radio-area {
+  margin: 20px 0 20px 0;
+}
 .basic-types-area {
   margin-top: 60px;
   width:100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .basic-types-title {
   font-family: YouSheBlack;
@@ -105,9 +191,7 @@ export default {
   font-size: 32px;
 }
 .basic-types-content {
-  width:480px;
-  margin-top: 50px;
-  margin-left: 240px;
+  width:60%;
 }
 .icon {
   width: 3em;

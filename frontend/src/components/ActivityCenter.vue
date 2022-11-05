@@ -128,13 +128,14 @@
       </div>
     </div>
     <div>
-        <CustomButton :title="clocked?'已签到':'签到'" width="100px" @click="handleClockIn" :disabled="clocked"></CustomButton>
+        <CustomButton :title="clocked?'已签到':'签到'" fontSize="18px" width="100px" @click="handleClockIn" :disabled="clocked" disabledColor="#fbe484"></CustomButton>
     </div>
   </div>
 </template>
 
 <script>
 import CustomButton from './CustomButton.vue';
+import { ElMessage } from 'element-plus';
 export default {
   name: "ActivityCenter",
   components:{
@@ -154,6 +155,10 @@ export default {
       }
       this.clocked = true;
       this.clockinDays += 1;
+      ElMessage({
+        type: 'success',
+        message: '签到成功',
+      });
     }
   },
   created(){
@@ -277,7 +282,7 @@ export default {
 }
 .clockin-box {
   width: 760px;
-  height: 500px;
+  height: 450px;
 }
 .large-mask-params {
   height:240px;

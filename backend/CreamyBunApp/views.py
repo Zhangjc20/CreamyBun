@@ -1,10 +1,17 @@
 from django.shortcuts import render,HttpResponse
+from .function.databaseOperations import *
+from .variables.globalConstants import *
 
 # Create your views here.
 
-#######
-def index(request):
-    return HttpResponse("zfhsb")
+# 注册
+def log_up(request):
+    pass
 
-def jb(request):
-    return HttpResponse('zfhjb')
+# 注销
+def log_off(request):
+    pass
+
+# 修改手机号
+def update_mobile(request):
+    pass
