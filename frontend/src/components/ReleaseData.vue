@@ -132,7 +132,7 @@
       
       <el-col :span="12" style="border-left: 1px solid #999999;">
         <el-row>
-          <ImageUpload>
+          <ImageUpload title="请上传任务封面">
 
           </ImageUpload>
         </el-row>
