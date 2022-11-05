@@ -1,0 +1,30 @@
+# 在此处定义全局常量
+
+# 任务发布模式
+NOW_RELEASE = 1
+NOT_YET_RELEASE = 2
+TIMED_RELEASE = 3
+
+# problem当前状态
+NOT_RECEIVED = 1
+RECEIVED_BUT_NOT_FINISHED = 2
+FINISHED =3
+
+# 任务类型常量
+IMAGE = 1
+TXET = 2
+VIDEO = 3
+AUDIO = 4
+
+# 用户任务状态常量
+HAS_RECEIVED = 1
+HAS_POSTED = 2
+
+# 选择题最多选项数
+MAX_CHOICE_NUMBER = 26
+
+# 答案字符串最长长度
+MAX_ANSWER_LENGTH = 10000
+
+# 问题描述最长长度
+MAX_DESCRIPTION_LENGTH = 500

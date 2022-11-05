@@ -1,5 +1,5 @@
 class Task:
-    def __init__(self,ID,poster,task_name,description,problem_total_number,star_rank,single_bonus,release_mode,begin_time,end_time):
+    def __init__(self,ID,poster,task_name,description,problem_total_number,problem_number_for_single_receiver,star_rank,single_bonus,release_mode,begin_time,end_time):
         self.ID=ID
         self.poster=poster #发布者的id
         self.task_name=task_name
@@ -8,6 +8,9 @@ class Task:
         # 通过以下两个变量计算该任务的完成程度
         self.problem_total_number=problem_total_number
         self.finished_problem_number=0
+
+        # 每个用户每次可领取的题目数量
+        self.problem_number_for_single_receiver = problem_number_for_single_receiver
 
         self.star_rank=star_rank
         self.single_bonus=single_bonus
