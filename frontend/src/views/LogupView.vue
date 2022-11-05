@@ -111,23 +111,21 @@ export default {
       });
     },
     clickLogup(){
-      if(this.password!=this.passwordAgain){
+      if(this.form.password!=this.form.passwordAgain){
         ElMessage({
             type: 'error',
             message: '两次输入的密码不一致',
           })
       }
-      axios.get('http://localhost:8000/log_up',{
-        username:this.username,
-        password:this.password,
-        email:this.email,
-        verifyCode:this.verifyCode
+      axios.get('/log_up',{ 
+        username:this.form.username,
+        password:this.form.password,
+        email:this.form.email,
+        verifyCode:this.form.verifyCode
       })
       .then(function(res){
-        console.log(res);
-        this.$router.push({
-          name: "login",
-        });
+        console.log(res.data);
+        console.log('nihao');
       })
       .catch(function(err){
         console.log(err);
