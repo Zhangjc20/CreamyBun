@@ -5,6 +5,7 @@ import ReleaseView from '../views/ReleaseView.vue';
 import LogupView from '@/views/LogupView.vue';
 import LogresetView from "@/views/LogresetView.vue";
 import TaskCenterView from "@/views/TaskCenterView.vue";
+import HelpView from '@/views/HelpView.vue';
 
 const routes = [
   {
@@ -40,10 +41,15 @@ const routes = [
     component: LogresetView,
   },
   {
+    path: "/help",
+    name: "help",
+    component: HelpView,
+  },
+  {
     //元数据
     meta:{
-        // 必须登录才可以查看
-        requireAuth: true
+      // 必须登录才可以查看
+      requireAuth: true
     },
     path: "/mine",
     name: "mine",
