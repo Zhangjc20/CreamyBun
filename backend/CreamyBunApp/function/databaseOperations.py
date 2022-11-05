@@ -10,9 +10,16 @@ def add_a_user(username,password,email):
     except:
         return False
 
-def exist_user(username):
+def exist_user_by_name(username):
     try:
         User.objects.get(username=username)
+        return True
+    except:
+        return False
+
+def exist_user_by_email(email):
+    try:
+        User.objects.get(email=email)
         return True
     except:
         return False

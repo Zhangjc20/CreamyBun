@@ -141,3 +141,13 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True 
 # 允许所有的请求头 
 CORS_ALLOW_HEADERS = ('*')
+
+# 发送邮箱验证码配置
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'# 发送邮件配置
+EMAIL_HOST = "smtp.qq.com"     # 服务器
+EMAIL_PORT = 25                 # 一般情况下都为25
+EMAIL_HOST_USER = "1596741408@qq.com"     # 账号
+EMAIL_HOST_PASSWORD = "dtleopfoucyfigbi"     # 授权码
+EMAIL_USE_TLS = True       # 一般都为False
+EMAIL_FROM = "奶黄包数据标注平台运营方"      # 邮箱来自
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

@@ -2,3 +2,4 @@
 /.vscode
 /backend/venv
 __pycache__
+migrations

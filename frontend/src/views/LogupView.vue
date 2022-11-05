@@ -230,7 +230,7 @@ export default {
         });
         return;
       }
-      this.codeEmail = this.form.verifyCode;
+      this.codeEmail = this.form.email;
       this.emailing = true;
       this.emailingSeconds = 0;
       let timerI = setInterval(() => {
@@ -252,13 +252,24 @@ export default {
         })
         .then(res => {
           if (res.data["status"] === "ok") {
+            this.correctCode = res.data["verifyCode"];
             ElMessage({
               type: "success",
               message: "验证码发送成功，请在对应邮箱查收",
             });
-            this.correctCode = res.data["verifyCode"];
+            console.log(this.correctCode)
             return;
-          } else {
+          } else if (res.data['status'] === 'wrong') {
+            if (res.data['type'] === 'sameEmail') { 
+              ElMessage({
+                type: "error",
+                message: "该邮箱已被注册",
+              });
+              this.emailing = false;
+              this.emailingSeconds = 0;
+              clearTimeout(timerT);
+              clearInterval(timerI);
+            }
             console.log("error");
           }
         })
@@ -287,7 +298,8 @@ export default {
         });
         return;
       }
-      if (this.verifyCode != this.correctCode) {
+      console.log(this.form.verifyCode)
+      if (this.form.verifyCode != this.correctCode) {
         ElMessage({
           type: "error",
           message: "验证码错误",
@@ -308,6 +320,9 @@ export default {
             ElMessage({
               type: "success",
               message: "注册成功",
+            });
+            this.$router.push({
+              name: "login",
             });
             return;
           } else {
