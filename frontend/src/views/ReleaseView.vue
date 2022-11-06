@@ -49,7 +49,7 @@
       return {
         show_content:"MineInfoView",
         materialType:0,
-        username:0
+        username:""
       }
     },
     methods:{
