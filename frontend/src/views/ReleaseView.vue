@@ -1,7 +1,7 @@
 <template>
     <el-container class="container">
       <el-header class="header-style">
-        <NavBar :login="true" activeItem="3"></NavBar>
+        <NavBar :login="true" activeItem="3" :username="username"></NavBar>
       </el-header>
       <el-container>
         <el-aside class="left-menu-area">
@@ -48,7 +48,8 @@
     data(){
       return {
         show_content:"MineInfoView",
-        materialType:0
+        materialType:0,
+        username:0
       }
     },
     methods:{
@@ -70,6 +71,12 @@
                 });
             },
 
+    },
+    mounted(){
+      if(this.$route.query.username){
+        this.username=this.$route.query.username;
+        console.log(this.username)
+      }
     }
   }
   </script>

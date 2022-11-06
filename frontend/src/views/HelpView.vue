@@ -1,7 +1,7 @@
 <template>
     <el-container class="container">
       <el-header class="header-style">
-        <NavBar :login="false" activeItem="1"></NavBar>
+        <NavBar :login="false" activeItem="1" :username="username"></NavBar>
       </el-header>
       <el-main class="main-style">
         <div class="feedback-box">
@@ -69,6 +69,7 @@
     },
     data(){
       return {
+        username:'',
         companyType: '',
         imageUrl: '',
         textarea:'',
@@ -104,6 +105,12 @@
           this.$message.error('上传头像图片大小不能超过 2MB!');
         }
         return isJPG && isLt2M;
+      }
+    },
+    mounted(){
+      if(this.$route.query.username){
+        this.username = this.$route.query.username;
+        console.log(this.username)
       }
     }
   }

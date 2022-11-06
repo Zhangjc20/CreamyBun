@@ -2,7 +2,7 @@
   <div class="cropper-content">
     <div class="cropper-box">
       <div class="cropper">
-        <vue-cropper
+        <!-- <vue-cropper
             ref="cropper"
             :img="option.img"
             :outputSize="option.outputSize"
@@ -27,7 +27,7 @@
             :mode="option.mode"
             @realTime="realTime"
             @imgLoad="imgLoad">
-        </vue-cropper>
+        </vue-cropper> -->
       </div>
       <!--底部操作工具按钮-->
       <div class="footer-btn">
@@ -54,11 +54,11 @@
 </template>
 
 <script>
-import { VueCropper } from 'vue-cropper'
+// import { VueCropper } from 'vue-cropper'
 export default {
   name: "ImageUpload",
   components: {
-    VueCropper
+    // VueCropper
   },
   props:['Name'],
   data() {
