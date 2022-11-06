@@ -13,6 +13,13 @@ module.exports = defineConfig({
           '^/log_up': '' //请求的时候使用这个api就可以
         }
       },
+      '/get_material_zip/': {
+        target: 'http://localhost:8000/get_material_zip/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/get_material_zip': '' //请求的时候使用这个api就可以
+        }
+      },
     }
   }
 })

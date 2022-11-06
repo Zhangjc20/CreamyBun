@@ -24,4 +24,5 @@ urlpatterns = [
     path('send_email/',views.send_email),
     path('log_off/',views.log_off),
     path('update_mobile/',views.update_mobile),
+    path('get_material_zip/',views.get_material_zip),
 ]
