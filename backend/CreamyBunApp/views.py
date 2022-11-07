@@ -81,9 +81,10 @@ def get_material_zip(request):
         if shardIndex == shardTotal - 1:  # 此时要解压了
             unzip_file(pathName, path)
             os.remove(pathName)
-            fileList = walk_file(path)
-
-            return HttpResponse(json.dumps({'status': 'done','list':fileList}), content_type='application/json')
+            fullList, listList = walk_file(path)
+            print(fullList)
+            print(listList)
+            return HttpResponse(json.dumps({'status': 'done', 'fullList': fullList, 'listList': listList}), content_type='application/json')
             pass
         # query_dict = request.POST
         # file = request.FILES.get('fileName', None)

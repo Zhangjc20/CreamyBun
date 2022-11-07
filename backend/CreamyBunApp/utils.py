@@ -103,22 +103,38 @@ def getSizeInNiceString(sizeInBytes):
 
 def walk_file(file):
     outputList = []
-    i = 0
-    for root, dirs, files in os.walk(file):
-        # root 表示当前正在访问的文件夹路径
-        # dirs 表示该文件夹下的子目录名list
-        # files 表示该文件夹下的文件list
-        # 遍历文件
-        for f in files:
-            tempPath = os.path.join(root, f)
-            fileInfo = os.stat(tempPath)
-            outputList.append({'index': i + 1,
-                               'fileName': f,
-                               'fileSize': getSizeInNiceString(fileInfo.st_size),
-                               'fileType': "寄了"
-                               })
-            i += 1
-        # 遍历所有的文件夹
+
+    j = 1
+    outputDirs = []
+    for base, dirs, _ in os.walk(file):
+        print(base, dirs)
         for d in dirs:
-            print(os.path.join(root, d))
-    return outputList
+            outputDirs.append({'index': j,
+                               'listName': d,
+                               'notes': ''})
+            dirPath = os.path.join(base, d)
+            subList = []
+            i = 1
+            for root, _, files in os.walk(dirPath):
+                # root 表示当前正在访问的文件夹路径
+                # dirs 表示该文件夹下的子目录名list
+                # files 表示该文件夹下的文件list
+                # 遍历文件
+                for f in files:
+                    filePath = os.path.join(root, f)
+                    fileInfo = os.stat(filePath)
+                    subList.append({'index': i,
+                                       'fileName': f,
+                                       'fileSize': getSizeInNiceString(fileInfo.st_size),
+                                       'totalSize': fileInfo.st_size,
+                                       'fileType': "寄了",
+                                       'filePath': filePath,
+                                       'list': d,
+                                       })
+                    i += 1
+            j += 1
+            outputList.append(subList)
+            # 遍历所有的文件夹
+            # for d in dirs:
+            #     print(os.path.join(root, d))
+    return outputList, outputDirs

@@ -134,7 +134,10 @@
         <el-row>
         </el-row>
         <el-row>
-          <MaterialUpload :username="username"/>
+          <MaterialUpload 
+          :username="username"
+          :questionList="questionList"
+          />
         </el-row>
       </el-col>
     </el-row>
@@ -259,7 +262,7 @@ export default {
   },
   data(){
     return {
-      componentName:'',
+      componentName:'ReleaseBasicQuestion',
 
       options:[
         {
