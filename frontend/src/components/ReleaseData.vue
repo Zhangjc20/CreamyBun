@@ -134,9 +134,7 @@
         <el-row>
         </el-row>
         <el-row>
-          <MaterialUpload>
-
-          </MaterialUpload>
+          <MaterialUpload :username="username"/>
         </el-row>
       </el-col>
     </el-row>
@@ -256,8 +254,8 @@ export default {
     MaterialUpload,
   },
   props: {
+    username:String,
     login:Boolean,
-    activeItem:String,
   },
   data(){
     return {

@@ -26,8 +26,7 @@
         </el-aside>
         <el-main class="main-style">
           <!-- <component :is="show_content"></component> -->
-          <ReleaseData :login="true" activeItem="3"></ReleaseData>
-          
+          <ReleaseData :login="true" :username="username"></ReleaseData>
         </el-main>
       </el-container>
     </el-container>
@@ -49,7 +48,7 @@
       return {
         show_content:"MineInfoView",
         materialType:0,
-        username:""
+        username:"",
       }
     },
     methods:{
