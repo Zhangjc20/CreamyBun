@@ -97,6 +97,11 @@
                     label="题干"
                     width="150">
                   </el-table-column>
+                  <el-table-column
+                    prop="questionAns"
+                    label="题干"
+                    width="150">
+                  </el-table-column>
                   
                   <el-table-column
                     prop=""

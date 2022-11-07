@@ -2,7 +2,7 @@
   <el-main class="main-style" >
     <el-row style="height: 50px;">
       <span class="header-title" style="margin: auto,auto,auto,20px;">请上传任务素材</span>
-      <CustomButton @click="clickEdit" isRound="true" style="float: right; right: 20px; position: absolute" title="提交修改" v-if="false"/>
+      <CustomButton @click="testListDialogVisible = true" isRound="true" style="float: right; right: 20px; position: absolute" v-if="!newOrEdit" title="编辑资质测试列表"/>
     </el-row>
     <!-- <el-row style="height: 50px;">
       <el-input
@@ -91,7 +91,7 @@
         <el-table-column
           prop="fileName"
           label="文件名"
-          width="110">
+          width="180">
         </el-table-column>
         <el-table-column
           prop="fileSize"
@@ -104,11 +104,7 @@
           width="100">
         </el-table-column> -->
         
-        <el-table-column
-          prop=""
-          label=""
-          width="">
-        </el-table-column>
+
         
         <el-table-column
           prop=""
@@ -128,6 +124,11 @@
               
             </el-dropdown>
           </template>
+        </el-table-column>
+        <el-table-column
+          prop=""
+          label=""
+          width="">
         </el-table-column>
       </el-table>
       <el-pagination
@@ -162,12 +163,11 @@
       title="设置题目答案"
       width="50%"
       height="80%"
-      :before-close="handleTestSetDialogClose"
     >
       <span class="header-title" style="margin: auto,auto,auto,20px;">请设置题目答案</span>
       <el-table
         :data="currentTestAnsList"
-        height="150"
+        height="500"
         :style="table"
         @row-click="rowClickTestSetDialog"
         class="customer-table">
@@ -212,10 +212,101 @@
         </el-table-column> -->
       </el-table>
       <span class="dialog-footer">
-        <el-button @click="testSetDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="testSetDialogVisible = false">
-          确定
-        </el-button>
+        <el-row style="height: 50px;">
+          <el-col :span="12">
+            <CustomButton @click="testSetDialogVisible = false" style="margin-right:20px" isRound="true" title="取消提交"/>
+          </el-col>
+          <el-col :span="12">
+            <CustomButton v-if="!isEditingTestAns" @click="handleTestSetDialogAdd" style="margin-left:20px" isRound="true" title="提交答案"/>
+            <CustomButton v-if="isEditingTestAns" @click="handleTestSetDialogEdit" style="margin-left:20px" isRound="true" title="提交修改"/>
+          </el-col>
+        </el-row>
+        
+      </span>
+    
+    </el-dialog>
+    <el-dialog
+      v-model="testListDialogVisible"
+      title="设置题目答案"
+      width="50%"
+      height="80%"
+    >
+      <span class="header-title" style="margin: auto,auto,auto,20px;">请设置题目答案</span>
+      <el-table
+        :data="testList"
+        height="500"
+        :style="table"
+        class="customer-table">
+        <el-table-column
+          prop="index"
+          label="测试卷号"
+          width="100">
+        </el-table-column>
+        <el-table-column
+          prop="materialIndex"
+          label="测试文件号"
+          width="100">
+        </el-table-column>
+        <el-table-column
+          prop="materialNames"
+          label="测试文件名"
+          width="300">
+        </el-table-column>
+        <!-- <el-table-column
+          prop="questionDescription"
+          label="题干"
+          width="150">
+        </el-table-column>
+        <el-table-column
+          prop="questionAns"
+          label="答案"
+          width="200">
+          <template v-slot="scope">
+            <div v-if="scope.row.index == currentTestSetDialogList">
+              <el-input v-model="scope.row.questionAns" placeholder="请输入注释内容"/>
+            </div>
+            <div v-else>{{ (scope.row.questionAns) }}</div>
+          </template>
+        </el-table-column> -->
+        
+        <el-table-column
+          prop=""
+          label=""
+          width="">
+        </el-table-column>
+        <el-table-column
+          prop=""
+          label="操作"
+          width="60">
+          <template v-slot="scope">
+            <el-dropdown>
+              <span class="iconfont icon-menu"></span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item icon="el-icon-remove" @click="editQAA(scope.row, scope.$index)">编辑</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-download" @click="deleteQAA(scope.row, scope.$index)">删除</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+              
+            </el-dropdown>
+          </template>
+        </el-table-column>
+        <!-- <el-table-column
+          prop=""
+          label="删除"
+          width="">
+          <span class="iconfont icon-menu"></span>
+        </el-table-column> -->
+      </el-table>
+      <span class="dialog-footer">
+        <el-row style="height: 50px;">
+          <el-col :span="20">
+          </el-col>
+          <el-col :span="4">
+            <CustomButton @click="testListDialogVisible = false" style="margin-left:20px" isRound="true" title="确定"/>
+          </el-col>
+        </el-row>
+        
       </span>
     
     </el-dialog>
@@ -250,9 +341,11 @@ export default {
       currentList:0,
       testSetDialogVisible:0,
       testListDialogVisible:0,
-      currentSelectedMaterial:0,
+      currentSelectedMaterialIndex:0,
+      // currentSelectedMaterialName:'',
       currentTestAnsList:[],
       currentTestSetDialogList:0,
+      isEditingTestAns:0,
     }
   },
   methods:{
@@ -457,12 +550,15 @@ export default {
     setTest(row, index) {
       //转换为实际index
       index = this.pageSize * (this.page - 1) + index
-      this.currentSelectedMaterial = index
+      this.currentSelectedMaterialIndex = index
+      this.isEditingTestAns = false
       console.log(this.questionList)
-      this.currentTestAnsList = this.questionList
+      //深复制数组
+      this.currentTestAnsList = JSON.parse(JSON.stringify(this.questionList))
       for(var item of this.testList){
-        if(item['index'] == index){
-          // this.currentTestAnsList = 
+        if(item['materialIndex'] == index + 1){
+          this.currentTestAnsList = item['questionsAndAns']
+          this.isEditingTestAns = true
           this.$message({
             message: '该题目已经存在，下面将进行修改',
             type: 'warning'
@@ -471,30 +567,58 @@ export default {
       }
       this.testSetDialogVisible = true
       
-      // if (index > 0) {
-      //   let upData = this.questionList[index - 1];
-      //   this.questionList[index - 1]['index'] ++
-      //   this.questionList[index]['index'] --
-      //   this.questionList.splice(index - 1, 1);
-      //   this.questionList.splice(index, 0, upData);
-      // } else {
-      //   this.$message({
-      //     message: '已经是第一条，上移失败',
-      //     type: 'warning'
-      //   });
-      // }
-    },
-    handleTestSetDialogClose(){
-      let length = this.testList.length
-      this.testList.push({'index': length, 
-      'materialIndex': this.currentSelectedMaterial, 
-      'questionsAndAns': this.currentTestAnsList})
     },
     rowClickTestSetDialog(row,column){
       if(column.label == "答案"){
         this.currentTestSetDialogList = row.index
         console.log(row,column)
       }
+    },
+    handleTestSetDialogAdd(){
+      let length = this.testList.length
+      let tempNames = ''
+      for(var item of this.fullList){
+        tempNames += item[this.currentSelectedMaterialIndex]['fileName']
+        tempNames += '\n'
+      }
+      tempNames = tempNames.substring(0,tempNames.length - 1)
+      this.testList.push({'index': length + 1, 
+      'materialIndex': this.currentSelectedMaterialIndex + 1, 
+      'materialNames': tempNames, 
+      'questionsAndAns': this.currentTestAnsList})
+      this.testSetDialogVisible = false
+      this.$message({
+        message: '添加测试卷成功',
+        type: 'success'
+      });
+    },
+    handleTestSetDialogEdit(){
+      this.testSetDialogVisible = false
+      this.$message({
+        message: '修改测试卷成功',
+        type: 'success'
+      });
+    },
+    editQAA(row, index){
+      this.currentTestAnsList = this.testList[index]['questionsAndAns']
+      this.testSetDialogVisible = true
+      this.isEditingTestAns = true
+    },
+    deleteQAA(row, index){
+      var deleteTarget = index + 1
+      console.log(deleteTarget)
+      this.testList.forEach(function (item,index,arr){
+          if (item.index == deleteTarget) {
+              arr.splice(index,1);
+          }
+      });
+      for(let i = 0; i<this.testList.length;i++){
+        this.testList[i]['index'] = i + 1
+      }
+      this.$message({
+        message: '删除测试卷成功',
+        type: 'success'
+      });
     }
   }
 }
@@ -523,5 +647,8 @@ export default {
     box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
     margin-left: 40px;
     margin-right: 40px;
+  }
+  .el-table .cell {
+    white-space: pre-wrap;   /*这是重点。文本换行*/
   }
 </style>
