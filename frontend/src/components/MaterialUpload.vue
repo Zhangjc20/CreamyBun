@@ -48,6 +48,11 @@
           width="60">
         </el-table-column>
         <el-table-column
+          prop="listLen"
+          label="素材数"
+          width="60">
+        </el-table-column>
+        <el-table-column
           prop="listName"
           label="表名"
           width="100">
@@ -57,7 +62,7 @@
           label="注释"
           width="200">
           <template v-slot="scope">
-            <div v-if="scope.row.index == currentList">
+            <div v-if="scope.row.index == currentEditingSubList">
               <el-input v-model="scope.row.notes" placeholder="请输入注释内容"/>
             </div>
             <div v-else>{{ (scope.row.notes) }}</div>
@@ -79,13 +84,21 @@
       </el-table>
 
       <el-table
-        :data="fileList.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize)"
+        :data="showingList"
         height="500"
         :style="table"
+        ref="materialShowingTable"
+        @select="handleMaterial"
+        @select-all="handleMaterial"
         class="customer-table">
+        <el-table-column v-if="isSelectingMaterial"
+          
+          type="selection"
+          width="50">
+        </el-table-column>
         <el-table-column
           prop="index"
-          label="题号"
+          label="卷号"
           width="60">
         </el-table-column>
         <el-table-column
@@ -115,7 +128,13 @@
               <span class="iconfont icon-menu"></span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item icon="el-icon-s-order" @click="setTest(scope.row, scope.$index)">设置为测试题</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-s-order" @click="setTest(scope.row, scope.$index)">设置为测试题</el-dropdown-item>                  
+                  <el-dropdown-item v-if="!isSelectingMaterial" icon="el-icon-s-order" @click="isSelectingMaterial = true">多选</el-dropdown-item>
+                  <el-dropdown-item v-if="!isSelectingMaterial" icon="el-icon-s-order" @click="deleteMaterialSingle(scope.row, scope.$index)">删除</el-dropdown-item>
+
+                  <el-dropdown-item v-if="isSelectingMaterial" icon="el-icon-s-order" @click="isSelectingMaterial = false;initSelected()">取消多选</el-dropdown-item>
+                  <el-dropdown-item v-if="isSelectingMaterial" icon="el-icon-s-order" @click="deleteMaterialMultiple(scope.row, scope.$index)">删除多个</el-dropdown-item>
+
                   <!-- <el-dropdown-item icon="el-icon-remove" @click="moveQuestionDown(scope.row, scope.$index)">下移</el-dropdown-item>
                   <el-dropdown-item icon="el-icon-remove" @click="editQuestion(scope.row, scope.$index)">编辑</el-dropdown-item>
                   <el-dropdown-item icon="el-icon-download" @click="deleteQuestion(scope.row, scope.$index)">删除</el-dropdown-item> -->
@@ -324,21 +343,31 @@ export default {
   props: {
     username:String,
     questionList:Array,
+    materialType:Number,
+  },
+  watch:{
+    materialType(newVal){
+      this.localMaterialType = newVal
+    },
   },
   data(){
     return {
+      localMaterialType:0,
       progress:0,
       idRef:['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],
       fileList:[],
+      showingList:[],
       listList:[],
       fullList:[],
       testList:[],
+      handleMaterialList:[],
       page:1,
       pageSize:10,
       pagerCount:1,
       currentTime:'',
       listNum:0,
-      currentList:0,
+      currentShowingSubList:0,
+      currentEditingSubList:0,
       testSetDialogVisible:0,
       testListDialogVisible:0,
       currentSelectedMaterialIndex:0,
@@ -346,6 +375,8 @@ export default {
       currentTestAnsList:[],
       currentTestSetDialogList:0,
       isEditingTestAns:0,
+      isSelectingMaterial:0,
+      
     }
   },
   methods:{
@@ -431,16 +462,22 @@ export default {
       console.log("生成块",start,end, packet)
       let formData = new FormData()
       
+      
       formData.append("file", packet)
       formData.append("fileName", name)
       formData.append("size", size)
       formData.append("shardIndex", shardIndex)
       formData.append("shardSize", shardSize)
       formData.append("shardTotal", shardTotal)
+      formData.append("materialType", this.localMaterialType)
+
+      console.log("shardTotal", shardTotal)
+      console.log("localMaterialType", "tempName")
+
       formData.append("currentTime", this.currentTime)
       // formData.append("username",this.username)
       formData.append("username","tempName")
-
+      
       let fileTypeList = file.name.split('.')
       let fileType = fileTypeList[fileTypeList.length - 1]
       formData.append("fileType",fileType)
@@ -476,11 +513,14 @@ export default {
                 this.fullList = []
                 this.listList = []
                 this.fileList = []
+                this.showingList = []
+                this.testList = []
+                this.handleMaterialList = []
 
                 this.fullList = res.data['fullList']
                 this.listList = res.data['listList']
                 this.fileList = this.fullList[0]
-                
+                this.updateShowingList()
                 console.log("this.fullList",this.fullList)
                 console.log("this.listList.",this.listList)
                 console.log("this.fileList.",this.fileList)
@@ -490,22 +530,27 @@ export default {
                     type: 'error'
                   });
                   this.fileList = []
+                  this.showingList = []
                   this.progress = 0
                   return
                 }
                 let tempLen = this.fileList.length
+                let tempHandleList = []
                 for(var subList of this.fullList){
+                  tempHandleList = []
+                  for(var itemMaterial of subList){//初始化选择串
+                    tempHandleList.push({'index': itemMaterial['index'], 'selected':0})
+                  }
+                  this.handleMaterialList.push(tempHandleList)
                   console.log("subList",subList)
                   if(subList.length !== tempLen){
                     this.$message({
-                      message: '您的题表中题目不相等！',
-                      type: 'error'
+                      message: '您的题表中题目不相等，请注意调整您的题表！',
+                      type: 'warning'
                     });
-                    this.fileList = []
-                    this.progress = 0
-                    return
                   }
                 }
+                console.log("handleMaterialList",this.handleMaterialList)
                 this.listNum = this.listList.length
                 this.pagerCount = Math.trunc(this.fileList.length / this.pageSize)
             }
@@ -515,18 +560,42 @@ export default {
 
       }
     },
-    
+    updateSelect(){//翻页后更新列表
+      this.$nextTick(() => {
+        let table = this.showingList; 
+        // console.log(this.handleMaterialList)
+        table.forEach(row => {
+          // console.log("正在遍历：", row,row['index'] - 1, this.handleMaterialList[this.currentShowingSubList][row['index'] - 1]['selected'])
+          if (this.handleMaterialList[this.currentShowingSubList][row['index'] - 1]['selected'] == 1){
+            this.$refs.materialShowingTable.toggleRowSelection(row, true);
+            //这一行不管用！！！！！
+            // console.log("更新了一个！", row, this.handleMaterialList[this.currentShowingSubList][row['index'] - 1]['selected'])
+          }
+        });
+      })
+
+    },
     handleCurrentChange(val) {
       this.page = val
+      this.updateShowingList()
+      this.updateSelect()
     },
     handleSizeChange(val) {
       this.pageSize = val
+      this.updateShowingList()
+      this.updateSelect()
+    },
+    updateShowingList(){
+      this.showingList = this.fileList.slice((this.page - 1) * this.pageSize, this.page * this.pageSize)
     },
     rowClick(row,column){
-      this.fileList = this.fullList[row.index - 1]
+      console.log("showingList",this.showingList)
+      this.currentShowingSubList = row.index - 1
+      this.fileList = this.fullList[this.currentShowingSubList]
+      this.updateShowingList()
+      this.updateSelect()
       if(column.label == "注释"){
-        
-        this.currentList = row.index
+        this.currentEditingSubList = row.index
         console.log(row,column)
       }
       // else if(column.label == "删除"){//删除特定行的内容
@@ -549,12 +618,19 @@ export default {
     // }
     setTest(row, index) {
       //转换为实际index
-      index = this.pageSize * (this.page - 1) + index
+      index = this.getActualIndex(index)
       this.currentSelectedMaterialIndex = index
       this.isEditingTestAns = false
       console.log(this.questionList)
       //深复制数组
       this.currentTestAnsList = JSON.parse(JSON.stringify(this.questionList))
+      if(this.currentTestAnsList.length === 0){
+        this.$message({
+          message: '您的题目列表为空，请先在左侧题目栏添加题目！',
+          type: 'error'
+        });
+        return 
+      }
       for(var item of this.testList){
         if(item['materialIndex'] == index + 1){
           this.currentTestAnsList = item['questionsAndAns']
@@ -619,6 +695,64 @@ export default {
         message: '删除测试卷成功',
         type: 'success'
       });
+    },
+    getActualIndex(index){
+      return this.pageSize * (this.page - 1) + index
+    },
+    // //处理单个选中
+    // handleSelectedMaterial(selection, row){
+      
+    //   let index = this.getActualIndex(row.index - 1)
+    //   console.log("单个选中！",this.currentShowingSubList,selection, row.index,this.handleMaterialList)
+    //   this.handleMaterialList[this.currentShowingSubList][index]['selected'] = selection
+    //   console.log("handleMaterialList",this.handleMaterialList)
+    // },
+    // handleAllMaterial(selection){
+    //   //改变所有选中状态
+    //   for(var subList of this.handleMaterialList){
+    //     for(var item of subList){
+    //       item['selected'] = selection
+    //     }
+    //   }
+    //   console.log("handleMaterialList",this.handleMaterialList)
+    // },
+    initSelected(){
+      for(var subList of this.handleMaterialList){
+        for(var item of subList){
+          item['selected'] = 0
+        }
+      }
+    },
+    handleMaterial(selection){
+      //改变所有选中状态
+    //   updateShowingList(){
+    //   this.showingList = this.fileList.slice((this.page - 1) * this.pageSize, this.page * this.pageSize)
+    // },
+      let tempTable = this.handleMaterialList[this.currentShowingSubList].slice((this.page - 1) * this.pageSize, this.page * this.pageSize)
+      for(var item of tempTable){
+        item['selected'] = 0
+      }
+      for(var item of selection){
+        this.handleMaterialList[this.currentShowingSubList][item['index'] - 1]['selected'] = 1
+        console.log("修改了！！！", this.handleMaterialList[this.currentShowingSubList][item['index'] - 1])
+      }
+      console.log("handleMaterialList",selection,this.handleMaterialList)
+    },
+    deleteMaterialSingle(row,index){
+      console.log(row,index)
+      this.handleMaterialList[this.currentShowingSubList][row['index'] - 1]['selected'] = 1
+      this.deleteMaterialMultiple(row,index)
+      console.log("handleMaterialList",this.handleMaterialList)
+    },
+    deleteMaterialMultiple(row,index){
+      console.log(row,index)
+      // axios.get('http://localhost:8000/log_in',{
+      //   params:{
+      //     username:this.username,
+      //     password:this.password
+      //   }
+      // }).then(res => {})
+      this.initSelected()
     }
   }
 }
@@ -646,7 +780,7 @@ export default {
     border-radius: 5px;
     box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
     margin-left: 40px;
-    margin-right: 40px;
+    margin-right: 20px;
   }
   .el-table .cell {
     white-space: pre-wrap;   /*这是重点。文本换行*/
