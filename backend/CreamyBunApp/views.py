@@ -7,7 +7,6 @@ from django.views.decorators.csrf import csrf_exempt
 from .function.databaseOperations import *
 from .variables.globalConstants import *
 from .function.universalFunctions import *
-from .utils import *
 import json
 
 
@@ -51,40 +50,33 @@ def update_mobile(request):
     pass
 
 
-def handle_uploaded_file(f, path='./temp/test.zip'):
-    with open(path, 'ab+') as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
-
-
 @csrf_exempt
 def get_material_zip(request):
     if request.method == "POST":  # 判断接收的值是否为POST
         query_dict = request.POST
+        print(query_dict)
         username = query_dict.get("username", "")
-        fileType = query_dict.get("fileType", "")
-        # current_time = time.strftime("%Y%m%d-%H%M%S")
-
-        shardIndex = eval(query_dict.get("shardIndex", ""))
-        shardTotal = eval(query_dict.get("shardTotal", ""))
-
+        file_type = query_dict.get("fileType", "")
+        shard_index = eval(query_dict.get("shardIndex", ""))
+        shard_total = eval(query_dict.get("shardTotal", ""))
+        material_type = eval(query_dict.get("materialType", ""))
         current_time = query_dict.get("currentTime", "")
         dirname = username + '_' + current_time
         path = os.path.join("./cache", dirname)
         file = request.FILES['file']
         if not os.path.exists(path):  # 如果目录不存在就创建
             os.makedirs(path)
-        pathName = os.path.join(path, "uploadPackage." + fileType)
+        path_name = os.path.join(path, "uploadPackage." + file_type)
         # time.sleep(0.5)
-        handle_uploaded_file(file, pathName)
-        print(shardIndex, shardTotal, query_dict)
-        if shardIndex == shardTotal - 1:  # 此时要解压了
-            unzip_file(pathName, path)
-            os.remove(pathName)
-            fullList, listList = walk_file(path)
-            print(fullList)
-            print(listList)
-            return HttpResponse(json.dumps({'status': 'done', 'fullList': fullList, 'listList': listList}), content_type='application/json')
+        handle_uploaded_file(file, path_name)
+        print(shard_index, shard_total, query_dict)
+        if shard_index == shard_total - 1:  # 此时要解压了
+            unzip_file(path_name, path)
+            os.remove(path_name)
+            full_list, list_list = walk_file(path, material_type)
+            # print(full_list)
+            # print(list_list)
+            return HttpResponse(json.dumps({'status': 'done', 'fullList': full_list, 'listList': list_list}), content_type='application/json')
             pass
         # query_dict = request.POST
         # file = request.FILES.get('fileName', None)

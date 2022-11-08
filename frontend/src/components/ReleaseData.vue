@@ -6,10 +6,10 @@
         ><a href="/">promotion management</a></el-breadcrumb-item
       > -->
       <el-breadcrumb-item>任务选择</el-breadcrumb-item>
-      <el-breadcrumb-item>图像</el-breadcrumb-item>
+      <el-breadcrumb-item>{{this.materialTypeName}}</el-breadcrumb-item>
     </el-breadcrumb>
     <span class="header-title">
-      图像任务
+      {{this.materialTypeName}}任务
     </span>
   </el-header>
   <el-main class="main-style">
@@ -142,6 +142,7 @@
           <MaterialUpload 
           :username="username"
           :questionList="questionList"
+          :materialType="localMaterialType"
           />
         </el-row>
       </el-col>
@@ -264,11 +265,35 @@ export default {
   props: {
     username:String,
     login:Boolean,
+    materialType:Number,
+  },
+  watch:{
+    materialType(newVal){
+      this.localMaterialType = newVal
+      switch(this.localMaterialType)
+      {
+        case 0:
+          this.materialTypeName = '图像'
+          break;
+        case 1:
+          this.materialTypeName = '文本'
+          break;
+        case 2:
+          this.materialTypeName = '视频'
+          break;
+        case 3:
+          this.materialTypeName = '音频'
+          break;
+        case 4:
+          this.materialTypeName = '自定义类型'
+          break;
+      }
+    },
   },
   data(){
     return {
       componentName:'ReleaseBasicQuestion',
-
+      localMaterialType:0,
       options:[
         {
           value: 'singleChoice',
@@ -327,8 +352,11 @@ export default {
       multiple:0,
       editingQuestion:'',
       newOrEdit:0,
-
+      materialTypeName:'图像',
     }
+  },
+  mounted(){
+
   },
   methods:{
     clickHome(){
