@@ -6116,7 +6116,7 @@
 
 "vue-cropper@^1.0.5":
   "integrity" "sha512-D4XXdqWmMWRLOIV9LIh7/mkH6OBOMQDFbRjwntkxmAtxOtwpC9U5ZZ6lSXw5F5cbd4g8znDjk6MuCwIL+fZSrA=="
-  "resolved" "https://registry.npmmirror.com/vue-cropper/-/vue-cropper-1.0.5.tgz"
+  "resolved" "https://registry.npmjs.org/vue-cropper/-/vue-cropper-1.0.5.tgz"
   "version" "1.0.5"
 
 "vue-demi@*":

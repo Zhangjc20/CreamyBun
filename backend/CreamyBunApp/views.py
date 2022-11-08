@@ -21,6 +21,7 @@ def log_up(request):
         verify_code = send_email(email)
         return HttpResponse(json.dumps({'status':'ok','verifyCode':verify_code}), content_type='application/json')
         # return HttpResponse(json.dumps({'status':'ok'}), content_type='application/json')
+    
     #判断是否重名
     flag = exist_user_by_name(username)
     if flag:
@@ -31,6 +32,10 @@ def log_up(request):
         return HttpResponse(json.dumps({'status':'ok'}), content_type='application/json')
     else:
         return HttpResponse(json.dumps({'status':'wrong','type':'unknown'}), content_type='application/json')
+
+# 登录
+def log_in(request):
+    pass
 
 # 注销
 def log_off(request):
