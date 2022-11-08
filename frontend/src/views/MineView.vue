@@ -11,8 +11,6 @@
               class="el-menu-vertical-demo"
               default-active="1"
               text-color="#4E5969"
-              @open="handleOpen"
-              @close="handleClose"
             >
               <el-menu-item index="1" @click="clickLeftMenu(1)">
                 <el-icon><Menu /></el-icon>
@@ -41,7 +39,9 @@
             </el-menu>
         </el-aside>
         <el-main class="main-style">
-          <component :is="show_content" :items="items" :total="total"></component>
+          <keep-alive include="MineInfoView,TaskPage,GiftCenter,SettingView,ActivityCenter">
+            <component :is="show_content" :items="items" :total="total" :username="username"></component>
+          </keep-alive>
         </el-main>
       </el-container>
   </el-container>
@@ -153,7 +153,6 @@
     mounted(){
       if(this.$route.query.username){
         this.username = this.$route.query.username;
-        console.log(this.username)
       }
     }
   }

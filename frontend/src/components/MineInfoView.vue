@@ -1,150 +1,189 @@
 <template>
-  <div class="basic-info-box">
-    <el-row class="basic-info-box-inner">
-      <el-col :span="6" class="left-info-box">
-        <div class="avatar-box">
-          <el-avatar
-            :size="100"
-            :src="require('@/assets/images/avatar.jpeg')"
-          ></el-avatar>
-        </div>
-      </el-col>
-      <el-col class="right-info-box" :span="18">
-        <div class="describe-inner">
-          <el-descriptions class="margin-top" :column="2" border>
-            <el-descriptions-item :span="1">
-              <template #label>
-                <div class="cell-item">
-                  <el-icon>
-                    <user />
-                  </el-icon>
-                  用户名
-                </div>
-              </template>
-              helloworld
-            </el-descriptions-item>
-            <el-descriptions-item :span="1">
-              <template #label>
-                <div class="cell-item">
-                  <el-icon>
-                    <iphone />
-                  </el-icon>
-                  手机号
-                </div>
-              </template>
-              18100000000
-            </el-descriptions-item>
-            <el-descriptions-item :span="1">
-              <template #label>
-                <div class="cell-item">
-                  <svg class="icon" aria-hidden="true">
-                    <use xlink:href="#icon-tiantianquan"></use>
-                  </svg>
-                  甜甜圈
-                </div>
-              </template>
-              6660
-            </el-descriptions-item>
-            <el-descriptions-item :span="1">
-              <template #label>
-                <div class="cell-item">
-                  <el-icon>
-                    <office-building />
-                  </el-icon>
-                  邮箱
-                </div>
-              </template>
-              baidu.com
-            </el-descriptions-item>
-          </el-descriptions>
-          <div class="level-box">
-            <span>信誉等级 LV 5</span>
-            <el-progress
-              class="level-progress"
-              :text-inside="true"
-              :stroke-width="22"
-              :percentage="80"
-            />
-            <span>400/500</span>
+  <div>
+    <div class="basic-info-box">
+      <el-row class="basic-info-box-inner">
+        <el-col :span="6" class="left-info-box">
+          <div class="avatar-box">
+            <el-avatar
+              :size="100"
+              :src="require('@/assets/images/avatar.jpeg')"
+            ></el-avatar>
           </div>
-        </div>
-      </el-col>
-    </el-row>
-  </div>
-  <div class="change-form-area">
-    <div class="change-title">修改信息</div>
-    <el-row>
-      <el-col :span="12">
-        <el-form :model="changeForm" label-width="120px" class="change-form">
-          <el-form-item label="用户名">
-            <el-input v-model="changeForm.username" class="info-input" />
-          </el-form-item>
-          <el-form-item label="">
-            <CustomButton title="修改用户名" :props="normalProps" @click="handleChangeName"></CustomButton>
-          </el-form-item>
-          <el-form-item label="邮箱">
-            <el-input v-model="changeForm.email" class="info-input" />
-          </el-form-item>
-          <el-form-item label="">
-            <CustomButton title="修改邮箱" :props="normalProps" @click="handleChangeEmail"></CustomButton>
-          </el-form-item>
-          <el-form-item label="手机号">
-            <el-input v-model="changeForm.phone" class="info-input" />
-          </el-form-item>
-          <el-form-item label="">
-            <CustomButton title="修改手机号" :props="normalProps" @click="handleChangePhone"></CustomButton>
-          </el-form-item>
-        </el-form>
-      </el-col>
-      <el-col :span="12">
-        <CustomButton :props="changePassProps" title="忘记密码" @click="handleChangePass"></CustomButton>
-      </el-col>
-    </el-row>
+        </el-col>
+        <el-col class="right-info-box" :span="18">
+          <div class="describe-inner">
+            <el-descriptions class="margin-top" :column="2" border>
+              <el-descriptions-item :span="1">
+                <template #label>
+                  <div class="cell-item">
+                    <el-icon>
+                      <user />
+                    </el-icon>
+                    用户名
+                  </div>
+                </template>
+                {{ username }}
+              </el-descriptions-item>
+              <el-descriptions-item :span="1">
+                <template #label>
+                  <div class="cell-item">
+                    <el-icon>
+                      <iphone />
+                    </el-icon>
+                    手机号
+                  </div>
+                </template>
+                {{phoneNumber}}
+              </el-descriptions-item>
+              <el-descriptions-item :span="1">
+                <template #label>
+                  <div class="cell-item">
+                    <svg class="icon" aria-hidden="true">
+                      <use xlink:href="#icon-tiantianquan"></use>
+                    </svg>
+                    甜甜圈
+                  </div>
+                </template>
+                {{donutNumber}}
+              </el-descriptions-item>
+              <el-descriptions-item :span="1">
+                <template #label>
+                  <div class="cell-item">
+                    <el-icon>
+                      <office-building />
+                    </el-icon>
+                    邮箱
+                  </div>
+                </template>
+                {{email}}
+              </el-descriptions-item>
+            </el-descriptions>
+            <div class="level-box">
+              <span>信誉等级 LV {{creditRank}}</span>
+              <el-progress
+                class="level-progress"
+                :text-inside="true"
+                :stroke-width="22"
+                :percentage="percentage"
+              />
+              <span>{{currentExp}}/{{expForUpgrade}}</span>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+    </div>
+    <div class="change-form-area">
+      <div class="change-title">修改信息</div>
+      <el-row>
+        <el-col :span="12">
+          <el-form :model="changeForm" label-width="120px" class="change-form">
+            <el-form-item label="用户名">
+              <el-input v-model="changeForm.username" class="info-input" />
+            </el-form-item>
+            <el-form-item label="">
+              <CustomButton
+                title="修改用户名"
+                :props="normalProps"
+                @click="handleChangeName"
+              ></CustomButton>
+            </el-form-item>
+            <el-form-item label="邮箱">
+              <el-input v-model="changeForm.email" class="info-input" />
+            </el-form-item>
+            <el-form-item label="">
+              <CustomButton
+                title="修改邮箱"
+                :props="normalProps"
+                @click="handleChangeEmail"
+              ></CustomButton>
+            </el-form-item>
+            <el-form-item label="手机号">
+              <el-input v-model="changeForm.phone" class="info-input" />
+            </el-form-item>
+            <el-form-item label="">
+              <CustomButton
+                title="修改手机号"
+                :props="normalProps"
+                @click="handleChangePhone"
+              ></CustomButton>
+            </el-form-item>
+          </el-form>
+        </el-col>
+        <el-col :span="12">
+          <CustomButton
+            :props="changePassProps"
+            title="忘记密码"
+            @click="handleChangePass"
+          ></CustomButton>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 
 <script>
-import CustomButton from './CustomButton.vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import CustomButton from "./CustomButton.vue";
+import { ElMessage, ElMessageBox } from "element-plus";
+import axios from "axios";
 export default {
   name: "MineInfoView",
-  components:{
-    CustomButton
+  components: {
+    CustomButton,
+  },
+  props: {
+    username: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
-      normalProps:{
-        width:'110px',
-        height:'32px',
-        normalColor:'#5EABBF',
-        fontSize:'14px',
-        fontColor:'#ffffff',
-        hoverColor:'#5299AB',
-        focusColor:"#5299AB"
+      normalProps: {
+        width: "110px",
+        height: "32px",
+        normalColor: "#5EABBF",
+        fontSize: "14px",
+        fontColor: "#ffffff",
+        hoverColor: "#5299AB",
+        focusColor: "#5299AB",
       },
-      changePassProps:{
-        width:'100px',
-        height:'36px',
-        normalColor:'#5EABBF',
-        fontSize:'15px',
-        fontColor:'#ffffff',
-        hoverColor:'#5299AB',
-        focusColor:"#5299AB"
+      changePassProps: {
+        width: "100px",
+        height: "36px",
+        normalColor: "#5EABBF",
+        fontSize: "15px",
+        fontColor: "#ffffff",
+        hoverColor: "#5299AB",
+        focusColor: "#5299AB",
       },
       changeForm: {
         username: "",
         email: "",
-        phone:"",
+        phone: "",
       },
+      phoneNumber:"12345678901",
+      inited:false,
+      donutNumber:-1,
+      creditRank:0,
+      currentExp: -1,
+      expForUpgrade: -1,
+      email:'',
+      percentage:0,
     };
   },
-  methods:{
-    handleChangePass(){
-      this.$router.push({
-            name: 'logreset',
-        });
+  methods: {
+    getRatio(){
+      return Math.floor((this.currentExp/this.expForUpgrade)*1000)/10
     },
-    handleChangeName(){
+    handleChangePass() {
+      this.$router.push({
+        name: "logreset",
+      });
+    },
+    handleChangeName() {
+      this.currentExp = 88;
+      this.expForUpgrade = 6000;
+      this.percentage = this.getRatio();
       // axios.get()
       // .then(function (response) {
       //   console.log(response);//考虑重名
@@ -153,7 +192,7 @@ export default {
       //   console.log(error);
       // });
     },
-    handleChangeEmail(){
+    handleChangeEmail() {
       // axios.get()
       // .then(function (response) {
       //   console.log(response);//考虑是否和当前邮箱一样
@@ -161,30 +200,60 @@ export default {
       // .catch(function (error) {
       //   console.log(error);
       // });
-      ElMessageBox.prompt('请输入发送到某邮箱的验证码（请勿关闭当前窗口）', '修改邮箱', {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        inputPattern:
-          /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
-        inputErrorMessage: '邮箱格式无效',
-      })
+      ElMessageBox.prompt(
+        "请输入发送到某邮箱的验证码（请勿关闭当前窗口）",
+        "修改邮箱",
+        {
+          confirmButtonText: "确认",
+          cancelButtonText: "取消",
+          inputPattern:
+            /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
+          inputErrorMessage: "邮箱格式无效",
+        }
+      )
         .then(({ value }) => {
           ElMessage({
-            type: 'success',
+            type: "success",
             message: `您的邮箱成功修改成:${value}`,
-          })
+          });
         })
         .catch(() => {
           ElMessage({
-            type: 'info',
-            message: '取消修改邮箱',
-          })
-        })
+            type: "info",
+            message: "取消修改邮箱",
+          });
+        });
     },
-    handleChangePhone(){
+    handleChangePhone() {
       //留待接口
-    }
+    },
   },
+  updated(){
+    //初次挂载获取后端信息
+    if(!this.inited){
+      this.inited = true;
+      axios
+      .get("/get_user_basic_info", {
+        params: {
+          username:this.username
+        },
+      })
+      .then((res) => {
+        if(res.data["status"]==='ok'){
+          this.donutNumber = res.data['donutNumber'];
+          this.email = res.data['email'];
+          this.phoneNumber = res.data['mobileNumber'];
+          this.creditRank = res.data['creditRank'];
+          this.currentExp = res.data['currentExp'];
+          this.expForUpgrade = res.data['expForUpgrade'];
+          this.percentage = this.getRatio();
+        }
+      })
+      .catch( (err)=> {
+        console.log(err);
+      });
+    }
+  }
 };
 </script>
 

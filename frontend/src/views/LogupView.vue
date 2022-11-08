@@ -267,7 +267,6 @@ export default {
               clearTimeout(timerT);
               clearInterval(timerI);
             }
-            console.log("error");
           }
         })
         .catch(function (err) {

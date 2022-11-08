@@ -1,4 +1,5 @@
 const { defineConfig } = require('@vue/cli-service')
+require('events').EventEmitter.defaultMaxListeners = 0; // 解除限制
 module.exports = defineConfig({
   transpileDependencies: true,
   devServer: {
@@ -7,17 +8,24 @@ module.exports = defineConfig({
     port: 8081,           // 端口号
     proxy: { //配置跨域
       '/log_up': {
-        target: 'http://localhost:8000/log_up', //填写请求的目标地址
+        target: 'http://localhost:8000/log_up/', //填写请求的目标地址
         changOrigin: true, //允许跨域
         pathRewrite: {
           '^/log_up': '' //请求的时候使用这个api就可以
         }
       },
       '/log_in': {
-        target: 'http://localhost:8000/log_in', //填写请求的目标地址
+        target: 'http://localhost:8000/log_in/', //填写请求的目标地址
         changOrigin: true, //允许跨域
         pathRewrite: {
           '^/log_in': '' //请求的时候使用这个api就可以
+        }
+      },
+      '/get_user_basic_info': {
+        target: 'http://localhost:8000/get_user_basic_info/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/get_user_basic_info': '' //请求的时候使用这个api就可以
         }
       },
       '/reset_password': {
