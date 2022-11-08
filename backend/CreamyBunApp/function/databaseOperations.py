@@ -47,8 +47,3 @@ def update_password_by_email(email,password):
 # 修改指定用户的手机号
 def update_mobile_number_of_a_user(username,mobile_number):
     User.objects.filter(username=username).update(mobile_number=mobile_number)
-
-def make_a_choice_question(index,question_type,description,must_do,option_list,min_option_num,max_option_num):
-    ChoiceQuestion.objects.create(index=index,question_type=question_type,\
-                                description=description,must_do=must_do,\
-                                min_option_num=min_option_num,max_option_num=max_option_num)

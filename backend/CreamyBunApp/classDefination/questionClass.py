@@ -8,7 +8,7 @@ class Question(models.Model):
     must_do = models.BooleanField(default=False)
 
 class ChoiceQuestion(Question):
-    option_list = models.ManyToManyField(KeyToValue) # 选项列表，成员为字典，如{A:xxxxx}，{B:xxxxx}等
+    option_list = models.ManyToManyField(StringToString) # 选项列表，成员为字典，如{A:xxxxx}，{B:xxxxx}等
     min_option_num = models.IntegerField(default=MAX_CHOICE_NUMBER) # 最少需要选择的选项数
     max_option_num = models.IntegerField(default=0) # 最多需要选择的选项数
     answer = models.ManyToManyField(Str)# 领取者作答的答案，选择题为ABCD选项列表
