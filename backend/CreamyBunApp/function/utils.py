@@ -1,6 +1,7 @@
 import os
 import shutil
 import zipfile
+from .variables.globalConstants import *
 
 
 def recode(raw: str) -> str:
@@ -101,7 +102,7 @@ def getSizeInNiceString(sizeInBytes):
     return (tempBytes[:-2] if tempBytes.endswith('.0') else tempBytes) + ' bytes'
 
 
-def walk_file(file):
+def walk_file(file, materiaType):
     outputList = []
 
     j = 1
@@ -121,7 +122,12 @@ def walk_file(file):
                 # files 表示该文件夹下的文件list
                 # 遍历文件
                 for f in files:
+                    fileType = os.path.splitext(f)[-1][1:]
                     filePath = os.path.join(root, f)
+                    if fileType not in TYPE_SET[materiaType]:
+                        os.remove(filePath)
+                        continue
+
                     fileInfo = os.stat(filePath)
                     subList.append({'index': i,
                                        'fileName': f,
