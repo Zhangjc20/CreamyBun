@@ -21,28 +21,165 @@ def log_up(request):
     username = query_dict.get("username", "")
 
     # 如果是发邮箱,verifyCode返回应该的验证码
-    if type == 'getEmail':
-        flag = exist_user_by_email(email)
-        if flag:
+    if type == 'getVerifyCode':
+        check_user_exist_by_email = exist_user_by_email(email)
+        if check_user_exist_by_email:
             return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameEmail'}), content_type='application/json')
         verify_code = send_email(email)
         return HttpResponse(json.dumps({'status': 'ok', 'verifyCode': verify_code}), content_type='application/json')
         # return HttpResponse(json.dumps({'status':'ok'}), content_type='application/json')
     
-    #判断是否重名
-    flag = exist_user_by_name(username)
-    if flag:
-        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameName'}), content_type='application/json')
-    password = query_dict.get("password", "")
-    flag = add_a_user(username=username, password=password, email=email)
-    if flag:
-        return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+    # 如果是点击注册
+    elif type == 'logUp':
+        #判断是否重名
+        check_user_by_name = exist_user_by_name(username)
+        if check_user_by_name:
+            return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameName'}), content_type='application/json')
+        password = query_dict.get("password", "")
+        create_user = add_a_user(username=username, password=password, email=email)
+        if create_user:
+            return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+        else:
+            return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')
+    
+    # 未知操作
     else:
-        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')
+        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}), content_type='application/json')
 
 # 登录
 def log_in(request):
-    pass
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    password = query_dict.get("password", "")
+
+    # 用户是否存在
+    is_user_exist = exist_user_by_name(username)
+    if not is_user_exist:
+        return HttpResponse(json.dumps({'status':'wrong','type':'noUser'}), content_type='application/json')
+    
+    # 密码是否正确
+    is_password_right = match_username_with_password(username,password)
+    if not is_password_right:
+        return HttpResponse(json.dumps({'status':'wrong','type':'wrongPassword'}), content_type='application/json')
+    
+    return HttpResponse(json.dumps({'status':'ok'}), content_type='application/json')
+
+# 重置密码
+def reset_password(request):
+    query_dict = request.GET
+    reset_way = query_dict.get("resetWay", "") 
+    password = query_dict.get("password", "") 
+  
+    # 如果是通过用户名重置
+    if reset_way == 'username':
+        # 用户是否存在
+        username = query_dict.get("username", "")
+        is_user_exist = exist_user_by_name(username)
+        if is_user_exist:
+            type = query_dict.get("type", "")
+            if type == 'getVerifyCode':
+                email = get_a_user_data(username).email
+                verify_code = send_email(email)
+                return HttpResponse(json.dumps({'status': 'ok', 'email':email, 'verifyCode': verify_code}), content_type='application/json')
+            elif type == 'resetPassword':
+                update_password_by_username(username,password)
+                return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+            else:
+                return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}), content_type='application/json')    
+        else:
+            return HttpResponse(json.dumps({'status': 'wrong', 'type': 'noUser'}), content_type='application/json')
+
+    # 如果是通过邮箱重置
+    elif reset_way == 'email':
+        # 用户是否存在
+        email = query_dict.get("email", "")
+        is_user_exist = exist_user_by_email(email)
+        if is_user_exist:
+            type = query_dict.get("type", "")
+            if type == 'getVerifyCode':
+                verify_code = send_email(email)
+                return HttpResponse(json.dumps({'status': 'ok', 'verifyCode': verify_code}), content_type='application/json')
+            elif type == 'resetPassword':
+                update_password_by_email(email,password)
+                return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+            else:
+                return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}), content_type='application/json')
+        else:
+            return HttpResponse(json.dumps({'status': 'wrong', 'type': 'noUser'}), content_type='application/json')
+
+    # 未知操作
+    else:
+        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}), content_type='application/json')
+
+# 获得个人基本信息
+def get_user_basic_info(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    u = get_a_user_data(username)
+    user_info = {
+        'status':'ok',
+        'userName':u.username,
+        'mobileNumber':u.mobile_number,
+        'donutNumber':u.donut_number,
+        'email':u.email,
+        'creditRank':u.credit_rank,
+        'currentExp':u.current_exp,
+        'expForUpgrade':get_exp_for_upgrade(u.credit_rank),
+    }
+    return HttpResponse(json.dumps(user_info), content_type='application/json')
+
+# 获得奖励中心信息
+def get_user_bonus_info(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    u = get_a_user_data(username)
+    bonus_info = {
+        'status':'ok',
+        'donutToMoney':get_donut_to_money(),
+        'moneyToDonet':get_money_to_donut(),
+        'donutNumber':u.donut_number,
+    }
+    return HttpResponse(json.dumps(bonus_info), content_type='application/json')  
+
+# 获得活动中心信息
+def get_user_activity_info(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    u = get_a_user_data(username)
+    activity_info = {
+        'status':'ok',
+        'continueSignInDays':u.continue_sign_in_days,
+        'isTodaySignIn':u.is_today_sign_in,
+    }
+    return HttpResponse(json.dumps(activity_info), content_type='application/json')
+
+# 获得设置信息
+def get_user_settings_info(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    u = get_a_user_data(username)
+    settings_info = {
+        'status':'ok',
+        'dark_mode':u.dark_mode,
+    }
+    return HttpResponse(json.dumps(settings_info), content_type='application/json')
+
+# 获得已领取任务信息
+# 任务信息(包括其id)通过列表传送,列表的每一项是一个字典
+def get_user_received_task_info(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    # 
+    # TODO
+    # 
+
+# 获得已发布任务信息
+def get_user_released_task_info(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    # 
+    # TODO
+    # 
 
 # 注销
 def log_off(request):

@@ -16,7 +16,7 @@ class User(models.Model):
     is_today_sign_in = models.BooleanField(default=False) # 用户当天是否已经签到
     continue_sign_in_days = models.IntegerField(default=0) # 用户当前连续签到天数
     # 该用户所拥有的所有任务信息，该列表增加的成员为字典类型，表示{任务id:任务状态（已领取或已发布）}
-    # 该列表在数据库中的存储格式为字符串，如“{1:HAS_POSTED} {2:HAS_RECEIVED}”
+    # 该列表在数据库中的存储格式为字典，如“{1:HAS_POSTED} {2:HAS_RECEIVED}”
     task_info_list = models.ManyToManyField(KeyToValue)
 
     # 如何设置用户当天已违规次数定时刷新为0（24：00）？
