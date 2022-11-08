@@ -255,7 +255,6 @@ export default {
               type: "success",
               message: "验证码发送成功，请在对应邮箱查收",
             });
-            console.log(this.correctCode);
             return;
           } else if (res.data["status"] === "wrong") {
             if (res.data["type"] === "sameEmail") {

@@ -6,9 +6,9 @@ from django.core.mail import send_mail
 import os
 import shutil
 import zipfile
-from backend.CreamyBunApp.variables.globalConstants import *
+from ..variables.globalConstants import *
 
-from databaseOperations import *
+from .databaseOperations import *
 from ..variables.globalVariables import *
 
 # 获取系统当前时间，为datetime相关类型

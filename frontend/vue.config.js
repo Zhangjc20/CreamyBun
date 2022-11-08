@@ -20,6 +20,13 @@ module.exports = defineConfig({
           '^/log_in': '' //请求的时候使用这个api就可以
         }
       },
+      '/reset_password': {
+        target: 'http://localhost:8000/reset_password', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/reset_password': '' //请求的时候使用这个api就可以
+        }
+      },
       '/get_material_zip/': {
         target: 'http://localhost:8000/get_material_zip/', //填写请求的目标地址
         changOrigin: true, //允许跨域

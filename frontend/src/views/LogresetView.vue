@@ -35,7 +35,7 @@
           </el-form-item>
         </div>
         <div v-else>
-          <el-form-item required>
+          <el-form-item required prop="email">
             <el-input clearable v-model="form.email" placeholder="请输入邮箱">
               <template #prefix>
                 <svg class="icon" aria-hidden="true">
@@ -229,7 +229,7 @@ export default {
       });
     },
     clickGetCode() {
-      if (!this.emailRight) {
+      if ( !this.form.isUsername && !this.emailRight) {
         ElMessage({
           type: "error",
           message: "邮箱格式错误，请进行修改",
@@ -243,8 +243,12 @@ export default {
         });
         return;
       }
-      this.codeEmail = this.form.email;
-      this.codeUsername = this.form.username;
+      if (!this.form.isUsername) {
+        this.codeEmail = this.form.email;
+      }
+      else {
+        this.codeUsername = this.form.username;
+      }
       this.emailing = true;
       this.emailingSeconds = 0;
       let timerI = setInterval(() => {
@@ -257,7 +261,7 @@ export default {
       }, 60000);
       if (this.form.isUsername) {
         axios
-          .get("/log_reset", {
+          .get("/reset_password", {
             params: {
               type: "getVerifyCode",
               resetWay: "username",
@@ -272,7 +276,6 @@ export default {
                 type: "success",
                 message: `验证码发送成功，请在${this.blurEmail(realEmail)}查收`,
               });
-              console.log(this.correctCode);
               return;
             } else if (res.data["status"] === "wrong") {
               ElMessage({
@@ -284,14 +287,13 @@ export default {
               clearTimeout(timerT);
               clearInterval(timerI);
             }
-            console.log("error");
           })
           .catch(function (err) {
             console.log(err);
           });
       } else {
         axios
-          .get("/log_reset", {
+          .get("/reset_password", {
             params: {
               type: "getVerifyCode",
               resetWay: "email",
@@ -305,7 +307,6 @@ export default {
                 type: "success",
                 message: "验证码发送成功，请在对应邮箱查收",
               });
-              console.log(this.correctCode);
               return;
             } else if (res.data["status"] === "wrong") {
               ElMessage({
@@ -317,7 +318,6 @@ export default {
               clearTimeout(timerT);
               clearInterval(timerI);
             }
-            console.log("error");
           })
           .catch(function (err) {
             console.log(err);
@@ -325,14 +325,18 @@ export default {
       }
     },
     clickLogreset() {
-      if (
-        !(
+      if ((
+          this.form.isUsername &&!(
           this.usernameRight &&
           this.passwordRight &&
           this.passwordAgainRight &&
-          this.emailRight &&
           this.verifyCodeRight
-        )
+          )) ||
+          (!this.form.isUsername && !(
+          this.passwordRight &&
+          this.passwordAgainRight &&
+          this.verifyCodeRight &&
+          this.emailRight))
       ) {
         ElMessage({
           type: "error",
@@ -340,14 +344,14 @@ export default {
         });
         return;
       }
-      if (this.form.email != this.codeEmail) {
+      if (!this.form.isUsername &&(this.form.email != this.codeEmail)) {
         ElMessage({
           type: "warning",
           message: "填写邮箱与发送验证码时对应邮箱不匹配",
         });
         return;
       }
-      if (this.form.username != this.codeUsername) {
+      if (this.form.isUsername && (this.form.username != this.codeUsername)) {
         ElMessage({
           type: "warning",
           message: "填写用户名与发送验证码时对应用户名不匹配",
@@ -361,9 +365,9 @@ export default {
         });
         return;
       }
-      if (this.isUsername) {
+      if (this.form.isUsername) {
         axios
-          .get("/log_reset", {
+          .get("/reset_password", {
             params: {
               type: "resetPassword",
               resetWay: "username",
@@ -394,7 +398,7 @@ export default {
       }
       else{
         axios
-          .get("/log_reset", {
+          .get("/reset_password", {
             params: {
               type: "resetPassword",
               resetWay: "email",
@@ -434,9 +438,9 @@ export default {
       if (front.length <= 1) {
         return email;
       } else if (front.length <= 4) {
-        return front.slice(0, 2) + "*" * (front.length - 2) + end;
+        return front.slice(0, 2) + "*".repeat(front.length - 2) + "@" + end;
       } else {
-        return "**" + front.slice(2, -2) + "**" + end;
+        return front.slice(0, 2) + "*".repeat(front.length - 4) + front.slice(-2) + "@" + end;
       }
     },
   },

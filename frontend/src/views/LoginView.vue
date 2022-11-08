@@ -73,11 +73,11 @@ export default {
       sessionStorage.setItem("token", 'true');
       axios.get('/log_in',{
         params:{
-          username:this.username,
-          password:this.password
+          username:this.form.username,
+          password:this.form.password
         }
       })
-      .then(res=>{
+        .then((res) => {
         if(res.data['status']==='wrong'){
           if(res.data['type']==='noUser'){
             ElMessage({
