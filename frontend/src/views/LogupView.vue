@@ -164,7 +164,7 @@ export default {
         password: "",
         passwordAgain: "",
         email: "",
-        verifyCode: "",
+        verifyCode: "", //仅为点击验证码时的验证码
       },
       correctCode: "",
       usernameRight: false,
@@ -173,7 +173,7 @@ export default {
       emailRight: false,
       verifyCodeRight: false,
       emailing: false,
-      codeEmail:"",
+      codeEmail: "", //发来的验证码对应的email
       emailingSeconds: 0,
       rules: {
         username: [
@@ -225,7 +225,7 @@ export default {
       }
       if (this.emailing) {
         ElMessage({
-          type: "info",
+          type: "warning",
           message: `验证码已发送，${60 - this.emailingSeconds}s后可以重新发送`,
         });
         return;
@@ -244,23 +244,21 @@ export default {
       axios
         .get("/log_up", {
           params: {
-            type: "getEmail",
-            username: this.form.username,
-            password: this.form.password,
+            type: "getVerifyCode",
             email: this.codeEmail,
           },
         })
-        .then(res => {
+        .then((res) => {
           if (res.data["status"] === "ok") {
             this.correctCode = res.data["verifyCode"];
             ElMessage({
               type: "success",
               message: "验证码发送成功，请在对应邮箱查收",
             });
-            console.log(this.correctCode)
+            console.log(this.correctCode);
             return;
-          } else if (res.data['status'] === 'wrong') {
-            if (res.data['type'] === 'sameEmail') { 
+          } else if (res.data["status"] === "wrong") {
+            if (res.data["type"] === "sameEmail") {
               ElMessage({
                 type: "error",
                 message: "该邮箱已被注册",
@@ -298,7 +296,13 @@ export default {
         });
         return;
       }
-      console.log(this.form.verifyCode)
+      if(this.form.email != this.codeEmail){
+        ElMessage({
+          type: "warning",
+          message: "填写邮箱与发送验证码时对应邮箱不匹配",
+        });
+        return;
+      }
       if (this.form.verifyCode != this.correctCode) {
         ElMessage({
           type: "error",
@@ -309,13 +313,14 @@ export default {
       axios
         .get("/log_up", {
           params: {
+            type: "logUp",
             username: this.form.username,
             password: this.form.password,
             email: this.form.email,
             verifyCode: this.form.verifyCode,
           },
         })
-        .then(function (res) {
+        .then((res) => {
           if (res.data["status"] === "ok") {
             ElMessage({
               type: "success",
@@ -323,6 +328,9 @@ export default {
             });
             this.$router.push({
               name: "login",
+              query: {
+                username: this.form.username,
+              },
             });
             return;
           } else {

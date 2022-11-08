@@ -17,16 +17,17 @@
                 <span class="iconfont icon-menu"></span>
                 <span>任务选择</span>
               </template>
-              <el-menu-item index="1-1">图像</el-menu-item>
-              <el-menu-item index="1-2">文本</el-menu-item>
-              <el-menu-item index="1-3">视频</el-menu-item>
-              <el-menu-item index="1-4">音频</el-menu-item>
+              <el-menu-item index="1-1" @click="materialType = 0">图像</el-menu-item>
+              <el-menu-item index="1-2" @click="materialType = 1">文本</el-menu-item>
+              <el-menu-item index="1-3" @click="materialType = 2">视频</el-menu-item>
+              <el-menu-item index="1-4" @click="materialType = 3">音频</el-menu-item>
+              <el-menu-item index="1-5" @click="materialType = 4">自定义</el-menu-item>
             </el-sub-menu>
           </el-menu>
         </el-aside>
         <el-main class="main-style">
           <!-- <component :is="show_content"></component> -->
-          <ReleaseData :login="true" :username="username"></ReleaseData>
+          <ReleaseData :login="true" :username="username" :materialType="materialType"></ReleaseData>
         </el-main>
       </el-container>
     </el-container>
