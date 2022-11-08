@@ -1,7 +1,7 @@
 <template>
     <el-container class="container">
       <el-header class="header-style">
-        <NavBar :login="true" activeItem="3"></NavBar>
+        <NavBar :login="true" activeItem="3" :username="username"></NavBar>
       </el-header>
       <el-container>
         <el-aside class="left-menu-area">
@@ -26,8 +26,7 @@
         </el-aside>
         <el-main class="main-style">
           <!-- <component :is="show_content"></component> -->
-          <ReleaseData :login="true" activeItem="3"></ReleaseData>
-          
+          <ReleaseData :login="true" :username="username"></ReleaseData>
         </el-main>
       </el-container>
     </el-container>
@@ -48,7 +47,8 @@
     data(){
       return {
         show_content:"MineInfoView",
-        materialType:0
+        materialType:0,
+        username:"",
       }
     },
     methods:{
@@ -70,6 +70,12 @@
                 });
             },
 
+    },
+    mounted(){
+      if(this.$route.query.username){
+        this.username=this.$route.query.username;
+        console.log(this.username)
+      }
     }
   }
   </script>

@@ -3,5 +3,8 @@
 /backend/venv
 __pycache__
 migrations
+package.json
 yarn.lock
-package-lock.json
+.idea
+temp
+cache

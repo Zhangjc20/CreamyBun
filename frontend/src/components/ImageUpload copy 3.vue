@@ -51,11 +51,11 @@
 
 <script>
 // import { client } from '@/utils/alioss'
-import { VueCropper } from 'vue-cropper'
+// import { VueCropper } from 'vue-cropper'
 export default {
   name: "ImageUpload",
   components: {
-    VueCropper
+    // VueCropper
   },
   data() {
     return {

@@ -201,7 +201,8 @@ export default {
         optionList:this.optionList.concat(),
         minOptionNum:this.minOptionNum,
         maxOptionNum:this.maxOptionNum,
-        mustDo:this.mustDo
+        mustDo:this.mustDo,
+        questionAns:'' //很久以后才会用到的接口
       })
       //提交后初始化列表
       this.init()

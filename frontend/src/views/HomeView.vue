@@ -1,7 +1,7 @@
 <template>
   <el-container class="container">
     <el-header class="header-style">
-      <NavBar :login='this.username!=""' activeItem="1"></NavBar>
+      <NavBar :login='username!=""' activeItem="1" :username="username"></NavBar>
     </el-header>
     <el-main class="main-style">
       <div class="custom-box">
@@ -148,7 +148,10 @@ export default {
     }
   },
   mounted(){
-    this.username = this.$route.query.username;
+    if(this.$route.query.username){
+      this.username = this.$route.query.username;
+      console.log(this.username)
+    }
   }
 }
 </script>

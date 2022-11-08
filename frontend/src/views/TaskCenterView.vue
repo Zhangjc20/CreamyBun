@@ -1,7 +1,7 @@
 <template>
   <el-container class="container">
     <el-header class="header-style">
-      <NavBar :login="true" activeItem="2"></NavBar>
+      <NavBar :login="true" activeItem="2" :username="username"></NavBar>
     </el-header>
     <el-container class="main-area">
       <el-aside class="left-menu-area">
@@ -284,6 +284,7 @@ export default {
       chosenDataType: 1,
       chosenQuestionType: 1,
       searchInput: "",
+      username:"",
       items: [
         {
           index: 1,
@@ -355,6 +356,12 @@ export default {
       }
     },
   },
+  mounted(){
+    if(this.$route.query.username){
+      this.username = this.$route.query.username;
+      console.log(this.username)
+    }
+  }
 };
 </script>
 

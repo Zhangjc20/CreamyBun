@@ -40,6 +40,10 @@ export default {
   props: {
     login:Boolean,
     activeItem:String,
+    username:{
+      type:String,
+      default:""
+    }
   },
   data(){
       return {
@@ -49,31 +53,49 @@ export default {
     clickHome(){
       this.$router.push({
             name: 'home',
+            query:{
+              username:this.username,
+            }
         });
     },
     clickTask(){
       this.$router.push({
             name: 'taskcenter',
+            query:{
+              username:this.username,
+            }
         });
     },
     clickLogin(){
         this.$router.push({
             name: 'login',
+            query:{
+              username:this.username,
+            }
         });
     },
     clickLogup(){
         this.$router.push({
             name: 'logup',
+            query:{
+              username:this.username,
+            }
         });
     },
     clickMine(){
         this.$router.push({
             name: 'mine',
+            query:{
+              username:this.username,
+            }
         });
     },
     clickRelease(){
         this.$router.push({
             name: 'release',
+            query:{
+              username:this.username,
+            }
         });
     }
   }

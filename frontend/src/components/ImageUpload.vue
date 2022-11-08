@@ -81,13 +81,13 @@
 </template>
 
 <script>
-import { VueCropper } from 'vue-cropper'
+// import { VueCropper } from 'vue-cropper'
 import CustomButton from './CustomButton.vue';
 export default {
   name: 'ImageUpload',
   components: {
     CustomButton,
-    VueCropper,
+    // VueCropper,
   },
   props: {
     title:String,
