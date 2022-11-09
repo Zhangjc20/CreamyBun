@@ -6,6 +6,7 @@ from django.core.mail import send_mail
 import os
 import shutil
 import zipfile
+import math
 from ..variables.globalConstants import *
 
 from .databaseOperations import *
@@ -90,6 +91,55 @@ def set_money_to_donut(donut_number):
 def get_money_to_donut():
     global money_to_donut
     return money_to_donut
+
+# 获取指定用户、指定页码、指定状态的任务列表
+def get_task_info_list(username,state,page_number):
+    u = get_a_user_data(username)
+    all_task_to_state = u.task_info_list.all() # 返回了字典model对象的列表
+
+    #存了所有的符合状态的任务的id 
+    needed_task_to_state_list = [x.key for x in all_task_to_state if x.value == state]
+        
+    # 总页数
+    total_page_number = math.ceil(len(needed_task_to_state_list)/TASK_NUMBER_PER_PAGE)
+
+    begin_index = TASK_NUMBER_PER_PAGE * (page_number -1)
+    if page_number == total_page_number: # 最后一页
+        needed_task_to_state_list = needed_task_to_state_list[begin_index,]
+    else:
+        needed_task_to_state_list = needed_task_to_state_list[begin_index,begin_index + TASK_NUMBER_PER_PAGE]
+
+    task_info_list=[]
+    # i从0开始
+    for i, t_id in enumerate(needed_task_to_state_list):
+        t = get_a_task_data(t_id)
+        t_info = {
+            'taskId':t_id,
+            'taskName':t.task_name,
+            'starRank':t.star_rank,
+            'singleBonus':t.single_bonus,
+            'taskType':t.task_type,
+            'answerType':t.answer_type,
+            'beginTime':t.begin_time,
+            'endTime':t.end_time,
+        }
+        t_info.setdefault('index',i)
+        task_info_list.append(t_info)
+    
+    task_info_list = list(reversed(task_info_list))
+
+    # 填充空白
+    info_list_length = len(task_info_list)
+    if info_list_length < TASK_NUMBER_PER_PAGE:
+        for i in range(info_list_length,TASK_NUMBER_PER_PAGE):
+            t_info = {
+                'index':i,
+                'isSpace':True,
+            }
+            task_info_list.append(t_info)
+
+    # 返回 总页数（int），任务信息列表（列表，成员为字典）
+    return total_page_number,task_info_list
 
 # 下载前端的分块文件
 def handle_uploaded_file(f, path='./temp/test.zip'):

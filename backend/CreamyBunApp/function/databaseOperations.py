@@ -1,6 +1,7 @@
 # 在此处定义对数据库的操作
 
 from ..classDefination.userClass import *
+from ..classDefination.taskClass import *
 from ..classDefination.questionClass import *
 
 # 添加一个用户到用户列表中
@@ -35,6 +36,10 @@ def delete_a_user(username):
 # 返回的对象可以通过.获取成员变量
 def get_a_user_data(username):
     return User.objects.filter(username=username).first()
+
+# 获取指定任务的数据
+def get_a_task_data(id):
+    return Task.objects.filter(id=id).first()
 
 # 通过用户名修改密码
 def update_password_by_username(username,password):

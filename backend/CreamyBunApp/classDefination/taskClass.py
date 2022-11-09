@@ -6,6 +6,8 @@ class Task(models.Model):
     poster = models.BigIntegerField(default=-1) # 发布者的id
     task_name = models.CharField(max_length = MAX_TASK_NAME_LENGTH,default="task_name") # 任务名
     description = models.CharField(max_length = MAX_DESCRIPTION_LENGTH,default="task_description") # 任务描述
+    task_type = models.IntegerField(default=-1) # 任务类型（图像，文本……）
+    answer_type = models.IntegerField(default=-1) #作答类型（单选，多选，填空，框图，混合）
 
     # 通过以下两个变量计算该任务的完成程度
     problem_total_number = models.IntegerField(default=-1) # 任务中大题总数

@@ -168,22 +168,37 @@ def get_user_settings_info(request):
 def get_user_received_task_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
-    # 
-    # TODO
-    # 
+    page_number = query_dict.get("pageNumber", "")
+
+    # 总页数（int），任务信息列表（列表，成员为字典）
+    total_page_number,task_info_list = get_task_info_list(username, HAS_RECEIVED, page_number)
+
+    ret = {
+        'status':'ok',
+        'totalPageNumber':total_page_number,
+        'taskInfoList':task_info_list
+    }
+    return HttpResponse(json.dumps(ret), content_type='application/json')
 
 # 获得已发布任务信息
 def get_user_released_task_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
-    # 
-    # TODO
-    # 
+    page_number = query_dict.get("pageNumber", "")
+
+    # 总页数（int），任务信息列表（列表，成员为字典）
+    total_page_number,task_info_list = get_task_info_list(username, HAS_POSTED, page_number)
+
+    ret = {
+        'status':'ok',
+        'totalPageNumber':total_page_number,
+        'taskInfoList':task_info_list
+    }
+    return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
 # 注销
 def log_off(request):
-    print(request.GET)
     pass
 
 
