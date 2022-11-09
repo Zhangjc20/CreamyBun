@@ -590,7 +590,7 @@ export default {
       console.log("this.listList.",this.listList)
       console.log("this.fileList.",this.fileList)
       
-      let tempLen = this.fileList.length
+      
       let tempHandleList = []
       for(var subList of this.fullList){
         tempHandleList = []
@@ -603,6 +603,7 @@ export default {
         this.handleMaterialList.push(tempHandleList)
         console.log("subList",subList)
       }
+      let tempLen = this.fileList.length
       for(var subList of this.fullList){
         if(subList.length !== tempLen){
           this.$message({
