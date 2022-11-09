@@ -97,8 +97,10 @@ def get_task_info_list(username,state,page_number):
     u = get_a_user_data(username)
     all_task_to_state = u.task_info_list.all() # 返回了字典model对象的列表
 
-    #存了所有的符合状态的任务的id 
+    # 存了所有的符合状态的任务的id 
     needed_task_to_state_list = [x.key for x in all_task_to_state if x.value == state]
+    # 反转，最新的在最前面
+    needed_task_to_state_list = list(reversed(needed_task_to_state_list))
         
     # 总页数
     total_page_number = math.ceil(len(needed_task_to_state_list)/TASK_NUMBER_PER_PAGE)
@@ -106,8 +108,10 @@ def get_task_info_list(username,state,page_number):
     begin_index = TASK_NUMBER_PER_PAGE * (page_number -1)
     if page_number == total_page_number: # 最后一页
         needed_task_to_state_list = needed_task_to_state_list[begin_index,]
-    else:
+    elif page_number < total_page_number:
         needed_task_to_state_list = needed_task_to_state_list[begin_index,begin_index + TASK_NUMBER_PER_PAGE]
+    else: # 超过页码范围
+        needed_task_to_state_list = []
 
     task_info_list=[]
     # i从0开始
@@ -125,8 +129,6 @@ def get_task_info_list(username,state,page_number):
         }
         t_info.setdefault('index',i)
         task_info_list.append(t_info)
-    
-    task_info_list = list(reversed(task_info_list))
 
     # 填充空白
     info_list_length = len(task_info_list)
