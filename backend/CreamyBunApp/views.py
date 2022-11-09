@@ -27,8 +27,8 @@ def log_up(request):
         verify_code = send_email(email)
         return HttpResponse(json.dumps({'status': 'ok', 'verifyCode': verify_code}), content_type='application/json')
         # return HttpResponse(json.dumps({'status':'ok'}), content_type='application/json')
-    
-    #判断是否重名
+
+    # 判断是否重名
     flag = exist_user_by_name(username)
     if flag:
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameName'}), content_type='application/json')
@@ -39,9 +39,11 @@ def log_up(request):
     else:
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')
 
+
 # 登录
 def log_in(request):
     pass
+
 
 # 注销
 def log_off(request):
@@ -80,7 +82,8 @@ def get_material_zip(request):
             full_list, list_list = walk_file(path, material_type)
             # print(full_list)
             # print(list_list)
-            return HttpResponse(json.dumps({'status': 'done', 'fullList': full_list, 'listList': list_list}), content_type='application/json')
+            return HttpResponse(json.dumps({'status': 'done', 'fullList': full_list, 'listList': list_list}),
+                                content_type='application/json')
             pass
         # query_dict = request.POST
         # file = request.FILES.get('fileName', None)
@@ -92,4 +95,24 @@ def get_material_zip(request):
         # for line in file_obj.chunks():  # 通过chunks分片上传存储在服务器内存中,以64k为一组，循环写入到服务器中
         #     f.write(line)
         # f.close()
+    return HttpResponse(json.dumps({'status': 'next'}), content_type='application/json')
+
+
+@csrf_exempt
+def handle_release_action(request):
+    if request.method == "POST":  # 判断接收的值是否为POST
+        request_body = json.loads(request.body)
+        print(request_body)
+        act = request_body['act']
+        msg_list = request_body['msgList']
+        if act == 'delete':
+            for target in msg_list:
+                os.remove(target['filePath'])
+    return HttpResponse(json.dumps({'status': 'done'}), content_type='application/json')
+
+
+@csrf_exempt
+def release_task(request):
+    request_body = json.loads(request.body)
+    print(request_body)
     return HttpResponse(json.dumps({'status': 'next'}), content_type='application/json')

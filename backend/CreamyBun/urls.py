@@ -26,4 +26,6 @@ urlpatterns = [
     path('log_off/',views.log_off),
     path('update_mobile/',views.update_mobile),
     path('get_material_zip/',views.get_material_zip),
+    path('handle_release_action/',views.handle_release_action),
+    path('release_task/',views.release_task),
 ]

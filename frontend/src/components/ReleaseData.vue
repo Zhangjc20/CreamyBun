@@ -2,15 +2,21 @@
   <el-header class="header-style">
     <el-breadcrumb separator="/" class="header-breadcrumb">
       <el-breadcrumb-item :to="{ path: '/' }">奶黄包</el-breadcrumb-item>
-      <!-- <el-breadcrumb-item
-        ><a href="/">promotion management</a></el-breadcrumb-item
-      > -->
       <el-breadcrumb-item>任务选择</el-breadcrumb-item>
       <el-breadcrumb-item>{{this.materialTypeName}}</el-breadcrumb-item>
     </el-breadcrumb>
     <span class="header-title">
       {{this.materialTypeName}}任务
     </span>
+    <CustomButton 
+      @click="finalSubmit" 
+      isRound="true" 
+      style="float: right; right: 50px; top: 100px; position: absolute"
+      height="40px"
+      width="150px"
+      title="提交任务"
+    />
+
   </el-header>
   <el-main class="main-style">
     <el-row style="height: 50px;">
@@ -140,6 +146,7 @@
         </el-row>
         <el-row>
           <MaterialUpload 
+          ref="MyMaterialUpload"
           :username="username"
           :questionList="questionList"
           :materialType="localMaterialType"
@@ -246,21 +253,20 @@
 </template>
 
 <script>
-
-// import CustomButton from './CustomButton.vue';
+import axios from "axios";
+import CustomButton from './CustomButton.vue';
 import ReleaseBasicQuestion from '@/components/ReleaseBasicQuestion.vue';
 import ImageUpload from '@/components/ImageUpload.vue';
 import MaterialUpload from '@/components/MaterialUpload.vue';
 
 export default {
   name: 'ReleasePicture',
-  // components: {
-  //   CustomButton
-  // },
+
   components:{
     ReleaseBasicQuestion,
     ImageUpload,
     MaterialUpload,
+    CustomButton,
   },
   props: {
     username:String,
@@ -444,7 +450,37 @@ export default {
         message: '删除题目成功',
         type: 'success'
       });
-    }
+    },
+    finalSubmit(){
+      
+      axios.post("http://localhost:8000/release_task/",
+        {basicInfoForm:this.form,
+          questionList:this.questionList,
+          fullList:this.$refs.MyMaterialUpload.fullList,
+          testList:this.$refs.MyMaterialUpload.testList,
+      }).then(res => {
+        if (res.data['status'] == 'done'){
+          this.initSelected()
+          this.initAllLists()
+          this.updateShowingList()
+          this.$message({
+            message: '操作素材列表成功',
+            type: 'success'
+          });
+        }else{
+          this.$message({
+            message: '操作素材列表失败',
+            type: 'error'
+          });
+        }
+      }).catch(error => {
+        console.log(error);
+        this.$message({
+          message: '链接失败',
+          type: 'error'
+        });
+      })
+    },
   }
 }
 </script>
