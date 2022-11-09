@@ -28,4 +28,11 @@ urlpatterns = [
     path('get_material_zip/',views.get_material_zip),
     path('handle_release_action/',views.handle_release_action),
     path('release_task/',views.release_task),
+    path('get_user_basic_info/',views.get_user_basic_info),
+    path('get_user_released_task_info/',views.get_user_released_task_info),
+    path('get_user_received_task_info/',views.get_user_received_task_info),
+    path('get_user_bonus_info/',views.get_user_bonus_info),
+    path('get_user_activity_info/',views.get_user_activity_info),
+    path('get_user_settings_info/',views.get_user_settings_info),
+    path('reset_password/',views.reset_password),
 ]

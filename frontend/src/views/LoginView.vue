@@ -45,6 +45,7 @@
 
 <script>
 import axios from 'axios';
+import { ElMessage } from 'element-plus';
 export default {
   name: 'MineInfoView',
   props: {
@@ -70,26 +71,56 @@ export default {
     },
     clickLogin(){
       sessionStorage.setItem("token", 'true');
-      this.$router.push({
-            name: 'home',
-            query:{
-              username:this.form.username
-            },
-        });
-      axios.get('http://localhost:8000/log_in',{
+      axios.get('/log_in',{
         params:{
-          username:this.username,
-          password:this.password
+          username:this.form.username,
+          password:this.form.password
         }
       })
-      .then(function(res){
-        console.log(res);
+        .then((res) => {
+        if(res.data['status']==='wrong'){
+          if(res.data['type']==='noUser'){
+            ElMessage({
+              type: 'error',
+              message: "用户不存在",
+            })
+          }
+          else if(res.data['type']==='wrongPassword'){
+            ElMessage({
+              type: 'error',
+              message: "密码错误",
+            })
+          }
+          else{
+            ElMessage({
+              type: 'error',
+              message: "登录失败，请稍后再试",
+            })
+          }
+        }
+        else if(res.data['status']==='ok'){
+          ElMessage({
+              type: 'success',
+              message: "登录成功",
+          });
+          this.$router.push({
+              name: 'home',
+              query:{
+                username:this.form.username
+              },
+          });
+        }
       })
       .catch(function(err){
         console.log(err);
       });
     },
   },
+  mounted(){
+    if(this.$route.query.username){
+      this.form.username = this.$route.query.username;
+    }
+  }
 }
 </script>
 
