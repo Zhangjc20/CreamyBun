@@ -52,7 +52,7 @@
               <el-radio-button label="3">音频分析</el-radio-button>
             </el-radio-group>
           </div>
-          <el-carousel height="300px" ref="carousel" @change="carouselChange" initial-index="0">
+          <el-carousel height="300px" ref="carousel" @change="carouselChange" :initial-index="0">
             <el-carousel-item key="0">
               <el-row>
                 <el-col :span="12">

@@ -26,6 +26,8 @@ urlpatterns = [
     path('log_off/',views.log_off),
     path('update_mobile/',views.update_mobile),
     path('get_material_zip/',views.get_material_zip),
+    path('handle_release_action/',views.handle_release_action),
+    path('release_task/',views.release_task),
     path('get_user_basic_info/',views.get_user_basic_info),
     path('get_user_released_task_info/',views.get_user_released_task_info),
     path('get_user_received_task_info/',views.get_user_received_task_info),

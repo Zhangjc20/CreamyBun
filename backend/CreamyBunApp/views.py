@@ -27,7 +27,6 @@ def log_up(request):
         verify_code = send_email(email)
         return HttpResponse(json.dumps({'status': 'ok', 'verifyCode': verify_code}), content_type='application/json')
         # return HttpResponse(json.dumps({'status':'ok'}), content_type='application/json')
-    
     # 如果是点击注册
     elif type == 'logUp':
         #判断是否重名
@@ -44,6 +43,7 @@ def log_up(request):
     # 未知操作
     else:
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}), content_type='application/json')
+
 
 # 登录
 def log_in(request):
@@ -168,21 +168,37 @@ def get_user_settings_info(request):
 def get_user_received_task_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
-    # 
-    # TODO
-    # 
+    page_number = query_dict.get("pageNumber", "")
+
+    # 总页数（int），任务信息列表（列表，成员为字典）
+    total_page_number,task_info_list = get_task_info_list(username, HAS_RECEIVED, page_number)
+
+    ret = {
+        'status':'ok',
+        'totalPageNumber':total_page_number,
+        'taskInfoList':task_info_list
+    }
+    return HttpResponse(json.dumps(ret), content_type='application/json')
 
 # 获得已发布任务信息
 def get_user_released_task_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
-    # 
-    # TODO
-    # 
+    page_number = query_dict.get("pageNumber", "")
+
+    # 总页数（int），任务信息列表（列表，成员为字典）
+    total_page_number,task_info_list = get_task_info_list(username, HAS_POSTED, page_number)
+
+    ret = {
+        'status':'ok',
+        'totalPageNumber':total_page_number,
+        'taskInfoList':task_info_list
+    }
+    return HttpResponse(json.dumps(ret), content_type='application/json')
+
 
 # 注销
 def log_off(request):
-    print(request.GET)
     pass
 
 
@@ -217,7 +233,8 @@ def get_material_zip(request):
             full_list, list_list = walk_file(path, material_type)
             # print(full_list)
             # print(list_list)
-            return HttpResponse(json.dumps({'status': 'done', 'fullList': full_list, 'listList': list_list}), content_type='application/json')
+            return HttpResponse(json.dumps({'status': 'done', 'fullList': full_list, 'listList': list_list}),
+                                content_type='application/json')
             pass
         # query_dict = request.POST
         # file = request.FILES.get('fileName', None)
@@ -229,4 +246,24 @@ def get_material_zip(request):
         # for line in file_obj.chunks():  # 通过chunks分片上传存储在服务器内存中,以64k为一组，循环写入到服务器中
         #     f.write(line)
         # f.close()
+    return HttpResponse(json.dumps({'status': 'next'}), content_type='application/json')
+
+
+@csrf_exempt
+def handle_release_action(request):
+    if request.method == "POST":  # 判断接收的值是否为POST
+        request_body = json.loads(request.body)
+        print(request_body)
+        act = request_body['act']
+        msg_list = request_body['msgList']
+        if act == 'delete':
+            for target in msg_list:
+                os.remove(target['filePath'])
+    return HttpResponse(json.dumps({'status': 'done'}), content_type='application/json')
+
+
+@csrf_exempt
+def release_task(request):
+    request_body = json.loads(request.body)
+    print(request_body)
     return HttpResponse(json.dumps({'status': 'next'}), content_type='application/json')

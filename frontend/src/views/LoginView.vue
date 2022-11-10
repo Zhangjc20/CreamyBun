@@ -70,7 +70,6 @@ export default {
         });
     },
     clickLogin(){
-      sessionStorage.setItem("token", 'true');
       axios.get('/log_in',{
         params:{
           username:this.form.username,
@@ -103,6 +102,7 @@ export default {
               type: 'success',
               message: "登录成功",
           });
+          sessionStorage.setItem("token", 'true');
           this.$router.push({
               name: 'home',
               query:{

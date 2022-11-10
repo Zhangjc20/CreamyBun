@@ -82,7 +82,9 @@
           <span class="iconfont icon-menu"></span>
         </el-table-column> -->
       </el-table>
-
+      <el-row v-if="listList.length" style="height: 40px;">
+        <span class="header-title" style="padding:10px">当前素材列表：{{currentShowingName}}</span>  
+      </el-row>
       <el-table
         :data="showingList"
         height="500"
@@ -130,10 +132,32 @@
                 <el-dropdown-menu>
                   <el-dropdown-item icon="el-icon-s-order" @click="setTest(scope.row, scope.$index)">设置为测试题</el-dropdown-item>                  
                   <el-dropdown-item v-if="!isSelectingMaterial" icon="el-icon-s-order" @click="isSelectingMaterial = true">多选</el-dropdown-item>
-                  <el-dropdown-item v-if="!isSelectingMaterial" icon="el-icon-s-order" @click="deleteMaterialSingle(scope.row, scope.$index)">删除</el-dropdown-item>
-
-                  <el-dropdown-item v-if="isSelectingMaterial" icon="el-icon-s-order" @click="isSelectingMaterial = false;initSelected()">取消多选</el-dropdown-item>
-                  <el-dropdown-item v-if="isSelectingMaterial" icon="el-icon-s-order" @click="deleteMaterialMultiple(scope.row, scope.$index)">删除多个</el-dropdown-item>
+                  <el-dropdown-item v-if="!isSelectingMaterial" icon="el-icon-s-order" @click="deleteMaterialSingle(scope.row, scope.$index);isSelectingMaterial = false;">删除</el-dropdown-item>
+                  <el-dropdown-item v-if="!isSelectingMaterial && !isMovingMaterial" icon="el-icon-s-order" @click="isMovingMaterial = true;movingMaterialIndex = getActualIndex(scope.$index)">移动</el-dropdown-item>
+<!--                   
+                  <el-input v-if="isMovingMaterial" 
+                    @input="onInput()"
+                    style="padding = 5px" 
+                    v-model="movingMaterialTarget" 
+                    placeholder="请输入目标位置"
+                  /> -->
+                  <!-- <el-form class="change-form">
+                    <el-form-item label="任务描述" :required="true">
+                      <el-input v-if="isMovingMaterial" 
+                        style="padding = 5px" 
+                        v-model="movingMaterialTarget" 
+                        placeholder="请输入目标位置"
+                      />               
+                    </el-form-item>
+                  </el-form> -->
+                  
+                  <!-- <el-dropdown-item v-if="isMovingMaterial" icon="el-icon-s-order" @click="moveMaterial(scope.$index);isMovingMaterial = false;">
+                    确认移位
+                  </el-dropdown-item>
+   -->
+                  
+                  <el-dropdown-item v-if="isSelectingMaterial" icon="el-icon-s-order" @click="initSelected();updateShowingList();isSelectingMaterial = false;">取消多选</el-dropdown-item>
+                  <el-dropdown-item v-if="isSelectingMaterial" icon="el-icon-s-order" @click="deleteMaterialMultiple(scope.row, scope.$index);isSelectingMaterial = false;">删除多个</el-dropdown-item>
 
                   <!-- <el-dropdown-item icon="el-icon-remove" @click="moveQuestionDown(scope.row, scope.$index)">下移</el-dropdown-item>
                   <el-dropdown-item icon="el-icon-remove" @click="editQuestion(scope.row, scope.$index)">编辑</el-dropdown-item>
@@ -161,22 +185,29 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
-
-      <!-- <el-upload
-            class="upload-demo"
-            action=""
-            drag
-            :auto-upload="false"
-            :show-file-list="false"
-            :on-change="handleChangeUpload"
-          >
-            <i class="el-icon-upload"></i>
-            <div class="el-upload__text">点击上传</div>
-            <div class="el-upload__tip">
-              请上传压缩包
-            </div>
-          </el-upload> -->
     </template>
+    <el-dialog
+      v-model="isMovingMaterial"
+      title="设置移动位置"
+      width="20%"
+    >
+      <el-row style="height: 50px;">
+        <span class="header-title" style="margin: auto,auto,auto,20px;">当前被移动卷号：{{movingMaterialIndex}}</span>
+      </el-row>
+      <el-form class="change-form">
+        <el-form-item label="目标位置" :required="true">
+          <el-input
+            v-model="movingMaterialTarget" 
+            placeholder="请输入目标位置"
+            @input="onInput()"
+          />               
+        </el-form-item>
+      </el-form>
+      <span class="dialog-footer">
+        <CustomButton @click="moveMaterial(movingMaterialIndex)" width="100px" style="margin-left:20px" isRound="true" title="移位"/>
+        <CustomButton @click="exchangeMaterial(movingMaterialIndex)" width="100px" style="margin-left:20px" isRound="true" title="交换"/>
+      </span>
+    </el-dialog>
     <el-dialog
       v-model="testSetDialogVisible"
       title="设置题目答案"
@@ -371,12 +402,16 @@ export default {
       testSetDialogVisible:0,
       testListDialogVisible:0,
       currentSelectedMaterialIndex:0,
+      currentShowingName:'',
       // currentSelectedMaterialName:'',
       currentTestAnsList:[],
       currentTestSetDialogList:0,
       isEditingTestAns:0,
       isSelectingMaterial:0,
-      
+
+      isMovingMaterial:0,
+      movingMaterialTarget:'',
+      movingMaterialIndex:0,
     }
   },
   methods:{
@@ -393,6 +428,9 @@ export default {
     //   }
       
     // },
+    onInput() {
+      this.$forceUpdate();
+    },
     dateFtt(fmt, date) { //author: meizz
     var o = {
         "M+": date.getMonth() + 1,     //月份
@@ -519,11 +557,6 @@ export default {
 
                 this.fullList = res.data['fullList']
                 this.listList = res.data['listList']
-                this.fileList = this.fullList[0]
-                this.updateShowingList()
-                console.log("this.fullList",this.fullList)
-                console.log("this.listList.",this.listList)
-                console.log("this.fileList.",this.fileList)
                 if(this.fullList.length == 0 || this.listList.length == 0){
                   this.$message({
                     message: '您上传的压缩包里没有有效文件！',
@@ -534,31 +567,55 @@ export default {
                   this.progress = 0
                   return
                 }
-                let tempLen = this.fileList.length
-                let tempHandleList = []
-                for(var subList of this.fullList){
-                  tempHandleList = []
-                  for(var itemMaterial of subList){//初始化选择串
-                    tempHandleList.push({'index': itemMaterial['index'], 'selected':0})
-                  }
-                  this.handleMaterialList.push(tempHandleList)
-                  console.log("subList",subList)
-                  if(subList.length !== tempLen){
-                    this.$message({
-                      message: '您的题表中题目不相等，请注意调整您的题表！',
-                      type: 'warning'
-                    });
-                  }
-                }
-                console.log("handleMaterialList",this.handleMaterialList)
-                this.listNum = this.listList.length
-                this.pagerCount = Math.trunc(this.fileList.length / this.pageSize)
+                this.initAllLists()
+                
             }
             shardIndex++
             this.uploadFile(file, shardIndex, res.data.createTime, res.data.savePath, res.data.relativePath, res.data.timeMillis)
+          }).catch(error => {
+            console.log(error);
+            this.$message({
+              message: '链接失败',
+              type: 'error'
+            });
           })
 
       }
+    },
+    initAllLists(){
+      this.currentShowingName =this.listList[this.currentShowingSubList]['listName']
+      this.fileList = this.fullList[0]
+      this.updateShowingList()
+      console.log("this.fullList",this.fullList)
+      console.log("this.listList.",this.listList)
+      console.log("this.fileList.",this.fileList)
+      
+      
+      let tempHandleList = []
+      for(var subList of this.fullList){
+        tempHandleList = []
+        let i = 1
+        for(var itemMaterial of subList){//初始化选择串
+          itemMaterial['index'] = i//初始化所有fullList的index
+          i++
+          tempHandleList.push({'index': itemMaterial['index'], 'selected':0})
+        }
+        this.handleMaterialList.push(tempHandleList)
+        console.log("subList",subList)
+      }
+      let tempLen = this.fileList.length
+      for(var subList of this.fullList){
+        if(subList.length !== tempLen){
+          this.$message({
+            message: '您的题表中题目不相等，请注意调整您的题表！',
+            type: 'warning'
+          });
+          break;
+        }
+      }
+      console.log("handleMaterialList",this.handleMaterialList)
+      this.listNum = this.listList.length
+      this.pagerCount = Math.trunc(this.fileList.length / this.pageSize)
     },
     updateSelect(){//翻页后更新列表
       this.$nextTick(() => {
@@ -592,6 +649,7 @@ export default {
       console.log("showingList",this.showingList)
       this.currentShowingSubList = row.index - 1
       this.fileList = this.fullList[this.currentShowingSubList]
+      this.currentShowingName =this.listList[this.currentShowingSubList]['listName']
       this.updateShowingList()
       this.updateSelect()
       if(column.label == "注释"){
@@ -744,15 +802,111 @@ export default {
       this.deleteMaterialMultiple(row,index)
       console.log("handleMaterialList",this.handleMaterialList)
     },
+    getActionMsg(act){
+      let msgList = []
+      console.log("getActionMsg", this.fullList,act)
+      for(let i = 0; i < this.handleMaterialList.length; i++){
+        var subList = this.handleMaterialList[i]
+        for(var item of subList){
+          if(item['selected']){
+            let targetIndex = item['index'] - 1
+            msgList.push({
+              'filePath':this.fullList[i][targetIndex]['filePath']
+            })
+            if(act === 'delete'){
+              this.fullList[i][targetIndex]['index'] = -1
+            }
+          }
+        }
+        for(let j = this.fullList[i].length - 1;j >= 0;j--){
+          if(this.fullList[i][j]['index'] < 0){
+            this.fullList[i].splice(j,1)
+            console.log("删除坐标：",i,j)
+          }
+        }
+        for(let j = 0;j < this.fullList[i].length;j++){
+            this.fullList[i][j]['index'] = j + 1
+        }
+      }
+      console.log("刚修改完啦啦啦啦啦啦啦啦啦啦", this.fullList)
+      return msgList
+    },
+    
     deleteMaterialMultiple(row,index){
+      let act = 'delete'
       console.log(row,index)
-      // axios.get('http://localhost:8000/log_in',{
-      //   params:{
-      //     username:this.username,
-      //     password:this.password
-      //   }
-      // }).then(res => {})
-      this.initSelected()
+      let msgList = this.getActionMsg(act)
+      axios.post("http://localhost:8000/handle_release_action/",
+        {act:act, 
+        msgList:msgList,
+      }).then(res => {
+        if (res.data['status'] == 'done'){
+          this.initSelected()
+          this.initAllLists()
+          this.updateShowingList()
+          this.$message({
+            message: '操作素材列表成功',
+            type: 'success'
+          });
+        }else{
+          this.$message({
+            message: '操作素材列表失败',
+            type: 'error'
+          });
+        }
+      }).catch(error => {
+        console.log(error);
+        this.$message({
+          message: '链接失败',
+          type: 'error'
+        });
+      })
+
+    },
+    moveMaterial(index){
+      if(this.movingMaterialTarget < 1 || this.movingMaterialTarget > this.fullList[this.currentShowingSubList].length){
+        this.$message({
+          message:'您输入的目标位置不合法！',
+          type: 'error'
+        });
+        return
+      }
+      this.movingMaterialTarget --
+      console.log("被移动：index",index, "目标：movingMaterialTarget",this.movingMaterialTarget)
+      let moveData = this.fullList[this.currentShowingSubList][index]
+      this.fullList[this.currentShowingSubList].splice(index, 1);
+      this.fullList[this.currentShowingSubList].splice(this.movingMaterialTarget, 0, moveData);
+      this.initAllLists()
+      this.updateShowingList()
+      this.$message({
+        message:'移位成功！',
+        type: 'success'
+      });
+      this.movingMaterialTarget = '';
+      this.isMovingMaterial = false
+    },
+    exchangeMaterial(index){
+      if(this.movingMaterialTarget < 1 || this.movingMaterialTarget > this.fullList[this.currentShowingSubList].length){
+        this.$message({
+          message:'您输入的目标位置不合法！',
+          type: 'error'
+        });
+        return
+      }
+      this.movingMaterialTarget --
+      console.log("被移动：index",index, "目标：movingMaterialTarget",this.movingMaterialTarget)
+      let moveData = this.fullList[this.currentShowingSubList][index]
+      let targetData = this.fullList[this.currentShowingSubList][this.movingMaterialTarget]
+      this.fullList[this.currentShowingSubList][index] = targetData
+      this.fullList[this.currentShowingSubList][this.movingMaterialTarget] = moveData
+      this.initAllLists()
+      this.updateShowingList()
+      this.$message({
+        message:'移位成功！',
+        type: 'success'
+      });
+      this.movingMaterialTarget = '';
+      this.isMovingMaterial = false
     }
   }
 }

@@ -47,118 +47,125 @@
   </el-container>
 </template>
 
-  <script>
-  import MineInfoView from '@/components/MineInfoView.vue';
-  import NavBar from '@/components/NavBar.vue';
-  import GiftCenter from '@/components/GiftCenter.vue';
-  import SettingView from '@/components/SettingView.vue';
-  import TaskPage from '@/components/TaskPage.vue';
-  import ActivityCenter from '@/components/ActivityCenter.vue';
-  export default{
-    name: 'MineView',
-    components:{
-      MineInfoView,
-      NavBar,
-      GiftCenter,
-      SettingView,
-      TaskPage,
-      ActivityCenter
-    },
-    data(){
-      return {
-        show_content:"MineInfoView",
-        total:4,
-        username:"",
-        items:[
-        {
-          index: 1,
-          taskName: "图像识别",
-          starNum: 2,
-          donut: 20,
-          dataType: "图片",
-        },
-        {
-          index: 2,
-          taskName: "垃圾邮件",
-          starNum: 1,
-          donut: 70,
-          dataType: "文本",
-        },
-        {
-          index: 3,
-          taskName: "音频识别",
-          starNum: 3,
-          donut: 80,
-          dataType: "音频",
-        },
-        {
-          index: 4,
-          taskName: "垃圾邮件",
-          starNum: 2,
-          donut: 90,
-          dataType: "文本",
-        },
-        {
-          index: 5,
-          isSpace:true,
-        },
-        {
-          index: 6,
-          isSpace:true,
-        },
-        {
-          index: 7,
-          isSpace:true,
-        },
-        {
-          index: 8,
-          isSpace:true,
-        },
-        {
-          index: 9,
-          isSpace:true,
-        },
-        {
-          index: 10,
-          isSpace:true,
-        },
-        ]
+<script>
+import MineInfoView from '@/components/MineInfoView.vue';
+import NavBar from '@/components/NavBar.vue';
+import GiftCenter from '@/components/GiftCenter.vue';
+import SettingView from '@/components/SettingView.vue';
+import TaskPage from '@/components/TaskPage.vue';
+import ActivityCenter from '@/components/ActivityCenter.vue';
+export default{
+  name: 'MineView',
+  components:{
+    MineInfoView,
+    NavBar,
+    GiftCenter,
+    SettingView,
+    TaskPage,
+    ActivityCenter
+  },
+  data(){
+    return {
+      show_content:"MineInfoView",
+      total:4,
+      username:"",
+      items:[
+      {
+        index: 1,
+        taskName: "图像识别",
+        starNum: 2,
+        donut: 20,
+        dataType: "图片",
+      },
+      {
+        index: 2,
+        taskName: "垃圾邮件",
+        starNum: 1,
+        donut: 70,
+        dataType: "文本",
+      },
+      {
+        index: 3,
+        taskName: "音频识别",
+        starNum: 3,
+        donut: 80,
+        dataType: "音频",
+      },
+      {
+        index: 4,
+        taskName: "垃圾邮件",
+        starNum: 2,
+        donut: 90,
+        dataType: "文本",
+      },
+      {
+        index: 5,
+        taskName: "垃圾邮件",
+        starNum: 2,
+        donut: 90,
+        dataType: "文本",
+      },
+      {
+        index: 6,
+        taskName: "垃圾邮件",
+        starNum: 2,
+        donut: 90,
+        dataType: "文本",
+      },
+      {
+        index: 7,
+        isSpace:true,
+      },
+      {
+        index: 8,
+        isSpace:true,
+      },
+      {
+        index: 9,
+        isSpace:true,
+      },
+      {
+        index: 10,
+        isSpace:true,
+      },
+      ]
+    }
+  },
+  methods:{
+    clickLeftMenu(number){
+      switch(number){
+        case 1:
+          this.show_content = "MineInfoView";
+          break;
+        case 2:
+          this.show_content = "TaskPage";
+          break;
+        case 3:
+          this.show_content = "TaskPage";
+          break;
+        case 4:
+          this.show_content = "GiftCenter";
+          break;
+        case 5:
+          this.show_content = "ActivityCenter";
+          break;
+        case 6:
+          this.show_content = "SettingView";
+          break;
+        default:
       }
     },
-    methods:{
-      clickLeftMenu(number){
-        switch(number){
-          case 1:
-            this.show_content = "MineInfoView";
-            break;
-          case 2:
-            this.show_content = "TaskPage";
-            break;
-          case 3:
-            this.show_content = "TaskPage";
-            break;
-          case 4:
-            this.show_content = "GiftCenter";
-            break;
-          case 5:
-            this.show_content = "ActivityCenter";
-            break;
-          case 6:
-            this.show_content = "SettingView";
-            break;
-          default:
-        }
-      }
-    },
-    mounted(){
+  },
+  mounted(){
       if(this.$route.query.username){
         this.username = this.$route.query.username;
+        console.log(this.username)
       }
     }
-  }
-  </script>
+}
+</script>
   
-  <style scoped>
+<style scoped>
   .container {
     margin:0;
     height:100%;

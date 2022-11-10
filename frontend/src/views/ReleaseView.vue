@@ -28,6 +28,7 @@
         <el-main class="main-style">
           <!-- <component :is="show_content"></component> -->
           <ReleaseData :login="true" :username="username" :materialType="materialType"></ReleaseData>
+          <ImageUploadCopy />
         </el-main>
       </el-container>
     </el-container>
@@ -39,11 +40,13 @@
 // } from '@element-plus/icons-vue'
   import NavBar from '@/components/NavBar.vue';
   import ReleaseData from '@/components/ReleaseData.vue';
+  import ImageUploadCopy from '@/components/ImageUploadCropper.vue';
   export default{
     name: 'MineView',
     components:{
       NavBar,
       ReleaseData,
+      ImageUploadCopy
     },
     data(){
       return {
@@ -73,6 +76,8 @@
 
     },
     mounted(){
+      console.log("niihasoda")
+      console.log(this.$route.query)
       if(this.$route.query.username){
         this.username=this.$route.query.username;
         console.log(this.username)

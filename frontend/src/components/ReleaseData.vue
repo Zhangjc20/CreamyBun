@@ -2,15 +2,21 @@
   <el-header class="header-style">
     <el-breadcrumb separator="/" class="header-breadcrumb">
       <el-breadcrumb-item :to="{ path: '/' }">奶黄包</el-breadcrumb-item>
-      <!-- <el-breadcrumb-item
-        ><a href="/">promotion management</a></el-breadcrumb-item
-      > -->
       <el-breadcrumb-item>任务选择</el-breadcrumb-item>
       <el-breadcrumb-item>{{this.materialTypeName}}</el-breadcrumb-item>
     </el-breadcrumb>
     <span class="header-title">
       {{this.materialTypeName}}任务
     </span>
+    <CustomButton 
+      @click="finalSubmit" 
+      isRound="true" 
+      style="float: right; right: 50px; top: 100px; position: absolute"
+      height="40px"
+      width="150px"
+      title="提交任务"
+    />
+
   </el-header>
   <el-main class="main-style">
     <el-row style="height: 50px;">
@@ -24,7 +30,7 @@
         <el-form :model="form" label-width="100px" class="change-form">
           <el-row style="height: 50px;">
             <el-form-item label="名称" :required="true">
-              <el-input v-model="form.poster" placeholder="请输入任务名字"/>
+              <el-input v-model="form.taskName" placeholder="请输入任务名字"/>
               <!-- <CustomButton
                 >保存</CustomButton> -->
             </el-form-item>
@@ -52,13 +58,6 @@
                   :value="item.value"
                 />
               </el-select>
-            </el-form-item>
-          </el-row>
-          <el-row style="height: 50px;">
-            <el-form-item label="题目数量" :required="true" style="margin-top: 10px;">
-              <el-input v-model="form.promblemTotalNum" placeholder="请输入题目数量"/>
-              <!-- <CustomButton
-                >保存</CustomButton> -->
             </el-form-item>
           </el-row>
           <el-row >
@@ -140,6 +139,7 @@
         </el-row>
         <el-row>
           <MaterialUpload 
+          ref="MyMaterialUpload"
           :username="username"
           :questionList="questionList"
           :materialType="localMaterialType"
@@ -246,21 +246,20 @@
 </template>
 
 <script>
-
-// import CustomButton from './CustomButton.vue';
+import axios from "axios";
+import CustomButton from './CustomButton.vue';
 import ReleaseBasicQuestion from '@/components/ReleaseBasicQuestion.vue';
 import ImageUpload from '@/components/ImageUpload.vue';
 import MaterialUpload from '@/components/MaterialUpload.vue';
 
 export default {
   name: 'ReleasePicture',
-  // components: {
-  //   CustomButton
-  // },
+
   components:{
     ReleaseBasicQuestion,
     ImageUpload,
     MaterialUpload,
+    CustomButton,
   },
   props: {
     username:String,
@@ -335,6 +334,7 @@ export default {
         },
       ],
       form: {//questionNum taskLevel username
+        taskName:"",
         poster: "",
         description: "",
         questionType: "",
@@ -444,7 +444,108 @@ export default {
         message: '删除题目成功',
         type: 'success'
       });
-    }
+    },
+    finalCheck(){
+      if(this.form.taskName == ''){
+        this.$message({
+          message: '您尚未填写任务名！',
+          type: 'error'
+        });
+      }else if(this.form.description == ''){
+        this.$message({
+          message: '您尚未填写任务描述！',
+          type: 'error'
+        })
+      }else if(this.form.releaseMode == ''){
+        this.$message({
+          message: '您尚选择发布模式！',
+          type: 'error'
+        })
+      }else if(this.form.deadLine1 == '' || this.form.deadLine2 == ''){
+        this.$message({
+          message: '您尚未填写完成截止日期！',
+          type: 'error'
+        })
+      }else if(this.form.releaseMode == '定时发布' && (this.form.startLine1 == '' || this.form.startLine2 == '')){
+        this.$message({
+          message: '您尚未填写完成发布日期！',
+          type: 'error'
+        })
+      }else if(this.form.starRank == ''){
+        this.$message({
+          message: '您尚未选择星级！',
+          type: 'error'
+        })
+      }else if(this.form.singleBonus == ''){
+        this.$message({
+          message: '您尚未填写单个试卷奖励！',
+          type: 'error'
+        })
+      }else if(this.questionList.length == 0){
+        this.$message({
+          message: '您尚未设定任何题目！',
+          type: 'error'
+        })
+      }else if(this.$refs.MyMaterialUpload.fullList.length == 0){
+        this.$message({
+          message: '您尚未上传任何素材列表！',
+          type: 'error'
+        })
+      }else{
+        let tempLen = this.$refs.MyMaterialUpload.fullList[0].length
+        for(var subList of this.fullList){
+          if(subList.length !== tempLen){
+            this.$message({
+              message: '您的题表中题目不相等！',
+              type: 'error'
+            });
+            return false
+          }
+        }
+        if(tempLen == 0){
+          this.$message({
+            message: '您的题表中没有题目！',
+            type: 'error'
+          });
+          return false
+        }
+        return true
+      }
+      return false
+    },
+    finalSubmit(){
+      this.form.poster = this.username
+      if(!this.finalCheck()){
+        return
+      }
+      axios.post("http://localhost:8000/release_task/",
+        {basicInfoForm:this.form,
+          questionList:this.questionList,
+          fullList:this.$refs.MyMaterialUpload.fullList,
+          testList:this.$refs.MyMaterialUpload.testList,
+      }).then(res => {
+        if (res.data['status'] == 'done'){
+          this.initSelected()
+          this.initAllLists()
+          this.updateShowingList()
+          this.$message({
+            message: '操作素材列表成功',
+            type: 'success'
+          });
+        }else{
+          this.$message({
+            message: '操作素材列表失败',
+            type: 'error'
+          });
+        }
+      }).catch(error => {
+        console.log(error);
+        this.$message({
+          message: '链接失败',
+          type: 'error'
+        });
+      })
+    },
   }
 }
 </script>
