@@ -124,6 +124,7 @@ def get_user_basic_info(request):
         'creditRank':u.credit_rank,
         'currentExp':u.current_exp,
         'expForUpgrade':get_exp_for_upgrade(u.credit_rank),
+        'avatarImage':get_user_avatr(username),
     }
     return HttpResponse(json.dumps(user_info), content_type='application/json')
 
@@ -196,6 +197,16 @@ def get_user_released_task_info(request):
     }
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
+# 修改用户头像
+@csrf_exempt
+def change_avatar(request):
+    image = request.FILES.get('image',None)
+    username = request.POST.get('username','')
+    if image == None:
+        return HttpResponse(json.dumps({'status':'wrong','type':'noImage'}), content_type='application/json')
+    else:
+        change_user_avatar(image,username)
+        return HttpResponse(json.dumps({'status':'ok'}), content_type='application/json')
 
 # 注销
 def log_off(request):

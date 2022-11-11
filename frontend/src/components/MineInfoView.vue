@@ -4,19 +4,21 @@
       v-model="showModal"
       classes="modal-container"
       content-class="modal-content"
+      :debounce="false"
+      :prevent-click="true"
+      stencil-component="circle-stencil"
     >
       <div class="modal-title">图片裁剪</div>
       <image-cropper
         ref="cropper"
         class="cropper"
         :src="image.src"
-        :debounce="false"
         :auto-zoom="true"
         :stencil-size="{
           width: 400,
           height: 400,
         }"
-        image-restriction="stencil"
+        stencil-component="circle-stencil"
       />
       <div class="button-area">
         <CustomButton title="确认" @click="handleConfirm" marginRight="30px" />
@@ -24,20 +26,17 @@
       </div>
     </vue-final-modal>
     <input
-        type="file"
-        ref="file"
-        @change="loadImage($event)"
-        accept="image/*"
-        class="file-input"
-      />
+      type="file"
+      ref="file"
+      @change="loadImage($event)"
+      accept="image/*"
+      class="file-input"
+    />
     <div class="basic-info-box">
       <el-row class="basic-info-box-inner">
         <el-col :span="6" class="left-info-box">
           <div class="avatar-box" @click="uploadAvatar">
-            <el-avatar
-              :size="100"
-              :src="image.src"
-            ></el-avatar>
+            <el-avatar :size="100" :src="image.src"></el-avatar>
           </div>
         </el-col>
         <el-col class="right-info-box" :span="18">
@@ -153,8 +152,8 @@
 
 <script>
 import CustomButton from "./CustomButton.vue";
-import { ElMessage, ElMessageBox } from "element-plus";
 import axios from "axios";
+import { ElMessage, ElMessageBox } from "element-plus";
 function getMimeType(file, fallback = null) {
   const byteArray = new Uint8Array(file).subarray(0, 4);
   let header = "";
@@ -228,11 +227,29 @@ export default {
     };
   },
   methods: {
-    handleConfirm(){
+    base64ImgtoFile (dataurl, filename = 'file') {
+      const arr = dataurl.split(',')
+      const mime = arr[0].match(/:(.*?);/)[1]
+      const suffix = mime.split('/')[1]
+      const bstr = atob(arr[1])
+      let n = bstr.length
+      const u8arr = new Uint8Array(n)
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+      }
+      return new File([u8arr], `${filename}.${suffix}`, {
+        type: mime
+      })
+    },
+    blobToFile(blob, fileName, mimeType) {
+      return new File([blob], fileName, { type: mimeType });
+    },
+    handleConfirm() {
       this.showModal = false;
       this.crop();
+      this.$refs.file.value = "";
     },
-    handleCrop(){
+    handleCrop() {
       this.crop();
     },
     crop() {
@@ -241,7 +258,22 @@ export default {
         if (this.image.src) {
           URL.revokeObjectURL(this.image.src);
         }
-        this.image.src = URL.createObjectURL(blob)
+        this.image.src = URL.createObjectURL(blob);
+        console.log(this.image.type);
+        var formData = new FormData();
+        formData.append('image',this.blobToFile(blob,this.image.type.split("/")[1],this.image.type))
+        formData.append('username',this.username)
+        axios.post('/change_avatar',formData,{
+          query:{
+            username:this.username
+          }
+        })
+          .then((res)=>{
+            console.log(res);
+          })
+          .catch((err)=>{
+            console.log(err);
+          })
       }, this.image.type);
     },
     loadImage(event) {
@@ -274,19 +306,14 @@ export default {
       }
     },
     uploadAvatar() {
-      ElMessageBox.confirm(
-        "是否要上传头像?",
-        "修改头像",
-        {
-          confirmButtonText: "确认",
-          cancelButtonText: "取消",
-        }
-      )
+      ElMessageBox.confirm("是否要上传头像?", "修改头像", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+      })
         .then(() => {
           this.$refs.file.click();
         })
-        .catch(() => {
-        });
+        .catch(() => {});
     },
     getRatio() {
       return Math.floor((this.currentExp / this.expForUpgrade) * 1000) / 10;
@@ -363,6 +390,9 @@ export default {
             this.currentExp = res.data["currentExp"];
             this.expForUpgrade = res.data["expForUpgrade"];
             this.percentage = this.getRatio();
+            const imageFile = this.base64ImgtoFile('data:image/png;base64,' + res.data['avatarImage']);
+            this.image.src = window.webkitURL.createObjectURL(imageFile) || window.URL.createObjectURL(imageFile);
+            this.$emit('initAvatar',this.image.src);
           }
         })
         .catch((err) => {
@@ -378,8 +408,7 @@ export default {
 .modal-title {
   font-size: 1.5em;
   margin-bottom: 30px;
-  color:#ffffff;
-  background-color: #f8d45e;
+  color: #ffffff;
 }
 .cropper {
   height: 600px;

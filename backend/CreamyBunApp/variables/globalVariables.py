@@ -14,3 +14,6 @@ money_to_donut = 100
 
 # 多少甜甜圈可兑换一元
 donut_to_money = 120
+
+# 用户头像储存位置
+user_avatar_save_path = "./user_avatar/"

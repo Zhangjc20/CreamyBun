@@ -5,7 +5,7 @@
       classes="modal-container"
       content-class="modal-content"
     >
-      <div class="modal-title">图片裁剪</div>
+        <div class="modal-title">图片裁剪</div>
       <image-cropper
         ref="cropper"
         class="cropper"
@@ -20,8 +20,8 @@
         image-restriction="stencil"
       />
       <div class="button-area">
-        <CustomButton title="确认" @click="handleConfirm" marginRight="30px" />
-        <CustomButton title="取消" @click="showModal = false" />
+      <CustomButton title="确认" @click="handleConfirm" marginRight="30px"/>
+      <CustomButton title="取消" @click="showModal = false"/>
       </div>
     </vue-final-modal>
     <image-preview
@@ -31,28 +31,21 @@
       :coordinates="result.coordinates"
       v-if="uploaded"
     />
-    <el-upload
-      action="#"
-      :disabled="true"
-      list-type="picture-card"
-      :auto-upload="false"
-      @click="inputClick"
-      v-else
-    >
-      <input
+    <el-upload action="#" :disabled="true" list-type="picture-card" :auto-upload="false" @click="inputClick" v-else>
+        <input
         type="file"
         ref="file"
         @change="loadImage($event)"
         accept="image/*"
         class="file-input"
       />
-      <el-icon><Plus /></el-icon>
+        <el-icon><Plus /></el-icon>
     </el-upload>
   </div>
 </template>
 
 <script>
-import CustomButton from "./CustomButton.vue";
+import CustomButton from './CustomButton.vue';
 function getMimeType(file, fallback = null) {
   const byteArray = new Uint8Array(file).subarray(0, 4);
   let header = "";
@@ -77,8 +70,8 @@ function getMimeType(file, fallback = null) {
 
 export default {
   name: "UploadCropper",
-  components: {
-    CustomButton,
+  components:{
+    CustomButton
   },
   data() {
     return {
@@ -95,12 +88,12 @@ export default {
     };
   },
   methods: {
-    handleConfirm() {
-      this.showModal = false;
-      this.crop();
+    handleConfirm(){
+        this.showModal = false;
+        this.crop();
     },
-    inputClick() {
-      this.$refs.file.click();
+    inputClick(){
+        this.$refs.file.click();
     },
     onChange({ coordinates, image }) {
       this.result = {
@@ -163,18 +156,18 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 .button-area {
-  display: flex;
-  justify-content: center;
-  margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
 }
 .modal-title {
-  color: #ffffff;
-  font-size: 18px;
+    color:#ffffff;
+    font-size:18px;
 }
 :deep .modal-container {
   display: flex;

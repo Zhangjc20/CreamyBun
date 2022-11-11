@@ -279,6 +279,7 @@ export default {
       });
     },
     clickLogup() {
+      console.log("meishiba");
       if (
         !(
           this.usernameRight &&
@@ -332,6 +333,7 @@ export default {
             });
             return;
           } else {
+            console.log(res)
             if (res.data["type"] === "sameName") {
               ElMessage({
                 type: "error",

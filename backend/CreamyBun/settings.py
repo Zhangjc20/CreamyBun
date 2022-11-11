@@ -142,6 +142,18 @@ CORS_ORIGIN_ALLOW_ALL = True
 # 允许所有的请求头 
 CORS_ALLOW_HEADERS = ('*')
 
+CORS_ORIGIN_WHITELIST = ()
+ #对应的发送的请求的跨域
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+    'VIEW',
+)
+
 # 发送邮箱验证码配置
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'# 发送邮件配置
 EMAIL_HOST = "smtp.qq.com"     # 服务器

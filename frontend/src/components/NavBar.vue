@@ -59,6 +59,7 @@ export default {
             name: 'home',
             query:{
               username:this.username,
+              imageSrc:this.imageUrl
             }
         });
     },
@@ -67,6 +68,7 @@ export default {
             name: 'taskcenter',
             query:{
               username:this.username,
+              imageSrc:this.imageUrl
             }
         });
     },
@@ -91,6 +93,7 @@ export default {
             name: 'mine',
             query:{
               username:this.username,
+              imageSrc:this.imageUrl
             }
         });
     },
@@ -99,6 +102,7 @@ export default {
             name: 'release',
             query:{
               username:this.username,
+              imageSrc:this.imageUrl
             }
         });
     }

@@ -104,7 +104,7 @@ export default {
           });
           sessionStorage.setItem("token", 'true');
           this.$router.push({
-              name: 'home',
+              name: 'mine',
               query:{
                 username:this.form.username
               },
