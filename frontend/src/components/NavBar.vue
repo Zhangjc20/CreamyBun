@@ -23,14 +23,14 @@
         </el-menu>
     </div>
     <span v-if="login">
-        <el-avatar :src="require('@/assets/images/avatar.jpeg')" class="avatar"></el-avatar>
+        <el-avatar :src="imageUrl?imageUrl:require('@/assets/images/avatar.jpeg')" class="avatar"></el-avatar>
         <span class="user-area">
             <span class="user-center" @click="clickUser">个人中心</span>
         </span>
     </span>
     <span class="log-buttons" v-else>
-        <el-button @click="clickLogin" type="primary" size="medium" round class="login-button">登录</el-button>
-        <el-button @click="clickLogup" type="primary" size="medium" round>注册</el-button>
+        <el-button @click="clickLogin" type="primary" size="default" round class="login-button">登录</el-button>
+        <el-button @click="clickLogup" type="primary" size="default" round>注册</el-button>
     </span>
 </template>
 
@@ -41,6 +41,10 @@ export default {
     login:Boolean,
     activeItem:String,
     username:{
+      type:String,
+      default:""
+    },
+    imageUrl:{
       type:String,
       default:""
     }
@@ -55,6 +59,7 @@ export default {
             name: 'home',
             query:{
               username:this.username,
+              imageSrc:this.imageUrl
             }
         });
     },
@@ -63,6 +68,7 @@ export default {
             name: 'taskcenter',
             query:{
               username:this.username,
+              imageSrc:this.imageUrl
             }
         });
     },
@@ -87,6 +93,7 @@ export default {
             name: 'mine',
             query:{
               username:this.username,
+              imageSrc:this.imageUrl
             }
         });
     },
@@ -95,6 +102,7 @@ export default {
             name: 'release',
             query:{
               username:this.username,
+              imageSrc:this.imageUrl
             }
         });
     }

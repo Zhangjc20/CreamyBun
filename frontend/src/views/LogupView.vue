@@ -267,7 +267,6 @@ export default {
               clearTimeout(timerT);
               clearInterval(timerI);
             }
-            console.log("error");
           }
         })
         .catch(function (err) {
@@ -280,6 +279,7 @@ export default {
       });
     },
     clickLogup() {
+      console.log("meishiba");
       if (
         !(
           this.usernameRight &&
@@ -333,6 +333,7 @@ export default {
             });
             return;
           } else {
+            console.log(res)
             if (res.data["type"] === "sameName") {
               ElMessage({
                 type: "error",

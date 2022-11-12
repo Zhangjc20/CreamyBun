@@ -1,4 +1,6 @@
 # CreamyBun
+# 前端配色：蓝色#5EABBF #FBE484
+
 # 前端命名统一
 + css多单词命名用-连接，如nav-bar
 + js文件变量命名，采用小驼峰

@@ -1,23 +1,21 @@
 <template>
   <el-config-provider :locale="locale">
-  <router-view/>
-</el-config-provider>
+    <router-view />
+  </el-config-provider>
 </template>
 
 <script>
-import zhCn from 'element-plus/lib/locale/lang/zh-cn'
+import zhCn from "element-plus/lib/locale/lang/zh-cn";
 export default {
-  components:{
+  components: {},
+  data() {
+    return {
+      locale: zhCn,
+    };
   },
-  data(){
-    return{
-      locale : zhCn
-    }
+  beforeUnmount() {
   },
-  beforeUnmount(){
-    sessionStorage.setItem("token", 'false');
-  }
-}
+};
 </script>
 
 <style lang="scss">
@@ -48,14 +46,14 @@ export default {
   text-align: center;
   color: #2c3e50;
   height: 100%;
-  padding:0;
-  margin:0;
+  padding: 0;
+  margin: 0;
 }
 
 html {
   height: 100%;
   margin: 0;
-  padding:0;
+  padding: 0;
 }
 
 /*重置body属性*/

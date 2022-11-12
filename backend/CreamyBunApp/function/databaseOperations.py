@@ -3,6 +3,7 @@
 from ..classDefination.userClass import *
 from ..classDefination.taskClass import *
 from ..classDefination.questionClass import *
+from ..variables.globalVariables import *
 
 # 添加一个用户到用户列表中
 def add_a_user(username,password,email):
@@ -45,9 +46,21 @@ def get_a_task_data(id):
 def update_password_by_username(username,password):
     User.objects.filter(username=username).update(password=password)
 
+# 通过用户名修改用户名
+def update_username_by_username(username,new_username):
+    User.objects.filter(username=username).update(username=new_username)
+
+# 通过用户名修改邮箱
+def update_email_by_username(username,new_email):
+    User.objects.filter(username=username).update(email=new_email)
+
 # 通过邮箱修改密码
 def update_password_by_email(email,password):
     User.objects.filter(email=email).update(password=password)
+
+# 通过用户名修改用户头像url
+def update_avatar_url_by_username(username,avatar_url):
+    User.objects.filter(username=username).update(avatar_url=avatar_url)
 
 # 修改指定用户的手机号
 def update_mobile_number_of_a_user(username,mobile_number):

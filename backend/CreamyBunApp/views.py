@@ -122,16 +122,19 @@ def reset_password(request):
 def get_user_basic_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
+    print(username)
     u = get_a_user_data(username)
     user_info = {
-        'status': 'ok',
-        'userName': u.username,
-        'mobileNumber': u.mobile_number,
-        'donutNumber': u.donut_number,
-        'email': u.email,
-        'creditRank': u.credit_rank,
-        'currentExp': u.current_exp,
-        'expForUpgrade': get_exp_for_upgrade(u.credit_rank),
+
+        'status':'ok',
+        'userName':u.username,
+        'mobileNumber':u.mobile_number,
+        'donutNumber':u.donut_number,
+        'email':u.email,
+        'creditRank':u.credit_rank,
+        'currentExp':u.current_exp,
+        'expForUpgrade':get_exp_for_upgrade(u.credit_rank),
+        'avatarImage':get_user_avatr(username),
     }
     return HttpResponse(json.dumps(user_info), content_type='application/json')
 
@@ -209,6 +212,51 @@ def get_user_released_task_info(request):
     }
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
+
+# 修改用户名
+@csrf_exempt
+def update_username(request):
+    query_dict = request.POST
+    username = query_dict.get("username","")
+    new_username = query_dict.get("newUsername","")
+    print(new_username)
+    is_new_username_exist = exist_user_by_name(new_username)
+    if is_new_username_exist:
+        return HttpResponse(json.dumps({'status':'wrong','type':'sameName'}), content_type='application/json') 
+    else:    
+        update_username_by_username(username,new_username)
+        return HttpResponse(json.dumps({'status':'ok','newUsername':new_username}), content_type='application/json')
+
+# 修改邮箱
+def update_email(request):
+    query_dict = request.GET
+    print(query_dict)
+    username = query_dict.get("username","")
+    type = query_dict.get("type", "")
+    new_email = query_dict.get("newEmail","")
+    if type == 'getVerifyCode':
+        is_new_email_exist = exist_user_by_email(new_email)
+        if is_new_email_exist:
+            return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameEmail'}), content_type='application/json')
+        else:
+            verify_code = send_email(new_email)
+            return HttpResponse(json.dumps({'status': 'ok', 'verifyCode': verify_code}), content_type='application/json')
+    elif type == 'changeEmail':
+        update_email_by_username(username,new_email)
+        return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+    else:
+        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}), content_type='application/json')
+
+# 修改用户头像
+@csrf_exempt
+def change_avatar(request):
+    image = request.FILES.get('image',None)
+    username = request.POST.get('username','')
+    if image == None:
+        return HttpResponse(json.dumps({'status':'wrong','type':'noImage'}), content_type='application/json')
+    else:
+        change_user_avatar(image,username)
+        return HttpResponse(json.dumps({'status':'ok'}), content_type='application/json')
 
 # 注销
 def log_off(request):

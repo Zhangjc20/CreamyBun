@@ -1,7 +1,7 @@
 <template>
   <el-container class="container">
     <el-header class="header-style">
-      <NavBar :login='username!=""' activeItem="1" :username="username"></NavBar>
+      <NavBar :login='username!=""' activeItem="1" :username="username" :imageUrl="image.src"></NavBar>
     </el-header>
     <el-main class="main-style">
       <div class="custom-box">
@@ -52,7 +52,7 @@
               <el-radio-button label="3">音频分析</el-radio-button>
             </el-radio-group>
           </div>
-          <el-carousel height="300px" ref="carousel" @change="carouselChange" initial-index="0">
+          <el-carousel height="300px" ref="carousel" @change="carouselChange" :initial-index="0">
             <el-carousel-item key="0">
               <el-row>
                 <el-col :span="12">
@@ -130,6 +130,10 @@ export default {
   },
   data(){
     return {
+      image:{
+        src:"",
+        type:"",
+      },
       itemList:['@/assets/images/pet1.jpeg',
       '@/assets/images/pet2.jpeg',
       '@/assets/images/pet3.jpeg',
@@ -151,6 +155,9 @@ export default {
     if(this.$route.query.username){
       this.username = this.$route.query.username;
       console.log(this.username)
+    }
+    if (this.$route.query.imageSrc) {
+      this.image.src = this.$route.query.imageSrc;
     }
   }
 }
