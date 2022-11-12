@@ -46,6 +46,14 @@ def get_a_task_data(id):
 def update_password_by_username(username,password):
     User.objects.filter(username=username).update(password=password)
 
+# 通过用户名修改用户名
+def update_username_by_username(username,new_username):
+    User.objects.filter(username=username).update(username=new_username)
+
+# 通过用户名修改邮箱
+def update_email_by_username(username,new_email):
+    User.objects.filter(username=username).update(email=new_email)
+
 # 通过邮箱修改密码
 def update_password_by_email(email,password):
     User.objects.filter(email=email).update(password=password)

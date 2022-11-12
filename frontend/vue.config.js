@@ -35,6 +35,20 @@ module.exports = defineConfig({
           '^/reset_password': '' //请求的时候使用这个api就可以
         }
       },
+      '/update_username': {
+        target: 'http://localhost:8000/update_username/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/update_username': '' //请求的时候使用这个api就可以
+        }
+      },
+      '/update_email': {
+        target: 'http://localhost:8000/update_email/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/update_email': '' //请求的时候使用这个api就可以
+        }
+      },
       '/change_avatar': {
         target: 'http://localhost:8000/change_avatar/', //填写请求的目标地址
         changOrigin: true, //允许跨域

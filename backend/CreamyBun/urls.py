@@ -24,6 +24,8 @@ urlpatterns = [
     path('log_in/',views.log_in),
     path('send_email/',views.send_email),
     path('change_avatar/',views.change_avatar),
+    path('update_username/',views.update_username),
+    path('update_email/',views.update_email),
     path('log_off/',views.log_off),
     path('update_mobile/',views.update_mobile),
     path('get_material_zip/',views.get_material_zip),

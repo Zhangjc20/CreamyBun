@@ -153,7 +153,7 @@ def change_user_avatar(image,username):
         for line in image:
             f.write(line)
 
-# 获取用户头像base64格式;暂时测试，等待fh改良
+# 获取用户头像base64格式
 def get_user_avatr(username):
     avatar_url = get_a_user_data(username).avatar_url
     if not os.path.exists(avatar_url):

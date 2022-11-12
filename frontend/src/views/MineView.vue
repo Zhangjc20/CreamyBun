@@ -49,6 +49,7 @@
             :username="username"
             ref="coreComponent"
             @initAvatar="initAvatar"
+            @changeUsername="changeUsername"
           ></component>
         </keep-alive>
       </el-main>
@@ -145,6 +146,10 @@ export default {
     };
   },
   methods: {
+    changeUsername(newUsername) { 
+      this.username = newUsername;
+      console.log(this.username);
+    },
     initAvatar(src){
       this.image.src = src;
     },

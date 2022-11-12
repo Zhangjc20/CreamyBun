@@ -289,6 +289,7 @@ export default {
       expForUpgrade: -1,
       email: "",
       percentage: 0,
+      codeEmail:""
     };
   },
   methods: {
@@ -410,30 +411,37 @@ export default {
         }
       )
         .then(() => {
-          // axios
-          //   .post("", {
-          //   username:this.username,
-          //   newUsername:this.changeForm.username
-          // })
-          //   .then((res) => {
-          //     if (res.data["status"] === "ok") {
-          //       ElMessage({
-          //         type: "success",
-          //         message: "修改成功",
-          //       });
-          //     } else {
-          //       if (res.data["type"] === "sameName") {
-          //         //用户名被注册过
-          //         ElMessage({
-          //           type: "error",
-          //           message: "该用户名已被注册",
-          //         });
-          //       }
-          //     }
-          //   })
-          //   .catch(function (error) {
-          //     console.log(error);
-          //   });
+          var formData = new FormData();
+          formData.append('username', this.username);
+          formData.append('newUsername', this.changeForm.username);
+          axios
+            .post("/update_username",formData)
+            .then((res) => {
+              if (res.data["status"] === "ok") {
+                ElMessage({
+                  type: "success",
+                  message: "修改成功",
+                });
+                this.$emit("changeUsername", res.data['newUsername']);
+                this.$router.push({
+                  name: "mine",
+                  query: {
+                    username: res.data['newUsername'],
+                  }
+                });
+              } else {
+                if (res.data["type"] === "sameName") {
+                  //用户名被注册过
+                  ElMessage({
+                    type: "error",
+                    message: "该用户名已被注册",
+                  });
+                }
+              }
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
         })
         .catch(() => {});
     },
@@ -456,17 +464,22 @@ export default {
       )
         .then(() => {
           axios
-            .get("", {
-              username: this.username,
-              newEmail: this.changeForm.email,
+            .get("/update_email", {
+              params: {
+                username: this.username,
+                newEmail: this.changeForm.email,
+                type: "getVerifyCode"
+              }
             })
             .then((res) => {
+              console.log(res)
               //考虑是否和当前邮箱一样
               if (res.data["status"] === "ok") {
                 ElMessage({
                   type: "success",
                   message: "邮箱验证码发送成功",
                 });
+                this.codeEmail = this.changeForm.email;
                 this.verifyCode=res.data['verifyCode']
                 ElMessageBox.prompt(
                   "请输入发送到对应邮箱的验证码（请勿关闭当前窗口）",
@@ -475,22 +488,43 @@ export default {
                     confirmButtonText: "确认",
                     cancelButtonText: "取消",
                     inputPattern:
-                      /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
-                    inputErrorMessage: "邮箱格式无效",
+                      /\d{6}/,
+                    inputErrorMessage: "验证码格式无效",
                   }
                 )
                   .then(({ value }) => {
-                    if (!Number.isInteger(value) && value.length != 6) {
+                    if (this.changeForm.email != this.codeEmail) {
                       ElMessage({
                         type: "error",
-                        message: "验证码格式错误",
+                        message: "输入邮箱需要和发送验证码时邮箱填写一致",
                       });
                     } else {
                       if (value == this.verifyCode) {
-                        ElMessage({
-                          type: "success",
-                          message: "邮箱修改成功",
-                        });
+                        axios
+                          .get("/update_email", {
+                            params: {
+                              username: this.username,
+                              newEmail: this.codeEmail,
+                              type: "changeEmail"
+                            }
+                          })
+                          .then((res) => {
+                            if (res.data['status'] === 'ok') {
+                              ElMessage({
+                                type: "success",
+                                message: "邮箱修改成功",
+                              });
+                              this.email = this.codeEmail;
+                              console.log(this.codeEmail);
+                              console.log(this.email);
+                            }
+                            else { 
+                              ElMessage({
+                                type: "error",
+                                message: "邮箱修改失败",
+                              });
+                            }
+                          }).catch(() => { })
                       } else {
                         ElMessage({
                           type: "error",
@@ -509,7 +543,7 @@ export default {
                 if (res.data["type"] === "sameEmail") {
                   ElMessage({
                     type: "error",
-                    message: "邮箱格式错误",
+                    message: "邮箱已被注册",
                   });
                 }
               }
