@@ -1,7 +1,7 @@
 <template>
   <el-container class="container">
     <el-header class="header-style">
-      <NavBar :login="true" activeItem="2" :username="username"></NavBar>
+      <NavBar :login="true" activeItem="2" :username="username" :imageUrl="image.src"></NavBar>
     </el-header>
     <el-container class="main-area">
       <el-aside class="left-menu-area">
@@ -22,24 +22,22 @@
           <div class="button-area">
             <CustomButton
               title="所有"
-              :props="donutType === 1? activeProps : normalProps"
+              :props="donutType === 1 ? activeProps : normalProps"
               @click="handleClickBtn(4, 1)"
             ></CustomButton>
             <CustomButton
               title="从多到少"
-              :props="donutType === 2? activeProps : normalProps"
+              :props="donutType === 2 ? activeProps : normalProps"
               @click="handleClickBtn(4, 2)"
             ></CustomButton>
           </div>
           <div class="button-area second-line">
             <CustomButton
               title="从少到多"
-              :props="donutType === 3? activeProps : normalProps"
+              :props="donutType === 3 ? activeProps : normalProps"
               @click="handleClickBtn(4, 3)"
             ></CustomButton>
-            <CustomButton
-              :props="disabledProps"
-            ></CustomButton>
+            <CustomButton :props="disabledProps"></CustomButton>
           </div>
         </div>
         <div class="later-area">
@@ -49,24 +47,22 @@
           <div class="button-area">
             <CustomButton
               title="所有"
-              :props="overType === 1? activeProps : normalProps"
+              :props="overType === 1 ? activeProps : normalProps"
               @click="handleClickBtn(1, 1)"
             ></CustomButton>
             <CustomButton
               title="未结束"
-              :props="overType === 2? activeProps : normalProps"
+              :props="overType === 2 ? activeProps : normalProps"
               @click="handleClickBtn(1, 2)"
             ></CustomButton>
           </div>
           <div class="button-area second-line">
             <CustomButton
               title="已结束"
-              :props="overType === 3? activeProps : normalProps"
+              :props="overType === 3 ? activeProps : normalProps"
               @click="handleClickBtn(1, 3)"
             ></CustomButton>
-            <CustomButton
-              :props="disabledProps"
-            ></CustomButton>
+            <CustomButton :props="disabledProps"></CustomButton>
           </div>
         </div>
         <div class="later-area">
@@ -76,24 +72,22 @@
           <div class="button-area">
             <CustomButton
               title="所有"
-              :props="newType === 1? activeProps : normalProps"
+              :props="newType === 1 ? activeProps : normalProps"
               @click="handleClickBtn(2, 1)"
             ></CustomButton>
             <CustomButton
               title="最新发布"
-              :props="newType === 2? activeProps : normalProps"
+              :props="newType === 2 ? activeProps : normalProps"
               @click="handleClickBtn(2, 2)"
             ></CustomButton>
           </div>
           <div class="button-area second-line">
             <CustomButton
               title="最早结束"
-              :props="newType === 3? activeProps : normalProps"
+              :props="newType === 3 ? activeProps : normalProps"
               @click="handleClickBtn(2, 3)"
             ></CustomButton>
-            <CustomButton
-              :props="disabledProps"
-            ></CustomButton>
+            <CustomButton :props="disabledProps"></CustomButton>
           </div>
         </div>
         <div class="later-area">
@@ -103,24 +97,22 @@
           <div class="button-area">
             <CustomButton
               title="所有"
-              :props="hardType === 1? activeProps : normalProps"
+              :props="hardType === 1 ? activeProps : normalProps"
               @click="handleClickBtn(3, 1)"
             ></CustomButton>
             <CustomButton
               title="从难到易"
-              :props="hardType === 2? activeProps : normalProps"
+              :props="hardType === 2 ? activeProps : normalProps"
               @click="handleClickBtn(3, 2)"
             ></CustomButton>
           </div>
           <div class="button-area second-line">
             <CustomButton
               title="从易到难"
-              :props="hardType === 3? activeProps : normalProps"
+              :props="hardType === 3 ? activeProps : normalProps"
               @click="handleClickBtn(3, 3)"
             ></CustomButton>
-            <CustomButton
-              :props="disabledProps"
-            ></CustomButton>
+            <CustomButton :props="disabledProps"></CustomButton>
           </div>
         </div>
         <div class="later-area">
@@ -202,10 +194,7 @@
           </div>
         </div>
         <div class="confirm-button-area">
-          <CustomButton
-            :props="confirmProps"
-            title="确认筛选"
-          ></CustomButton>
+          <CustomButton :props="confirmProps" title="确认筛选"></CustomButton>
         </div>
       </el-aside>
       <el-main class="main-style">
@@ -240,12 +229,16 @@ export default {
   },
   data() {
     return {
-      confirmProps:{
-        width:"120px",
-        fontSize:"16px",
-        fontColor:"#FFFFFF",
-        normalColor:"#5EABBF",
-        hoverColor:"",
+      image:{
+        src:"",
+        type:"",
+      },
+      confirmProps: {
+        width: "120px",
+        fontSize: "16px",
+        fontColor: "#FFFFFF",
+        normalColor: "#5EABBF",
+        hoverColor: "",
       },
       disabledProps: {
         hasBorder: false,
@@ -284,7 +277,7 @@ export default {
       chosenDataType: 1,
       chosenQuestionType: 1,
       searchInput: "",
-      username:"",
+      username: "",
       items: [
         {
           index: 1,
@@ -356,17 +349,20 @@ export default {
       }
     },
   },
-  mounted(){
-    if(this.$route.query.username){
+  mounted() {
+    if (this.$route.query.username) {
       this.username = this.$route.query.username;
-      console.log(this.username)
+      console.log(this.username);
     }
-  }
+    if (this.$route.query.imageSrc) {
+      this.image.src = this.$route.query.imageSrc;
+    }
+  },
 };
 </script>
 
 <style scoped>
-  .icon {
+.icon {
   width: 1em;
   height: 1em;
   vertical-align: -0.15em;
