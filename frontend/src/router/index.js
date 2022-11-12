@@ -90,7 +90,17 @@ router.beforeEach((to, from, next) => {
   //跳转指定路由 next('error') 
   if (to.meta.requireAuth) { // 判断该路由是否需要登录权限
     if (sessionStorage.getItem("token") == 'true') { // 判断本地是否存在token
-      next()
+      if(to.query.username){
+        next()
+      }
+      else{
+        next({
+          name:to.name,
+          query:{
+            username:sessionStorage.getItem('username')
+          }
+        })
+      }
     } else {
       // 未登录,跳转到登陆页面
       next({

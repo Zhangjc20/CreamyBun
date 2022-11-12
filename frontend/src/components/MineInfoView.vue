@@ -36,7 +36,12 @@
       <el-row class="basic-info-box-inner">
         <el-col :span="6" class="left-info-box">
           <div class="avatar-box" @click="uploadAvatar">
-            <el-avatar :size="100" :src="image.src"></el-avatar>
+            <el-avatar
+              :size="100"
+              :src="
+                image.src ? image.src : require('@/assets/images/avatar.jpeg')
+              "
+            ></el-avatar>
           </div>
         </el-col>
         <el-col class="right-info-box" :span="18">
@@ -105,9 +110,19 @@
       <div class="change-title">修改信息</div>
       <el-row>
         <el-col :span="12">
-          <el-form :model="changeForm" label-width="120px" class="change-form">
-            <el-form-item label="用户名">
-              <el-input v-model="changeForm.username" class="info-input" />
+          <el-form
+            :model="changeForm"
+            label-width="120px"
+            class="change-form"
+            :rules="rules"
+          >
+            <el-form-item label="用户名" prop="username">
+              <el-input
+                v-model="changeForm.username"
+                maxlength="12"
+                class="info-input"
+                clearable
+              />
             </el-form-item>
             <el-form-item label="">
               <CustomButton
@@ -116,8 +131,12 @@
                 @click="handleChangeName"
               ></CustomButton>
             </el-form-item>
-            <el-form-item label="邮箱">
-              <el-input v-model="changeForm.email" class="info-input" />
+            <el-form-item label="邮箱" prop="email">
+              <el-input
+                v-model="changeForm.email"
+                class="info-input"
+                clearable
+              />
             </el-form-item>
             <el-form-item label="">
               <CustomButton
@@ -187,7 +206,53 @@ export default {
     },
   },
   data() {
+    const validateUsername = (rule, value, callback) => {
+      if (value === "") {
+        this.usernameRight = false;
+        callback(new Error("用户名不能为空"));
+      } else if (value.match(/[a-z\d]{5,12}/g)) {
+        this.usernameRight = true;
+        callback();
+      } else {
+        this.usernameRight = false;
+        callback(new Error("请输入5-12位字母和数字的组合"));
+      }
+    };
+    const validateEmail = (rule, value, callback) => {
+      if (
+        value.match(
+          /[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+/g
+        )
+      ) {
+        this.emailRight = true;
+        console.log("asd");
+        callback();
+      } else {
+        this.emailRight = false;
+        console.log("asasdfasd");
+        callback(new Error("邮箱格式不合法"));
+      }
+    };
     return {
+      verifyCode: "",
+      usernameRight: false,
+      emailRight: false,
+      rules: {
+        username: [
+          {
+            validator: validateUsername,
+            required: true,
+            trigger: ["blur", "change"],
+          },
+        ],
+        email: [
+          {
+            validator: validateEmail,
+            required: true,
+            trigger: ["blur", "change"],
+          },
+        ],
+      },
       showModal: false,
       image: {
         src: null,
@@ -227,19 +292,19 @@ export default {
     };
   },
   methods: {
-    base64ImgtoFile (dataurl, filename = 'file') {
-      const arr = dataurl.split(',')
-      const mime = arr[0].match(/:(.*?);/)[1]
-      const suffix = mime.split('/')[1]
-      const bstr = atob(arr[1])
-      let n = bstr.length
-      const u8arr = new Uint8Array(n)
+    base64ImgtoFile(dataurl, filename = "file") {
+      const arr = dataurl.split(",");
+      const mime = arr[0].match(/:(.*?);/)[1];
+      const suffix = mime.split("/")[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
       while (n--) {
-        u8arr[n] = bstr.charCodeAt(n)
+        u8arr[n] = bstr.charCodeAt(n);
       }
       return new File([u8arr], `${filename}.${suffix}`, {
-        type: mime
-      })
+        type: mime,
+      });
     },
     blobToFile(blob, fileName, mimeType) {
       return new File([blob], fileName, { type: mimeType });
@@ -261,19 +326,23 @@ export default {
         this.image.src = URL.createObjectURL(blob);
         console.log(this.image.type);
         var formData = new FormData();
-        formData.append('image',this.blobToFile(blob,this.image.type.split("/")[1],this.image.type))
-        formData.append('username',this.username)
-        axios.post('/change_avatar',formData,{
-          query:{
-            username:this.username
-          }
-        })
-          .then((res)=>{
+        formData.append(
+          "image",
+          this.blobToFile(blob, this.image.type.split("/")[1], this.image.type)
+        );
+        formData.append("username", this.username);
+        axios
+          .post("/change_avatar", formData, {
+            query: {
+              username: this.username,
+            },
+          })
+          .then((res) => {
             console.log(res);
           })
-          .catch((err)=>{
+          .catch((err) => {
             console.log(err);
-          })
+          });
       }, this.image.type);
     },
     loadImage(event) {
@@ -324,48 +393,132 @@ export default {
       });
     },
     handleChangeName() {
-      this.currentExp = 88;
-      this.expForUpgrade = 6000;
-      this.percentage = this.getRatio();
-      // axios.get()
-      // .then(function (response) {
-      //   console.log(response);//考虑重名
-      // })
-      // .catch(function (error) {
-      //   console.log(error);
-      // });
-    },
-    handleChangeEmail() {
-      // axios.get()
-      // .then(function (response) {
-      //   console.log(response);//考虑是否和当前邮箱一样
-      // })
-      // .catch(function (error) {
-      //   console.log(error);
-      // });
-      ElMessageBox.prompt(
-        "请输入发送到某邮箱的验证码（请勿关闭当前窗口）",
-        "修改邮箱",
+      if (!this.usernameRight) {
+        ElMessage({
+          type: "error",
+          message: "用户名格式错误",
+        });
+        return;
+      }
+      ElMessageBox.confirm(
+        "确定要修改用户名为" + this.changeForm.username,
+        "修改用户名",
         {
           confirmButtonText: "确认",
           cancelButtonText: "取消",
-          inputPattern:
-            /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
-          inputErrorMessage: "邮箱格式无效",
+          type: "info",
         }
       )
-        .then(({ value }) => {
-          ElMessage({
-            type: "success",
-            message: `您的邮箱成功修改成:${value}`,
-          });
+        .then(() => {
+          // axios
+          //   .post("", {
+          //   username:this.username,
+          //   newUsername:this.changeForm.username
+          // })
+          //   .then((res) => {
+          //     if (res.data["status"] === "ok") {
+          //       ElMessage({
+          //         type: "success",
+          //         message: "修改成功",
+          //       });
+          //     } else {
+          //       if (res.data["type"] === "sameName") {
+          //         //用户名被注册过
+          //         ElMessage({
+          //           type: "error",
+          //           message: "该用户名已被注册",
+          //         });
+          //       }
+          //     }
+          //   })
+          //   .catch(function (error) {
+          //     console.log(error);
+          //   });
         })
-        .catch(() => {
-          ElMessage({
-            type: "info",
-            message: "取消修改邮箱",
-          });
+        .catch(() => {});
+    },
+    handleChangeEmail() {
+      if (!this.emailRight) {
+        ElMessage({
+          type: "error",
+          message: "邮箱格式错误",
         });
+        return;
+      }
+      ElMessageBox.confirm(
+        "确定要修改邮箱为" + this.changeForm.email,
+        "修改用户名",
+        {
+          confirmButtonText: "确认",
+          cancelButtonText: "取消",
+          type: "info",
+        }
+      )
+        .then(() => {
+          axios
+            .get("", {
+              username: this.username,
+              newEmail: this.changeForm.email,
+            })
+            .then((res) => {
+              //考虑是否和当前邮箱一样
+              if (res.data["status"] === "ok") {
+                ElMessage({
+                  type: "success",
+                  message: "邮箱验证码发送成功",
+                });
+                this.verifyCode=res.data['verifyCode']
+                ElMessageBox.prompt(
+                  "请输入发送到对应邮箱的验证码（请勿关闭当前窗口）",
+                  "修改邮箱",
+                  {
+                    confirmButtonText: "确认",
+                    cancelButtonText: "取消",
+                    inputPattern:
+                      /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
+                    inputErrorMessage: "邮箱格式无效",
+                  }
+                )
+                  .then(({ value }) => {
+                    if (!Number.isInteger(value) && value.length != 6) {
+                      ElMessage({
+                        type: "error",
+                        message: "验证码格式错误",
+                      });
+                    } else {
+                      if (value == this.verifyCode) {
+                        ElMessage({
+                          type: "success",
+                          message: "邮箱修改成功",
+                        });
+                      } else {
+                        ElMessage({
+                          type: "error",
+                          message: "验证码错误",
+                        });
+                      }
+                    }
+                  })
+                  .catch(() => {
+                    ElMessage({
+                      type: "info",
+                      message: "取消修改邮箱",
+                    });
+                  });
+              } else {
+                if (res.data["type"] === "sameEmail") {
+                  ElMessage({
+                    type: "error",
+                    message: "邮箱格式错误",
+                  });
+                }
+              }
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        })
+        .catch(() => {});
     },
     handleChangePhone() {
       //留待接口
@@ -390,9 +543,13 @@ export default {
             this.currentExp = res.data["currentExp"];
             this.expForUpgrade = res.data["expForUpgrade"];
             this.percentage = this.getRatio();
-            const imageFile = this.base64ImgtoFile('data:image/png;base64,' + res.data['avatarImage']);
-            this.image.src = window.webkitURL.createObjectURL(imageFile) || window.URL.createObjectURL(imageFile);
-            this.$emit('initAvatar',this.image.src);
+            const imageFile = this.base64ImgtoFile(
+              "data:image/png;base64," + res.data["avatarImage"]
+            );
+            this.image.src =
+              window.webkitURL.createObjectURL(imageFile) ||
+              window.URL.createObjectURL(imageFile);
+            this.$emit("initAvatar", this.image.src);
           }
         })
         .catch((err) => {

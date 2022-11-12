@@ -103,6 +103,7 @@ export default {
               message: "登录成功",
           });
           sessionStorage.setItem("token", 'true');
+          sessionStorage.setItem("username", this.form.username );
           this.$router.push({
               name: 'mine',
               query:{

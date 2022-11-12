@@ -14,7 +14,6 @@ export default {
     };
   },
   beforeUnmount() {
-    sessionStorage.setItem("token", "false");
   },
 };
 </script>
