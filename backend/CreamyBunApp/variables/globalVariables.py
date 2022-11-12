@@ -16,4 +16,4 @@ money_to_donut = 100
 donut_to_money = 120
 
 # 用户头像储存位置
-user_avatar_save_path = "./user_avatar/"
+user_avatar_save_path = "./resource/user_avatar/"

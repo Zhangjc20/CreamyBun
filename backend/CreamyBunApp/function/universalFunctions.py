@@ -145,18 +145,21 @@ def get_task_info_list(username,state,page_number):
     # 返回 总页数（int），任务信息列表（列表，成员为字典）
     return total_page_number,task_info_list
 
-# 修改用户头像
+# 修改用户头像并保存至后端
 def change_user_avatar(image,username):
-    with open(user_avatar_save_path + username + "." + image.name, 'wb') as f:
+    avatar_url = user_avatar_save_path + username + "." + image.name
+    update_avatar_url_by_username(username,avatar_url)
+    with open(avatar_url, 'wb') as f:
         for line in image:
             f.write(line)
 
 # 获取用户头像base64格式;暂时测试，等待fh改良
 def get_user_avatr(username):
-    if not os.path.exists(user_avatar_save_path+'zhangjc20.jpeg'):
+    avatar_url = get_a_user_data(username).avatar_url
+    if not os.path.exists(avatar_url):
         return None
     else:
-        with open(user_avatar_save_path+'zhangjc20.jpeg', 'rb') as f:
+        with open(avatar_url, 'rb') as f:
             data = f.read()
             return bytes.decode(base64.b64encode(data))
     

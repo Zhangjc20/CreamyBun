@@ -8,7 +8,7 @@ class User(models.Model):
     username = models.CharField(max_length=12,default="username")
     password = models.CharField(max_length=18,default="password")
     email = models.CharField(max_length=350,default="email")
-    avatar_url = models.CharField(max_length=18,default="image")
+    avatar_url = models.CharField(max_length=1000,default="image")
     mobile_number = models.CharField(max_length=11,default="")
     donut_number = models.IntegerField(default=0)
     credit_rank = models.IntegerField(default=1)
