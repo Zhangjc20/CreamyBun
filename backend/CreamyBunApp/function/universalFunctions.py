@@ -118,14 +118,15 @@ def get_task_info_list(username,state,page_number):
     for i, t_id in enumerate(needed_task_to_state_list):
         t = get_a_task_data(t_id)
         t_info = {
+            'isSpace':False,
             'taskId':t_id,
             'taskName':t.task_name,
             'starRank':t.star_rank,
             'singleBonus':t.single_bonus,
             'taskType':t.task_type,
             'answerType':t.answer_type,
-            'beginTime':t.begin_time,
-            'endTime':t.end_time,
+            'beginTime':t.begin_time.split(" ")[0],
+            'endTime':t.end_time.split(" ")[0],
         }
         t_info.setdefault('index',i)
         task_info_list.append(t_info)
