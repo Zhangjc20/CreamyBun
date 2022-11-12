@@ -510,11 +510,9 @@ export default {
       formData.append("materialType", this.localMaterialType)
 
       console.log("shardTotal", shardTotal)
-      console.log("localMaterialType", "tempName")
 
       formData.append("currentTime", this.currentTime)
-      // formData.append("username",this.username)
-      formData.append("username","tempName")
+      formData.append("username",this.username)
       
       let fileTypeList = file.name.split('.')
       let fileType = fileTypeList[fileTypeList.length - 1]
