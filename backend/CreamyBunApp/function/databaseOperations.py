@@ -4,6 +4,7 @@ from ..classDefination.userClass import *
 from ..classDefination.taskClass import *
 from ..classDefination.questionClass import *
 from ..variables.globalVariables import *
+from ..variables.globalConstants import *
 
 # 添加一个用户到用户列表中
 def add_a_user(username,password,email):
@@ -61,6 +62,20 @@ def update_password_by_email(email,password):
 # 通过用户名修改用户头像url
 def update_avatar_url_by_username(username,avatar_url):
     User.objects.filter(username=username).update(avatar_url=avatar_url)
+
+# 让用户签到
+def update_clock_in_info(username):
+    u = get_a_user_data(username)
+    if not u.is_today_sign_in:
+        u.is_today_sign_in = True
+        u.continue_sign_in_days += 1
+    return u.is_today_sign_in,u.continue_sign_in_days
+
+# 定时重置签到数据
+def reset_clock_in_info(user:User):
+    if user.is_today_sign_in == False or user.continue_sign_in_days == CLOCK_IN_CYCLE:
+        user.continue_sign_in_days = 0
+    user.is_today_sign_in = False
 
 # 修改指定用户的手机号
 def update_mobile_number_of_a_user(username,mobile_number):

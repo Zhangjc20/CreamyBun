@@ -45,6 +45,9 @@ MAX_TASK_NAME_LENGTH = 40
 # 时间字符串长度上限
 MAX_TIME_STRING_LENGTH = 25
 
+# 签到周期
+CLOCK_IN_CYCLE = 7
+
 IMAGE_TYPE_SET = {'jpg', 'bmp', 'png'}
 TEXT_TYPE_SET = {'txt', 'docx'}
 VIDEO_TYPE_SET = {'mp4'}

@@ -151,8 +151,20 @@ def get_user_activity_info(request):
         'status':'ok',
         'continueSignInDays':u.continue_sign_in_days,
         'isTodaySignIn':u.is_today_sign_in,
+        'donutListForClockIn':donut_for_clock_in,
     }
     return HttpResponse(json.dumps(activity_info), content_type='application/json')
+
+# 签到接口
+def clock_in(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    success_clock_in,continue_clock_in_days = update_clock_in_info(username)
+    clock_in_info = {
+        'continueSignInDays':continue_clock_in_days,
+        'isTodaySignIn':success_clock_in,
+    }
+    return HttpResponse(json.dumps(clock_in_info), content_type='application/json')
 
 # 获得设置信息
 def get_user_settings_info(request):
