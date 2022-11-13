@@ -136,12 +136,18 @@
 <script>
 import CustomButton from './CustomButton.vue';
 import { ElMessage } from 'element-plus';
+import axios from 'axios';
 export default {
   name: "ActivityCenter",
   components:{
     CustomButton
   },
-  props: {},
+  props: {
+    username:{
+      type:String,
+      default:""
+    }
+  },
   data() {
     return {
       clocked: false,
@@ -164,6 +170,16 @@ export default {
   created(){
     //从后端获得该用户的连续签到天数
     //从后端获得该用户是否已经签到
+    axios.get("/get_user_activity_info",{
+      params:{
+        username:this.username
+      }
+    }).then((res)=>{
+        if(res.data['status']==='ok'){
+          this.clockinDays = res.data['continueSignInDays'];
+          this.clocked = res.data['isTodaySignIn'];
+        }
+    }).catch();
   },
 };
 </script>

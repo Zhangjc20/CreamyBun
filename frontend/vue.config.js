@@ -28,6 +28,20 @@ module.exports = defineConfig({
           '^/get_user_basic_info': '' //请求的时候使用这个api就可以
         }
       },
+      '/get_user_activity_info': {
+        target: 'http://localhost:8000/get_user_activity_info/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/get_user_activity_info': '' //请求的时候使用这个api就可以
+        }
+      },
+      '/get_user_bonus_info': {
+        target: 'http://localhost:8000/get_user_bonus_info/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/get_user_bonus_info': '' //请求的时候使用这个api就可以
+        }
+      },
       '/reset_password': {
         target: 'http://localhost:8000/reset_password/', //填写请求的目标地址
         changOrigin: true, //允许跨域

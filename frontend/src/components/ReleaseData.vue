@@ -135,7 +135,7 @@
             <el-row style="height: 50px;">
               <span class="header-title" style="margin: auto,auto,auto,20px;font-size:17px;">请上传任务封面</span>
             </el-row>
-            <UploadCropper/>
+            <UploadCropper @getImage="getImage"/>
 
           </el-main>
           
@@ -294,6 +294,7 @@ export default {
   },
   data(){
     return {
+      imageFile:null,
       componentName:'ReleaseBasicQuestion',
       localMaterialType:0,
       options:[
@@ -362,6 +363,10 @@ export default {
 
   },
   methods:{
+    getImage(file){
+      this.imageFile = file;
+      console.log(file);
+    },
     clickHome(){
       this.$router.push({
             name: 'home',

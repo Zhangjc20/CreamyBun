@@ -1,13 +1,13 @@
 <template>
     <div class="gift-box">
       <div class="gift-title">奖励中心</div>
-      <div class="exchange-rate-title">当前汇率: 120
+      <div class="exchange-rate-title">当前汇率: {{donutToMoney}}
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-tiantianquan"></use>
         </svg>
         => 1 元
       </div>
-      <div class="exchange-rate-title reverse-title">1 元 => 100
+      <div class="exchange-rate-title reverse-title">1 元 => {{moneyToDonut}}
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-tiantianquan"></use>
         </svg>
@@ -16,7 +16,7 @@
         拥有
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-tiantianquan"></use>
-        </svg> = 240
+        </svg> = {{donutNumber}}
       </div>
       <div class="exchange-area">
         兑换甜甜圈 ： 
@@ -34,14 +34,22 @@
 </template>
   
   <script>
-  import { ElMessage, ElMessageBox } from 'element-plus';
+  import axios from 'axios';
+import { ElMessage, ElMessageBox } from 'element-plus';
   export default {
     name: 'GiftCenter',
     props: {
+      username:{
+        type:String,
+        default:""
+      }
     },
     data(){
         return {
-          valueInput:""
+          valueInput:"",
+          donutToMoney:-1,
+          moneyToDonut:-1,
+          donutNumber:-1,
         }
     },
     methods:{
@@ -72,6 +80,21 @@
             })
           })
       }
+    },
+    mounted(){
+      axios.get("/get_user_bonus_info",{
+        params:{
+          username:this.username
+        }
+      })
+      .then((res)=>{
+        if(res.data['status']==='ok'){
+          this.donutNumber=res.data['donutNumber'];
+          this.donutToMoney=res.data['donutToMoney'];
+          this.moneyToDonut=res.data['moneyToDonut'];
+        }
+      })
+      .catch()
     }
   }
   </script>

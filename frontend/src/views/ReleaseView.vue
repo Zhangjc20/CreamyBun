@@ -95,8 +95,6 @@ export default {
     },
   },
   mounted() {
-    console.log("niihasoda");
-    console.log(this.$route.query);
     if (this.$route.query.username) {
       this.username = this.$route.query.username;
       console.log(this.username);

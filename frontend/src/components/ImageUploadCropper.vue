@@ -1,5 +1,12 @@
 <template>
   <div class="wrapper">
+    <input
+        type="file"
+        ref="file"
+        @change="loadImage($event)"
+        accept="image/*"
+        class="file-input"
+      />
     <vue-final-modal
       v-model="showModal"
       classes="modal-container"
@@ -29,16 +36,11 @@
       :height="150"
       :image="result.image"
       :coordinates="result.coordinates"
+      @click="uploadImage"
       v-if="uploaded"
+      class="preview"
     />
     <el-upload action="#" :disabled="true" list-type="picture-card" :auto-upload="false" @click="inputClick" v-else>
-        <input
-        type="file"
-        ref="file"
-        @change="loadImage($event)"
-        accept="image/*"
-        class="file-input"
-      />
         <el-icon><Plus /></el-icon>
     </el-upload>
   </div>
@@ -88,6 +90,12 @@ export default {
     };
   },
   methods: {
+    blobToFile(blob, fileName, mimeType) {
+      return new File([blob], fileName, { type: mimeType });
+    },
+    uploadImage(){
+      this.$refs.file.click();
+    },
     handleConfirm(){
         this.showModal = false;
         this.crop();
@@ -105,7 +113,8 @@ export default {
       const { canvas } = this.$refs.cropper.getResult();
       canvas.toBlob((blob) => {
         // 可以上传blob
-        console.log(blob);
+        this.$emit("getImage",this.blobToFile(blob))
+        this.$refs.file.value="";
       }, this.image.type);
     },
     reset() {
@@ -155,6 +164,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.preview{
+  cursor: pointer;
+}
 .wrapper {
     display: flex;
     flex-direction: column;
