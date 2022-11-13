@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue';
 import MineView from '../views/MineView.vue';
 import ReleaseView from '../views/ReleaseView.vue';
+import PerformView from '../views/PerformView.vue';
 import LogupView from '@/views/LogupView.vue';
 import LogresetView from "@/views/LogresetView.vue";
 import TaskCenterView from "@/views/TaskCenterView.vue";
@@ -63,6 +64,15 @@ const routes = [
     path: "/Release",
     name: "release",
     component: ReleaseView
+  },
+  {
+    meta:{
+      // 必须登录才可以查看
+      requireAuth: true
+    },
+    path: "/Perform",
+    name: "perform",
+    component: PerformView
   },
   {
     meta:{

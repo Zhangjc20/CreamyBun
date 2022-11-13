@@ -29,7 +29,7 @@ def log_up(request):
         # return HttpResponse(json.dumps({'status':'ok'}), content_type='application/json')
     # 如果是点击注册
     elif type == 'logUp':
-        #判断是否重名
+        # 判断是否重名
         check_user_by_name = exist_user_by_name(username)
         if check_user_by_name:
             return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameName'}), content_type='application/json')
@@ -39,10 +39,11 @@ def log_up(request):
             return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
         else:
             return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')
-    
+
     # 未知操作
     else:
-        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}), content_type='application/json')
+        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}),
+                            content_type='application/json')
 
 
 # 登录
@@ -54,21 +55,22 @@ def log_in(request):
     # 用户是否存在
     is_user_exist = exist_user_by_name(username)
     if not is_user_exist:
-        return HttpResponse(json.dumps({'status':'wrong','type':'noUser'}), content_type='application/json')
-    
+        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'noUser'}), content_type='application/json')
+
     # 密码是否正确
-    is_password_right = match_username_with_password(username,password)
+    is_password_right = match_username_with_password(username, password)
     if not is_password_right:
-        return HttpResponse(json.dumps({'status':'wrong','type':'wrongPassword'}), content_type='application/json')
-    
-    return HttpResponse(json.dumps({'status':'ok'}), content_type='application/json')
+        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'wrongPassword'}), content_type='application/json')
+
+    return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+
 
 # 重置密码
 def reset_password(request):
     query_dict = request.GET
-    reset_way = query_dict.get("resetWay", "") 
-    password = query_dict.get("password", "") 
-  
+    reset_way = query_dict.get("resetWay", "")
+    password = query_dict.get("password", "")
+
     # 如果是通过用户名重置
     if reset_way == 'username':
         # 用户是否存在
@@ -79,12 +81,14 @@ def reset_password(request):
             if type == 'getVerifyCode':
                 email = get_a_user_data(username).email
                 verify_code = send_email(email)
-                return HttpResponse(json.dumps({'status': 'ok', 'email':email, 'verifyCode': verify_code}), content_type='application/json')
+                return HttpResponse(json.dumps({'status': 'ok', 'email': email, 'verifyCode': verify_code}),
+                                    content_type='application/json')
             elif type == 'resetPassword':
-                update_password_by_username(username,password)
+                update_password_by_username(username, password)
                 return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
             else:
-                return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}), content_type='application/json')    
+                return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}),
+                                    content_type='application/json')
         else:
             return HttpResponse(json.dumps({'status': 'wrong', 'type': 'noUser'}), content_type='application/json')
 
@@ -97,18 +101,22 @@ def reset_password(request):
             type = query_dict.get("type", "")
             if type == 'getVerifyCode':
                 verify_code = send_email(email)
-                return HttpResponse(json.dumps({'status': 'ok', 'verifyCode': verify_code}), content_type='application/json')
+                return HttpResponse(json.dumps({'status': 'ok', 'verifyCode': verify_code}),
+                                    content_type='application/json')
             elif type == 'resetPassword':
-                update_password_by_email(email,password)
+                update_password_by_email(email, password)
                 return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
             else:
-                return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}), content_type='application/json')
+                return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}),
+                                    content_type='application/json')
         else:
             return HttpResponse(json.dumps({'status': 'wrong', 'type': 'noUser'}), content_type='application/json')
 
     # 未知操作
     else:
-        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}), content_type='application/json')
+        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}),
+                            content_type='application/json')
+
 
 # 获得个人基本信息
 def get_user_basic_info(request):
@@ -117,6 +125,7 @@ def get_user_basic_info(request):
     print(username)
     u = get_a_user_data(username)
     user_info = {
+
         'status':'ok',
         'userName':u.username,
         'mobileNumber':u.mobile_number,
@@ -129,18 +138,20 @@ def get_user_basic_info(request):
     }
     return HttpResponse(json.dumps(user_info), content_type='application/json')
 
+
 # 获得奖励中心信息
 def get_user_bonus_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     u = get_a_user_data(username)
     bonus_info = {
-        'status':'ok',
-        'donutToMoney':get_donut_to_money(),
-        'moneyToDonet':get_money_to_donut(),
-        'donutNumber':u.donut_number,
+        'status': 'ok',
+        'donutToMoney': get_donut_to_money(),
+        'moneyToDonet': get_money_to_donut(),
+        'donutNumber': u.donut_number,
     }
-    return HttpResponse(json.dumps(bonus_info), content_type='application/json')  
+    return HttpResponse(json.dumps(bonus_info), content_type='application/json')
+
 
 # 获得活动中心信息
 def get_user_activity_info(request):
@@ -172,10 +183,11 @@ def get_user_settings_info(request):
     username = query_dict.get("username", "")
     u = get_a_user_data(username)
     settings_info = {
-        'status':'ok',
-        'dark_mode':u.dark_mode,
+        'status': 'ok',
+        'dark_mode': u.dark_mode,
     }
     return HttpResponse(json.dumps(settings_info), content_type='application/json')
+
 
 # 获得已领取任务信息
 # 任务信息(包括其id)通过列表传送,列表的每一项是一个字典
@@ -185,14 +197,15 @@ def get_user_received_task_info(request):
     page_number = query_dict.get("pageNumber", "")
 
     # 总页数（int），任务信息列表（列表，成员为字典）
-    total_page_number,task_info_list = get_task_info_list(username, HAS_RECEIVED, page_number)
+    total_page_number, task_info_list = get_task_info_list(username, HAS_RECEIVED, page_number)
 
     ret = {
-        'status':'ok',
-        'totalPageNumber':total_page_number,
-        'taskInfoList':task_info_list
+        'status': 'ok',
+        'totalPageNumber': total_page_number,
+        'taskInfoList': task_info_list
     }
     return HttpResponse(json.dumps(ret), content_type='application/json')
+
 
 # 获得已发布任务信息
 def get_user_released_task_info(request):
@@ -201,12 +214,12 @@ def get_user_released_task_info(request):
     page_number = query_dict.get("pageNumber", "")
 
     # 总页数（int），任务信息列表（列表，成员为字典）
-    total_page_number,task_info_list = get_task_info_list(username, HAS_POSTED, page_number)
+    total_page_number, task_info_list = get_task_info_list(username, HAS_POSTED, page_number)
 
     ret = {
-        'status':'ok',
-        'totalPageNumber':total_page_number,
-        'taskInfoList':task_info_list
+        'status': 'ok',
+        'totalPageNumber': total_page_number,
+        'taskInfoList': task_info_list
     }
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
@@ -266,6 +279,7 @@ def update_mobile(request):
     pass
 
 
+# 接收前端分片上传的素材压缩包
 @csrf_exempt
 def get_material_zip(request):
     if request.method == "POST":  # 判断接收的值是否为POST
@@ -308,6 +322,7 @@ def get_material_zip(request):
     return HttpResponse(json.dumps({'status': 'next'}), content_type='application/json')
 
 
+# 处理前端对列表的操作（目前能想到的只有删除
 @csrf_exempt
 def handle_release_action(request):
     if request.method == "POST":  # 判断接收的值是否为POST
@@ -321,6 +336,7 @@ def handle_release_action(request):
     return HttpResponse(json.dumps({'status': 'done'}), content_type='application/json')
 
 
+# 最终前端返回的数据，request_body参数参见 https://ziyouzhiyi4.coding.net/p/naihuangbao/km/spaces/1/pages/K-16
 @csrf_exempt
 def release_task(request):
     request_body = json.loads(request.body)
