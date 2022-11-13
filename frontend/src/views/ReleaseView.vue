@@ -42,7 +42,7 @@
           :username="username"
           :materialType="materialType"
         ></ReleaseData>
-        <ImageUploadCopy />
+        <!-- <ImageUploadCopy /> -->
       </el-main>
     </el-container>
   </el-container>
@@ -54,13 +54,13 @@
 // } from '@element-plus/icons-vue'
 import NavBar from "@/components/NavBar.vue";
 import ReleaseData from "@/components/ReleaseData.vue";
-import ImageUploadCopy from "@/components/ImageUploadCropper.vue";
+// import ImageUploadCopy from "@/components/ImageUploadCropper.vue";
 export default {
   name: "MineView",
   components: {
     NavBar,
     ReleaseData,
-    ImageUploadCopy,
+    // ImageUploadCopy,
   },
   data() {
     return {
