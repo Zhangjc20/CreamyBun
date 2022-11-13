@@ -14,6 +14,8 @@ class ChoiceQuestion(Question):
     answer = models.ManyToManyField(Str)# 领取者作答的答案，选择题为ABCD选项列表
 
 class FillBlankQuestion(Question):
+    min_answer_length = models.IntegerField(default=MAX_ANSWER_LENGTH)
+    max_answer_length = models.IntegerField(default=0)
     answer = models.CharField(max_length=MAX_ANSWER_LENGTH,default="")# 领取者作答的答案，填空题答案为一个字符串
 
 class FrameSelectionQuestion(Question):
