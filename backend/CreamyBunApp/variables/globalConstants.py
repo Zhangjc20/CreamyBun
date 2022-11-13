@@ -5,6 +5,13 @@ NOW_RELEASE = 1
 NOT_YET_RELEASE = 2
 TIMED_RELEASE = 3
 
+# 问题反馈类型
+FUNCTION_ADVICE = 1
+INTERFACE_OPTIMIZE = 2
+PRODUCT_BUG = 3
+REPORT = 4 # 举报
+OTHERS = 5
+
 # problem当前状态
 NOT_RECEIVED = 1
 RECEIVED_BUT_NOT_FINISHED = 2
@@ -44,6 +51,15 @@ MAX_TASK_NAME_LENGTH = 40
 
 # 时间字符串长度上限
 MAX_TIME_STRING_LENGTH = 25
+
+# url最长长度
+MAX_URL_LENGTH = 1000
+
+# 邮箱最长长度
+MAX_EMAIL_LENGTH = 350
+
+# 签到周期
+CLOCK_IN_CYCLE = 7
 
 IMAGE_TYPE_SET = {'jpg', 'bmp', 'png'}
 TEXT_TYPE_SET = {'txt', 'docx'}
