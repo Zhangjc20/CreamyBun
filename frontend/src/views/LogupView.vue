@@ -107,12 +107,12 @@ export default {
       if (value === "") {
         this.usernameRight = false;
         callback(new Error("用户名不能为空"));
-      } else if (value.search(/[a-z\d]{5,12}/g) == -1) {
-        this.usernameRight = false;
-        callback(new Error("请输入5-12位字母和数字的组合"));
-      } else {
+      } else if (value.match(/[a-z\d]{5,12}/g)) {
         this.usernameRight = true;
         callback();
+      } else {
+        this.usernameRight = false;
+        callback(new Error("请输入5-12位字母和数字的组合"));
       }
     };
     const validatePassword = (rule, value, callback) => {

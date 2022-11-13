@@ -130,7 +130,15 @@
       
       
       <el-col :span="12" style="border-left: 1px solid #999999;">
-        <el-row>
+        <el-row style="margin-left:40px;margin-right:20px;">
+          <el-main class="main-style">
+            <el-row style="height: 50px;">
+              <span class="header-title" style="margin: auto,auto,auto,20px;font-size:17px;">请上传任务封面</span>
+            </el-row>
+            <UploadCropper @getImage="getImage"/>
+
+          </el-main>
+          
         </el-row>
         <el-row>
           <MaterialUpload 
@@ -244,7 +252,7 @@
 import axios from "axios";
 import CustomButton from './CustomButton.vue';
 import ReleaseBasicQuestion from '@/components/ReleaseBasicQuestion.vue';
-import ImageUpload from '@/components/ImageUpload.vue';
+import UploadCropper from '@/components/ImageUploadCropper.vue';
 import MaterialUpload from '@/components/MaterialUpload.vue';
 
 export default {
@@ -252,7 +260,7 @@ export default {
 
   components:{
     ReleaseBasicQuestion,
-    ImageUpload,
+    UploadCropper,
     MaterialUpload,
     CustomButton,
   },
@@ -286,6 +294,7 @@ export default {
   },
   data(){
     return {
+      imageFile:null,
       componentName:'ReleaseBasicQuestion',
       localMaterialType:0,
       options:[
@@ -354,6 +363,10 @@ export default {
 
   },
   methods:{
+    getImage(file){
+      this.imageFile = file;
+      console.log(file);
+    },
     clickHome(){
       this.$router.push({
             name: 'home',
@@ -567,6 +580,12 @@ export default {
     border-radius: 5px;
     box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
   }
+  .cropper {
+  height: 600px;
+  width: 600px;
+  background: #ddd;
+  border-radius: 20px;
+}
 /* 
   .user-area {
     float: right;

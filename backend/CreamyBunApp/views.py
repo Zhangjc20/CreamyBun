@@ -147,7 +147,7 @@ def get_user_bonus_info(request):
     bonus_info = {
         'status': 'ok',
         'donutToMoney': get_donut_to_money(),
-        'moneyToDonet': get_money_to_donut(),
+        'moneyToDonut': get_money_to_donut(),
         'donutNumber': u.donut_number,
     }
     return HttpResponse(json.dumps(bonus_info), content_type='application/json')
