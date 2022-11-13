@@ -6,4 +6,4 @@ def daily_update():
     # 刷新签到信息
     user_list = User.objects.all()
     for u in user_list:
-        reset_clock_in_info(u)
+        u.reset_clock_in_info()

@@ -22,4 +22,15 @@ class User(models.Model):
     # 该列表在数据库中的存储格式为字典，如“{1:HAS_POSTED} {2:HAS_RECEIVED}”
     task_info_list = models.ManyToManyField(BigIntToInt)
 
-    # 如何设置用户当天已违规次数定时刷新为0（24：00）？
+    # 定时重置签到数据
+    def reset_clock_in_info(self):
+        if self.is_today_sign_in == False or self.continue_sign_in_days == CLOCK_IN_CYCLE:
+            self.continue_sign_in_days = 0
+        self.is_today_sign_in = False
+    
+    # 检验密码是否匹配
+    def validate_password(self,password):
+        if self.password == password:
+            return True
+        else:
+            return False

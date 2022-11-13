@@ -35,14 +35,6 @@ def send_email(email):
     send_mail('奶黄包数据标注平台邮箱验证码', message, '1596741408@qq.com', emailBox, fail_silently=False)
     return varify_code
 
-# 检查用户名和密码是否匹配
-def match_username_with_password(username,password):
-    cur_user = get_a_user_data(username)
-    if cur_user.password == password:
-        return True
-    else:
-        return False 
-
 # 管理员修改指定等级的升级所需经验
 def set_exp_for_upgrade(rank,exp):
     global exp_for_upgrade
