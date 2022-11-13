@@ -1,5 +1,5 @@
 from django.db import models
-from ..variables.globalConstants import MAX_ANSWER_LENGTH,MAX_DESCRIPTION_LENGTH
+from ..variables.globalConstants import *
 
 class BigIntToInt(models.Model):
     key = models.BigIntegerField(default=-1)
