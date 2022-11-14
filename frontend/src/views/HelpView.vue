@@ -14,13 +14,13 @@
           </el-row>
           <el-row class="el-row">
             <el-form-item style="width: 100%">
-              <el-select v-model="companyType" style="width: 100%">
+              <el-select v-model="questionID" style="width: 100%">
                 <el-option label="请选择反馈类型" value=""></el-option>
                 <el-option
-                  v-for="item in companyTypes"
+                  v-for="item in questionTypes"
                   :key="item.id"
                   :label="item.value"
-                  :value="item.value"
+                  :value="item.id"
                 >
                 </el-option>
               </el-select>
@@ -36,20 +36,17 @@
               placeholder="请说明问题描述与建议，我们将为您不断改进~"
               v-model="textarea"
             ></el-input>
-            <el-upload
-              class="avatar-uploader"
-              action="/api/file/upload"
-              :show-file-list="false"
-              :on-success="handleAvatarSuccess"
-              :on-preview="handlePreview"
-              :before-upload="beforeAvatarUpload"
-            >
-              <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-              <i v-else class="el-icon-plus avatar-uploader-icon"
-                >点击上传图片</i
-              >
-              <template #tip> 支持格式:.jpg.png </template>
-            </el-upload>
+          </el-row>
+          <el-row>
+            <div>
+              <button id="select_img_button" @click="select_img_button_onclick">选择图片</button>
+            </div>
+          </el-row>
+          <el-row>
+            <input type='file' id="inputImgFile" style="display:none" accept="image/*"  @change="inputImgFile_onchange"/>
+            <!-- 预览图片S -->
+            <img id="show_img" src="@/assets/images/logo.png" width="220" height="160"/>
+            <!-- 预览图片E -->
           </el-row>
           <el-row class="row2">
             <span class="in-feedback-title">通知邮箱</span>
@@ -64,7 +61,7 @@
           </el-row>
         </div>
         <div class="feedback-title-outer">
-          <el-button class="help-button">提交反馈</el-button>
+          <el-button class="help-button" @click="submitFeedback">提交反馈</el-button>
         </div>
         <div class="feedback-title-outer">
           <span class="feedback-title">联系信息</span>
@@ -82,6 +79,7 @@
 <script>
 // @ is an alias to /src
 import NavBar from "@/components/NavBar.vue";
+import axios from "axios";
 export default {
   name: "HelpView",
   components: {
@@ -93,13 +91,11 @@ export default {
         src:"",
         type:""
       },
-      username: "",
-      companyType: "",
       imageUrl: "",
       textarea: "",
       email: "",
-      tempUrl: "",
-      companyTypes: [
+      questionID: "",
+      questionTypes: [
         {
           value: "功能建议",
           id: "1",
@@ -120,20 +116,48 @@ export default {
     };
   },
   methods: {
-    handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
-    },
-    beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
+    select_img_button_onclick(){
+    var ie = navigator.appName == "Microsoft Internet Explorer" ? true : false;
+    var inputImgFile = document.getElementById("inputImgFile");
 
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
+      if (ie) {
+        inputImgFile.click();
+      } else {
+        var a = document.createEvent("MouseEvents");
+        a.initEvent("click", true, true);
+        inputImgFile.dispatchEvent(a);
       }
-      if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
-      }
-      return isJPG && isLt2M;
+    },
+    inputImgFile_onchange()
+    {
+    var inputImgFile = document.getElementById("inputImgFile");
+    var show_img = document.getElementById("show_img");
+    var my_data = inputImgFile.files[0];
+    this.imageUrl = inputImgFile.files[0];
+    // 获取上传图片信息
+    var reader = new FileReader();
+    // 监听reader对象的的onload事件，当图片加载完成时，把base64编码賦值给预览图片
+    reader.addEventListener("load", function () {
+        show_img.src = reader.result;
+        }, false);
+      // 调用reader.readAsDataURL()方法，把图片转成base64
+      reader.readAsDataURL(my_data);
+    },
+    submitFeedback(){
+      let formData = new FormData();
+      formData.append("email", this.email);
+      formData.append("questionType", this.questionID);
+      formData.append("textarea", this.textarea);
+      formData.append("image", this.imageUrl);
+      axios({
+              method:"Post",
+              url:'http://localhost:8000/submit_feedback/',
+              headers: {
+            //请求头这个一定要写
+                'Content-Type': 'multipart/form-data',
+            },
+              data:formData
+            })
     },
   },
   mounted() {
@@ -184,12 +208,12 @@ export default {
   margin-bottom: 50px;
 }
 .feedback-title {
-  font-family: YouSheRound;
+  font-family: YouSheRound;;
   font-size: 36px;
   color: #5eabbf;
 }
 .contact-info {
-  font-family: YouSheRound;
+  font-family: XiaWuManHei;;
   font-size: 23px;
   color: #5eabbf;
 }
@@ -221,32 +245,6 @@ export default {
 .row2 {
   margin-top: 40px;
 }
-.avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.avatar-uploader .el-upload:hover {
-  border-color: #409eff;
-}
-.avatar-uploader-icon {
-  font-size: 25px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-.avatar-uploader {
-  margin-top: 2px;
-  width: 178px;
-  height: 178px;
-  display: block;
-  border: 2px dashed #d9d9d9;
-}
-
 .help-button {
   color: #ffffff;
   width: 20%;

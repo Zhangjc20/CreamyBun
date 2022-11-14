@@ -342,3 +342,11 @@ def release_task(request):
     request_body = json.loads(request.body)
     print(request_body)
     return HttpResponse(json.dumps({'status': 'next'}), content_type='application/json')
+
+@csrf_exempt
+def submit_feedback(request):
+    image = request.FILES.get('image',None)
+    print(image)
+    if request.method == "POST":  # 判断接收的值是否为POST
+        query_dict = request.POST
+        print(query_dict)
