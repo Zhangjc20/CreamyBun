@@ -500,7 +500,7 @@ export default {
       console.log("生成块",start,end, packet)
       let formData = new FormData()
       
-      
+      console.log("我是个jb", packet)
       formData.append("file", packet)
       formData.append("fileName", name)
       formData.append("size", size)

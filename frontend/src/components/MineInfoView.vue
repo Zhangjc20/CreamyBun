@@ -331,6 +331,7 @@ export default {
           "image",
           this.blobToFile(blob, this.image.type.split("/")[1], this.image.type)
         );
+        console.log("this.blobToFile(blo", this.blobToFile(blob, this.image.type.split("/")[1], this.image.type))
         formData.append("username", this.username);
         axios
           .post("/change_avatar", formData, {
