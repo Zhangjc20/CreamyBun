@@ -4,9 +4,7 @@
       <NavBar :login='username!=""' activeItem="1" :username="username" :imageUrl="image.src"></NavBar>
     </el-header>
     <el-main class="main-style">
-      <ImageFramer :dash="dash" :color="color" imageSrc="https://img1.baidu.com/it/u=3171858076,1808175228&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500"/>
-      <el-button @click.stop="changeDash">切换虚线</el-button>
-      <el-color-picker v-model="color" />
+      <ImageFramer :minFrameNum="1" :maxFrameNum="3" imageSrc="https://img1.baidu.com/it/u=730169258,2197609409&fm=253&fmt=auto&app=138&f=JPEG?w=746&h=500"/>
       <div class="custom-box">
         <div class="custom-title-outer"><span class="custom-title">个性化数据标注服务</span></div>
         <el-row>
@@ -135,8 +133,6 @@ export default {
   },
   data(){
     return {
-      dash:false,
-      color:"#ffffff",
       image:{
         src:"",
         type:"",
