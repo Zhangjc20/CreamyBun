@@ -83,7 +83,7 @@
           rwidth:this.props.width,
           rheight:this.props.height,
           rmarginRight:this.props.marginRight,
-          rmarginLeft:this.props.marginRight,
+          rmarginLeft:this.props.marginLeft,
           rfontColor:this.props.fontColor,
           rfontSize:this.props.fontSize,
           rfontWeight:this.props.fontWeight,
@@ -103,7 +103,7 @@
           rwidth:this.width,
           rheight:this.height,
           rmarginRight:this.marginRight,
-          rmarginLeft:this.marginRight,
+          rmarginLeft:this.marginLeft,
           rfontColor:this.fontColor,
           rfontSize:this.fontSize,
           rfontWeight:this.fontWeight,
@@ -126,7 +126,7 @@
         this.rwidth =this.props.width;
         this.rheight =this.props.height;
         this.rmarginRight = this.props.marginRight;
-        this.rmarginLeft= this.props.marginRight;
+        this.rmarginLeft= this.props.marginLeft;
         this.rfontColor=this.props.fontColor;
         this.rfontSize=this.props.fontSize;
         this.rfontWeight=this.props.fontWeight;
@@ -144,7 +144,7 @@
         this.rwidth =this.width;
         this.rheight =this.height;
         this.rmarginRight = this.marginRight;
-        this.rmarginLeft= this.marginRight;
+        this.rmarginLeft= this.marginLeft;
         this.rfontColor=this.fontColor;
         this.rfontSize=this.fontSize;
         this.rfontWeight=this.fontWeight;

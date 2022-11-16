@@ -102,8 +102,8 @@ export default {
               type: 'success',
               message: "登录成功",
           });
-          sessionStorage.setItem("token", 'true');
-          sessionStorage.setItem("username", this.form.username );
+          localStorage.setItem("logined", 'true');
+          localStorage.setItem("username", this.form.username );
           this.$router.push({
               name: 'mine',
               query:{

@@ -289,7 +289,7 @@ export default {
       expForUpgrade: -1,
       email: "",
       percentage: 0,
-      codeEmail:""
+      codeEmail: "",
     };
   },
   methods: {
@@ -312,21 +312,22 @@ export default {
     },
     handleConfirm() {
       this.showModal = false;
-      this.crop();
+      this.crop(true);
       this.$refs.file.value = "";
     },
     handleCrop() {
       this.crop();
     },
-    crop() {
+    crop(emit) {
       const { canvas } = this.$refs.cropper.getResult();
       canvas.toBlob((blob) => {
         if (this.image.src) {
           URL.revokeObjectURL(this.image.src);
         }
         this.image.src = URL.createObjectURL(blob);
-        console.log(this.image.type);
         var formData = new FormData();
+        if (emit) {
+        this.$emit('changeAvatar',this.image.src)
         formData.append(
           "image",
           this.blobToFile(blob, this.image.type.split("/")[1], this.image.type)
@@ -345,7 +346,7 @@ export default {
           .catch((err) => {
             console.log(err);
           });
-      }, this.image.type);
+      }}, this.image.type);
     },
     loadImage(event) {
       // DOM input组件得引用
@@ -413,22 +414,22 @@ export default {
       )
         .then(() => {
           var formData = new FormData();
-          formData.append('username', this.username);
-          formData.append('newUsername', this.changeForm.username);
+          formData.append("username", this.username);
+          formData.append("newUsername", this.changeForm.username);
           axios
-            .post("/update_username",formData)
+            .post("/update_username", formData)
             .then((res) => {
               if (res.data["status"] === "ok") {
                 ElMessage({
                   type: "success",
                   message: "修改成功",
                 });
-                this.$emit("changeUsername", res.data['newUsername']);
+                this.$emit("changeUsername", res.data["newUsername"]);
                 this.$router.push({
                   name: "mine",
                   query: {
-                    username: res.data['newUsername'],
-                  }
+                    username: res.data["newUsername"],
+                  },
                 });
               } else {
                 if (res.data["type"] === "sameName") {
@@ -469,11 +470,11 @@ export default {
               params: {
                 username: this.username,
                 newEmail: this.changeForm.email,
-                type: "getVerifyCode"
-              }
+                type: "getVerifyCode",
+              },
             })
             .then((res) => {
-              console.log(res)
+              console.log(res);
               //考虑是否和当前邮箱一样
               if (res.data["status"] === "ok") {
                 ElMessage({
@@ -481,15 +482,14 @@ export default {
                   message: "邮箱验证码发送成功",
                 });
                 this.codeEmail = this.changeForm.email;
-                this.verifyCode=res.data['verifyCode']
+                this.verifyCode = res.data["verifyCode"];
                 ElMessageBox.prompt(
                   "请输入发送到对应邮箱的验证码（请勿关闭当前窗口）",
                   "修改邮箱",
                   {
                     confirmButtonText: "确认",
                     cancelButtonText: "取消",
-                    inputPattern:
-                      /\d{6}/,
+                    inputPattern: /\d{6}/,
                     inputErrorMessage: "验证码格式无效",
                   }
                 )
@@ -506,11 +506,11 @@ export default {
                             params: {
                               username: this.username,
                               newEmail: this.codeEmail,
-                              type: "changeEmail"
-                            }
+                              type: "changeEmail",
+                            },
                           })
                           .then((res) => {
-                            if (res.data['status'] === 'ok') {
+                            if (res.data["status"] === "ok") {
                               ElMessage({
                                 type: "success",
                                 message: "邮箱修改成功",
@@ -518,14 +518,14 @@ export default {
                               this.email = this.codeEmail;
                               console.log(this.codeEmail);
                               console.log(this.email);
-                            }
-                            else { 
+                            } else {
                               ElMessage({
                                 type: "error",
                                 message: "邮箱修改失败",
                               });
                             }
-                          }).catch(() => { })
+                          })
+                          .catch(() => {});
                       } else {
                         ElMessage({
                           type: "error",
@@ -584,6 +584,7 @@ export default {
             this.image.src =
               window.webkitURL.createObjectURL(imageFile) ||
               window.URL.createObjectURL(imageFile);
+            localStorage.setItem('imageSrc',this.image.src);
             this.$emit("initAvatar", this.image.src);
           }
         })

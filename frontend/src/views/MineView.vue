@@ -1,7 +1,12 @@
 <template>
   <el-container class="container">
     <el-header class="header-style">
-      <NavBar :login="true" activeItem="4" :username="username" :imageUrl="image.src"></NavBar>
+      <NavBar
+        :login="true"
+        activeItem="4"
+        :username="username"
+        :imageUrl="image.src"
+      ></NavBar>
     </el-header>
     <el-container>
       <el-aside class="left-menu-area">
@@ -44,12 +49,14 @@
         >
           <component
             :is="show_content"
+            :key="show_content"
             :items="items"
             :total="total"
             :username="username"
             ref="coreComponent"
             @initAvatar="initAvatar"
             @changeUsername="changeUsername"
+            @changeAvatar="changeAvatar"
           ></component>
         </keep-alive>
       </el-main>
@@ -76,9 +83,9 @@ export default {
   },
   data() {
     return {
-      image:{
-        src:"",
-        type:""
+      image: {
+        src: "",
+        type: "",
       },
       show_content: "MineInfoView",
       total: 4,
@@ -146,11 +153,14 @@ export default {
     };
   },
   methods: {
-    changeUsername(newUsername) { 
+    changeAvatar(src) {
+      this.image.src = src;
+    },
+    changeUsername(newUsername) {
       this.username = newUsername;
       console.log(this.username);
     },
-    initAvatar(src){
+    initAvatar(src) {
       this.image.src = src;
     },
     clickLeftMenu(number) {
