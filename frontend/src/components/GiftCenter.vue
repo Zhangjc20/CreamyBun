@@ -83,7 +83,7 @@ import { ElMessage, ElMessageBox } from 'element-plus';
     },
     mounted(){
       axios.get("/get_user_bonus_info",{
-        params:{
+        query:{
           username:this.username
         }
       })
@@ -101,7 +101,7 @@ import { ElMessage, ElMessageBox } from 'element-plus';
   
   <!-- Add "scoped" attribute to limit CSS to this component only -->
   <style scoped lang="scss">
-  .gitf-box {
+  .gift-box {
     display: flex;
     flex-direction: column;
   }
