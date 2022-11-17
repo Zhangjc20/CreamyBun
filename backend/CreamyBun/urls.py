@@ -32,6 +32,7 @@ urlpatterns = [
     path('handle_release_action/',views.handle_release_action),
     path('release_task/',views.release_task),
     path('get_user_basic_info/',views.get_user_basic_info),
+    path('get_task_basic_info/',views.get_task_basic_info),
     path('get_user_released_task_info/',views.get_user_released_task_info),
     path('get_user_received_task_info/',views.get_user_received_task_info),
     path('get_user_bonus_info/',views.get_user_bonus_info),
