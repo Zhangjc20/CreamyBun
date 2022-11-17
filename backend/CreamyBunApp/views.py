@@ -138,6 +138,23 @@ def get_user_basic_info(request):
     }
     return HttpResponse(json.dumps(user_info), content_type='application/json')
 
+def get_task_basic_info(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    print(username)
+    #u = get_a_user_data(username)
+    task_info = {
+        'status':'ok',
+        'taskName':'任务名',
+        'questionType':'单选题',
+        'description':'haha',
+        'problemTotalNum':'100',
+        'singleBonus':'1yuan',
+        'starRank':'1级',
+        'materialType':'图像',
+    }
+    print('hello')
+    return HttpResponse(json.dumps(task_info), content_type='application/json')
 
 # 获得奖励中心信息
 def get_user_bonus_info(request):
