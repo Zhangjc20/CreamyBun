@@ -6,7 +6,7 @@
     <el-container>
       <el-aside class="left-menu-area">
         <el-menu
-          default-active="2"
+          default-active="1-1"
           active-text-color="#5EABBF"
           class="el-menu-vertical-demo"
           @open="handleOpen"

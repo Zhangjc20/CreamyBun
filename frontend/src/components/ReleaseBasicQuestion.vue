@@ -4,6 +4,7 @@
       <span class="header-title" style="margin: auto,auto,auto,20px;" v-if="questionType == 0">题目设置：单选题</span>
       <span class="header-title" style="margin: auto,auto,auto,20px;" v-if="questionType == 1">题目设置：多选题</span>
       <span class="header-title" style="margin: auto,auto,auto,20px;" v-if="questionType == 2">题目设置：填空题</span>
+      <span class="header-title" style="margin: auto,auto,auto,20px;" v-if="questionType == 3">题目设置：框图题</span>
       <CustomButton @click="clickAddOption" isRound="true" style="float: right; right: 120px; position: absolute" v-if="questionType == 0 || questionType == 1" title="新增选项"/>
       <CustomButton @click="clickEdit" isRound="true" style="float: right; right: 20px; position: absolute" v-if="newOrEdit" title="提交修改"/>
       <CustomButton @click="clickSubmit" isRound="true" style="float: right; right: 20px; position: absolute" v-if="!newOrEdit" title="提交题目"/>
@@ -55,6 +56,33 @@
             :rows="1"
             type="textarea"
             placeholder="最大字数"
+            resize="none"
+            style="width: 100px;height: 40px;"
+          />
+        </el-col>
+      </el-form-item>
+    </el-row>
+
+    <el-row style="height: 50px;" v-if="questionType == 3">
+      <el-form-item label="答案框数" :required="true">
+        <el-col :span="11">
+          <el-input
+            v-model="minOptionNum"
+            :rows="1"
+            type="textarea"
+            placeholder="最小框数"
+            resize="none"
+            style="width: 100px;height: 40px;"
+          />
+        </el-col>
+        <el-col :span="2" class="text-center">
+        </el-col>
+        <el-col :span="11">
+          <el-input
+            v-model="maxOptionNum"
+            :rows="1"
+            type="textarea"
+            placeholder="最大框数"
             resize="none"
             style="width: 100px;height: 40px;"
           />
