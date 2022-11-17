@@ -345,11 +345,9 @@ def release_task(request):
     if request_type == 'application/json':
         request_body = json.loads(request.body)
         # fhgg 存啊啊啊啊啊啊
-        print("后后后后后后后后后后后后后后")
         print(request_body)
         return HttpResponse(json.dumps({'status': 'done'}), content_type='application/json')
     else:
-        print("先先先先先先先先先先先先先")
         image = request.FILES.get('image', None)
         username = request.POST.get('username', '')
         file_format = image.name
