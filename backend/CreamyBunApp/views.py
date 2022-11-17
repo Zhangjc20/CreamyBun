@@ -344,11 +344,21 @@ def release_task(request):
 
     if request_type == 'application/json':
         request_body = json.loads(request.body)
-        return HttpResponse(json.dumps({'status': 'next'}), content_type='application/json')
+        # fhgg 存啊啊啊啊啊啊
+        print(request_body)
+        return HttpResponse(json.dumps({'status': 'done'}), content_type='application/json')
     else:
         image = request.FILES.get('image', None)
         username = request.POST.get('username', '')
-        return HttpResponse(json.dumps({'status': 'next'}), content_type='application/json')
+        file_format = image.name
+        current_time = datetime.datetime.now().strftime('_%y%m%d%H%M%S.')
+        path = "./resource/task_cover"
+        if not os.path.exists(path):  # 如果目录不存在就创建
+            os.makedirs(path)
+        path_name = os.path.join(path, username + current_time + file_format)
+        handle_uploaded_file(image, path_name)
+
+        return HttpResponse(json.dumps({'status': 'get the image', 'url': path_name}), content_type='application/json')
 
 
 @csrf_exempt
