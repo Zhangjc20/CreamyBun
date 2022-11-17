@@ -6,28 +6,28 @@
       <el-container>
         <el-aside class="left-menu-area">
           <el-menu
-            default-active="2"
             active-text-color="#5EABBF"
             class="el-menu-vertical-demo"
             @open="handleOpen"
             @close="handleClose"
+            :default-openeds="['1']"
           >
-            <el-sub-menu index="1">
+            <el-sub-menu index="1" default-active="1">
               <template #title>
                 <span class="iconfont icon-menu"></span>
-                <span>任务选择</span>
+                <span>选项菜单</span>
               </template>
-              <el-menu-item index="1-1" @click="materialType = 0">图像</el-menu-item>
-              <el-menu-item index="1-2" @click="materialType = 1">文本</el-menu-item>
-              <el-menu-item index="1-3" @click="materialType = 2">视频</el-menu-item>
-              <el-menu-item index="1-4" @click="materialType = 3">音频</el-menu-item>
-              <el-menu-item index="1-5" @click="materialType = 4">自定义</el-menu-item>
+              <el-menu-item index="1-1" @click="menuAction(0)">当前任务</el-menu-item>
+              <el-menu-item index="1-2" @click="menuAction(1)">任务列表</el-menu-item>
+              <el-menu-item index="1-3" @click="menuAction(2)">历史任务</el-menu-item>
+              <el-menu-item index="1-4" @click="menuAction(3)">任务详情</el-menu-item>
+              <el-menu-item index="1-5" @click="menuAction(4)">个人中心</el-menu-item>
             </el-sub-menu>
           </el-menu>
         </el-aside>
-        <!-- <el-main class="main-style">
-          <ReleaseData :login="true" :username="username" :materialType="materialType"></ReleaseData>
-        </el-main> -->
+        <el-main class="main-style">
+
+        </el-main>
       </el-container>
     </el-container>
 </template>
@@ -45,28 +45,62 @@
     data(){
       return {
         show_content:"MineInfoView",
-        materialType:0,
         username:"",
       }
     },
     methods:{
-        clickUser(){
-            this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-            }).then(() => {
-                this.$message({
-                    type: 'success',
-                    message: '删除成功!'
-                });
-            }).catch(() => {
-                this.$message({
-                    type: 'info',
-                    message: '已取消删除'
-                });          
-                });
-            },
+      menuAction(type){
+        switch (type) {
+          case 0:
+            this.$message({
+              type: "success",
+              message: "当前任务",
+            });
+            break;
+          case 1:
+            this.$message({
+              type: "success",
+              message: "任务列表",
+            });
+            break;
+          case 2:
+            this.$message({
+              type: "success",
+              message: "历史列表",
+            });
+            break;
+          case 3:
+            this.$message({
+              type: "success",
+              message: "任务详情",
+            });
+            break;
+          case 4:
+            this.$message({
+              type: "success",
+              message: "个人中心",
+            });
+            break;
+          default:
+        }
+      },
+      clickUser(){
+          this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+          }).then(() => {
+              this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+              });
+          }).catch(() => {
+              this.$message({
+                  type: 'info',
+                  message: '已取消删除'
+              });          
+              });
+          },
 
     },
     mounted(){
