@@ -494,6 +494,11 @@ export default {
           message: '您尚未设定任何题目！',
           type: 'error'
         })
+      }else if(this.imageFile == null){
+        this.$message({
+          message: '您尚未设置封面！',
+          type: 'error'
+        })
       }else if(this.$refs.MyMaterialUpload.fullList.length == 0){
         this.$message({
           message: '您尚未上传任何素材列表！',
@@ -501,7 +506,8 @@ export default {
         })
       }else{
         let tempLen = this.$refs.MyMaterialUpload.fullList[0].length
-        for(var subList of this.fullList){
+        console.log("releaseData:this.$refs.MyMaterialUpload.fullList",this.$refs.MyMaterialUpload.fullListt)
+        for(var subList of this.$refs.MyMaterialUpload.fullList){
           if(subList.length !== tempLen){
             this.$message({
               message: '您的题表中题目不相等！',
@@ -521,11 +527,42 @@ export default {
       }
       return false
     },
+    blobToFile(blob, fileName, mimeType) {
+      return new File([blob], fileName, { type: mimeType });
+    },
     finalSubmit(){
       this.form.poster = this.username
       if(!this.finalCheck()){
         return
       }
+      var formData = new FormData();
+      // var tempFile = new Blob(this.imageFile)
+      console.log("我是个jb", this.imageFile)
+      formData.append("image",this.imageFile);
+      formData.append("username", this.username);
+      formData.append("fileName", 'image')
+      formData.append("size", '-1')
+      console.log("jbjbjbjjbjjbjbjbjbjbjbjjbjbjbjjb")
+      axios({
+              method:"Post",
+              url:'http://localhost:8000/release_task/',
+              headers: {
+              //请求头这个一定要写
+                'Content-Type': 'multipart/form-data',
+              },
+              data:formData
+            })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+        this.$message({
+          message: '上传封面失败',
+          type: 'error'
+        });
+      });
+      console.log("xpxpxpxpxpxppxppxpxppxpxppxppxpxppxppxp")
       axios.post("http://localhost:8000/release_task/",
         {basicInfoForm:this.form,
           questionList:this.questionList,

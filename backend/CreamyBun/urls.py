@@ -39,4 +39,5 @@ urlpatterns = [
     path('clock_in/',views.clock_in),
     path('get_user_settings_info/',views.get_user_settings_info),
     path('reset_password/',views.reset_password),
+    path('submit_feedback/',views.submit_feedback),
 ]

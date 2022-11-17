@@ -113,7 +113,8 @@ export default {
       const { canvas } = this.$refs.cropper.getResult();
       canvas.toBlob((blob) => {
         // 可以上传blob
-        this.$emit("getImage",this.blobToFile(blob))
+      console.log("crop上传",this.blobToFile(blob, this.image.type.split("/")[1], this.image.type))
+        this.$emit("getImage",this.blobToFile(blob, this.image.type.split("/")[1], this.image.type))
         this.$refs.file.value="";
       }, this.image.type);
     },

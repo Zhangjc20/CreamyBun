@@ -292,7 +292,7 @@ def get_material_zip(request):
         material_type = eval(query_dict.get("materialType", ""))
         current_time = query_dict.get("currentTime", "")
         dirname = username + '_' + current_time
-        path = os.path.join("./cache", dirname)
+        path = os.path.join("./resource/task_materials", dirname)
         file = request.FILES['file']
         if not os.path.exists(path):  # 如果目录不存在就创建
             os.makedirs(path)
@@ -339,6 +339,22 @@ def handle_release_action(request):
 # 最终前端返回的数据，request_body参数参见 https://ziyouzhiyi4.coding.net/p/naihuangbao/km/spaces/1/pages/K-16
 @csrf_exempt
 def release_task(request):
-    request_body = json.loads(request.body)
-    print(request_body)
-    return HttpResponse(json.dumps({'status': 'next'}), content_type='application/json')
+    request_type = request.META['CONTENT_TYPE']
+    print("request_type",request_type)
+
+    if request_type == 'application/json':
+        request_body = json.loads(request.body)
+        return HttpResponse(json.dumps({'status': 'next'}), content_type='application/json')
+    else:
+        image = request.FILES.get('image', None)
+        username = request.POST.get('username', '')
+        return HttpResponse(json.dumps({'status': 'next'}), content_type='application/json')
+
+
+@csrf_exempt
+def submit_feedback(request):
+    image = request.FILES.get('image',None)
+    print(image)
+    if request.method == "POST":  # 判断接收的值是否为POST
+        query_dict = request.POST
+        print(query_dict)
