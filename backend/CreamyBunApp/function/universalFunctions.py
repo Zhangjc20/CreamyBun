@@ -139,7 +139,7 @@ def get_task_info_list(username,state,page_number):
 
 # 修改用户头像并保存至后端
 def change_user_avatar(image,username):
-    avatar_url = user_avatar_save_path + username + "." + image.name
+    avatar_url = USER_AVATAR_SAVE_PATH + username + "." + image.name
     update_avatar_url_by_username(username,avatar_url)
     with open(avatar_url, 'wb') as f:
         for line in image:

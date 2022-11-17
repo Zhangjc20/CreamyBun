@@ -1,5 +1,8 @@
 # 在此处定义全局常量
 
+# 用户头像储存位置
+USER_AVATAR_SAVE_PATH = "./resource/user_avatar/"
+
 # 任务发布模式
 NOW_RELEASE = 1
 NOT_YET_RELEASE = 2
