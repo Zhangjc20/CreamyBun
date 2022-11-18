@@ -1,4 +1,4 @@
-from django.db import models
+from .questionClass import *
 from ..variables.globalConstants import *
 
 # 存储反馈信息的类

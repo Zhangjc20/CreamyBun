@@ -381,8 +381,12 @@ def release_task(request):
 
 @csrf_exempt
 def submit_feedback(request):
-    image = request.FILES.get('image',None)
-    print(image)
-    if request.method == "POST":  # 判断接收的值是否为POST
-        query_dict = request.POST
-        print(query_dict)
+    image_url = request.FILES.get('image',None)
+    inform_email = request.POST.get('email', '')
+    description = request.POST.get('textarea', '')
+    feedback_type = request.POST.get('questionType', '')
+    create_feedback = add_a_feedback(feedback_type,description,image_url,inform_email)
+    if create_feedback:
+        return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+    else:
+        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')
