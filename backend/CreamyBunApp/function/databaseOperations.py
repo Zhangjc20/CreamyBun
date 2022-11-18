@@ -99,7 +99,7 @@ def create_task(request_body):
 
     star_rank = basic_info_form["starRank"]
     single_bonus = basic_info_form["singleBonus"]
-    release_mode = basic_info_form["releaseMode"]
+    release_mode = basic_info_form["releaseModeInt"]
 
     # 获得开始时间
     if release_mode == TIMED_RELEASE:
@@ -169,7 +169,7 @@ def create_task(request_body):
         
         # 向problem中加入material
         for m_info in material_info:
-            m = m_info[i+1]
+            m = m_info[i]
             m_path = Str.objects.create(str_content=m["filePath"])
             p.material_path.add(m_path)
 
@@ -179,22 +179,30 @@ def create_task(request_body):
     test_info = request_body["testList"]
     problem_list = t.problem_list.all()
     for p_info in test_info:
-        t.test_problem_number += 1
+
+        t.test_problem_number += 1 
         t.problem_total_number -= 1
+        t.save()
+
         p = problem_list.filter(index=p_info["materialIndex"]).first()
         p.is_test = True
+        p.save()
+
         q_list = p.question_list.all()
         for q_info in p_info["questionsAndAns"]:
             q_list.filter(index=q_info["index"]).update(standard_answer=q_info["questionAns"])
     
     # 计算每个用户每次可领取的题目数量
     receiver_number = basic_info_form["receiverNum"]
-    t.problem_number_for_single_receiver = math.ceil(t.problem_total_number/receiver_number)
+    t.problem_number_for_single_receiver = math.ceil(1.00*t.problem_total_number/eval(receiver_number))
+    t.save()
 
     # task的problem列表随机排个序
-    random.shuffle(problem_list)
+    random_list = list(range(len(problem_list)))
+    random.shuffle(random_list)
     for i,p in enumerate(problem_list):
-        p.index = i+1
+        p.index = random_list[i] + 1
+        p.save()
 
     # 返回刚刚创建的任务的id和发布状态给用户
     return basic_info_form['poster'], t.id, t.release_mode

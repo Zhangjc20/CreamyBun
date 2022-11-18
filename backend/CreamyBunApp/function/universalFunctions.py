@@ -17,7 +17,7 @@ from ..variables.globalVariables import *
 # 可通过成员变量获取年月日时分秒等属性，通过strftime转成字符串返回
 # 参考https://www.cnblogs.com/jszfy/p/11143048.html
 def get_now_time():
-    return datetime.datetime.now().strftime('%F %T')
+    return datetime.datetime.now()
 
 
 # 发送邮件并返回验证码

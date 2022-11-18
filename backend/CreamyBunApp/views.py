@@ -369,7 +369,7 @@ def release_task(request):
         image = request.FILES.get('image', None)
         username = request.POST.get('username', '')
         file_format = image.name
-        current_time = get_now_time()
+        current_time = get_now_time().strftime('_%y%m%d%H%M%S.')
         path = "./resource/task_cover"
         if not os.path.exists(path):  # 如果目录不存在就创建
             os.makedirs(path)
