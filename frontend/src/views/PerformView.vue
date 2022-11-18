@@ -6,6 +6,7 @@
       <el-container>
         <el-aside class="left-menu-area">
           <el-menu
+            default-active="1-1"
             active-text-color="#5EABBF"
             class="el-menu-vertical-demo"
             @open="handleOpen"
@@ -26,7 +27,7 @@
           </el-menu>
         </el-aside>
         <el-main class="main-style">
-
+          <PerformTask/>
         </el-main>
       </el-container>
     </el-container>
@@ -37,10 +38,12 @@
 //   Menu as IconMenu,
 // } from '@element-plus/icons-vue'
   import NavBar from '@/components/NavBar.vue';
+  import PerformTask from '@/components/PerformTask.vue';
   export default{
     name: 'MineView',
     components:{
       NavBar,
+      PerformTask,
     },
     data(){
       return {

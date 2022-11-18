@@ -7,6 +7,7 @@ import LogupView from "@/views/LogupView.vue";
 import LogresetView from "@/views/LogresetView.vue";
 import TaskCenterView from "@/views/TaskCenterView.vue";
 import HelpView from "@/views/HelpView.vue";
+import TaskDetailView from '@/views/TaskDetailView.vue';
 
 const routes = [
   {
@@ -95,6 +96,15 @@ const routes = [
     path: "/taskcenter",
     name: "taskcenter",
     component: TaskCenterView,
+  },
+  {
+    meta:{
+      // 必须登录才可以查看
+      requireAuth: true
+    },
+    path: "/taskdetail",
+    name: "taskdetail",
+    component: TaskDetailView
   },
 ];
 

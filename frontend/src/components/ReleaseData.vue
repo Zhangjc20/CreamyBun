@@ -178,6 +178,11 @@
         </el-form-item>
       </el-row>
       <el-row style="height: 50px;">
+        <el-form-item label="领取人数" :required="true">
+          <el-input v-model="form.receiverNum" placeholder="请输如本任务的领取人数"/>
+        </el-form-item>
+      </el-row>
+      <el-row style="height: 50px;">
         <el-form-item label="发布方式" :required="true">
           <el-radio-group v-model="form.releaseMode">
             <el-radio label="立即发布" />
@@ -228,17 +233,19 @@
               v-model="form.deadLine1"
               type="date"
               placeholder="请选择截止日期"
-              style="width: 100%"
+              style="width: 200px"
+              value-format="YYYY-MM-DD"
             />
           </el-col>
           <el-col :span="2" class="text-center">
-            <span class="text-gray-500">:</span>
+            <!-- <span class="text-gray-500">  :</span> -->
           </el-col>
           <el-col :span="11">
             <el-time-picker
               v-model="form.deadLine2"
               placeholder="请选择截止时间"
-              style="width: 100%"
+              style="width: 200px"
+              value-format="HH:mm:ss"
             />
           </el-col>
         </el-form-item>
@@ -300,19 +307,19 @@ export default {
       localMaterialType:0,
       options:[
         {
-          value: 'singleChoice',
+          value: 0,
           label: '单选题',
         },
         {
-          value: 'multipleChoice',
+          value: 1,
           label: '多选题',
         },
         {
-          value: 'fillBlank',
+          value: 2,
           label: '填空题',
         },
         {
-          value: 'frameSelection',
+          value: 3,
           label: '框图题',
         },
       ],
@@ -343,8 +350,10 @@ export default {
         poster: "",
         description: "",
         questionType: "",
+        receiverNum:0,
         promblemTotalNum: "",
         releaseMode: "",
+        releaseModeInt: "",
         singleBonus: "",
         starRank: "",
         startLine1: "",
@@ -352,8 +361,11 @@ export default {
         deadLine1: "",
         deadLine2: "",
         coverUrl:"",
+        materialType:"",
       },
       //传回后端的题目列表，需要复制一百万次给每个problem都一个
+      questionTypeMixed:0,
+      questionTypeOld:"",
       questionList:[],
       multiple:0,
       editingQuestion:'',
@@ -378,19 +390,24 @@ export default {
     showQuestionPage(selected){
       this.newOrEdit = 0
       let value = selected.value
-      if(value == 'singleChoice'){
+      if(this.questionTypeOld != value){
+        this.questionTypeMixed = 1
+      }
+      if(value == 0){
         this.componentName = 'ReleaseBasicQuestion'
         this.multiple = 0
-      }else if(value == 'multipleChoice'){
+      }else if(value == 1){
         this.componentName = 'ReleaseBasicQuestion'
         this.multiple = 1
-      }else if(value == 'fillBlank'){
+      }else if(value == 2){
         this.componentName = 'ReleaseBasicQuestion'
         this.multiple = 2
-      }else if(value == 'frameSelection'){
+      }else if(value == 3){
         this.componentName = 'ReleaseBasicQuestion'
         this.multiple = 3
       }
+      //记录上一次的question选择
+      this.questionTypeOld = value
     },
     addQuestion(newQuestion){
       console.log("新的题目：",newQuestion)
@@ -535,8 +552,22 @@ export default {
     },
     async finalSubmit(){
       this.form.poster = this.username
+      this.form.materialType = this.materialType
+      if(this.questionTypeMixed){
+        this.form.questionType = 4
+      }
       if(!this.finalCheck()){
         return
+      }
+      switch (this.form.releaseMode) {
+        case "立即发布":
+          this.form.releaseModeInt = 0;
+          break;
+        case "暂不发布":
+          this.form.releaseModeInt = 1;
+          break;
+        default:
+          this.form.releaseModeInt = 2;
       }
       var formData = new FormData();
       // var tempFile = new Blob(this.imageFile)

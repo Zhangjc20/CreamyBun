@@ -1,282 +1,86 @@
 <template>
-  <el-header class="header-style">
+  <el-header class="perform-task-header-style">
     <el-breadcrumb separator="/" class="header-breadcrumb">
       <el-breadcrumb-item :to="{ path: '/' }">奶黄包</el-breadcrumb-item>
       <el-breadcrumb-item>任务选择</el-breadcrumb-item>
       <el-breadcrumb-item>{{this.materialTypeName}}</el-breadcrumb-item>
     </el-breadcrumb>
     <span class="header-title">
-      {{this.materialTypeName}}任务
+      /*这里填写任务名字*/
     </span>
     <CustomButton 
-      @click="finalSubmit" 
       isRound="true" 
       style="float: right; right: 50px; top: 100px; position: absolute"
       height="40px"
       width="150px"
       title="提交任务"
     />
+    
+
 
   </el-header>
   <el-main class="main-style">
-    <el-row style="height: 50px;">
-      <span class="header-title">
-        基本信息
-      </span>
-    </el-row>
-    <el-row>
-      
-      <el-col :span="12">
-        <el-form :model="form" label-width="100px" class="change-form">
-          <el-row style="height: 50px;">
-            <el-form-item label="名称" :required="true">
-              <el-input v-model="form.taskName" placeholder="请输入任务名字"/>
-              <!-- <CustomButton
-                >保存</CustomButton> -->
-            </el-form-item>
-          </el-row>
-          <el-row style="height: 80px;">
-            <el-form-item label="任务描述" :required="true">
-              <el-input
-                v-model="form.description"
-                :rows="3"
-                type="textarea"
-                placeholder="请输入任务描述"
-                resize="none"
-                style="width: 300px;"
-              />
-            </el-form-item>
-          </el-row>
-          <el-row style="height: 50px;">
-            <el-form-item label="题型" :required="true" style="margin-top: 10px;">
-              <el-select v-model="form.questionType" class="m-2" placeholder="请选择题型">
-                <el-option
-                  @click="showQuestionPage(item)"
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
-            </el-form-item>
-          </el-row>
-          <el-row >
-            <component 
-              :is="componentName" 
-              :multiple="multiple" 
-              :editingQuestion="editingQuestion" 
-              :questionList="questionList" 
-              :newOrEdit="newOrEdit"
-              @questionSubmit="addQuestion">
-            </component>
-            <!-- <ReleaseChoice multiple="1"></ReleaseChoice> -->
-          </el-row>
-          <el-row>
-            <el-main class="main-style" style="margin-right: 40px;">
-              <el-row style="height: 50px;">
-                <span class="header-title" style="margin: auto,auto,auto,20px;">当前题目列表</span>
-              </el-row>
-              <el-table
-                  :data="questionList"
-                  height="200"
-                  :style="table"
-                  class="customer-table">
-                  <el-table-column
-                    prop="index"
-                    label="题号"
-                    width="60">
-                  </el-table-column>
-                  <el-table-column
-                    prop="questionTypeName"
-                    label="题型"
-                    width="60">
-                  </el-table-column>
-                  <el-table-column
-                    prop="questionDescription"
-                    label="题干"
-                    width="150">
-                  </el-table-column>
-                  
-                  <el-table-column
-                    prop=""
-                    label=""
-                    width="">
-                  </el-table-column>
-                  
-                  <el-table-column
-                    prop=""
-                    label="操作"
-                    width="60">
-                    <template v-slot="scope">
-                      <el-dropdown>
-                        <span class="iconfont icon-menu"></span>
-                        <template #dropdown>
-                          <el-dropdown-menu>
-                            <el-dropdown-item icon="el-icon-s-order" @click="moveQuestionUpward(scope.row, scope.$index)">上移</el-dropdown-item>
-                            <el-dropdown-item icon="el-icon-remove" @click="moveQuestionDown(scope.row, scope.$index)">下移</el-dropdown-item>
-                            <el-dropdown-item icon="el-icon-remove" @click="editQuestion(scope.row, scope.$index)">编辑</el-dropdown-item>
-                            <el-dropdown-item icon="el-icon-download" @click="deleteQuestion(scope.row, scope.$index)">删除</el-dropdown-item>
-                          </el-dropdown-menu>
-                        </template>
-                        
-                      </el-dropdown>
-                    </template>
-                  </el-table-column>
-                </el-table>
-            </el-main>
-          </el-row>
-        </el-form>
-      </el-col>
-      
-      
-      <el-col :span="12" style="border-left: 1px solid #999999;">
-        <el-row style="margin-left:40px;margin-right:20px;">
-          <el-main class="main-style">
-            <el-row style="height: 50px;">
-              <span class="header-title" style="margin: auto,auto,auto,20px;font-size:17px;">请上传任务封面</span>
-            </el-row>
-            <UploadCropper @getImage="getImage"/>
+    <el-col :span="16">
 
-          </el-main>
-          
-        </el-row>
-        <el-row>
-          <MaterialUpload 
-          ref="MyMaterialUpload"
-          :username="username"
-          :questionList="questionList"
-          :materialType="localMaterialType"
-          />
-        </el-row>
-      </el-col>
-    </el-row>
+    </el-col>
+    <el-col :span="8" style="border-left: 1px solid #999999;">
 
+    </el-col>
   </el-main>
+  <!-- <el-main class="main-style">
+    
+  </el-main> -->
 
 </template>
 
 <script>
 import axios from "axios";
 import CustomButton from './CustomButton.vue';
-import ReleaseBasicQuestion from '@/components/ReleaseBasicQuestion.vue';
-import UploadCropper from '@/components/ImageUploadCropper.vue';
-import MaterialUpload from '@/components/MaterialUpload.vue';
+
 // import { ElMessageBox } from "element-plus";
 
 export default {
-  name: 'ReleasePicture',
+  name: 'PerformTask',
 
   components:{
-    ReleaseBasicQuestion,
-    UploadCropper,
-    MaterialUpload,
     CustomButton,
   },
   props: {
     username:String,
     login:Boolean,
-    materialType:Number,
   },
-  watch:{
-    materialType(newVal){
-      this.localMaterialType = newVal
-      switch(this.localMaterialType)
-      {
-        case 0:
-          this.materialTypeName = '图像'
-          break;
-        case 1:
-          this.materialTypeName = '文本'
-          break;
-        case 2:
-          this.materialTypeName = '视频'
-          break;
-        case 3:
-          this.materialTypeName = '音频'
-          break;
-        case 4:
-          this.materialTypeName = '自定义类型'
-          break;
-      }
-    },
-  },
+  // watch:{
+  //   materialType(newVal){
+  //     this.localMaterialType = newVal
+  //     switch(this.localMaterialType)
+  //     {
+  //       case 0:
+  //         this.materialTypeName = '图像'
+  //         break;
+  //       case 1:
+  //         this.materialTypeName = '文本'
+  //         break;
+  //       case 2:
+  //         this.materialTypeName = '视频'
+  //         break;
+  //       case 3:
+  //         this.materialTypeName = '音频'
+  //         break;
+  //       case 4:
+  //         this.materialTypeName = '自定义类型'
+  //         break;
+  //     }
+  //   },
+  // },
   data(){
     return {
       imageFile:null,
-      componentName:'ReleaseBasicQuestion',
-      localMaterialType:0,
-      options:[
-        {
-          value: 'singleChoice',
-          label: '单选题',
-        },
-        {
-          value: 'multipleChoice',
-          label: '多选题',
-        },
-        {
-          value: 'fillBlank',
-          label: '填空题',
-        },
-        {
-          value: 'frameSelection',
-          label: '框图题',
-        },
-      ],
-      levels:[
-        {
-          value: 'level1',
-          label: '1',
-        },
-        {
-          value: 'level2',
-          label: '2',
-        },
-        {
-          value: 'level3',
-          label: '3',
-        },
-        {
-          value: 'level4',
-          label: '4',
-        },
-        {
-          value: 'level5',
-          label: '5',
-        },
-      ],
-      form: {//questionNum taskLevel username
-        taskName:"",
-        poster: "",
-        description: "",
-        questionType: "",
-        promblemTotalNum: "",
-        releaseMode: "",
-        singleBonus: "",
-        starRank: "",
-        startLine1: "",
-        startLine2: "",
-        deadLine1: "",
-        deadLine2: "",
-        coverUrl:"",
-      },
-      //传回后端的题目列表，需要复制一百万次给每个problem都一个
-      questionList:[],
-      multiple:0,
-      editingQuestion:'',
-      newOrEdit:0,
-      materialTypeName:'图像',
     }
   },
   mounted(){
 
   },
   methods:{
-    getImage(file){
-      this.imageFile = file;
-      console.log(file);
-
-    },
     clickHome(){
       this.$router.push({
             name: 'home',
@@ -442,9 +246,7 @@ export default {
     },
     async finalSubmit(){
       this.form.poster = this.username
-      if(!this.finalCheck()){
-        return
-      }
+
       var formData = new FormData();
       // var tempFile = new Blob(this.imageFile)
       console.log("我是个jb", this.imageFile)
@@ -531,7 +333,7 @@ export default {
 
 <style scoped>
 
-  .header-style{
+  .perform-task-header-style{
     border-radius: 5px;
     box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
     height: 100px;
