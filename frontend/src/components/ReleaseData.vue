@@ -666,7 +666,7 @@ export default {
           url: 'http://localhost:8000/release_task/',
           data: JSON.parse(this.abc),
           headers: {
-              'Content-Type': 'application/json; charset=utf-8'
+              'Content-Type': 'application/json'
           }
       }).then(({ data }) => {
           console.log(data)
