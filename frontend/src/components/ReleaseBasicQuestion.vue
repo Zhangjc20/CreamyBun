@@ -278,7 +278,7 @@ export default {
     //   this.maxOptionNum = '',
     //   this.mustDo = true
     checkContent(){
-      if(this.optionList.length == 0 && this.questionType != 2){
+      if(this.optionList.length == 0 && (this.questionType == 0 || this.questionType == 1)){
         this.$message({
           message: '您尚未添加选项！',
           type: 'warning'

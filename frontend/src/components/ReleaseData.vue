@@ -8,6 +8,15 @@
     <span class="header-title">
       {{this.materialTypeName}}任务
     </span>
+    <el-input v-model="abc" style="width: 300px" placeholder="这是一个阴险的字符串输入接口"/>
+    <CustomButton 
+      @click="abcSubmit" 
+      isRound="true" 
+      style="float: right; right: 200px; top: 100px; position: absolute"
+      height="40px"
+      width="150px"
+      title="阴险的临时按钮"
+    />
     <CustomButton 
       @click="finalSubmit" 
       isRound="true" 
@@ -23,6 +32,7 @@
       <span class="header-title">
         基本信息
       </span>
+      
     </el-row>
     <el-row>
       
@@ -325,23 +335,23 @@ export default {
       ],
       levels:[
         {
-          value: 'level1',
+          value: 1,
           label: '1',
         },
         {
-          value: 'level2',
+          value: 2,
           label: '2',
         },
         {
-          value: 'level3',
+          value: 3,
           label: '3',
         },
         {
-          value: 'level4',
+          value: 4,
           label: '4',
         },
         {
-          value: 'level5',
+          value: 5,
           label: '5',
         },
       ],
@@ -363,6 +373,7 @@ export default {
         coverUrl:"",
         materialType:"",
       },
+      abc:"",
       //传回后端的题目列表，需要复制一百万次给每个problem都一个
       questionTypeMixed:0,
       questionTypeOld:"",
@@ -649,6 +660,19 @@ export default {
         });
       })
     },
+    abcSubmit(){
+      axios({
+          method: 'POST',
+          url: 'http://localhost:8000/release_task/',
+          data: this.abc,
+          headers: {
+              'Content-Type': 'application/json; charset=utf-8'
+          }
+      }).then(({ data }) => {
+          console.log(data)
+      })
+
+    }
   }
 }
 </script>
