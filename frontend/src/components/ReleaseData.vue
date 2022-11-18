@@ -664,7 +664,7 @@ export default {
       axios({
           method: 'POST',
           url: 'http://localhost:8000/release_task/',
-          data: this.abc,
+          data: JSON.parse(this.abc),
           headers: {
               'Content-Type': 'application/json; charset=utf-8'
           }
