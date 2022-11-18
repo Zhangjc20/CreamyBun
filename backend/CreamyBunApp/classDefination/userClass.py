@@ -20,7 +20,8 @@ class User(models.Model):
 
     # 该用户所拥有的所有任务信息，该列表增加的成员为字典类型，表示{任务id:任务状态（已领取或已发布）}
     # 该列表在数据库中的存储格式为字典，如“{1:HAS_POSTED} {2:HAS_RECEIVED}”
-    task_info_list = models.ManyToManyField(BigIntToInt)
+    # 新增二级检索常量，包括发布状态或者完成状态
+    task_info_list = models.ManyToManyField(TaskDict)
 
     # 定时重置签到数据
     def reset_clock_in_info(self):

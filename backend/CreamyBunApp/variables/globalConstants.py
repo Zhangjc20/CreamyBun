@@ -4,9 +4,17 @@
 USER_AVATAR_SAVE_PATH = "./resource/user_avatar/"
 
 # 任务发布模式
-NOW_RELEASE = 1
-NOT_YET_RELEASE = 2
-TIMED_RELEASE = 3
+NOW_RELEASE = 0
+NOT_YET_RELEASE = 1
+TIMED_RELEASE = 2
+
+# 任务自身状态常量
+NOT_FINISHED = 3
+FINISHED = 4
+
+# 用户任务状态常量
+HAS_RECEIVED = 1
+HAS_POSTED = 2
 
 # 问题反馈类型
 FUNCTION_ADVICE = 1
@@ -25,6 +33,7 @@ IMAGE = 0
 TEXT = 1
 VIDEO = 2
 AUDIO = 3
+MIXED = 4
 
 # 作答类型常量
 SINGLE_CHOICE = 0
@@ -38,10 +47,6 @@ CHOICE_QUESTION = 1
 FILL_BLANK_QUESTION = 2
 SELECT_FRAME_QUESTION = 3
 
-# 用户任务状态常量
-HAS_RECEIVED = 1
-HAS_POSTED = 2
-
 # 用户分页每页任务数量
 TASK_NUMBER_PER_PAGE = 10
 
@@ -50,6 +55,9 @@ MAX_CHOICE_NUMBER = 26
 
 # 答案字符串最长长度
 MAX_ANSWER_LENGTH = 10000
+
+# 框图题最多可以框几个框
+MAX_FRAME_NUM = 100
 
 # 小题题干和任务描述最长长度
 MAX_DESCRIPTION_LENGTH = 500
