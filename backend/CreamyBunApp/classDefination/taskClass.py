@@ -11,10 +11,13 @@ class Task(models.Model):
     answer_type = models.IntegerField(default=-1)  # 作答类型（单选，多选，填空，框图，混合）
 
     # 通过以下两个变量计算该任务的完成程度
-    problem_total_number = models.IntegerField(default=-1)  # 任务中大题总数
-    finished_problem_number = models.IntegerField(default=0)  # 任务中已经完成的大题数
+    problem_total_number = models.IntegerField(default=-1) # 任务中大题总数（不包括测试题目）
+    finished_problem_number = models.IntegerField(default=0) # 任务中已经完成的大题数
+
+    test_problem_number = models.IntegerField(default=0) # 任务中的测试题数量
 
     # 每个用户每次可领取的题目数量
+    # 用户领取任务时应该先通过这个量算出还剩多少题目可领取，然后决定当前用户要领多少题目
     problem_number_for_single_receiver = models.IntegerField(default=-1)
 
     star_rank = models.IntegerField(default=-1)  # 任务星级

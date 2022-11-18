@@ -122,7 +122,6 @@ def reset_password(request):
 def get_user_basic_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
-    print(username)
     u = get_a_user_data(username)
     user_info = {
 
@@ -247,7 +246,6 @@ def update_username(request):
     query_dict = request.POST
     username = query_dict.get("username","")
     new_username = query_dict.get("newUsername","")
-    print(new_username)
     is_new_username_exist = exist_user_by_name(new_username)
     if is_new_username_exist:
         return HttpResponse(json.dumps({'status':'wrong','type':'sameName'}), content_type='application/json') 
@@ -361,14 +359,17 @@ def release_task(request):
 
     if request_type == 'application/json':
         request_body = json.loads(request.body)
-        # fhgg 存啊啊啊啊啊啊
-        print(request_body)
+        username,t_id,t_release_mode = create_task(request_body)
+
+        # 给相应用户加上任务和状态
+        add_task_to_user(username,t_id,HAS_POSTED,t_release_mode)
+
         return HttpResponse(json.dumps({'status': 'done'}), content_type='application/json')
     else:
         image = request.FILES.get('image', None)
         username = request.POST.get('username', '')
         file_format = image.name
-        current_time = datetime.datetime.now().strftime('_%y%m%d%H%M%S.')
+        current_time = get_now_time()
         path = "./resource/task_cover"
         if not os.path.exists(path):  # 如果目录不存在就创建
             os.makedirs(path)
