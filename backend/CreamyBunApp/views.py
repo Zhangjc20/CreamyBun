@@ -34,7 +34,8 @@ def log_up(request):
         if check_user_by_name:
             return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameName'}), content_type='application/json')
         password = query_dict.get("password", "")
-        create_user = add_a_user(username=username, password=password, email=email)
+        create_user = add_a_user(
+            username=username, password=password, email=email)
         if create_user:
             return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
         else:
@@ -125,17 +126,18 @@ def get_user_basic_info(request):
     u = get_a_user_data(username)
     user_info = {
 
-        'status':'ok',
-        'userName':u.username,
-        'mobileNumber':u.mobile_number,
-        'donutNumber':u.donut_number,
-        'email':u.email,
-        'creditRank':u.credit_rank,
-        'currentExp':u.current_exp,
-        'expForUpgrade':get_exp_for_upgrade(u.credit_rank),
-        'avatarImage':get_user_avatr(username),
+        'status': 'ok',
+        'userName': u.username,
+        'mobileNumber': u.mobile_number,
+        'donutNumber': u.donut_number,
+        'email': u.email,
+        'creditRank': u.credit_rank,
+        'currentExp': u.current_exp,
+        'expForUpgrade': get_exp_for_upgrade(u.credit_rank),
+        'avatarImage': get_user_avatr(username),
     }
     return HttpResponse(json.dumps(user_info), content_type='application/json')
+
 
 def get_task_basic_info(request):
     query_dict = request.GET
@@ -143,19 +145,21 @@ def get_task_basic_info(request):
     print(username)
     #u = get_a_user_data(username)
     task_info = {
-        'status':'ok',
-        'taskName':'任务名',
-        'questionType':'单选题',
-        'description':'haha',
-        'problemTotalNum':'100',
-        'singleBonus':'1yuan',
-        'starRank':'1级',
-        'materialType':'图像',
+        'status': 'ok',
+        'taskName': '任务名',
+        'questionType': '单选题',
+        'description': 'haha',
+        'problemTotalNum': '100',
+        'singleBonus': '1yuan',
+        'starRank': '1级',
+        'materialType': '图像',
     }
     print('hello')
     return HttpResponse(json.dumps(task_info), content_type='application/json')
 
 # 获得奖励中心信息
+
+
 def get_user_bonus_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
@@ -175,32 +179,36 @@ def get_user_activity_info(request):
     username = query_dict.get("username", "")
     u = get_a_user_data(username)
     activity_info = {
-        'status':'ok',
-        'continueSignInDays':u.continue_sign_in_days,
-        'isTodaySignIn':u.is_today_sign_in,
-        'donutListForClockIn':donut_for_clock_in,
+        'status': 'ok',
+        'continueSignInDays': u.continue_sign_in_days,
+        'isTodaySignIn': u.is_today_sign_in,
+        'donutListForClockIn': donut_for_clock_in,
     }
     return HttpResponse(json.dumps(activity_info), content_type='application/json')
 
 # 签到接口
+
+
 def clock_in(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
-    success_clock_in,continue_clock_in_days = update_clock_in_info(username)
+    success_clock_in, continue_clock_in_days = update_clock_in_info(username)
     clock_in_info = {
-        'continueSignInDays':continue_clock_in_days,
-        'isTodaySignIn':success_clock_in,
+        'continueSignInDays': continue_clock_in_days,
+        'isTodaySignIn': success_clock_in,
     }
     return HttpResponse(json.dumps(clock_in_info), content_type='application/json')
 
 # 获得设置信息
+
+
 def get_user_settings_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     u = get_a_user_data(username)
     settings_info = {
         'status': 'ok',
-        'dark_mode': u.dark_mode,
+        'darkMode': u.dark_mode,
     }
     return HttpResponse(json.dumps(settings_info), content_type='application/json')
 
@@ -211,16 +219,93 @@ def get_user_received_task_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     page_number = query_dict.get("pageNumber", "")
+    sort_choice = query_dict.get("sortChoice","")#int 1是所有 2是正在进行，3是已结束
 
     # 总页数（int），任务信息列表（列表，成员为字典）
-    total_page_number, task_info_list = get_task_info_list(username, HAS_RECEIVED, page_number)
+    # total_page_number, task_info_list = get_task_info_list(
+    #     username, HAS_RECEIVED, page_number)
 
-    ret = {
-        'status': 'ok',
-        'totalPageNumber': total_page_number,
-        'taskInfoList': task_info_list
-    }
-    return HttpResponse(json.dumps(ret), content_type='application/json')
+    # ret = {
+    #     'status': 'ok',
+    #     'totalPageNumber': total_page_number,# 注意是totalNumber筛选出来的总任务数，不是总页数
+    #     'taskInfoList': task_info_list
+    # }
+    #以下为应返回类型具有属性，必须返回10个对象，index可以随意只要10个对象的index不相同（比如可以拿id代替）
+    example = [{
+        'index': 1,
+        'taskName': "图像识别",
+        'starNum': 2,
+        'donut': 20,
+        'dataType': "图片",
+        'problemType':"选择题",
+        'startTime':"2020.1.1",
+        'endTime':"2020.1.28",
+        'id': "123"},
+        {
+        'index': 2,
+        'taskName': "图像识别",
+        'starNum': 2,
+        'donut': 20,
+        'dataType': "图片",
+        'problemType':"选择题",
+        'startTime':"2020.1.1",
+        'endTime':"2020.1.28",
+        'id': "123"},
+        {
+        'index': 3,
+        'taskName': "图像识别",
+        'starNum': 2,
+        'donut': 20,
+        'dataType': "图片",
+        'problemType':"选择题",
+        'startTime':"2020.1.1",
+        'endTime':"2020.1.28",
+        'id': "123"},
+        {
+        'index': 4,
+        'taskName': "图像识别",
+        'starNum': 2,
+        'donut': 20,
+        'dataType': "图片",
+        'problemType':"选择题",
+        'startTime':"2020.1.1",
+        'endTime':"2020.1.28",
+        'id': "123"},
+        {
+        'index': 5,
+        'taskName': "图像识别",
+        'starNum': 2,
+        'donut': 20,
+        'dataType': "图片",
+        'problemType':"选择题",
+        'startTime':"2020.1.1",
+        'endTime':"2020.1.28",
+        'id': "123"},
+        {
+        'index': 6,
+        'isSpace': True,
+        'id': '123'
+    },
+        {
+        'index': 7,
+        'isSpace': True,
+        'id': '123'
+    },
+        {
+        'index': 8,
+        'isSpace': True,
+        'id': '123'
+    },
+        {
+        'index': 9,
+        'isSpace': True,
+        'id': '123'
+    },
+        {
+        'index': 10,
+        'isSpace': True,
+        'id': '123'}]
+    return HttpResponse(json.dumps({'status':"ok",'totalNumber':21,'taskInfoList':example}), content_type='application/json')
 
 
 # 获得已发布任务信息
@@ -228,13 +313,15 @@ def get_user_released_task_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     page_number = query_dict.get("pageNumber", "")
+    sort_choice = query_dict.get("sortChoice","")#1是所有，2是暂未发布 3是发布但未结束 4是已结束
 
     # 总页数（int），任务信息列表（列表，成员为字典）
-    total_page_number, task_info_list = get_task_info_list(username, HAS_POSTED, page_number)
+    total_page_number, task_info_list = get_task_info_list(
+        username, HAS_POSTED, page_number)
 
     ret = {
         'status': 'ok',
-        'totalPageNumber': total_page_number,
+        'totalPageNumber': total_page_number,  # 注意是totalNumber筛选出来的总任务数，不是总页数
         'taskInfoList': task_info_list
     }
     return HttpResponse(json.dumps(ret), content_type='application/json')
@@ -244,22 +331,24 @@ def get_user_released_task_info(request):
 @csrf_exempt
 def update_username(request):
     query_dict = request.POST
-    username = query_dict.get("username","")
-    new_username = query_dict.get("newUsername","")
+    username = query_dict.get("username", "")
+    new_username = query_dict.get("newUsername", "")
     is_new_username_exist = exist_user_by_name(new_username)
     if is_new_username_exist:
-        return HttpResponse(json.dumps({'status':'wrong','type':'sameName'}), content_type='application/json') 
-    else:    
-        update_username_by_username(username,new_username)
-        return HttpResponse(json.dumps({'status':'ok','newUsername':new_username}), content_type='application/json')
+        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameName'}), content_type='application/json')
+    else:
+        update_username_by_username(username, new_username)
+        return HttpResponse(json.dumps({'status': 'ok', 'newUsername': new_username}), content_type='application/json')
 
 # 修改邮箱
+
+
 def update_email(request):
     query_dict = request.GET
     print(query_dict)
-    username = query_dict.get("username","")
+    username = query_dict.get("username", "")
     type = query_dict.get("type", "")
-    new_email = query_dict.get("newEmail","")
+    new_email = query_dict.get("newEmail", "")
     if type == 'getVerifyCode':
         is_new_email_exist = exist_user_by_email(new_email)
         if is_new_email_exist:
@@ -268,23 +357,27 @@ def update_email(request):
             verify_code = send_email(new_email)
             return HttpResponse(json.dumps({'status': 'ok', 'verifyCode': verify_code}), content_type='application/json')
     elif type == 'changeEmail':
-        update_email_by_username(username,new_email)
+        update_email_by_username(username, new_email)
         return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
     else:
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}), content_type='application/json')
 
 # 修改用户头像
+
+
 @csrf_exempt
 def change_avatar(request):
-    image = request.FILES.get('image',None)
-    username = request.POST.get('username','')
+    image = request.FILES.get('image', None)
+    username = request.POST.get('username', '')
     if image == None:
-        return HttpResponse(json.dumps({'status':'wrong','type':'noImage'}), content_type='application/json')
+        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'noImage'}), content_type='application/json')
     else:
-        change_user_avatar(image,username)
-        return HttpResponse(json.dumps({'status':'ok'}), content_type='application/json')
+        change_user_avatar(image, username)
+        return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
 
 # 注销
+
+
 def log_off(request):
     pass
 
@@ -355,14 +448,14 @@ def handle_release_action(request):
 @csrf_exempt
 def release_task(request):
     request_type = request.META['CONTENT_TYPE']
-    print("request_type",request_type)
+    print("request_type", request_type)
 
     if request_type == 'application/json':
         request_body = json.loads(request.body)
-        username,t_id,t_release_mode = create_task(request_body)
+        username, t_id, t_release_mode = create_task(request_body)
 
         # 给相应用户加上任务和状态
-        add_task_to_user(username,t_id,HAS_POSTED,t_release_mode)
+        add_task_to_user(username, t_id, HAS_POSTED, t_release_mode)
 
         return HttpResponse(json.dumps({'status': 'done'}), content_type='application/json')
     else:
@@ -381,11 +474,12 @@ def release_task(request):
 
 @csrf_exempt
 def submit_feedback(request):
-    image_url = request.FILES.get('image',None)
+    image_url = request.FILES.get('image', None)
     inform_email = request.POST.get('email', '')
     description = request.POST.get('textarea', '')
     feedback_type = request.POST.get('questionType', '')
-    create_feedback = add_a_feedback(feedback_type,description,image_url,inform_email)
+    create_feedback = add_a_feedback(
+        feedback_type, description, image_url, inform_email)
     if create_feedback:
         return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
     else:

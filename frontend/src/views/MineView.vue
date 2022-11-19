@@ -23,11 +23,11 @@
           </el-menu-item>
           <el-menu-item index="2" @click="clickLeftMenu(2)">
             <el-icon><document /></el-icon>
-            <span>已领取任务</span>
+            <span>领取列表</span>
           </el-menu-item>
           <el-menu-item index="3" @click="clickLeftMenu(3)">
             <el-icon><document /></el-icon>
-            <span>已发布任务</span>
+            <span>发布列表</span>
           </el-menu-item>
           <el-menu-item index="4" @click="clickLeftMenu(4)">
             <el-icon><Shop /></el-icon>
@@ -44,21 +44,16 @@
         </el-menu>
       </el-aside>
       <el-main class="main-style">
-        <keep-alive
-          include="MineInfoView,TaskPage,GiftCenter,SettingView,ActivityCenter"
-        >
           <component
-            :is="show_content"
-            :key="show_content"
-            :items="items"
-            :total="total"
+            :is="showContent"
+            :key="showContent"
             :username="username"
+            :type="showTaskType"
             ref="coreComponent"
             @initAvatar="initAvatar"
             @changeUsername="changeUsername"
             @changeAvatar="changeAvatar"
           ></component>
-        </keep-alive>
       </el-main>
     </el-container>
   </el-container>
@@ -87,69 +82,10 @@ export default {
         src: "",
         type: "",
       },
-      show_content: "MineInfoView",
+      showContent: "MineInfoView",
       total: 4,
+      showTaskType:1,
       username: "",
-      items: [
-        {
-          index: 1,
-          taskName: "图像识别",
-          starNum: 2,
-          donut: 20,
-          dataType: "图片",
-        },
-        {
-          index: 2,
-          taskName: "垃圾邮件",
-          starNum: 1,
-          donut: 70,
-          dataType: "文本",
-        },
-        {
-          index: 3,
-          taskName: "音频识别",
-          starNum: 3,
-          donut: 80,
-          dataType: "音频",
-        },
-        {
-          index: 4,
-          taskName: "垃圾邮件",
-          starNum: 2,
-          donut: 90,
-          dataType: "文本",
-        },
-        {
-          index: 5,
-          taskName: "垃圾邮件",
-          starNum: 2,
-          donut: 90,
-          dataType: "文本",
-        },
-        {
-          index: 6,
-          taskName: "垃圾邮件",
-          starNum: 2,
-          donut: 90,
-          dataType: "文本",
-        },
-        {
-          index: 7,
-          isSpace: true,
-        },
-        {
-          index: 8,
-          isSpace: true,
-        },
-        {
-          index: 9,
-          isSpace: true,
-        },
-        {
-          index: 10,
-          isSpace: true,
-        },
-      ],
     };
   },
   methods: {
@@ -166,22 +102,24 @@ export default {
     clickLeftMenu(number) {
       switch (number) {
         case 1:
-          this.show_content = "MineInfoView";
+          this.showContent = "MineInfoView";
           break;
         case 2:
-          this.show_content = "TaskPage";
+          this.showContent = "TaskPage";
+          this.showTaskType = 1;
           break;
         case 3:
-          this.show_content = "TaskPage";
+          this.showContent = "TaskPage";
+          this.showTaskType = 2;
           break;
         case 4:
-          this.show_content = "GiftCenter";
+          this.showContent = "GiftCenter";
           break;
         case 5:
-          this.show_content = "ActivityCenter";
+          this.showContent = "ActivityCenter";
           break;
         case 6:
-          this.show_content = "SettingView";
+          this.showContent = "SettingView";
           break;
         default:
       }
@@ -211,6 +149,10 @@ export default {
 }
 .el-aside .el-menu {
   border-right: 0;
+}
+.el-aside {
+  /* border-right: 1px solid; */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 5px 0 rgba(0, 0, 0, 0.19);
 }
 .el-aside .el-menu .el-menu-item {
   border-radius: 20px;

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mine-info-container">
     <vue-final-modal
       v-model="showModal"
       classes="modal-container"
@@ -266,6 +266,7 @@ export default {
         fontColor: "#ffffff",
         hoverColor: "#5299AB",
         focusColor: "#5299AB",
+        isRound:true,
       },
       changePassProps: {
         width: "100px",
@@ -275,6 +276,7 @@ export default {
         fontColor: "#ffffff",
         hoverColor: "#5299AB",
         focusColor: "#5299AB",
+        isRound:true,
       },
       changeForm: {
         username: "",
@@ -598,6 +600,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.mine-info-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 .modal-title {
   font-size: 1.5em;
   margin-bottom: 30px;
@@ -650,7 +658,7 @@ export default {
   padding: 20px 0 20px 0;
 }
 .change-form-area {
-  width: 100%;
+  width: 94%;
   border-radius: 10px;
   margin-top: 40px;
   box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
@@ -692,7 +700,7 @@ export default {
   display: flex;
 }
 .basic-info-box {
-  width: 100%;
+  width: 94%;
   border-radius: 10px;
   box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
   margin-top: 30px;

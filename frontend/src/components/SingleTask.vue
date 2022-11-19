@@ -23,9 +23,9 @@
             <el-col :span="12">
               类型：{{props.dataType}}
             </el-col>
-            <el-col :span="12">选择题</el-col>
+            <el-col :span="12">{{props.problemType}}</el-col>
           </el-row>
-          <div class="time-font">2022.10.22 ~ 2022.10.23</div>
+          <div class="time-font">{{props.startTime}} ~ {{props.endTime}}</div>
         </div>
       </div>
     </div>
@@ -49,7 +49,9 @@
     methods:{
       
     },
-    created(){
+    updated(){
+      this.isSpace = this.props.isSpace;
+      this.starNum = this.props.starNum;
     }
   }
   </script>

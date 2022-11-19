@@ -1,7 +1,12 @@
 <template>
   <el-container class="container">
     <el-header class="header-style">
-      <NavBar :login="true" activeItem="2" :username="username" :imageUrl="image.src"></NavBar>
+      <NavBar
+        :login="true"
+        activeItem="2"
+        :username="username"
+        :imageUrl="image.src"
+      ></NavBar>
     </el-header>
     <el-container class="main-area">
       <el-aside class="left-menu-area">
@@ -159,42 +164,42 @@
           <div class="button-area">
             <CustomButton
               title="所有"
-              :props="chosenQuestionType === 1 ? activeProps : normalProps"
+              :props="chosenProblemType === 1 ? activeProps : normalProps"
               @click="handleClickBtn(6, 1)"
             ></CustomButton>
             <CustomButton
               title="单选"
-              :props="chosenQuestionType === 2 ? activeProps : normalProps"
+              :props="chosenProblemType === 2 ? activeProps : normalProps"
               @click="handleClickBtn(6, 2)"
             ></CustomButton>
           </div>
           <div class="button-area second-line">
             <CustomButton
               title="多选"
-              :props="chosenQuestionType === 3 ? activeProps : normalProps"
+              :props="chosenProblemType === 3 ? activeProps : normalProps"
               @click="handleClickBtn(6, 3)"
             ></CustomButton>
             <CustomButton
               title="填空"
-              :props="chosenQuestionType === 4 ? activeProps : normalProps"
+              :props="chosenProblemType === 4 ? activeProps : normalProps"
               @click="handleClickBtn(6, 4)"
             ></CustomButton>
           </div>
           <div class="button-area second-line">
             <CustomButton
               title="框图"
-              :props="chosenQuestionType === 5 ? activeProps : normalProps"
+              :props="chosenProblemType === 5 ? activeProps : normalProps"
               @click="handleClickBtn(6, 5)"
             ></CustomButton>
             <CustomButton
               title="混合"
-              :props="chosenQuestionType === 6 ? activeProps : normalProps"
+              :props="chosenProblemType === 6 ? activeProps : normalProps"
               @click="handleClickBtn(6, 6)"
             ></CustomButton>
           </div>
         </div>
         <div class="confirm-button-area">
-          <CustomButton :props="confirmProps" title="确认筛选"></CustomButton>
+          <CustomButton :props="confirmProps" title="确认筛选" @click.stop="handleSort"></CustomButton>
         </div>
       </el-aside>
       <el-main class="main-style">
@@ -205,12 +210,14 @@
             placeholder="请输入搜索的任务"
             class="search-input"
           >
-            <template #suffix>
-              <el-icon><Search /></el-icon>
+            <template #append>
+              <el-button @click="handleSort"
+                ><el-icon><Search /></el-icon
+              ></el-button>
             </template>
           </el-input>
         </div>
-        <TaskPage :items="items" :total="6"></TaskPage>
+        <TaskPage :type="0" ref="taskPage"></TaskPage>
       </el-main>
     </el-container>
   </el-container>
@@ -229,16 +236,17 @@ export default {
   },
   data() {
     return {
-      image:{
-        src:"",
-        type:"",
+      image: {
+        src: "",
+        type: "",
       },
       confirmProps: {
         width: "120px",
         fontSize: "16px",
         fontColor: "#FFFFFF",
         normalColor: "#5EABBF",
-        hoverColor: "",
+        hoverColor: "#549fb2",
+        focusColor: "#549fb2",
       },
       disabledProps: {
         hasBorder: false,
@@ -275,7 +283,7 @@ export default {
       hardType: 1,
       donutType: 1,
       chosenDataType: 1,
-      chosenQuestionType: 1,
+      chosenProblemType: 1,
       searchInput: "",
       username: "",
       items: [
@@ -325,6 +333,9 @@ export default {
     };
   },
   methods: {
+    handleSort(){
+      this.$refs.taskPage.sort(this.searchInput,this.onlyLevel,this.donutType,this.overType,this.newType,this.hardType,this.chosenDataType,this.chosenProblemType);
+    },
     handleClickBtn(btn, val) {
       switch (btn) {
         case 1: //调整overType即是否结束
@@ -343,7 +354,7 @@ export default {
           this.chosenDataType = val;
           break;
         case 6:
-          this.chosenQuestionType = val;
+          this.chosenProblemType = val;
           break;
         default:
       }
@@ -352,7 +363,6 @@ export default {
   mounted() {
     if (this.$route.query.username) {
       this.username = this.$route.query.username;
-      console.log(this.username);
     }
     if (this.$route.query.imageSrc) {
       this.image.src = this.$route.query.imageSrc;

@@ -144,7 +144,7 @@ export default {
     font-family: YouSheRound;
     line-height: 50px;
     font-size: 28px;
-    color: #6cb7ca;
+    color: #5EABBF;
     margin-left: 80px;
     display: flex;
   }
