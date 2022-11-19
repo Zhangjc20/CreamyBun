@@ -3,6 +3,7 @@
 from ..classDefination.userClass import *
 from ..classDefination.taskClass import *
 from ..classDefination.questionClass import *
+from ..classDefination.feedbackInfoClass import *
 from ..variables.globalVariables import *
 from ..variables.globalConstants import *
 import math
@@ -213,3 +214,11 @@ def add_task_to_user(username,task_id,state_for_user,state_for_task):
     td = TaskDict.objects.create(task_id=task_id, task_status_for_user=state_for_user,\
                                  task_status_for_itself=state_for_task)
     u.task_info_list.add(td)
+
+# 添加一个问题反馈到问题反馈列表中
+def add_a_feedback(feedback_type,description,image_url,inform_email):
+    try:
+        FeedbackInfo.objects.create(feedback_type=feedback_type,description=description,image_url=image_url,inform_email=inform_email)
+        return True
+    except:
+        return False
