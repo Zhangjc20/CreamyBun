@@ -386,3 +386,13 @@ def submit_feedback(request):
     if request.method == "POST":  # 判断接收的值是否为POST
         query_dict = request.POST
         print(query_dict)
+
+
+def perform_basic_info(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    print("perform_basic_info", username)
+    basic_info = {
+        'status': 'ok',
+    }
+    return HttpResponse(json.dumps(basic_info), content_type='application/json')
