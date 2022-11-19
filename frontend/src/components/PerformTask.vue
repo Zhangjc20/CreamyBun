@@ -1,5 +1,5 @@
 <template>
-  <el-header class="perform-task-header-style">
+  <el-header class="header-style">
     <el-breadcrumb separator="/" class="header-breadcrumb">
       <el-breadcrumb-item :to="{ path: '/' }">奶黄包</el-breadcrumb-item>
       <el-breadcrumb-item>任务选择</el-breadcrumb-item>
@@ -15,17 +15,31 @@
       width="150px"
       title="提交任务"
     />
-    
-
-
   </el-header>
   <el-main class="main-style">
-    <el-col :span="16">
+    <!-- <el-row :gutter="20">
+      <el-col :span="16"><div class="grid-content ep-bg-purple" /></el-col>
+      <el-col :span="8"><div class="grid-content ep-bg-purple" /></el-col>
+    </el-row> -->
+    <el-row :gutter="20">
+      <el-col :span="16">
+        <PerformTaskMaterial
+        >
+        </PerformTaskMaterial>
+      </el-col>
+      <!-- <el-col :span="16" v-for="material in materialList" :key="material">
+        <PerformTaskMaterial
+        :materialInfo="material"
+        >
+        </PerformTaskMaterial>
+      </el-col> -->
+      <el-col :span="8">
+        <el-main class="main-style">
 
-    </el-col>
-    <el-col :span="8" style="border-left: 1px solid #999999;">
-
-    </el-col>
+        </el-main>
+      </el-col>
+    </el-row>
+    <!-- <el-col :span="8" style="border-left: 1px solid #999999;"></el-col> -->
   </el-main>
   <!-- <el-main class="main-style">
     
@@ -36,7 +50,7 @@
 <script>
 import axios from "axios";
 import CustomButton from './CustomButton.vue';
-
+import PerformTaskMaterial from "@/components/PerformTaskMaterial.vue";
 // import { ElMessageBox } from "element-plus";
 
 export default {
@@ -44,6 +58,7 @@ export default {
 
   components:{
     CustomButton,
+    PerformTaskMaterial,
   },
   props: {
     username:String,
@@ -75,264 +90,63 @@ export default {
   data(){
     return {
       imageFile:null,
+      questionList:[],
+      materialList:[{
+                "index": 1, 
+                "fileName": "2 (1).docx", 
+                "fileSize": "28.7 KB", 
+                "totalSize": 29414, 
+                "fileType": "寄了", 
+                "filePath": "./resource/task_materials\\ZDandsomSP_20221118130618\\list4\\2 (1).docx", 
+                "list": "list4"
+            }, ],
     }
   },
   mounted(){
-
+    axios.get("http://localhost:8000/perform_basic_info/",{
+      params:{
+        username:this.username
+      }
+    }).then((res)=>{
+        if(res.data['status']==='ok'){
+          this.questionList = res.data['questionList'];
+          this.materialList = res.data['materialList'];
+        }
+    }).catch();
   },
   methods:{
-    clickHome(){
-      this.$router.push({
-            name: 'home',
-        });
-    },
-    showQuestionPage(selected){
-      this.newOrEdit = 0
-      let value = selected.value
-      if(value == 'singleChoice'){
-        this.componentName = 'ReleaseBasicQuestion'
-        this.multiple = 0
-      }else if(value == 'multipleChoice'){
-        this.componentName = 'ReleaseBasicQuestion'
-        this.multiple = 1
-      }else if(value == 'fillBlank'){
-        this.componentName = 'ReleaseBasicQuestion'
-        this.multiple = 2
-      }else if(value == 'frameSelection'){
-        this.componentName = 'ReleaseBasicQuestion'
-        this.multiple = 3
-      }
-    },
-    addQuestion(newQuestion){
-      console.log("新的题目：",newQuestion)
-      var len = this.questionList.length
-      newQuestion['index'] = len + 1
-      this.questionList.push(newQuestion)
-    },
-    moveQuestionUpward(row, index) {
-      if (index > 0) {
-        let upData = this.questionList[index - 1];
-        this.questionList[index - 1]['index'] ++
-        this.questionList[index]['index'] --
-        this.questionList.splice(index - 1, 1);
-        this.questionList.splice(index, 0, upData);
-      } else {
-        this.$message({
-          message: '已经是第一条，上移失败',
-          type: 'warning'
-        });
-      }
-    },
-    moveQuestionDown(row, index) {
-      if ((index + 1) == this.questionList.length) {
-        this.$message({
-          message: '已经是最后一条，下移失败',
-          type: 'warning'
-        });
-      } else {
-        this.questionList[index + 1]['index'] --
-        this.questionList[index]['index'] ++
-        let downData = this.questionList[index + 1];
-        this.questionList.splice(index + 1, 1);
-        this.questionList.splice(index, 0, downData);
-      }
-    },
-    editQuestion(row, index){
-      this.editingQuestion = index
-      this.newOrEdit = 1
-      // var deleteTarget = index + 1
-      // console.log(deleteTarget)
-      // this.questionList.forEach(function (item,index,arr){
-      //     if (item.index == deleteTarget) {
-      //         arr.splice(index,1);
-      //     }
-      // });
-      // for(let i = 0; i<this.questionList.length;i++){
-      //   this.questionList[i]['index'] = i + 1
-      // }
-    },
-    deleteQuestion(row, index){
-      var deleteTarget = index + 1
-      console.log(deleteTarget)
-      this.questionList.forEach(function (item,index,arr){
-          if (item.index == deleteTarget) {
-              arr.splice(index,1);
-          }
-      });
-      for(let i = 0; i<this.questionList.length;i++){
-        this.questionList[i]['index'] = i + 1
-      }
-      this.$message({
-        message: '删除题目成功',
-        type: 'success'
-      });
-    },
-    finalCheck(){
-      if(this.form.taskName == ''){
-        this.$message({
-          message: '您尚未填写任务名！',
-          type: 'error'
-        });
-      }else if(this.form.description == ''){
-        this.$message({
-          message: '您尚未填写任务描述！',
-          type: 'error'
-        })
-      }else if(this.form.releaseMode == ''){
-        this.$message({
-          message: '您尚选择发布模式！',
-          type: 'error'
-        })
-      }else if(this.form.deadLine1 == '' || this.form.deadLine2 == ''){
-        this.$message({
-          message: '您尚未填写完成截止日期！',
-          type: 'error'
-        })
-      }else if(this.form.releaseMode == '定时发布' && (this.form.startLine1 == '' || this.form.startLine2 == '')){
-        this.$message({
-          message: '您尚未填写完成发布日期！',
-          type: 'error'
-        })
-      }else if(this.form.starRank == ''){
-        this.$message({
-          message: '您尚未选择星级！',
-          type: 'error'
-        })
-      }else if(this.form.singleBonus == ''){
-        this.$message({
-          message: '您尚未填写单个试卷奖励！',
-          type: 'error'
-        })
-      }else if(this.questionList.length == 0){
-        this.$message({
-          message: '您尚未设定任何题目！',
-          type: 'error'
-        })
-      }else if(this.imageFile == null){
-        this.$message({
-          message: '您尚未设置封面！',
-          type: 'error'
-        })
-      }else if(this.$refs.MyMaterialUpload.fullList.length == 0){
-        this.$message({
-          message: '您尚未上传任何素材列表！',
-          type: 'error'
-        })
-      }else{
-        let tempLen = this.$refs.MyMaterialUpload.fullList[0].length
-        console.log("releaseData:this.$refs.MyMaterialUpload.fullList",this.$refs.MyMaterialUpload.fullListt)
-        for(var subList of this.$refs.MyMaterialUpload.fullList){
-          if(subList.length !== tempLen){
-            this.$message({
-              message: '您的题表中题目不相等！',
-              type: 'error'
-            });
-            return false
-          }
-        }
-        if(tempLen == 0){
-          this.$message({
-            message: '您的题表中没有题目！',
-            type: 'error'
-          });
-          return false
-        }
-        return true
-      }
-      return false
-    },
-    blobToFile(blob, fileName, mimeType) {
-      return new File([blob], fileName, { type: mimeType });
-    },
-    async finalSubmit(){
-      this.form.poster = this.username
 
-      var formData = new FormData();
-      // var tempFile = new Blob(this.imageFile)
-      console.log("我是个jb", this.imageFile)
-      formData.append("image",this.imageFile);
-      formData.append("username", this.username);
-      formData.append("fileName", 'image')
-      formData.append("size", '-1')
-      console.log("jbjbjbjjbjjbjbjbjbjbjbjjbjbjbjjb")
-      await axios({
-              method:"Post",
-              url:'http://localhost:8000/release_task/',
-              headers: {
-              //请求头这个一定要写
-                'Content-Type': 'multipart/form-data',
-              },
-              data:formData
-            })
-      .then((res) => {
-        console.log(res);
-        try{
-          if(res.data['status'] == 'get the image'){
-            console.log(res);
-            this.form.coverUrl = res.data['url']
-          }
-        }catch(err){
-          this.$message({
-            message: '上传封面失败',
-            type: 'error'
-          });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        this.$message({
-          message: '上传封面失败',
-          type: 'error'
-        });
-      });     
-      console.log("xpxpxpxpxpxppxppxpxppxpxppxppxpxppxppxp")
-      await axios.post("http://localhost:8000/release_task/",
-        {basicInfoForm:this.form,
-          questionList:this.questionList,
-          fullList:this.$refs.MyMaterialUpload.fullList,
-          testList:this.$refs.MyMaterialUpload.testList,
-      }).then(res => {
-        if (res.data['status'] == 'done'){
-          // this.$refs.MyMaterialUpload.initSelected()
-          // this.$refs.MyMaterialUpload.initAllLists()
-          // this.$refs.MyMaterialUpload.updateShowingList()
-          var confirmRes = this.$confirm('您已成功创建任务，请问是否要继续创建？', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'success'
-          }).catch(err => err)
-          console.log("confirmResconfirmResconfirmRes", confirmRes)
-          if ('confirm' === confirmRes){
-            location.reload();
-          }
-          if ('cancel' === confirmRes) {//用户点击了取消
-            location.reload();
-            //此处可以跳转到已发布任务列表
-          }
-          // this.$message({
-          //   message: '操作素材列表成功',
-          //   type: 'success'
-          // });
-        }else{
-          this.$message({
-            message: '操作素材列表失败',
-            type: 'error'
-          });
-        }
-      }).catch(error => {
-        console.log(error);
-        this.$message({
-          message: error,
-          type: 'error'
-        });
-      })
-    },
   }
 }
 </script>
 
 <style scoped>
-
+  .header-style{
+    border-radius: 5px;
+    box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
+    height: 100px;
+    padding: 20px 20px 20px 40px;
+  }
+  .header-breadcrumb{
+    margin:0 0 10px 0;
+  }
+  .header-title{
+    float:left;
+    font-size:20px;
+    font-weight:bold;
+  }
+  .main-style{
+    padding: 20px 20px 20px 20px;
+    margin-top: 20px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
+  }
+/*.header-style{
+    border-radius: 5px;
+    box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
+    height: 100px;
+    padding: 20px 20px 20px 40px;
+  }
   .perform-task-header-style{
     border-radius: 5px;
     box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
@@ -352,106 +166,6 @@ export default {
     margin-top: 20px;
     border-radius: 5px;
     box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
-  }
-  .cropper {
-  height: 600px;
-  width: 600px;
-  background: #ddd;
-  border-radius: 20px;
-}
-/* 
-  .user-area {
-    float: right;
-    position: absolute;
-    top:0;
-    right: 0;
-    height: 60px;
-    margin-right: 90px;
-  }
-   .avatar {
-    float: right;
-    position: absolute;
-    top:0;
-    right: 0;
-    margin-right: 180px;
-    margin-top: 10px;
-  }
-  .user-center {
-    line-height: 60px;
-    margin-bottom: 20px;
-    font-size: 22px;
-    color:#f8f8f8;
-    font-family: YouSheBlack;
-    cursor: pointer;
-  }
-  .user-center:hover {
-    opacity: 0.6;
-  }
-.nav-title {
-    float: left;
-    height: 60px;
-    font-family: YouSheRound;
-    line-height: 50px;
-    font-size: 28px;
-    color: #5EABBF;
-    margin-left: 80px;
-    display: flex;
-  }
-  .nav-title-font {
-    margin-left: 10px;
-    line-height: 60px;
-  }
-  .menu-out {
-    margin-left: 80px;
-    background-color: #ffffff;
-    width:470px;
-    overflow: hidden;
-    border-radius: 40px;
-    margin-top: 10px;
-    display: flex;
-   }
-   .el-button--primary {
-  background: #FBE484 !important;
-  border-color: #FBE484 !important;
-  color:#6C6C6C;
-}
-.el-button--medium {
-  width: 80px;
-}
-
-.logo {
-  width: 45px; 
-  height: 40px; 
-  margin-top: 10px;
-}
-.login-button {
-  margin-right: 30px;
-}
-
-.log-buttons {
-  float: right;
-  position: absolute;
-  top:0;
-  right: 0;
-  line-height: 60px;
-  margin-right: 100px;
-}
-.el-nav-menu {
-  width:480px;
-  padding-left: 46px;
-}
-.el-menu {
-  border-radius: 0;
-}
-.el-menu-item {
-  height: 50px;
-  font-size: 16px;
-  padding-top: 4px;
-}
-.el-menu--horizontal .el-menu-item:not(.is-disabled):focus{
-  background-color: transparent;
-}
-.el-menu--horizontal .el-menu-item:not(.is-disabled):hover{
-  background-color: #f8f8f8;
-} */
+    height:95%
+  }*/
 </style>

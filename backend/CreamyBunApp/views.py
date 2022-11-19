@@ -484,3 +484,13 @@ def submit_feedback(request):
         return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
     else:
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')
+
+
+def perform_basic_info(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    print("perform_basic_info", username)
+    basic_info = {
+        'status': 'ok',
+    }
+    return HttpResponse(json.dumps(basic_info), content_type='application/json')

@@ -276,13 +276,21 @@ def walk_file(file, material_type):
                         print(TYPE_SET[material_type], "删除了：", file_path)
                         os.remove(file_path)
                         continue
+                    # 防止混合类型
+                    file_type_num = material_type
+                    if file_type_num == 4:
+                        i = 0
+                        for temp_set in TYPE_SET:
+                            if file_type in temp_set:
+                                file_type_num = i
+                            i += 1
 
                     fileInfo = os.stat(file_path)
                     sub_list.append({'index': i,
                                      'fileName': f,
                                      'fileSize': get_formatted_size_string(fileInfo.st_size),
                                      'totalSize': fileInfo.st_size,
-                                     'fileType': "寄了",
+                                     'fileType': file_type_num,
                                      'filePath': file_path,
                                      'list': d,
                                      })

@@ -27,7 +27,10 @@
           </el-menu>
         </el-aside>
         <el-main class="main-style">
-          <PerformTask/>
+          <PerformTask
+          :login="true"
+          :username="username"
+          />
         </el-main>
       </el-container>
     </el-container>
