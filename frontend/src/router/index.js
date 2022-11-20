@@ -8,6 +8,7 @@ import LogresetView from "@/views/LogresetView.vue";
 import TaskCenterView from "@/views/TaskCenterView.vue";
 import HelpView from "@/views/HelpView.vue";
 import TaskDetailView from '@/views/TaskDetailView.vue';
+import AdminView from "@/views/AdminView.vue";
 
 const routes = [
   {
@@ -43,6 +44,7 @@ const routes = [
     name: "logup",
     component: LogupView,
   },
+
   {
     path: "/logreset",
     name: "logreset",
@@ -63,6 +65,16 @@ const routes = [
     path: "/mine",
     name: "mine",
     component: MineView,
+  },
+  {
+    //元数据
+    meta: {
+      // 必须登录才可以查看
+      requireAdminAuth:true
+    },
+    path: "/admin",
+    name: "admin",
+    component: AdminView,
   },
   {
     meta: {
@@ -121,6 +133,13 @@ router.beforeEach((to, from, next) => {
   //直接进to 所指路由 next(false)
   //中断当前路由 next('route')
   //跳转指定路由 next('error')
+  if(to.meta.requireAdminAuth){
+    if(sessionStorage.getItem("adminAuth")){
+      next()
+    }else{
+      next({name:"login"})
+    }
+  }
   if (to.meta.requireUsername && to.meta.requireAvatar) {
     if (!to.meta.global) {
       let tempQuery = Object.assign({}, to.query);

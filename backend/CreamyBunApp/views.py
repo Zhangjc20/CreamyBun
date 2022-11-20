@@ -227,7 +227,7 @@ def get_user_received_task_info(request):
 
     ret = {
         'status': 'ok',
-        'totalPageNumber': total_number,# 注意是totalNumber筛选出来的总任务数
+        'totalNumber': total_number,# 注意是totalNumber筛选出来的总任务数
         'taskInfoList': task_info_list
     }
 
@@ -247,7 +247,7 @@ def get_user_released_task_info(request):
 
     ret = {
         'status': 'ok',
-        'totalPageNumber': total_number,  # 注意是totalNumber筛选出来的总任务数，不是总页数
+        'totalNumber': total_number,  # 注意是totalNumber筛选出来的总任务数，不是总页数
         'taskInfoList': task_info_list
     }
     return HttpResponse(json.dumps(ret), content_type='application/json')

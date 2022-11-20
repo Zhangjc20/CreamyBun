@@ -151,7 +151,6 @@ export default {
   border-right: 0;
 }
 .el-aside {
-  /* border-right: 1px solid; */
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 5px 0 rgba(0, 0, 0, 0.19);
 }
 .el-aside .el-menu .el-menu-item {

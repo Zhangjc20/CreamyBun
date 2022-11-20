@@ -1,9 +1,11 @@
 <template>
   <div class="task-page-container">
     <div class="task-list-title" v-if="type != 0">
-      {{ type === 1 ? "领取任务列表" : "发布任务列表" }}
+      {{
+        type === 1 ? "领取任务列表" : type === 2 ? "发布任务列表" : "待审核任务"
+      }}
     </div>
-    <div class="radio-box" v-if="type != 0">
+    <div class="radio-box" v-if="type == 1 || type == 2">
       筛选条件：
       <el-radio-group
         v-model="sortChoice"
@@ -65,98 +67,71 @@ export default {
       items: [
         {
           index: 1,
-          taskName: "图像识别",
-          starNum: 2,
-          donut: 20,
-          dataType: "图片",
-          id: "123",
-          problemType: "选择题",
-          startTime: "2020.1.1",
-          endTime: "2020.1.28",
+          taskName: "nihao",
+          isSpace: false,
         },
         {
           index: 2,
-          taskName: "垃圾邮件",
-          starNum: 1,
-          donut: 70,
-          dataType: "文本",
-          id: "123",
-          problemType: "选择题",
-          startTime: "2020.1.1",
-          endTime: "2020.1.28",
+          taskName: "nihao",
+          isSpace: false,
         },
         {
           index: 3,
-          taskName: "音频识别",
-          starNum: 3,
-          donut: 80,
-          dataType: "音频",
-          id: "123",
-          problemType: "选择题",
-          startTime: "2020.1.1",
-          endTime: "2020.1.28",
+          taskName: "nihao",
+          isSpace: false,
         },
         {
           index: 4,
-          taskName: "垃圾邮件",
-          starNum: 2,
-          donut: 90,
-          dataType: "文本",
-          id: "123",
-          problemType: "选择题",
-          startTime: "2020.1.1",
-          endTime: "2020.1.28",
+          taskName: "nihao",
+          isSpace: false,
         },
         {
           index: 5,
-          taskName: "垃圾邮件",
-          starNum: 2,
-          donut: 90,
-          dataType: "文本",
-          id: "123",
-          problemType: "选择题",
-          startTime: "2020.1.1",
-          endTime: "2020.1.28",
+          taskName: "nihao",
+          isSpace: false,
         },
         {
           index: 6,
-          taskName: "垃圾邮件",
-          starNum: 2,
-          donut: 90,
-          dataType: "文本",
-          id: "123",
-          problemType: "选择题",
-          startTime: "2020.1.1",
-          endTime: "2020.1.28",
+          taskName: "nihao",
+          isSpace: false,
         },
         {
           index: 7,
           isSpace: true,
-          id: "123",
         },
         {
           index: 8,
           isSpace: true,
-          id: "123",
         },
         {
           index: 9,
           isSpace: true,
-          id: "123",
         },
         {
           index: 10,
           isSpace: true,
-          id: "123",
         },
       ],
       currentPage: 1,
       sortChoice: 0,
+      searchInput: "",
+      onlyLevel: "",
+      donutType: "",
+      overType: "",
+      newType: "",
+      hardType: "",
+      chosenDataType: "",
+      chosenProblemType: "",
     };
   },
   methods: {
-    handleClickTask(value){
-      console.log(value);
+    handleClickTask(id) {
+      this.$router.push({
+        name: "taskdetail",
+        query: {
+          id: id,
+        },
+      });
     },
     sort(
       searchInput,
@@ -168,6 +143,14 @@ export default {
       chosenDataType,
       chosenProblemType
     ) {
+      this.searchInput = searchInput;
+      this.onlyLevel = onlyLevel;
+      this.donutType = donutType;
+      this.overType = overType;
+      this.newType = newType;
+      this.hardType = hardType;
+      this.chosenDataType = chosenDataType;
+      this.chosenProblemType = chosenProblemType;
       //onlyLevel:bool false:所有 true:只选入满足等级的
       //donutType:int 1:所有 2:从多到少 3:从少到多
       //newType:int 1:所有 2：最新发布 3：最早结束
@@ -210,7 +193,34 @@ export default {
         });
     },
     clickPage(page) {
-      if (this.type === 1) {
+      if(this.type === 0){
+        axios
+          .get("/get_sorted_tasks", {
+            params: {
+              username: this.username,
+            searchInput: this.searchInput,
+            onlyLevel: this.onlyLevel,
+            donutType: this.donutType,
+            overType: this.overType,
+            newType: this.newType,
+            hardType: this.hardType,
+            chosenDataType: this.chosenDataType,
+            chosenProblemType: this.chosenProblemType,
+            pageNumber:page
+            },
+          })
+          .then((res) => {
+            if (res.data["status"] === "ok") {
+              this.items = res.data["taskInfoList"];
+              this.total = res.data["totalNumber"];
+              console.log("ok");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+      else if (this.type === 1) {
         //个人领取列表 todo
         axios
           .get("/get_user_received_task_info", {
@@ -250,6 +260,22 @@ export default {
           .catch((err) => {
             console.log(err);
           });
+      } else if (this.type === 3) {
+        axios
+          .get("/get_examining_tasks", {
+            params: {
+              pageNumber: page,
+            },
+          })
+          .then((res) => {
+            if (res.data["status"] === "ok") {
+              this.items = res.data["taskInfoList"];
+              this.total = res.data["totalNumber"];
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
     },
     handleSortChange(value) {
@@ -267,7 +293,6 @@ export default {
             if (res.data["status"] === "ok") {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
-              console.log("ok");
             }
           })
           .catch((err) => {
@@ -297,13 +322,14 @@ export default {
     },
     init() {
       //初始化任务列表
+      this.sortChoice = 0;
       if (this.type === 1) {
         //个人领取列表 todo
         axios
           .get("/get_user_received_task_info", {
             params: {
               username: this.username, //String 用户名
-              sortChoice: 1, //int 1是所有 2是正在进行，3是已结束
+              sortChoice: 0, //int 1是所有 2是正在进行，3是已结束
               pageNumber: 1, //int页码
             },
           })
@@ -323,7 +349,7 @@ export default {
           .get("/get_user_released_task_info", {
             params: {
               username: this.username, //String 用户名
-              sortChoice: 1, //int 1是所有，2是暂未发布 3是发布但未结束 4是已结束
+              sortChoice: 0, //int 1是所有，2是暂未发布 3是发布但未结束 4是已结束
               pageNumber: 1, //int页码
             },
           })
@@ -331,7 +357,22 @@ export default {
             if (res.data["status"] === "ok") {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
-              console.log("ok");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else if (this.type === 3) {
+        axios
+          .get("/get_examining_tasks", {
+            params: {
+              pageNumber: 1,
+            },
+          })
+          .then((res) => {
+            if (res.data["status"] === "ok") {
+              this.items = res.data["taskInfoList"];
+              this.total = res.data["totalNumber"];
             }
           })
           .catch((err) => {
