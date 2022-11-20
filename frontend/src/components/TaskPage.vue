@@ -10,14 +10,14 @@
         @change="handleSortChange"
         style="margin-left: 15px"
       >
-        <el-radio :label="1">所有</el-radio>
-        <el-radio :label="2">{{
+        <el-radio :label="0">所有</el-radio>
+        <el-radio :label="1">{{
           type === 1 ? "正在进行" : "暂未发布"
         }}</el-radio>
-        <el-radio :label="3">{{
+        <el-radio :label="2">{{
           type === 1 ? "已结束" : "发布但未结束"
         }}</el-radio>
-        <el-radio :label="4" v-if="type === 2">已结束</el-radio>
+        <el-radio :label="3" v-if="type === 2">已结束</el-radio>
       </el-radio-group>
     </div>
     <div class="task-box">
@@ -150,7 +150,7 @@ export default {
         },
       ],
       currentPage: 1,
-      sortChoice: 1,
+      sortChoice: 0,
     };
   },
   methods: {

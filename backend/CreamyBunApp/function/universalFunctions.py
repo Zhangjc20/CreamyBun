@@ -89,6 +89,7 @@ def get_money_to_donut():
 def get_task_info_list(username,state,page_number,sort_choice):
     u = get_a_user_data(username)
     page_number = eval(page_number)
+    sort_choice = eval(sort_choice)
     all_task_to_state = u.task_info_list.all() # 返回了字典model对象的列表
 
     # 存了所有的符合状态的任务的id 
@@ -107,9 +108,9 @@ def get_task_info_list(username,state,page_number,sort_choice):
 
     begin_index = TASK_NUMBER_PER_PAGE * (page_number -1)
     if page_number == total_page_number: # 最后一页
-        needed_task_to_state_list = needed_task_to_state_list[begin_index,]
+        needed_task_to_state_list = needed_task_to_state_list[begin_index:]
     elif page_number < total_page_number:
-        needed_task_to_state_list = needed_task_to_state_list[begin_index,begin_index + TASK_NUMBER_PER_PAGE]
+        needed_task_to_state_list = needed_task_to_state_list[begin_index:begin_index + TASK_NUMBER_PER_PAGE]
     else: # 超过页码范围
         needed_task_to_state_list = []
 
