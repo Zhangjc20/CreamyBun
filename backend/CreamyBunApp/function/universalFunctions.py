@@ -345,3 +345,112 @@ def get_problem_material(avatar_url):
 def get_suffix(input_str):
     temp = input_str.split('.')[:-1]
     return temp
+
+def take_single_bonus(elem):
+    return elem.single_bonus
+
+def take_begin_time(elem):
+    return elem.begin_time
+
+def take_end_time(elem):
+    return elem.end_time
+
+def take_star_rank(elem):
+    return elem.star_rank
+
+def sorted_and_selected_tasks(username, seach_content, only_level,\
+                              donut_type, over_type, new_type,\
+                              hard_type, data_type, answer_type, page_number):
+    # seach_content:搜索框输入的内容，用于模糊搜索(TODO:暂时不做)
+    
+    u = get_a_user_data(username)
+
+    # 得到所有的任务列表
+    all_task = Task.objects.all()
+
+    # data_type:int 1:所有 2：图片 3：文本 4：视频  5：音频 6：混合
+    if data_type > 1:
+        all_task = all_task.filter(task_type=(data_type-2))
+
+    # answer_type:int 1:所有 2：单选 3：多选 4：填空 5：框图 6：混合
+    if answer_type > 1:
+        all_task = all_task.filter(answer_type=(answer_type-2))
+    
+    # 必须是已经发布的任务
+    all_task = [x for x in all_task if (get_now_time().strftime('%F %T') >= x.begin_time)]
+
+    # over_type: int 1:所有 2：未结束 3：已结束
+    if over_type > 1:
+        if over_type == 3:
+            all_task = [x for x in all_task if ((x.finished_problem_number == x.problem_total_number)\
+                                                or get_now_time().strftime('%F %T') >= x.end_time)]
+        else:
+            all_task = [x for x in all_task if ((x.finished_problem_number < x.problem_total_number)\
+                                                and get_now_time().strftime('%F %T') < x.end_time)]
+    # username:用户名用来获取等级啥的
+    # only_level:bool false:所有 true:只选入满足做题者等级的
+    if only_level:
+        all_task = [x for x in all_task if (x.star_rank <= u.credit_rank)]
+
+    # 升序：大的在后面，sort默认升序reverse=False
+    
+    # hard_type:int 1:默认 2：从难到易 3：从易到难
+    if hard_type > 1:
+        if hard_type == 2:
+            all_task.sort(key=take_star_rank,reverse=True)
+        else:
+            all_task.sort(key=take_star_rank)
+
+    # new_type:int 1:默认 2：最新发布 3：最早结束
+    if new_type > 1:
+        if new_type == 2:
+            all_task.sort(key=take_begin_time,reverse=True)
+        else:
+            all_task.sort(key=take_end_time)
+
+    # donut_type:int 1:默认 2:从多到少 3:从少到多 
+    if donut_type > 1:
+        if donut_type == 2:
+            all_task.sort(key=take_single_bonus,reverse=True)
+        else:
+            all_task.sort(key=take_single_bonus)
+
+    total_number = len(all_task)
+    total_page_number = math.ceil(total_number/TASK_NUMBER_PER_PAGE)
+
+    begin_index = TASK_NUMBER_PER_PAGE * (page_number -1)
+    if page_number == total_page_number: # 最后一页
+        all_task = all_task[begin_index:]
+    elif page_number < total_page_number:
+        all_task = all_task[begin_index:begin_index + TASK_NUMBER_PER_PAGE]
+    else: # 超过页码范围
+        all_task = []
+
+    task_info_list=[]
+    # i从0开始
+    for i, t in enumerate(all_task):
+        t_info = {
+            'isSpace':False,
+            'id':t.id,
+            'taskName':t.task_name,
+            'starNum':t.star_rank,
+            'donut':t.single_bonus,
+            'dataType':TASK_TYPE_DICT[t.task_type],
+            'problemType':ANSWER_TYPE_DICT[t.answer_type],
+            'startTime':t.begin_time.split(" ")[0],
+            'endTime':t.end_time.split(" ")[0],
+        }
+        t_info.setdefault('index',i)
+        task_info_list.append(t_info)
+
+    # 填充空白
+    info_list_length = len(task_info_list)
+    if info_list_length < TASK_NUMBER_PER_PAGE:
+        for i in range(info_list_length,TASK_NUMBER_PER_PAGE):
+            t_info = {
+                'index':i,
+                'isSpace':True,
+            }
+            task_info_list.append(t_info)
+
+    return total_number,task_info_list

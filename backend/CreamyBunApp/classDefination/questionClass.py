@@ -20,6 +20,7 @@ class FillBlankQuestion(Question):
 
 class FrameSelectionQuestion(Question):
     # 框图题可以框多个框
+    picture_index = models.IntegerField(default=-1) # 这题框图题指向哪张图片
     min_frame_number = models.IntegerField(default=MAX_FRAME_NUM)
     max_frame_number = models.IntegerField(default=0)
 

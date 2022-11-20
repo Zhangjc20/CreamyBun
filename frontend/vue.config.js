@@ -21,6 +21,13 @@ module.exports = defineConfig({
           '^/log_in': '' //请求的时候使用这个api就可以
         }
       },
+      '/get_sorted_tasks': {
+        target: 'http://localhost:8000/get_sorted_tasks/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/get_sorted_tasks': '' //请求的时候使用这个api就可以
+        }
+      },
       '/get_user_basic_info': {
         target: 'http://localhost:8000/get_user_basic_info/', //填写请求的目标地址
         changOrigin: true, //允许跨域
