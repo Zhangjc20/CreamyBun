@@ -219,93 +219,19 @@ def get_user_received_task_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     page_number = query_dict.get("pageNumber", "")
-    sort_choice = query_dict.get("sortChoice","")#int 1是所有 2是正在进行，3是已结束
+    sort_choice = query_dict.get("sortChoice","")#int 0是所有 1是正在进行，2是已结束
 
     # 总页数（int），任务信息列表（列表，成员为字典）
-    # total_page_number, task_info_list = get_task_info_list(
-    #     username, HAS_RECEIVED, page_number)
+    total_number, task_info_list = get_task_info_list(
+        username, HAS_RECEIVED, page_number, sort_choice)
 
-    # ret = {
-    #     'status': 'ok',
-    #     'totalPageNumber': total_page_number,# 注意是totalNumber筛选出来的总任务数，不是总页数
-    #     'taskInfoList': task_info_list
-    # }
-    #以下为应返回类型具有属性，必须返回10个对象，index可以随意只要10个对象的index不相同（比如可以拿id代替）
-    example = [{
-        'index': 1,
-        'taskName': "图像识别",
-        'starNum': 2,
-        'donut': 20,
-        'dataType': "图片",
-        'problemType':"选择题",
-        'startTime':"2020.1.1",
-        'endTime':"2020.1.28",
-        'id': "123"},
-        {
-        'index': 2,
-        'taskName': "图像识别",
-        'starNum': 2,
-        'donut': 20,
-        'dataType': "图片",
-        'problemType':"选择题",
-        'startTime':"2020.1.1",
-        'endTime':"2020.1.28",
-        'id': "123"},
-        {
-        'index': 3,
-        'taskName': "图像识别",
-        'starNum': 2,
-        'donut': 20,
-        'dataType': "图片",
-        'problemType':"选择题",
-        'startTime':"2020.1.1",
-        'endTime':"2020.1.28",
-        'id': "123"},
-        {
-        'index': 4,
-        'taskName': "图像识别",
-        'starNum': 2,
-        'donut': 20,
-        'dataType': "图片",
-        'problemType':"选择题",
-        'startTime':"2020.1.1",
-        'endTime':"2020.1.28",
-        'id': "123"},
-        {
-        'index': 5,
-        'taskName': "图像识别",
-        'starNum': 2,
-        'donut': 20,
-        'dataType': "图片",
-        'problemType':"选择题",
-        'startTime':"2020.1.1",
-        'endTime':"2020.1.28",
-        'id': "123"},
-        {
-        'index': 6,
-        'isSpace': True,
-        'id': '123'
-    },
-        {
-        'index': 7,
-        'isSpace': True,
-        'id': '123'
-    },
-        {
-        'index': 8,
-        'isSpace': True,
-        'id': '123'
-    },
-        {
-        'index': 9,
-        'isSpace': True,
-        'id': '123'
-    },
-        {
-        'index': 10,
-        'isSpace': True,
-        'id': '123'}]
-    return HttpResponse(json.dumps({'status':"ok",'totalNumber':21,'taskInfoList':example}), content_type='application/json')
+    ret = {
+        'status': 'ok',
+        'totalPageNumber': total_number,# 注意是totalNumber筛选出来的总任务数
+        'taskInfoList': task_info_list
+    }
+
+    return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
 # 获得已发布任务信息
@@ -313,15 +239,15 @@ def get_user_released_task_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     page_number = query_dict.get("pageNumber", "")
-    sort_choice = query_dict.get("sortChoice","")#1是所有，2是暂未发布 3是发布但未结束 4是已结束
+    sort_choice = query_dict.get("sortChoice","")#0是所有，1是暂未发布 2是发布但未结束 3是已结束
 
     # 总页数（int），任务信息列表（列表，成员为字典）
-    total_page_number, task_info_list = get_task_info_list(
-        username, HAS_POSTED, page_number)
+    total_number, task_info_list = get_task_info_list(
+        username, HAS_POSTED, page_number,sort_choice)
 
     ret = {
         'status': 'ok',
-        'totalPageNumber': total_page_number,  # 注意是totalNumber筛选出来的总任务数，不是总页数
+        'totalPageNumber': total_number,  # 注意是totalNumber筛选出来的总任务数，不是总页数
         'taskInfoList': task_info_list
     }
     return HttpResponse(json.dumps(ret), content_type='application/json')
@@ -341,8 +267,6 @@ def update_username(request):
         return HttpResponse(json.dumps({'status': 'ok', 'newUsername': new_username}), content_type='application/json')
 
 # 修改邮箱
-
-
 def update_email(request):
     query_dict = request.GET
     print(query_dict)
@@ -363,8 +287,6 @@ def update_email(request):
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}), content_type='application/json')
 
 # 修改用户头像
-
-
 @csrf_exempt
 def change_avatar(request):
     image = request.FILES.get('image', None)
@@ -376,8 +298,6 @@ def change_avatar(request):
         return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
 
 # 注销
-
-
 def log_off(request):
     pass
 
@@ -455,7 +375,11 @@ def release_task(request):
         username, t_id, t_release_mode = create_task(request_body)
 
         # 给相应用户加上任务和状态
-        add_task_to_user(username, t_id, HAS_POSTED, t_release_mode)
+        if t_release_mode == NOT_YET_RELEASE or t_release_mode == TIMED_RELEASE:
+            state_for_task = NOT_RELEASE
+        else:
+            state_for_task = RELEASE_BUT_NOT_FINISHED
+        add_task_to_user(username, t_id, HAS_POSTED, state_for_task)
 
         return HttpResponse(json.dumps({'status': 'done'}), content_type='application/json')
     else:
