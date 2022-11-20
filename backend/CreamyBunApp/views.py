@@ -141,20 +141,24 @@ def get_user_basic_info(request):
 
 def get_task_basic_info(request):
     query_dict = request.GET
-    username = query_dict.get("username", "")
-    print(username)
-    # u = get_a_user_data(username)
+    id = query_dict.get("id", "")
+    t = get_a_task_data(id)
+    poster_username = get_a_user_data_by_id(t.poster).username
     task_info = {
         'status': 'ok',
-        'taskName': '任务名',
-        'questionType': '单选题',
-        'description': 'haha',
-        'problemTotalNum': '100',
-        'singleBonus': '1yuan',
-        'starRank': '1级',
-        'materialType': '图像',
+        'taskName': t.task_name,
+        'answerType': ANSWER_TYPE_DICT[t.answer_type],
+        'description': t.description,
+        'problemTotalNum': t.problem_total_number,
+        'finishedProblemNum':t.finished_problem_number,
+        'singleBonus': t.single_bonus,
+        'starRank': t.star_rank,
+        'materialType': TASK_TYPE_DICT[t.task_type],
+        'posterName': poster_username,
+        'posterAvatar':get_user_avatr(poster_username),
+        'startTime':t.begin_time.split(" ")[0],
+        'endTime':t.end_time.split(" ")[0]
     }
-    print('hello')
     return HttpResponse(json.dumps(task_info), content_type='application/json')
 
 
@@ -254,14 +258,14 @@ def get_sorted_tasks(request):
     query_dict = request.GET
     username = query_dict.get("username", "") # 用户名用来获取等级啥的
     seach_content = query_dict.get("searchInput", "") # 搜索框输入的内容，用于模糊搜索
-    only_level = query_dict.get("onlyLevel", "")
-    donut_type = query_dict.get("donutType", "")
-    over_type = query_dict.get("overType", "")
-    new_type = query_dict.get("newType", "")
-    hard_type = query_dict.get("hardType", "")
-    data_type = query_dict.get("chosenDataType", "")
-    answer_type = query_dict.get("chosenProblemType", "")
-    page_number = query_dict.get("pageNumber","")
+    only_level = eval(query_dict.get("onlyLevel", "").capitalize())
+    donut_type = eval(query_dict.get("donutType", ""))
+    over_type = eval(query_dict.get("overType", ""))
+    new_type = eval(query_dict.get("newType", ""))
+    hard_type = eval(query_dict.get("hardType", ""))
+    data_type = eval(query_dict.get("chosenDataType", ""))
+    answer_type = eval(query_dict.get("chosenProblemType", ""))
+    page_number = eval(query_dict.get("pageNumber",""))
 
     total_number,task_info_list = sorted_and_selected_tasks(username, seach_content, only_level,\
                                                             donut_type, over_type, new_type,\

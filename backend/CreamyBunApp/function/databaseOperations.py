@@ -49,6 +49,11 @@ def get_a_user_data(username):
     return User.objects.filter(username=username).first()
 
 
+# 通过id获得用户
+def get_a_user_data_by_id(id):
+    return User.objects.filter(id=id).first()
+
+
 # 获取指定任务的数据
 def get_a_task_data(id):
     return Task.objects.filter(id=id).first()

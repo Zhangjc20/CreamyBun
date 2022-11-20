@@ -70,6 +70,15 @@ export default {
         });
     },
     clickLogin(){
+      if(this.form.username==="admin"){
+        if(this.form.password==='123456'){
+          sessionStorage.setItem("adminAuth",true);
+          this.$router.push({
+              name: 'admin',
+          });
+          return;
+        }
+      }
       axios.get('/log_in',{
         params:{
           username:this.form.username,
@@ -102,8 +111,8 @@ export default {
               type: 'success',
               message: "登录成功",
           });
-          localStorage.setItem("logined", 'true');
-          localStorage.setItem("username", this.form.username );
+          sessionStorage.setItem("logined", 'true');
+          sessionStorage.setItem("username", this.form.username );
           this.$router.push({
               name: 'mine',
               query:{

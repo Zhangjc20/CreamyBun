@@ -89,8 +89,7 @@ class Migration(migrations.Migration):
             name='FillBlankQuestion',
             fields=[
                 ('question_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='CreamyBunApp.question')),
-                ('min_answer_length', models.IntegerField(default=10000)),
-                ('max_answer_length', models.IntegerField(default=0)),
+                ('answer', models.CharField(default='', max_length=10000)),
             ],
             bases=('CreamyBunApp.question',),
         ),
@@ -110,7 +109,7 @@ class Migration(migrations.Migration):
                 ('username', models.CharField(default='username', max_length=12)),
                 ('password', models.CharField(default='password', max_length=18)),
                 ('email', models.CharField(default='email', max_length=350)),
-                ('avatar_url', models.CharField(default='image', max_length=1000)),
+                ('avatar_url', models.CharField(default='image', max_length=18)),
                 ('mobile_number', models.CharField(default='', max_length=11)),
                 ('donut_number', models.IntegerField(default=0)),
                 ('credit_rank', models.IntegerField(default=1)),
