@@ -21,6 +21,55 @@ module.exports = defineConfig({
           '^/log_in': '' //请求的时候使用这个api就可以
         }
       },
+      '/get_current_rate_info': {
+        target: 'http://localhost:8000/get_current_rate_info/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/get_current_rate_info': '' //请求的时候使用这个api就可以
+        }
+      },
+      '/change_current_rate_info': {
+        target: 'http://localhost:8000/change_current_rate_info/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/change_current_rate_info': '' //请求的时候使用这个api就可以
+        }
+      },
+      '/add_reported_task': {
+        target: 'http://localhost:8000/add_reported_task/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/add_reported_task': '' //请求的时候使用这个api就可以
+        }
+      },
+      '/receive_a_task': {
+        target: 'http://localhost:8000/receive_a_task/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/receive_a_task': '' //请求的时候使用这个api就可以
+        }
+      },
+      '/get_examining_tasks': {
+        target: 'http://localhost:8000/get_examining_tasks/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/get_examining_tasks': '' //请求的时候使用这个api就可以
+        }
+      },
+      '/get_task_basic_info': {
+        target: 'http://localhost:8000/get_task_basic_info/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/get_task_basic_info': '' //请求的时候使用这个api就可以
+        }
+      },
+      '/get_sorted_tasks': {
+        target: 'http://localhost:8000/get_sorted_tasks/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/get_sorted_tasks': '' //请求的时候使用这个api就可以
+        }
+      },
       '/get_user_basic_info': {
         target: 'http://localhost:8000/get_user_basic_info/', //填写请求的目标地址
         changOrigin: true, //允许跨域

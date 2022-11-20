@@ -1,9 +1,9 @@
 <template>
-    <div class="task-container" v-if="isSpace">
+    <div class="task-container" v-if="isSpace" :style="{cursor:'default'}">
       <div class="task-container-inner">
       </div>
     </div>
-    <div class="task-container" :style="{cursor:isSpace?'default':'pointer'}" v-else>
+    <div class="task-container" :style="{cursor:'pointer'}" v-else>
       <div class="task-container-inner" style="border: 2px solid #e9e9e9;">
         <el-image :src="require('@/assets/images/recognize.jpeg')" style="width:180px;height:180px;"></el-image>
         <div class="color-bg-box">
@@ -64,6 +64,7 @@
     background-color: transparent;
     width: 200px;
     height: 300px;
+    cursor: pointer;
   }
   .donut-num {
     line-height: 34px;

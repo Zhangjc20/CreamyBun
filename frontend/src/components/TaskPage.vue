@@ -57,6 +57,10 @@ export default {
       type: String,
       default: "",
     },
+    imageSrc: {
+      type: String,
+      default: "",
+    },
   },
   components: {
     SingleTask,
@@ -67,33 +71,27 @@ export default {
       items: [
         {
           index: 1,
-          taskName: "nihao",
-          isSpace: false,
+          isSpace: true,
         },
         {
           index: 2,
-          taskName: "nihao",
-          isSpace: false,
+          isSpace: true,
         },
         {
           index: 3,
-          taskName: "nihao",
-          isSpace: false,
+          isSpace: true,
         },
         {
           index: 4,
-          taskName: "nihao",
-          isSpace: false,
+          isSpace: true,
         },
         {
           index: 5,
-          taskName: "nihao",
-          isSpace: false,
+          isSpace: true,
         },
         {
           index: 6,
-          taskName: "nihao",
-          isSpace: false,
+          isSpace: true,
         },
         {
           index: 7,
@@ -115,23 +113,28 @@ export default {
       currentPage: 1,
       sortChoice: 0,
       searchInput: "",
-      onlyLevel: "",
-      donutType: "",
-      overType: "",
-      newType: "",
-      hardType: "",
-      chosenDataType: "",
-      chosenProblemType: "",
+      onlyLevel: false,
+      donutType: 1,
+      overType: 1,
+      newType: 1,
+      hardType: 1,
+      chosenDataType: 1,
+      chosenProblemType: 1,
     };
   },
   methods: {
     handleClickTask(id) {
-      this.$router.push({
-        name: "taskdetail",
-        query: {
-          id: id,
-        },
-      });
+      if (this.type === 0) {
+        //管理员任务不触发
+        this.$router.push({
+          name: "taskdetail",
+          query: {
+            id: id,
+            username: this.username,
+            imageSrc: this.imageSrc,
+          },
+        });
+      }
     },
     sort(
       searchInput,
@@ -157,20 +160,15 @@ export default {
       //hardType:int 1:所有 2：从难到易 3：从易到难
       //chosenDataType:int 1:所有 2：图片 3：文本 4：音频  5：视频
       //chosenProblemType:int 1:所有 2：单选 3：多选 4：填空 5：框图 6：混合
-      console.log(
-        searchInput,
-        onlyLevel,
-        donutType,
-        overType,
-        newType,
-        hardType,
-        chosenDataType,
-        chosenProblemType
-      );
       axios
-        .get("/url", {
-          //todo 改成对应的url，参数含义见上注释
+        .get("/get_sorted_tasks", {
           params: {
+            //onlyLevel:bool false:所有 true:只选入满足做题者等级的
+            //donutType:int 1:默认 2:从多到少 3:从少到多
+            //newType:int 1:默认 2：最新发布 3：最早结束
+            //hardType:int 1:默认 2：从难到易 3：从易到难
+            //chosenDataType:int 1:所有 2：图片 3：文本 4：音频  5：视频 6：混合
+            //chosenProblemType:int 1:所有 2：单选 3：多选 4：填空 5：框图 6：混合
             username: this.username,
             searchInput: searchInput,
             onlyLevel: onlyLevel,
@@ -180,6 +178,7 @@ export default {
             hardType: hardType,
             chosenDataType: chosenDataType,
             chosenProblemType: chosenProblemType,
+            pageNumber: 1,
           },
         })
         .then((res) => {
@@ -193,20 +192,20 @@ export default {
         });
     },
     clickPage(page) {
-      if(this.type === 0){
+      if (this.type === 0) {
         axios
           .get("/get_sorted_tasks", {
             params: {
               username: this.username,
-            searchInput: this.searchInput,
-            onlyLevel: this.onlyLevel,
-            donutType: this.donutType,
-            overType: this.overType,
-            newType: this.newType,
-            hardType: this.hardType,
-            chosenDataType: this.chosenDataType,
-            chosenProblemType: this.chosenProblemType,
-            pageNumber:page
+              searchInput: this.searchInput,
+              onlyLevel: this.onlyLevel,
+              donutType: this.donutType,
+              overType: this.overType,
+              newType: this.newType,
+              hardType: this.hardType,
+              chosenDataType: this.chosenDataType,
+              chosenProblemType: this.chosenProblemType,
+              pageNumber: page,
             },
           })
           .then((res) => {
@@ -219,9 +218,7 @@ export default {
           .catch((err) => {
             console.log(err);
           });
-      }
-      else if (this.type === 1) {
-        //个人领取列表 todo
+      } else if (this.type === 1) {
         axios
           .get("/get_user_received_task_info", {
             params: {
@@ -241,7 +238,6 @@ export default {
             console.log(err);
           });
       } else if (this.type === 2) {
-        //个人发布列表 todo
         axios
           .get("/get_user_released_task_info", {
             params: {
@@ -261,6 +257,7 @@ export default {
             console.log(err);
           });
       } else if (this.type === 3) {
+        //todo:获得指定页数待审核任务
         axios
           .get("/get_examining_tasks", {
             params: {
@@ -280,7 +277,6 @@ export default {
     },
     handleSortChange(value) {
       if (this.type === 1) {
-        //个人领取列表 todo
         axios
           .get("/get_user_received_task_info", {
             params: {
@@ -299,7 +295,6 @@ export default {
             console.log(err);
           });
       } else if (this.type === 2) {
-        //个人发布列表 todo
         axios
           .get("/get_user_released_task_info", {
             params: {
@@ -323,8 +318,34 @@ export default {
     init() {
       //初始化任务列表
       this.sortChoice = 0;
-      if (this.type === 1) {
-        //个人领取列表 todo
+      console.log("username");
+      console.log(this.username);
+      if (this.type === 0) {
+        axios
+          .get("/get_sorted_tasks", {
+            params: {
+              username: this.username,
+              searchInput: this.searchInput,
+              onlyLevel: this.onlyLevel,
+              donutType: this.donutType,
+              overType: this.overType,
+              newType: this.newType,
+              hardType: this.hardType,
+              chosenDataType: this.chosenDataType,
+              chosenProblemType: this.chosenProblemType,
+              pageNumber: 1,
+            },
+          })
+          .then((res) => {
+            if (res.data["status"] === "ok") {
+              this.items = res.data["taskInfoList"];
+              this.total = res.data["totalNumber"];
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else if (this.type === 1) {
         axios
           .get("/get_user_received_task_info", {
             params: {
@@ -344,7 +365,6 @@ export default {
             console.log(err);
           });
       } else if (this.type === 2) {
-        //个人发布列表 todo
         axios
           .get("/get_user_released_task_info", {
             params: {
@@ -363,6 +383,7 @@ export default {
             console.log(err);
           });
       } else if (this.type === 3) {
+        //todo:获得所有需要审核的任务
         axios
           .get("/get_examining_tasks", {
             params: {
@@ -394,7 +415,9 @@ export default {
     },
   },
   mounted() {
-    this.init();
+    this.$nextTick(() => {
+      this.init();
+    });
   },
 };
 </script>

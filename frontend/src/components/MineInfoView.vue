@@ -6,7 +6,6 @@
       content-class="modal-content"
       :debounce="false"
       :prevent-click="true"
-      stencil-component="circle-stencil"
     >
       <div class="modal-title">图片裁剪</div>
       <image-cropper
@@ -337,14 +336,6 @@ export default {
               this.image.type
             )
           );
-          console.log(
-            "this.blobToFile(blo",
-            this.blobToFile(
-              blob,
-              this.image.type.split("/")[1],
-              this.image.type
-            )
-          );
           formData.append("username", this.username);
           axios
             .post("/change_avatar", formData, {
@@ -596,7 +587,7 @@ export default {
             this.image.src =
               window.webkitURL.createObjectURL(imageFile) ||
               window.URL.createObjectURL(imageFile);
-            localStorage.setItem("imageSrc", this.image.src);
+            sessionStorage.setItem("imageSrc", this.image.src);
             this.$emit("initAvatar", this.image.src);
           }
         })

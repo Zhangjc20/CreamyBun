@@ -141,25 +141,28 @@ def get_user_basic_info(request):
 
 def get_task_basic_info(request):
     query_dict = request.GET
-    username = query_dict.get("username", "")
-    print(username)
-    #u = get_a_user_data(username)
+    id = query_dict.get("id", "")
+    t = get_a_task_data(id)
+    poster_username = get_a_user_data_by_id(t.poster).username
     task_info = {
         'status': 'ok',
-        'taskName': '任务名',
-        'questionType': '单选题',
-        'description': 'haha',
-        'problemTotalNum': '100',
-        'singleBonus': '1yuan',
-        'starRank': '1级',
-        'materialType': '图像',
+        'taskName': t.task_name,
+        'answerType': ANSWER_TYPE_DICT[t.answer_type],
+        'description': t.description,
+        'problemTotalNum': t.problem_total_number,
+        'finishedProblemNum':t.finished_problem_number,
+        'singleBonus': t.single_bonus,
+        'starRank': t.star_rank,
+        'materialType': TASK_TYPE_DICT[t.task_type],
+        'posterName': poster_username,
+        'posterAvatar':get_user_avatr(poster_username),
+        'startTime':t.begin_time.split(" ")[0],
+        'endTime':t.end_time.split(" ")[0]
     }
-    print('hello')
     return HttpResponse(json.dumps(task_info), content_type='application/json')
 
+
 # 获得奖励中心信息
-
-
 def get_user_bonus_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
@@ -186,9 +189,8 @@ def get_user_activity_info(request):
     }
     return HttpResponse(json.dumps(activity_info), content_type='application/json')
 
+
 # 签到接口
-
-
 def clock_in(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
@@ -199,9 +201,8 @@ def clock_in(request):
     }
     return HttpResponse(json.dumps(clock_in_info), content_type='application/json')
 
+
 # 获得设置信息
-
-
 def get_user_settings_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
@@ -252,6 +253,30 @@ def get_user_released_task_info(request):
     }
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
+def get_sorted_tasks(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "") # 用户名用来获取等级啥的
+    seach_content = query_dict.get("searchInput", "") # 搜索框输入的内容，用于模糊搜索
+    only_level = eval(query_dict.get("onlyLevel", "").capitalize())
+    donut_type = eval(query_dict.get("donutType", ""))
+    over_type = eval(query_dict.get("overType", ""))
+    new_type = eval(query_dict.get("newType", ""))
+    hard_type = eval(query_dict.get("hardType", ""))
+    data_type = eval(query_dict.get("chosenDataType", ""))
+    answer_type = eval(query_dict.get("chosenProblemType", ""))
+    page_number = eval(query_dict.get("pageNumber",""))
+
+    total_number,task_info_list = sorted_and_selected_tasks(username, seach_content, only_level,\
+                                                            donut_type, over_type, new_type,\
+                                                            hard_type, data_type, answer_type,\
+                                                            page_number)
+
+    ret = {
+        'status':'ok',
+        "taskInfoList":task_info_list,
+        "totalNumber":total_number,
+    }
+    return HttpResponse(json.dumps(ret), content_type='application/json')
 
 # 修改用户名
 @csrf_exempt
@@ -279,12 +304,15 @@ def update_email(request):
             return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameEmail'}), content_type='application/json')
         else:
             verify_code = send_email(new_email)
-            return HttpResponse(json.dumps({'status': 'ok', 'verifyCode': verify_code}), content_type='application/json')
+            return HttpResponse(json.dumps({'status': 'ok', 'verifyCode': verify_code}),
+                                content_type='application/json')
     elif type == 'changeEmail':
         update_email_by_username(username, new_email)
         return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
     else:
-        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}), content_type='application/json')
+        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}),
+                            content_type='application/json')
+
 
 # 修改用户头像
 @csrf_exempt
@@ -296,6 +324,7 @@ def change_avatar(request):
     else:
         change_user_avatar(image, username)
         return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+
 
 # 注销
 def log_off(request):
@@ -336,17 +365,6 @@ def get_material_zip(request):
             # print(list_list)
             return HttpResponse(json.dumps({'status': 'done', 'fullList': full_list, 'listList': list_list}),
                                 content_type='application/json')
-            pass
-        # query_dict = request.POST
-        # file = request.FILES.get('fileName', None)
-        # myFile = request.FILES["file"]
-        # print(myFile)
-        # inp_files = request.FILES  # 上传文件的接收方式应该是request.FILES
-        # file_obj = inp_files.get('f1')  # 通过get方法获取upload.html页面提交过来的文件
-        # f = open(file_obj.name, 'wb')  # 将客户端上传的文件保存在服务器上，一定要用wb二进制方式写入，否则文件会乱码
-        # for line in file_obj.chunks():  # 通过chunks分片上传存储在服务器内存中,以64k为一组，循环写入到服务器中
-        #     f.write(line)
-        # f.close()
     return HttpResponse(json.dumps({'status': 'next'}), content_type='application/json')
 
 
@@ -375,6 +393,7 @@ def release_task(request):
         username, t_id, t_release_mode = create_task(request_body)
 
         # 给相应用户加上任务和状态
+
         if t_release_mode == NOT_YET_RELEASE or t_release_mode == TIMED_RELEASE:
             state_for_task = NOT_RELEASE
         else:
@@ -402,6 +421,7 @@ def submit_feedback(request):
     inform_email = request.POST.get('email', '')
     description = request.POST.get('textarea', '')
     feedback_type = request.POST.get('questionType', '')
+
     create_feedback = add_a_feedback(
         feedback_type, description, image_url, inform_email)
     if create_feedback:
@@ -413,8 +433,38 @@ def submit_feedback(request):
 def perform_basic_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
-    print("perform_basic_info", username)
+    task_id = query_dict.get("taskId","")
+    # print("perform_basic_info", username)
+
+    material_list,question_list,is_test,current_problem_index=get_current_problem(username,task_id)
+
     basic_info = {
         'status': 'ok',
+        'materialList':material_list,
+        'questionList':question_list,
+        'isTest':is_test,
+        'currentIndex':current_problem_index,
     }
     return HttpResponse(json.dumps(basic_info), content_type='application/json')
+
+
+def perform_problem_material(request):
+    query_dict = request.GET
+    file_type = query_dict.get("fileType", "")
+    file_path = query_dict.get("filePath", "")
+    if file_type == 0:
+        file_suffix = get_suffix(file_path)
+        base64_str = get_problem_material(file_path)
+        if file_suffix == 'jpg':
+            file_suffix = 'jpeg'
+        return_info = {
+            'status': 'ok',
+            'materialImage': "data:image/" + file_suffix + ";base64," + base64_str
+        }
+        return HttpResponse(json.dumps(return_info), content_type='application/json')
+    pass
+
+
+def uck_me(request):
+    print("uck_me")
+    return HttpResponse(json.dumps(fake_ans), content_type='application/json')

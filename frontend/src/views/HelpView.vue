@@ -1,7 +1,7 @@
 <template>
   <el-container class="container">
     <el-header class="header-style">
-      <NavBar :login="false" activeItem="1" :username="username" :imageUrl="image.src"></NavBar>
+      <NavBar :login="true" activeItem="1" :username="username" :imageUrl="image.src"></NavBar>
     </el-header>
     <el-main class="main-style">
       <div class="feedback-box">

@@ -14,7 +14,7 @@
           active-text-color="#FBE484"
           background-color="#FFFFFF"
           class="el-menu-vertical-demo"
-          default-active="1"
+          :default-active="defaultActive"
           text-color="#4E5969"
         >
           <el-menu-item index="1" @click="clickLeftMenu(1)">
@@ -48,6 +48,7 @@
             :is="showContent"
             :key="showContent"
             :username="username"
+            :imageSrc="image.src"
             :type="showTaskType"
             ref="coreComponent"
             @initAvatar="initAvatar"
@@ -86,6 +87,7 @@ export default {
       total: 4,
       showTaskType:1,
       username: "",
+      defaultActive:"1",
     };
   },
   methods: {
@@ -132,6 +134,10 @@ export default {
     }
     if (this.$route.query.imageSrc) {
       this.image.src = this.$route.query.imageSrc;
+    }
+    if (this.$route.query.defaultActive) {
+      this.defaultActive = this.$route.query.defaultActive;
+      this.clickLeftMenu(Number(this.defaultActive));
     }
   },
 };

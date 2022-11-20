@@ -18,35 +18,35 @@
       </span>
     </el-header>
     <el-container>
-    <el-aside class="left-menu-area">
-      <el-menu
-        active-text-color="#FBE484"
-        background-color="#FFFFFF"
-        class="el-menu-vertical-demo"
-        default-active="1"
-        text-color="#4E5969"
-      >
-        <el-menu-item index="1" @click="clickLeftMenu(1)">
-          <el-icon><Tickets /></el-icon>
-          <span>审核任务</span>
-        </el-menu-item>
-        <el-menu-item index="2" @click="clickLeftMenu(2)">
-          <el-icon><Reading /></el-icon>
-          <span>处理反馈</span>
-        </el-menu-item>
-        <el-menu-item index="3" @click="clickLeftMenu(3)">
-          <el-icon><SetUp /></el-icon>
-          <span>参数调整</span>
-        </el-menu-item>
-        <el-menu-item index="4" @click="clickLeftMenu(4)">
-          <el-icon><Setting /></el-icon>
-          <span>设置</span>
-        </el-menu-item>
-      </el-menu>
-    </el-aside>
-    <el-main class="main-style">
-      <component :is="showContent" :type="3" :key="showContent" />
-    </el-main>
+      <el-aside class="left-menu-area">
+        <el-menu
+          active-text-color="#FBE484"
+          background-color="#FFFFFF"
+          class="el-menu-vertical-demo"
+          default-active="1"
+          text-color="#4E5969"
+        >
+          <el-menu-item index="1" @click="clickLeftMenu(1)">
+            <el-icon><Tickets /></el-icon>
+            <span>审核任务</span>
+          </el-menu-item>
+          <el-menu-item index="2" @click="clickLeftMenu(2)">
+            <el-icon><Reading /></el-icon>
+            <span>处理反馈</span>
+          </el-menu-item>
+          <el-menu-item index="3" @click="clickLeftMenu(3)">
+            <el-icon><SetUp /></el-icon>
+            <span>参数调整</span>
+          </el-menu-item>
+          <el-menu-item index="4" @click="clickLeftMenu(4)">
+            <el-icon><Setting /></el-icon>
+            <span>设置</span>
+          </el-menu-item>
+        </el-menu>
+      </el-aside>
+      <el-main class="main-style">
+        <component :is="showContent" :type="3" :key="showContent" />
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -61,7 +61,7 @@ import ChangeParams from "@/components/ChangeParams.vue";
 // @ is an alias to /src
 export default {
   name: "AdminView",
-  components: { componentSizes, TaskPage, AdminSettings,ChangeParams },
+  components: { componentSizes, TaskPage, AdminSettings, ChangeParams },
   data() {
     return {
       showContent: "TaskPage",
@@ -69,18 +69,18 @@ export default {
   },
   methods: {
     clickLeftMenu(val) {
-      switch(val){
+      switch (val) {
         case 1:
-            this.showContent = "TaskPage";
-            break;
+          this.showContent = "TaskPage";
+          break;
         case 2:
-            break;
+          break;
         case 3:
-            this.showContent = "ChangeParams";
-            break;
+          this.showContent = "ChangeParams";
+          break;
         case 4:
-            this.showContent = "AdminSettings";
-            break;
+          this.showContent = "AdminSettings";
+          break;
         default:
       }
     },
@@ -160,7 +160,7 @@ export default {
   cursor: pointer;
 }
 .main-style {
-  background-color:transparent;
+  background-color: transparent;
 }
 .header-style {
   background-image: url(@/assets/images/nav-background.png);

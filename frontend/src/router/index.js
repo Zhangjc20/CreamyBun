@@ -60,7 +60,6 @@ const routes = [
     meta: {
       // 必须登录才可以查看
       requireAuth: true,
-      requireUsername: true,
     },
     path: "/mine",
     name: "mine",
@@ -69,7 +68,7 @@ const routes = [
   {
     //元数据
     meta: {
-      // 必须登录才可以查看
+      // 必须管理员登录才可以查看
       requireAdminAuth:true
     },
     path: "/admin",
@@ -80,8 +79,6 @@ const routes = [
     meta: {
       // 必须登录才可以查看
       requireAuth: true,
-      requireUsername: true,
-      requireAvatar: true,
     },
     path: "/Release",
     name: "release",
@@ -91,8 +88,6 @@ const routes = [
     meta: {
       // 必须登录才可以查看
       requireAuth: true,
-      requireUsername: true,
-      requireAvatar: true,
     },
     path: "/Perform",
     name: "perform",
@@ -102,8 +97,6 @@ const routes = [
     meta: {
       // 必须登录才可以查看
       requireAuth: true,
-      requireUsername: true,
-      requireAvatar: true,
     },
     path: "/taskcenter",
     name: "taskcenter",
@@ -140,54 +133,9 @@ router.beforeEach((to, from, next) => {
       next({name:"login"})
     }
   }
-  if (to.meta.requireUsername && to.meta.requireAvatar) {
-    if (!to.meta.global) {
-      let tempQuery = Object.assign({}, to.query);
-      let flag = true; //true表示具有应有参数
-      if (
-        tempQuery["username"] &&
-        tempQuery["username"] != localStorage.getItem("username")
-      ) {
-        next({
-          name: to.name,
-          query: {
-            username: localStorage.getItem("username"),
-          },
-        });
-      }
-      if (!tempQuery["username"]) {
-        tempQuery["username"] = localStorage.getItem("username");
-        flag = false;
-      }
-      if (!tempQuery["imageSrc"]) {
-        tempQuery["imageSrc"] = localStorage.getItem("imageSrc");
-        flag = false;
-      }
-      if (!flag) {
-        next({
-          name: to.name,
-          query: tempQuery,
-        });
-      }
-    } else {
-      let tempQuery = Object.assign({}, to.query);
-      let flag = true; //是否进行补全
-      if (!tempQuery["username"] && localStorage.getItem("username")) {
-        tempQuery["username"] = localStorage.getItem("username");
-        flag = false;
-      }
-      if (!tempQuery["imageSrc"] && localStorage.getItem("imageSrc")) {
-        tempQuery["imageSrc"] = localStorage.getItem("imageSrc");
-        flag = false;
-      }
-      if (!flag) {
-        next({ name: to.name, query: tempQuery });
-      }
-    }
-  }
   if (to.meta.requireAuth) {
     // 判断该路由是否需要登录权限
-    if (localStorage.getItem("logined") == "true") {
+    if (sessionStorage.getItem("logined") == "true") {
       // 判断本地是否存在token
       next();
     } else {
