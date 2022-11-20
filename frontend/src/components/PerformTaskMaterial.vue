@@ -53,13 +53,6 @@ export default {
   },
   methods:{
 
-    // this.currentOption = '26',
-    //   this.description = '',
-    //   this.optionList = [],
-    //   this.minOptionNum = '',
-    //   this.maxOptionNum = '',
-    //   this.mustDo = true
-
     clickContentSet(){
       this.dialogVisible = false
     }

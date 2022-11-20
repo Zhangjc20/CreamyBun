@@ -101,7 +101,7 @@ fake_ans = {
         {
             "questionTypeName": "单选",
             "questionType": 0,
-            "questionDescription": "我是第一道单选题",
+            "questionDescription": "我是单选题",
             "optionList": [
                 {
                     "index": 0,
@@ -114,8 +114,9 @@ fake_ans = {
                     "content": "我是单选B"
                 }
             ],
-            "minOptionNum": "",
-            "maxOptionNum": "",
+            "minOptionNum": 1,
+            "maxOptionNum": 1,
+            "targetIndex": "",
             "mustDo": True,
             "questionAns": "",
             "index": 1
@@ -146,8 +147,9 @@ fake_ans = {
                     "content": "我是多选D"
                 }
             ],
-            "minOptionNum": "2",
-            "maxOptionNum": "4",
+            "minOptionNum": 2,
+            "maxOptionNum": 3,
+            "targetIndex": "",
             "mustDo": False,
             "questionAns": "",
             "index": 2
@@ -156,9 +158,10 @@ fake_ans = {
             "questionTypeName": "填空",
             "questionType": 2,
             "questionDescription": "我是填空题",
-            "optionList": [],
-            "minOptionNum": "20",
-            "maxOptionNum": "114514",
+            "optionList": [ ],
+            "minOptionNum": 20,
+            "maxOptionNum": 2000,
+            "targetIndex": "",
             "mustDo": True,
             "questionAns": "",
             "index": 3
@@ -167,9 +170,10 @@ fake_ans = {
             "questionTypeName": "单选",
             "questionType": 3,
             "questionDescription": "我是框图题",
-            "optionList": [],
-            "minOptionNum": "2",
-            "maxOptionNum": "10",
+            "optionList": [ ],
+            "minOptionNum": 2,
+            "maxOptionNum": 10,
+            "targetIndex": 1,
             "mustDo": False,
             "questionAns": "",
             "index": 4
