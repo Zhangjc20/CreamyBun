@@ -249,6 +249,7 @@ def get_user_released_task_info(request):
     }
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
+# 获得任务大厅排序筛选后的任务信息
 def get_sorted_tasks(request):
     query_dict = request.GET
     username = query_dict.get("username", "") # 用户名用来获取等级啥的
@@ -425,7 +426,7 @@ def submit_feedback(request):
     else:
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')
 
-
+# 任务进行界面基本信息
 def perform_basic_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
