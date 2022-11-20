@@ -25,6 +25,7 @@
         v-for="item in items"
         :key="item.index"
         :props="item"
+        @click="handleClickTask(item.id)"
       ></SingleTask>
     </div>
     <div class="pagnation-box">
@@ -154,6 +155,9 @@ export default {
     };
   },
   methods: {
+    handleClickTask(value){
+      console.log(value);
+    },
     sort(
       searchInput,
       onlyLevel,
@@ -181,7 +185,8 @@ export default {
         chosenProblemType
       );
       axios
-        .get("/url", {//todo 改成对应的url，参数含义见上注释
+        .get("/url", {
+          //todo 改成对应的url，参数含义见上注释
           params: {
             username: this.username,
             searchInput: searchInput,
@@ -200,9 +205,9 @@ export default {
             this.total = res.data["totalNumber"];
           }
         })
-        .catch((err)=>{
+        .catch((err) => {
           console.log(err);
-        })
+        });
     },
     clickPage(page) {
       if (this.type === 1) {

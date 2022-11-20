@@ -61,6 +61,7 @@
     background-color: transparent;
     width: 200px;
     height: 300px;
+    cursor: pointer;
   }
   .donut-num {
     line-height: 34px;

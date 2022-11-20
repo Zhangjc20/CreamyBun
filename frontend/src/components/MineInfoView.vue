@@ -266,7 +266,7 @@ export default {
         fontColor: "#ffffff",
         hoverColor: "#5299AB",
         focusColor: "#5299AB",
-        isRound:true,
+        isRound: true,
       },
       changePassProps: {
         width: "100px",
@@ -276,7 +276,7 @@ export default {
         fontColor: "#ffffff",
         hoverColor: "#5299AB",
         focusColor: "#5299AB",
-        isRound:true,
+        isRound: true,
       },
       changeForm: {
         username: "",
@@ -284,7 +284,6 @@ export default {
         phone: "",
       },
       phoneNumber: "12345678901",
-      inited: false,
       donutNumber: -1,
       creditRank: 0,
       currentExp: -1,
@@ -329,26 +328,38 @@ export default {
         this.image.src = URL.createObjectURL(blob);
         var formData = new FormData();
         if (emit) {
-        this.$emit('changeAvatar',this.image.src)
-        formData.append(
-          "image",
-          this.blobToFile(blob, this.image.type.split("/")[1], this.image.type)
-        );
-        console.log("this.blobToFile(blo", this.blobToFile(blob, this.image.type.split("/")[1], this.image.type))
-        formData.append("username", this.username);
-        axios
-          .post("/change_avatar", formData, {
-            query: {
-              username: this.username,
-            },
-          })
-          .then((res) => {
-            console.log(res);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }}, this.image.type);
+          this.$emit("changeAvatar", this.image.src);
+          formData.append(
+            "image",
+            this.blobToFile(
+              blob,
+              this.image.type.split("/")[1],
+              this.image.type
+            )
+          );
+          console.log(
+            "this.blobToFile(blo",
+            this.blobToFile(
+              blob,
+              this.image.type.split("/")[1],
+              this.image.type
+            )
+          );
+          formData.append("username", this.username);
+          axios
+            .post("/change_avatar", formData, {
+              query: {
+                username: this.username,
+              },
+            })
+            .then((res) => {
+              console.log(res);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      }, this.image.type);
     },
     loadImage(event) {
       // DOM input组件得引用
@@ -561,10 +572,9 @@ export default {
       //留待接口
     },
   },
-  updated() {
+  mounted() {
     //初次挂载获取后端信息
-    if (!this.inited) {
-      this.inited = true;
+    this.$nextTick(() => {
       axios
         .get("/get_user_basic_info", {
           params: {
@@ -586,21 +596,21 @@ export default {
             this.image.src =
               window.webkitURL.createObjectURL(imageFile) ||
               window.URL.createObjectURL(imageFile);
-            localStorage.setItem('imageSrc',this.image.src);
+            localStorage.setItem("imageSrc", this.image.src);
             this.$emit("initAvatar", this.image.src);
           }
         })
         .catch((err) => {
           console.log(err);
         });
-    }
+    });
   },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-.mine-info-container{
+.mine-info-container {
   display: flex;
   flex-direction: column;
   justify-content: center;

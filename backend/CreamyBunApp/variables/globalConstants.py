@@ -41,7 +41,7 @@ AUDIO = 3
 MIXED = 4
 
 # 任务类型中文
-TASK_TYPE_DICT = ["图片","文本","视频","音频"]
+TASK_TYPE_DICT = ["图片","文本","视频","音频","自定义"]
 
 # 作答类型常量
 SINGLE_CHOICE = 0
