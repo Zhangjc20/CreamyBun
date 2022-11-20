@@ -158,8 +158,6 @@ def get_task_basic_info(request):
     return HttpResponse(json.dumps(task_info), content_type='application/json')
 
 # 获得奖励中心信息
-
-
 def get_user_bonus_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
@@ -187,8 +185,6 @@ def get_user_activity_info(request):
     return HttpResponse(json.dumps(activity_info), content_type='application/json')
 
 # 签到接口
-
-
 def clock_in(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
@@ -200,8 +196,6 @@ def clock_in(request):
     return HttpResponse(json.dumps(clock_in_info), content_type='application/json')
 
 # 获得设置信息
-
-
 def get_user_settings_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
@@ -227,7 +221,7 @@ def get_user_received_task_info(request):
 
     ret = {
         'status': 'ok',
-        'totalPageNumber': total_number,# 注意是totalNumber筛选出来的总任务数
+        'totalNumber': total_number,# 注意是totalNumber筛选出来的总任务数
         'taskInfoList': task_info_list
     }
 
@@ -247,11 +241,35 @@ def get_user_released_task_info(request):
 
     ret = {
         'status': 'ok',
-        'totalPageNumber': total_number,  # 注意是totalNumber筛选出来的总任务数，不是总页数
+        'totalNumber': total_number,  # 注意是totalNumber筛选出来的总任务数，不是总页数
         'taskInfoList': task_info_list
     }
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
+def get_sorted_tasks(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "") # 用户名用来获取等级啥的
+    seach_content = query_dict.get("searchInput", "") # 搜索框输入的内容，用于模糊搜索
+    only_level = query_dict.get("onlyLevel", "")
+    donut_type = query_dict.get("donutType", "")
+    over_type = query_dict.get("overType", "")
+    new_type = query_dict.get("newType", "")
+    hard_type = query_dict.get("hardType", "")
+    data_type = query_dict.get("chosenDataType", "")
+    answer_type = query_dict.get("chosenProblemType", "")
+    page_number = query_dict.get("pageNumber","")
+
+    total_number,task_info_list = sorted_and_selected_tasks(username, seach_content, only_level,\
+                                                            donut_type, over_type, new_type,\
+                                                            hard_type, data_type, answer_type,\
+                                                            page_number)
+
+    ret = {
+        'status':'ok',
+        "taskInfoList":task_info_list,
+        "totalNumber":total_number,
+    }
+    return HttpResponse(json.dumps(ret), content_type='application/json')
 
 # 修改用户名
 @csrf_exempt
@@ -336,17 +354,6 @@ def get_material_zip(request):
             # print(list_list)
             return HttpResponse(json.dumps({'status': 'done', 'fullList': full_list, 'listList': list_list}),
                                 content_type='application/json')
-            pass
-        # query_dict = request.POST
-        # file = request.FILES.get('fileName', None)
-        # myFile = request.FILES["file"]
-        # print(myFile)
-        # inp_files = request.FILES  # 上传文件的接收方式应该是request.FILES
-        # file_obj = inp_files.get('f1')  # 通过get方法获取upload.html页面提交过来的文件
-        # f = open(file_obj.name, 'wb')  # 将客户端上传的文件保存在服务器上，一定要用wb二进制方式写入，否则文件会乱码
-        # for line in file_obj.chunks():  # 通过chunks分片上传存储在服务器内存中,以64k为一组，循环写入到服务器中
-        #     f.write(line)
-        # f.close()
     return HttpResponse(json.dumps({'status': 'next'}), content_type='application/json')
 
 
@@ -413,8 +420,16 @@ def submit_feedback(request):
 def perform_basic_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
-    print("perform_basic_info", username)
+    task_id = query_dict.get("taskId","")
+    # print("perform_basic_info", username)
+
+    material_list,question_list,is_test,current_problem_index=get_current_problem(username,task_id)
+
     basic_info = {
         'status': 'ok',
+        'materialList':material_list,
+        'questionList':question_list,
+        'isTest':is_test,
+        'currentIndex':current_problem_index,
     }
     return HttpResponse(json.dumps(basic_info), content_type='application/json')

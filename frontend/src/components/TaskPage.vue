@@ -168,12 +168,6 @@ export default {
       chosenDataType,
       chosenProblemType
     ) {
-      //onlyLevel:bool false:所有 true:只选入满足等级的
-      //donutType:int 1:所有 2:从多到少 3:从少到多
-      //newType:int 1:所有 2：最新发布 3：最早结束
-      //hardType:int 1:所有 2：从难到易 3：从易到难
-      //chosenDataType:int 1:所有 2：图片 3：文本 4：音频  5：视频
-      //chosenProblemType:int 1:所有 2：单选 3：多选 4：填空 5：框图 6：混合
       console.log(
         searchInput,
         onlyLevel,
@@ -185,9 +179,14 @@ export default {
         chosenProblemType
       );
       axios
-        .get("/url", {
-          //todo 改成对应的url，参数含义见上注释
+        .get("/get_sorted_tasks", {
           params: {
+            //onlyLevel:bool false:所有 true:只选入满足做题者等级的
+            //donutType:int 1:默认 2:从多到少 3:从少到多
+            //newType:int 1:默认 2：最新发布 3：最早结束
+            //hardType:int 1:默认 2：从难到易 3：从易到难
+            //chosenDataType:int 1:所有 2：图片 3：文本 4：音频  5：视频 6：混合
+            //chosenProblemType:int 1:所有 2：单选 3：多选 4：填空 5：框图 6：混合
             username: this.username,
             searchInput: searchInput,
             onlyLevel: onlyLevel,
@@ -197,6 +196,7 @@ export default {
             hardType: hardType,
             chosenDataType: chosenDataType,
             chosenProblemType: chosenProblemType,
+            pageNumber:1
           },
         })
         .then((res) => {

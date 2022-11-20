@@ -125,6 +125,7 @@ def create_task(request_body):
     
     question_info = request_body["questionList"]
     material_info = request_body["fullList"]
+    note_info = request_body["listList"]
 
     # 向task中加入problem
     for i in range(problem_total_number):
@@ -164,15 +165,17 @@ def create_task(request_body):
                 q = FrameSelectionQuestion.objects.create(\
                     index=q_info["index"], question_type=SELECT_FRAME_QUESTION,\
                     description=q_info["questionDescription"], must_do=q_info["mustDo"],\
-                    min_frame_number=q_info["minOptionNum"], max_frame_number=q_info["maxOptionNum"])
+                    min_frame_number=q_info["minOptionNum"], max_frame_number=q_info["maxOptionNum"],\
+                    picture_index=q_info["targetIndex"])
 
             p.question_list.add(q)
         
+        n = note_info[i]
         # 向problem中加入material
         for m_info in material_info:
             m = m_info[i]
-            m_path = Str.objects.create(str_content=m["filePath"])
-            p.material_path.add(m_path)
+            m_dict = MaterialDict.objects.create(material_path=m["filePath"], material_type=m["fileType"], material_note=n['notes'])
+            p.material_info.add(m_dict)
 
         t.problem_list.add(p)
 
@@ -222,3 +225,79 @@ def add_a_feedback(feedback_type,description,image_url,inform_email):
         return True
     except:
         return False
+    
+# 获得指定用户当前正在做的指定任务的大题信息
+def get_current_problem(username,task_id):
+    u = get_a_user_data(username)
+    t = get_a_task_data(task_id) # 当前正在进行的任务
+    td = u.task_info_list.filter(task_id=task_id).first() # 用户正在做的任务的信息
+
+    # 确定是否在进行测试
+    if td.current_problem_index < td.test_problem_number:
+        is_test = True
+        current_problem_index = td.current_problem_index + 1
+    else:
+        is_test = False
+        current_problem_index = td.current_problem_index + 1 - td.test_problem_number
+
+    # 确定当前的大题
+    p = t.problem_list.filter(id=td.received_problem_id_list[td.current_problem_index]).first()
+
+    material_list = []
+    # 封装当前大题的素材信息
+    for m in p.material_info:
+        m_info = {
+            'fileType':m.material_type,
+            'filePath':m.material_path,
+            'fileNotes':m.material_note,
+        }
+        material_list.append(m_info)
+
+    # 封装当前大题的小题信息
+    question_list = []
+    for q in p.question_list:
+        if q.question_type == CHOICE_QUESTION:
+            cq = ChoiceQuestion(q)
+            option_list = []
+            for i,op in enumerate(cq.option_list.all()):
+                op_info = {
+                    "index":i,
+                    "name":op.key,
+                    "content":op.value,
+                }
+                option_list.append(op_info)
+            min_option_num = cq.min_option_num
+            max_option_num = cq.max_option_num
+            if min_option_num == max_option_num and eval(max_option_num) == 1: # 单选
+                question_type = SINGLE_CHOICE
+            else: # 多选
+                question_type = SEVERAL_CHOICES
+        
+        elif q.question_type == FILL_BLANK_QUESTION:
+            fbq = FillBlankQuestion(q)
+            option_list = []
+            question_type = FILL_BLANK
+            min_option_num = fbq.min_answer_length
+            max_option_num = fbq.max_answer_length
+        
+        else:
+            fcq = FrameSelectionQuestion(q)
+            option_list = []
+            question_type = SELECT_FRAME
+            min_option_num = fcq.min_frame_number
+            max_option_num = fcq.max_frame_number
+        
+        q_info = {
+                'questionType':question_type,
+                'questionTypeName':ANSWER_TYPE_DICT[question_type],
+                'questionDescription':q.description,
+                'optionList':option_list,
+                'minOptionNum':min_option_num,
+                'maxOptionNum':max_option_num,
+                'mustDo':q.must_do,
+                'index':q.index,
+            }
+        question_list.append(q_info)
+    
+    return material_list,question_list,is_test,current_problem_index
+    

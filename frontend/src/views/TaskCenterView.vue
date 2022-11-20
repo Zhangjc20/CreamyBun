@@ -26,7 +26,7 @@
           </div>
           <div class="button-area">
             <CustomButton
-              title="所有"
+              title="默认"
               :props="donutType === 1 ? activeProps : normalProps"
               @click="handleClickBtn(4, 1)"
             ></CustomButton>
@@ -76,7 +76,7 @@
           </div>
           <div class="button-area">
             <CustomButton
-              title="所有"
+              title="默认"
               :props="newType === 1 ? activeProps : normalProps"
               @click="handleClickBtn(2, 1)"
             ></CustomButton>
@@ -101,7 +101,7 @@
           </div>
           <div class="button-area">
             <CustomButton
-              title="所有"
+              title="默认"
               :props="hardType === 1 ? activeProps : normalProps"
               @click="handleClickBtn(3, 1)"
             ></CustomButton>
@@ -143,18 +143,22 @@
               @click="handleClickBtn(5, 3)"
             ></CustomButton>
             <CustomButton
-              title="音频"
+              title="视频"
               :props="chosenDataType === 4 ? activeProps : normalProps"
               @click="handleClickBtn(5, 4)"
             ></CustomButton>
           </div>
+          
           <div class="button-area second-line">
             <CustomButton
-              title="视频"
+              title="音频"
               :props="chosenDataType === 5 ? activeProps : normalProps"
               @click="handleClickBtn(5, 5)"
             ></CustomButton>
-            <CustomButton title="" :props="disabledProps"></CustomButton>
+            <CustomButton title="混合" 
+              :props="chosenDataType === 6 ? activeProps : normalProps" 
+              @click="handleClickBtn(5, 6)">
+            </CustomButton>
           </div>
         </div>
         <div class="later-area">
