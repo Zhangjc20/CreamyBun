@@ -19,7 +19,7 @@
         <el-menu-item index="2" @click="clickTask">任务</el-menu-item>
         <el-menu-item index="3" @click="clickRelease">发布</el-menu-item>
         <el-menu-item index="4" @click="clickMine">我的</el-menu-item>
-        <el-menu-item index="5">帮助</el-menu-item>
+        <el-menu-item index="5" @click="clickHelp">帮助</el-menu-item>
         </el-menu>
     </div>
     <span v-if="login">
@@ -57,6 +57,15 @@ export default {
     clickHome(){
       this.$router.push({
             name: 'home',
+            query:{
+              username:this.username,
+              imageSrc:this.imageUrl
+            }
+        });
+    },
+    clickHelp(){
+      this.$router.push({
+            name: 'help',
             query:{
               username:this.username,
               imageSrc:this.imageUrl
