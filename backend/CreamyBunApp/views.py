@@ -444,3 +444,8 @@ def perform_problem_material(request):
         }
         return HttpResponse(json.dumps(return_info), content_type='application/json')
     pass
+
+
+def uck_me(request):
+    print("uck_me")
+    return HttpResponse(json.dumps(fake_ans), content_type='application/json')

@@ -25,7 +25,7 @@ HAS_POSTED = 2
 FUNCTION_ADVICE = 1
 INTERFACE_OPTIMIZE = 2
 PRODUCT_BUG = 3
-REPORT = 4 # 举报
+REPORT = 4  # 举报
 OTHERS = 5
 
 # problem当前状态
@@ -41,7 +41,7 @@ AUDIO = 3
 MIXED = 4
 
 # 任务类型中文
-TASK_TYPE_DICT = ["图片","文本","视频","音频","自定义"]
+TASK_TYPE_DICT = ["图片", "文本", "视频", "音频", "自定义"]
 
 # 作答类型常量
 SINGLE_CHOICE = 0
@@ -51,7 +51,7 @@ SELECT_FRAME = 3
 MULTI_TASK = 4
 
 # 作答类型中文
-ANSWER_TYPE_DICT = ["单选题","多选题","填空题","框图题","混合"]
+ANSWER_TYPE_DICT = ["单选题", "多选题", "填空题", "框图题", "混合"]
 
 # 小题类型常量
 CHOICE_QUESTION = 1
@@ -91,6 +91,88 @@ CLOCK_IN_CYCLE = 7
 IMAGE_TYPE_SET = {'jpg', 'bmp', 'png'}
 TEXT_TYPE_SET = {'txt', 'docx'}
 VIDEO_TYPE_SET = {'mp4'}
-AUDIO_TYPE_SET = {'mp3', 'wav'}
+AUDIO_TYPE_SET = {'mp3', 'wav', 'm4a'}
 ALL_TYPE_SET = IMAGE_TYPE_SET | TEXT_TYPE_SET | VIDEO_TYPE_SET | AUDIO_TYPE_SET
 TYPE_SET = [IMAGE_TYPE_SET, TEXT_TYPE_SET, VIDEO_TYPE_SET, AUDIO_TYPE_SET, ALL_TYPE_SET]
+
+fake_ans = {
+    "materialList": [],
+    "questionList": [
+        {
+            "questionTypeName": "单选",
+            "questionType": 0,
+            "questionDescription": "我是第一道单选题",
+            "optionList": [
+                {
+                    "index": 0,
+                    "name": "A",
+                    "content": "我是单选A"
+                },
+                {
+                    "index": 1,
+                    "name": "B",
+                    "content": "我是单选B"
+                }
+            ],
+            "minOptionNum": "",
+            "maxOptionNum": "",
+            "mustDo": True,
+            "questionAns": "",
+            "index": 1
+        },
+        {
+            "questionTypeName": "多选",
+            "questionType": 1,
+            "questionDescription": "我是多选题",
+            "optionList": [
+                {
+                    "index": 0,
+                    "name": "A",
+                    "content": "我是多选A"
+                },
+                {
+                    "index": 1,
+                    "name": "B",
+                    "content": "我是多选B"
+                },
+                {
+                    "index": 2,
+                    "name": "C",
+                    "content": "我是多选C"
+                },
+                {
+                    "index": 3,
+                    "name": "D",
+                    "content": "我是多选D"
+                }
+            ],
+            "minOptionNum": "2",
+            "maxOptionNum": "4",
+            "mustDo": False,
+            "questionAns": "",
+            "index": 2
+        },
+        {
+            "questionTypeName": "填空",
+            "questionType": 2,
+            "questionDescription": "我是填空题",
+            "optionList": [],
+            "minOptionNum": "20",
+            "maxOptionNum": "114514",
+            "mustDo": True,
+            "questionAns": "",
+            "index": 3
+        },
+        {
+            "questionTypeName": "单选",
+            "questionType": 3,
+            "questionDescription": "我是框图题",
+            "optionList": [],
+            "minOptionNum": "2",
+            "maxOptionNum": "10",
+            "mustDo": False,
+            "questionAns": "",
+            "index": 4
+        }
+    ],
+}

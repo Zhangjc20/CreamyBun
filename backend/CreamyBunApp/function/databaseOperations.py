@@ -195,7 +195,7 @@ def create_task(request_body):
     
     # 计算每个用户每次可领取的题目数量
     receiver_number = basic_info_form["receiverNum"]
-    t.problem_number_for_single_receiver = math.ceil(1.00*t.problem_total_number/eval(receiver_number))
+    t.problem_number_for_single_receiver = math.ceil(1.00*t.problem_total_number/receiver_number)
     t.save()
 
     # task的problem列表随机排个序

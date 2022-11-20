@@ -184,12 +184,12 @@
       </el-row>
       <el-row style="height: 50px;">
         <el-form-item label="题目奖励" :required="true">
-          <el-input v-model="form.singleBonus" placeholder="请输入单个题目的奖励"/>
+          <el-input v-model="form.singleBonus" placeholder="请输入单个题目的奖励" type="number" @blur="form.singleBonus=Number(form.singleBonus)" oninput="value=value.replace(/[^\d]/g,'')"/>
         </el-form-item>
       </el-row>
       <el-row style="height: 50px;">
         <el-form-item label="领取人数" :required="true">
-          <el-input v-model="form.receiverNum" placeholder="请输如本任务的领取人数"/>
+          <el-input v-model="form.receiverNum" placeholder="请输如本任务的领取人数" type="number" @blur="form.receiverNum=Number(form.receiverNum)" oninput="value=value.replace(/[^\d]/g,'')"/>
         </el-form-item>
       </el-row>
       <el-row style="height: 50px;">
