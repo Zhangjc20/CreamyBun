@@ -22,7 +22,7 @@
       <el-col :span="8"><div class="grid-content ep-bg-purple" /></el-col>
     </el-row> -->
     <el-row :gutter="20">
-      <el-col :span="16">
+      <el-col :span="15">
         <PerformTaskMaterial
         >
         </PerformTaskMaterial>
@@ -33,13 +33,64 @@
         >
         </PerformTaskMaterial>
       </el-col> -->
-      <el-col :span="8">
+      <el-col :span="9">
         <el-main class="main-style">
         <el-row
+          class="question-row"
           v-for="question in questionList" 
           :key="question"
         >
-        {{question["questionTypeName"]}}
+        <span class="header-title" style="margin: auto,auto,auto,20px;" >
+          {{question["index"] + '.[' + question["questionTypeName"] + ']: ' + question["questionDescription"]}}
+        </span>
+        <el-table v-if="question['questionType'] == 0 || question['questionType'] == 1"
+          :data="question['optionList']"
+          :style="table"
+          ref="regTable"
+          @selection-change="handleSelectionChange($event, question['minOptionNum'],question['maxOptionNum'],question['index'] - 1)"
+          class="selection-table">
+          <el-table-column
+            type="selection"
+            width="50">
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            label="选项"
+            width="100">
+          </el-table-column>
+          <el-table-column
+            prop="content"
+            label="选项内容"
+            width="200">
+            <template v-slot="scope">
+              <div>{{ (scope.row.content) }}</div>
+            </template>
+          </el-table-column>
+          
+          <el-table-column
+            prop=""
+            label=""
+            width="">
+          </el-table-column>
+          
+          <el-table-column
+            prop=""
+            label="删除"
+            width="">
+            <span class="iconfont icon-menu"></span>
+          </el-table-column>
+        </el-table>
+        <el-input
+        v-if="question['questionType'] == 2"
+        v-model="this.ansList[question['index'] - 1]"
+        :rows="3"
+        type="textarea"
+        placeholder="请输入填空题答案"
+        resize="none"
+        :maxlength="question['maxOptionNum']"
+        show-word-limit
+        style="margin: 20px;"
+        />
         </el-row>
         </el-main>
         
@@ -106,6 +157,8 @@ export default {
                 "filePath": "./resource/task_materials\\ZDandsomSP_20221118130618\\list4\\2 (1).docx", 
                 "list": "list4"
             }, ],
+      ansList:[],
+      lastSelectedList:[],
     }
   },
   mounted(){
@@ -116,15 +169,157 @@ export default {
     }).then((res)=>{
         this.questionList = res.data['questionList'];
         this.materialList = res.data['materialList'];
+        for(var i = 0;i<this.questionList.length;i++){
+          this.lastSelectedList.push(undefined)
+          var tempQuestion = this.questionList[i]
+          // 如果题目是选择题
+          if(tempQuestion['questionType'] == 0 || tempQuestion['questionType'] == 1){
+            this.ansList.push([])
+            // 初始化对应串
+            for(var j = 0;j<tempQuestion['optionList'].length;j++){
+              console.log(j,tempQuestion['optionList'][j])
+              this.ansList[i].push({
+                index: tempQuestion['optionList'][j]['index'],
+                name: tempQuestion['optionList'][j]['name'],
+                selected:0
+              })
+            }
+          // 否则
+          }else{
+            this.ansList.push('')
+          }
+          
+        }
+        
     }).catch();
   },
   methods:{
+    // rowClick(row,minOptionNum,maxOptionNum,dom) {
+    //   // 单击行，设置选中
+    //   console.log(":::::::::",row,minOptionNum,maxOptionNum,dom)
+    //   const check = this.checkTableList.find((v) => {return v.id == row.id})
+    //   if (!check && this.checkTableList.length >= maxOptionNum) {
+    //     this.$message.warning(`最多只能选minOptionNum条！`)
+    //     return
+    //   }
+    //   if (check && this.checkTableList.length <= minOptionNum) {
+    //     this.$message.warning(`最少需要选minOptionNum条！`)
+    //     return
+    //   }
+    //   dom.toggleRowSelection(row)
+    // },
+    // checkboxInit(row) {
+    //   // 设置checkbox，选中状态，是否可选
+    //   const check = this.checkTableList.find((v) => {return v.id == row.id})
+    //   if (!check && this.checkTableList.length == this.checkNumber) {
+    //     return 0
+    //   } else {
+    //     return 1
+    //   }
+    // }
+    getDeletedRow(selection,questionIndex){
+      var judgeList = JSON.parse(JSON.stringify(this.ansList[questionIndex]))
+      console.log("judgeListjudgeListjudgeList",judgeList)
+      for(var tempRow of selection){
+        var tempTarget = tempRow['index']
+        judgeList[tempTarget]['selected'] = 0
+      }
+      console.log("judgeListjudgeListjudgeList",judgeList)
+      var targetIndex = -1;
+      for(var tempRow of judgeList){
+        if(tempRow['selected']){
+          targetIndex = tempRow['index']
+        }
+      }
+      console.log("targetIndextargetIndextargetIndex",targetIndex)
+      console.log("lastSelectedListlastSelectedListlastSelectedList",this.lastSelectedList[questionIndex])
+      for(var tempRow of this.lastSelectedList[questionIndex]){
+        if(tempRow['index'] == targetIndex){
+          return tempRow
+        }
+      }
+      return
+    },
+    handleSelectionChange (selection,minOptionNum,maxOptionNum,index) { // section 被选中状态修改后触发事件，根据被选择的数量控制是否还可被选中
+      
+      console.log("selection", selection)
+      console.log("this.ansList[index]", this.ansList[index])
+      // 如果是单选
+      // if(minOptionNum == 1 && maxOptionNum == 1){
 
+      // }else{
+      if (selection.length > maxOptionNum) {
+        // 如果这个题是单选
+        if(minOptionNum == 1 && maxOptionNum == 1){
+          for(var tempRow of this.ansList[index]){
+            tempRow['selected'] = 0
+          }
+          this.ansList[index][selection[1]['index']]['selected'] = 1
+          this.$refs.regTable[index].toggleRowSelection(selection[0], false)
+          return
+        }
+        this.$message.warning(`最多只能选${maxOptionNum}条！`);
+        this.$refs.regTable[index].toggleRowSelection(selection[selection.length - 1], false)
+        return
+      }
+      var lastLen = 0
+      for(var tempRow of this.ansList[index]){
+        if(tempRow['selected']){
+          lastLen ++
+        }
+      }
+      if (selection.length < minOptionNum && selection.length < lastLen && minOptionNum < maxOptionNum) {
+        this.$message.warning(`最少需要选${maxOptionNum}条！`);
+        var targetRow = this.getDeletedRow(selection,index)
+        console.log("targetRowtargetRowtargetRow",targetRow)
+        this.$refs.regTable[index].toggleRowSelection(targetRow)
+        return
+      }
+      for(var tempRow of this.ansList[index]){
+        tempRow['selected'] = 0
+      }
+      for(var tempRow of selection){
+        // this.ansList[i].push({
+        //   index: tempQuestion['optionList'][j]['index'],
+        //   name: tempQuestion['optionList'][j]['name'],
+        //   selected:0
+        // })
+        console.log("tempRow",tempRow)
+        console.log("tempRow['index']",tempRow['index'])
+        console.log("this.ansList[index][tempRow['index']]",this.ansList[index][tempRow['index']])
+        this.ansList[index][tempRow['index']]['selected'] = 1
+      }
+      this.lastSelectedList[index] = selection
+        //  else if (selection.length <= minOptionNum) {
+        //   this.$message.warning(`最少只能选${minOptionNum}条！`);
+        //   for (let j of this.popTableData) {
+        //     j.status = 0;
+        //     for (let i of selection) {
+        //      if (i.id == j.id) {
+        //       j.status = 1;
+        //      }
+        //     }
+        //   }
+        //   return
+        //  } 
+        // else {
+        // for (let i in this.popTableData) {
+        //   this.popTableData[i].status = 1;
+        // }
+        // }
+      // }
+
+    }
   }
 }
 </script>
 
 <style scoped>
+/* 隐藏多选框 */
+  .selection-table /deep/ .el-table__header-wrapper  .el-checkbox{
+    display:none
+  }
+  
   .header-style{
     border-radius: 5px;
     box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
@@ -136,7 +331,7 @@ export default {
   }
   .header-title{
     float:left;
-    font-size:20px;
+    font-size:15px;
     font-weight:bold;
   }
   .main-style{
@@ -145,6 +340,10 @@ export default {
     border-radius: 5px;
     box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
   }
+  .question-row{
+    margin-top: 20px;
+  }
+  
 /*.header-style{
     border-radius: 5px;
     box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
