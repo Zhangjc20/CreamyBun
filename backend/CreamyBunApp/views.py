@@ -34,7 +34,8 @@ def log_up(request):
         if check_user_by_name:
             return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameName'}), content_type='application/json')
         password = query_dict.get("password", "")
-        create_user = add_a_user(username=username, password=password, email=email)
+        create_user = add_a_user(
+            username=username, password=password, email=email)
         if create_user:
             return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
         else:
@@ -158,6 +159,8 @@ def get_task_basic_info(request):
 
 
 # 获得奖励中心信息
+
+
 def get_user_bonus_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
@@ -186,6 +189,8 @@ def get_user_activity_info(request):
 
 
 # 签到接口
+
+
 def clock_in(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
@@ -198,13 +203,15 @@ def clock_in(request):
 
 
 # 获得设置信息
+
+
 def get_user_settings_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     u = get_a_user_data(username)
     settings_info = {
         'status': 'ok',
-        'dark_mode': u.dark_mode,
+        'darkMode': u.dark_mode,
     }
     return HttpResponse(json.dumps(settings_info), content_type='application/json')
 
@@ -215,15 +222,18 @@ def get_user_received_task_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     page_number = query_dict.get("pageNumber", "")
+    sort_choice = query_dict.get("sortChoice","")#int 0是所有 1是正在进行，2是已结束
 
     # 总页数（int），任务信息列表（列表，成员为字典）
-    total_page_number, task_info_list = get_task_info_list(username, HAS_RECEIVED, page_number)
+    total_number, task_info_list = get_task_info_list(
+        username, HAS_RECEIVED, page_number, sort_choice)
 
     ret = {
         'status': 'ok',
-        'totalPageNumber': total_page_number,
+        'totalPageNumber': total_number,# 注意是totalNumber筛选出来的总任务数
         'taskInfoList': task_info_list
     }
+
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
@@ -232,13 +242,15 @@ def get_user_released_task_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     page_number = query_dict.get("pageNumber", "")
+    sort_choice = query_dict.get("sortChoice","")#0是所有，1是暂未发布 2是发布但未结束 3是已结束
 
     # 总页数（int），任务信息列表（列表，成员为字典）
-    total_page_number, task_info_list = get_task_info_list(username, HAS_POSTED, page_number)
+    total_number, task_info_list = get_task_info_list(
+        username, HAS_POSTED, page_number,sort_choice)
 
     ret = {
         'status': 'ok',
-        'totalPageNumber': total_page_number,
+        'totalPageNumber': total_number,  # 注意是totalNumber筛选出来的总任务数，不是总页数
         'taskInfoList': task_info_list
     }
     return HttpResponse(json.dumps(ret), content_type='application/json')
@@ -256,7 +268,6 @@ def update_username(request):
     else:
         update_username_by_username(username, new_username)
         return HttpResponse(json.dumps({'status': 'ok', 'newUsername': new_username}), content_type='application/json')
-
 
 # 修改邮箱
 def update_email(request):
@@ -371,7 +382,12 @@ def release_task(request):
         username, t_id, t_release_mode = create_task(request_body)
 
         # 给相应用户加上任务和状态
-        add_task_to_user(username, t_id, HAS_POSTED, t_release_mode)
+
+        if t_release_mode == NOT_YET_RELEASE or t_release_mode == TIMED_RELEASE:
+            state_for_task = NOT_RELEASE
+        else:
+            state_for_task = RELEASE_BUT_NOT_FINISHED
+        add_task_to_user(username, t_id, HAS_POSTED, state_for_task)
 
         return HttpResponse(json.dumps({'status': 'done'}), content_type='application/json')
     else:
@@ -394,7 +410,9 @@ def submit_feedback(request):
     inform_email = request.POST.get('email', '')
     description = request.POST.get('textarea', '')
     feedback_type = request.POST.get('questionType', '')
-    create_feedback = add_a_feedback(feedback_type, description, image_url, inform_email)
+
+    create_feedback = add_a_feedback(
+        feedback_type, description, image_url, inform_email)
     if create_feedback:
         return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
     else:

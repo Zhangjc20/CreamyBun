@@ -8,9 +8,14 @@ NOW_RELEASE = 0
 NOT_YET_RELEASE = 1
 TIMED_RELEASE = 2
 
-# 任务自身状态常量
-NOT_FINISHED = 3
-FINISHED = 4
+# 任务自身状态常量（完成）
+NOT_FINISHED = 1
+HAS_FINISHED = 2
+
+# 任务自身状态常量（发布）
+NOT_RELEASE = 1
+RELEASE_BUT_NOT_FINISHED = 2
+FINISHED = 3
 
 # 用户任务状态常量
 HAS_RECEIVED = 1
@@ -35,12 +40,18 @@ VIDEO = 2
 AUDIO = 3
 MIXED = 4
 
+# 任务类型中文
+TASK_TYPE_DICT = ["图片","文本","视频","音频","自定义"]
+
 # 作答类型常量
 SINGLE_CHOICE = 0
 SEVERAL_CHOICES = 1
 FILL_BLANK = 2
 SELECT_FRAME = 3
 MULTI_TASK = 4
+
+# 作答类型中文
+ANSWER_TYPE_DICT = ["单选题","多选题","填空题","框图题","混合"]
 
 # 小题类型常量
 CHOICE_QUESTION = 1

@@ -96,26 +96,34 @@ def get_money_to_donut():
     global money_to_donut
     return money_to_donut
 
-
-# 获取指定用户、指定页码、指定状态的任务列表
-def get_task_info_list(username, state, page_number):
+# 获取指定用户、指定页码、指定状态、指定筛选条件的任务列表
+def get_task_info_list(username,state,page_number,sort_choice):
     u = get_a_user_data(username)
-    all_task_to_state = u.task_info_list.all()  # 返回了字典model对象的列表
+    page_number = eval(page_number)
+    sort_choice = eval(sort_choice)
+    all_task_to_state = u.task_info_list.all() # 返回了字典model对象的列表
 
     # 存了所有的符合状态的任务的id 
-    needed_task_to_state_list = [x.key for x in all_task_to_state if x.value == state]
+    needed_task_to_state_list = [x for x in all_task_to_state if x.task_status_for_user == state]
+    if sort_choice == 0:
+        needed_task_to_state_list = [x.task_id for x in needed_task_to_state_list] 
+    else:
+        needed_task_to_state_list = [x.task_id for x in needed_task_to_state_list if x.task_status_for_itself == sort_choice]
+
     # 反转，最新的在最前面
     needed_task_to_state_list = list(reversed(needed_task_to_state_list))
 
+        
     # 总页数
-    total_page_number = math.ceil(len(needed_task_to_state_list) / TASK_NUMBER_PER_PAGE)
+    total_number = len(needed_task_to_state_list)
+    total_page_number = math.ceil(total_number/TASK_NUMBER_PER_PAGE)
 
-    begin_index = TASK_NUMBER_PER_PAGE * (page_number - 1)
-    if page_number == total_page_number:  # 最后一页
-        needed_task_to_state_list = needed_task_to_state_list[begin_index,]
+    begin_index = TASK_NUMBER_PER_PAGE * (page_number -1)
+    if page_number == total_page_number: # 最后一页
+        needed_task_to_state_list = needed_task_to_state_list[begin_index:]
     elif page_number < total_page_number:
-        needed_task_to_state_list = needed_task_to_state_list[begin_index, begin_index + TASK_NUMBER_PER_PAGE]
-    else:  # 超过页码范围
+        needed_task_to_state_list = needed_task_to_state_list[begin_index:begin_index + TASK_NUMBER_PER_PAGE]
+    else: # 超过页码范围
         needed_task_to_state_list = []
 
     task_info_list = []
@@ -123,15 +131,16 @@ def get_task_info_list(username, state, page_number):
     for i, t_id in enumerate(needed_task_to_state_list):
         t = get_a_task_data(t_id)
         t_info = {
-            'isSpace': False,
-            'taskId': t_id,
-            'taskName': t.task_name,
-            'starRank': t.star_rank,
-            'singleBonus': t.single_bonus,
-            'taskType': t.task_type,
-            'answerType': t.answer_type,
-            'beginTime': t.begin_time.split(" ")[0],
-            'endTime': t.end_time.split(" ")[0],
+
+            'isSpace':False,
+            'id':t_id,
+            'taskName':t.task_name,
+            'starNum':t.star_rank,
+            'donut':t.single_bonus,
+            'dataType':TASK_TYPE_DICT[t.task_type],
+            'problemType':ANSWER_TYPE_DICT[t.answer_type],
+            'startTime':t.begin_time.split(" ")[0],
+            'endTime':t.end_time.split(" ")[0],
         }
         t_info.setdefault('index', i)
         task_info_list.append(t_info)
@@ -147,8 +156,8 @@ def get_task_info_list(username, state, page_number):
             task_info_list.append(t_info)
 
     # 返回 总页数（int），任务信息列表（列表，成员为字典）
-    return total_page_number, task_info_list
 
+    return total_number,task_info_list
 
 # 修改用户头像并保存至后端
 def change_user_avatar(image, username):

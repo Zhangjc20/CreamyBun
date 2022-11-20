@@ -28,7 +28,9 @@ class User(models.Model):
     def reset_clock_in_info(self):
         if self.is_today_sign_in == False or self.continue_sign_in_days == CLOCK_IN_CYCLE:
             self.continue_sign_in_days = 0
+            self.save()
         self.is_today_sign_in = False
+        self.save()
 
     # 检验密码是否匹配
     def validate_password(self, password):
