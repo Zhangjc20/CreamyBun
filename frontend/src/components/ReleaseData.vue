@@ -624,6 +624,7 @@ export default {
           questionList:this.questionList,
           fullList:this.$refs.MyMaterialUpload.fullList,
           testList:this.$refs.MyMaterialUpload.testList,
+          listList:this.$refs.MyMaterialUpload.listList,
       }).then(res => {
         if (res.data['status'] == 'done'){
           // this.$refs.MyMaterialUpload.initSelected()
