@@ -143,7 +143,7 @@ def get_task_basic_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     print(username)
-    #u = get_a_user_data(username)
+    # u = get_a_user_data(username)
     task_info = {
         'status': 'ok',
         'taskName': '任务名',
@@ -156,6 +156,7 @@ def get_task_basic_info(request):
     }
     print('hello')
     return HttpResponse(json.dumps(task_info), content_type='application/json')
+
 
 # 获得奖励中心信息
 def get_user_bonus_info(request):
@@ -184,6 +185,7 @@ def get_user_activity_info(request):
     }
     return HttpResponse(json.dumps(activity_info), content_type='application/json')
 
+
 # 签到接口
 def clock_in(request):
     query_dict = request.GET
@@ -194,6 +196,7 @@ def clock_in(request):
         'isTodaySignIn': success_clock_in,
     }
     return HttpResponse(json.dumps(clock_in_info), content_type='application/json')
+
 
 # 获得设置信息
 def get_user_settings_info(request):
@@ -297,12 +300,15 @@ def update_email(request):
             return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameEmail'}), content_type='application/json')
         else:
             verify_code = send_email(new_email)
-            return HttpResponse(json.dumps({'status': 'ok', 'verifyCode': verify_code}), content_type='application/json')
+            return HttpResponse(json.dumps({'status': 'ok', 'verifyCode': verify_code}),
+                                content_type='application/json')
     elif type == 'changeEmail':
         update_email_by_username(username, new_email)
         return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
     else:
-        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}), content_type='application/json')
+        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}),
+                            content_type='application/json')
+
 
 # 修改用户头像
 @csrf_exempt
@@ -314,6 +320,7 @@ def change_avatar(request):
     else:
         change_user_avatar(image, username)
         return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+
 
 # 注销
 def log_off(request):
@@ -382,6 +389,7 @@ def release_task(request):
         username, t_id, t_release_mode = create_task(request_body)
 
         # 给相应用户加上任务和状态
+
         if t_release_mode == NOT_YET_RELEASE or t_release_mode == TIMED_RELEASE:
             state_for_task = NOT_RELEASE
         else:
@@ -409,6 +417,7 @@ def submit_feedback(request):
     inform_email = request.POST.get('email', '')
     description = request.POST.get('textarea', '')
     feedback_type = request.POST.get('questionType', '')
+
     create_feedback = add_a_feedback(
         feedback_type, description, image_url, inform_email)
     if create_feedback:
@@ -433,3 +442,25 @@ def perform_basic_info(request):
         'currentIndex':current_problem_index,
     }
     return HttpResponse(json.dumps(basic_info), content_type='application/json')
+
+
+def perform_problem_material(request):
+    query_dict = request.GET
+    file_type = query_dict.get("fileType", "")
+    file_path = query_dict.get("filePath", "")
+    if file_type == 0:
+        file_suffix = get_suffix(file_path)
+        base64_str = get_problem_material(file_path)
+        if file_suffix == 'jpg':
+            file_suffix = 'jpeg'
+        return_info = {
+            'status': 'ok',
+            'materialImage': "data:image/" + file_suffix + ";base64," + base64_str
+        }
+        return HttpResponse(json.dumps(return_info), content_type='application/json')
+    pass
+
+
+def uck_me(request):
+    print("uck_me")
+    return HttpResponse(json.dumps(fake_ans), content_type='application/json')

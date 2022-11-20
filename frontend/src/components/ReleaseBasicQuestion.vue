@@ -15,11 +15,14 @@
           <el-input
             v-model="minOptionNum"
             :rows="1"
-            type="textarea"
+            type="number"
+            @blur="minOptionNum=Number(minOptionNum)"
             placeholder="最小数量"
             resize="none"
             style="width: 100px;height: 40px;"
+            oninput="value=value.replace(/[^\d]/g,'')"
           />
+
         </el-col>
         <el-col :span="2" class="text-center">
         </el-col>
@@ -27,10 +30,12 @@
           <el-input
             v-model="maxOptionNum"
             :rows="1"
-            type="textarea"
+            type="number"
+            @blur="maxOptionNum=Number(maxOptionNum)"
             placeholder="最大数量"
             resize="none"
             style="width: 100px;height: 40px;"
+            oninput="value=value.replace(/[^\d]/g,'')"
           />
         </el-col>
       </el-form-item>
@@ -42,10 +47,12 @@
           <el-input
             v-model="minOptionNum"
             :rows="1"
-            type="textarea"
+            type="number"
+            @blur="minOptionNum=Number(minOptionNum)"
             placeholder="最小字数"
             resize="none"
             style="width: 100px;height: 40px;"
+            oninput="value=value.replace(/[^\d]/g,'')"
           />
         </el-col>
         <el-col :span="2" class="text-center">
@@ -54,10 +61,12 @@
           <el-input
             v-model="maxOptionNum"
             :rows="1"
-            type="textarea"
+            type="number"
+            @blur="maxOptionNum=Number(maxOptionNum)"
             placeholder="最大字数"
             resize="none"
             style="width: 100px;height: 40px;"
+            oninput="value=value.replace(/[^\d]/g,'')"
           />
         </el-col>
       </el-form-item>
@@ -69,10 +78,12 @@
           <el-input
             v-model="minOptionNum"
             :rows="1"
-            type="textarea"
+            type="number"
+            @blur="minOptionNum=Number(minOptionNum)"
             placeholder="最小框数"
             resize="none"
             style="width: 100px;height: 40px;"
+            oninput="value=value.replace(/[^\d]/g,'')"
           />
         </el-col>
         <el-col :span="2" class="text-center">
@@ -81,15 +92,30 @@
           <el-input
             v-model="maxOptionNum"
             :rows="1"
-            type="textarea"
+            type="number"
+            @blur="maxOptionNum=Number(maxOptionNum)"
             placeholder="最大框数"
             resize="none"
             style="width: 100px;height: 40px;"
+            oninput="value=value.replace(/[^\d]/g,'')"
           />
         </el-col>
       </el-form-item>
     </el-row>
-
+    <el-row style="height: 60px;" v-if="questionType == 3">
+      <el-form-item label="题干" :required="true">
+        <el-input
+          v-model="targetIndex"
+          :rows="1"
+          placeholder="请输入指向素材"
+          resize="none"
+          style="width: 150px;"
+          type="number"
+          @blur="targetIndex=Number(targetIndex)"
+          oninput="value=value.replace(/[^\d]/g,'')"
+        />
+      </el-form-item>
+    </el-row>
     <el-row style="height: 60px;">
       <el-form-item label="题干" :required="true">
         <el-input
@@ -175,6 +201,7 @@ export default {
       this.description = this.tempQuestion.questionDescription
       this.minOptionNum = this.tempQuestion.minOptionNum
       this.maxOptionNum = this.tempQuestion.maxOptionNum
+      this.targetIndex = this.tempQuestion.targetIndex
       this.questionType = this.tempQuestion.questionType
       this.mustDo = this.tempQuestion.mustDo
       this.optionList = this.tempQuestion.optionList
@@ -189,6 +216,7 @@ export default {
       idRef:['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],
       minOptionNum:'',
       maxOptionNum:'',
+      targetIndex:'',
       mustDo:true,
       tempQuestion:{},
     }
@@ -200,6 +228,7 @@ export default {
       this.optionList = [],
       this.minOptionNum = '',
       this.maxOptionNum = '',
+      this.targetIndex = '',
       this.mustDo = true
     },
     clickAddOption(){
@@ -222,6 +251,10 @@ export default {
       }else if(this.questionType == 2){
         tempType = '填空'
       }
+      if(this.questionType == 0){
+        this.minOptionNum = 1
+        this.maxOptionNum = 1
+      }
       this.$emit("questionSubmit", 
       { questionTypeName:tempType,
         questionType:this.questionType,
@@ -229,6 +262,7 @@ export default {
         optionList:this.optionList.concat(),
         minOptionNum:this.minOptionNum,
         maxOptionNum:this.maxOptionNum,
+        targetIndex:this.targetIndex,
         mustDo:this.mustDo,
         questionAns:'' //很久以后才会用到的接口
       })
@@ -244,6 +278,7 @@ export default {
       this.tempQuestion.questionDescription = this.description
       this.tempQuestion.minOptionNum = this.minOptionNum
       this.tempQuestion.maxOptionNum = this.maxOptionNum
+      this.tempQuestion.targetIndex = this.targetIndex
       this.tempQuestion.questionType = this.questionType
       this.tempQuestion.mustDo = this.mustDo
       this.tempQuestion.optionList = this.optionList
@@ -301,6 +336,11 @@ export default {
       }else if(this.maxOptionNum == '' && this.questionType == 2){
         this.$message({
           message: '您尚未设置填空最大字数！',
+          type: 'warning'
+        })
+      }else if(this.targetIndex =='' && this.questionType == 3){
+        this.$message({
+          message: '您尚未设置框图指向！',
           type: 'warning'
         })
       }else if(this.description == ''){

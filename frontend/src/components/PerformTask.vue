@@ -35,8 +35,14 @@
       </el-col> -->
       <el-col :span="8">
         <el-main class="main-style">
-
+        <el-row
+          v-for="question in questionList" 
+          :key="question"
+        >
+        {{question["questionTypeName"]}}
+        </el-row>
         </el-main>
+        
       </el-col>
     </el-row>
     <!-- <el-col :span="8" style="border-left: 1px solid #999999;"></el-col> -->
@@ -103,15 +109,13 @@ export default {
     }
   },
   mounted(){
-    axios.get("http://localhost:8000/perform_basic_info/",{
+    axios.get("http://localhost:8000/uck_me/",{
       params:{
         username:this.username
       }
     }).then((res)=>{
-        if(res.data['status']==='ok'){
-          this.questionList = res.data['questionList'];
-          this.materialList = res.data['materialList'];
-        }
+        this.questionList = res.data['questionList'];
+        this.materialList = res.data['materialList'];
     }).catch();
   },
   methods:{
