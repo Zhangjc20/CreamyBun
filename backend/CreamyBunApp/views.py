@@ -447,10 +447,10 @@ def perform_basic_info(request):
 
 def perform_problem_material(request):
     query_dict = request.GET
-    file_type = query_dict.get("fileType", "")
+    file_type = eval(query_dict.get("fileType"))
     file_path = query_dict.get("filePath", "")
+    file_suffix = get_suffix(file_path)
     if file_type == 0:
-        file_suffix = get_suffix(file_path)
         base64_str = get_problem_material(file_path)
         if file_suffix == 'jpg':
             file_suffix = 'jpeg'
@@ -459,7 +459,16 @@ def perform_problem_material(request):
             'materialImage': "data:image/" + file_suffix + ";base64," + base64_str
         }
         return HttpResponse(json.dumps(return_info), content_type='application/json')
-    pass
+    elif file_type == 1:
+        base64_str = get_problem_material(file_path)
+        if file_suffix == 'jpg':
+            file_suffix = 'jpeg'
+        return_info = {
+            'status': 'ok',
+            'materialImage': "data:image/" + file_suffix + ";base64," + base64_str
+        }
+        return HttpResponse(json.dumps(return_info), content_type='application/json')
+    return HttpResponse(json.dumps({'status': 'ok',}), content_type='application/json')
 
 
 def uck_me(request):

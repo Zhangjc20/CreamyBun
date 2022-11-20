@@ -309,6 +309,7 @@ def walk_file(file, material_type):
                         for temp_set in TYPE_SET:
                             if file_type in temp_set:
                                 file_type_num = i
+                                break
                             i += 1
 
                     fileInfo = os.stat(file_path)
@@ -343,7 +344,8 @@ def get_problem_material(avatar_url):
 
 
 def get_suffix(input_str):
-    temp = input_str.split('.')[:-1]
+    temp_list = input_str.split('.')
+    temp = temp_list[-1]
     return temp
 
 def take_single_bonus(elem):

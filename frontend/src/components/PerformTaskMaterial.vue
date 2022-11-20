@@ -1,10 +1,11 @@
 <template>
-  <el-main class="main-style" >
-    <el-row style="height: 50px;">
-      <span class="header-title" style="margin: auto,auto,auto,20px;">{{materialInfoLocal.notes}}</span>
-    </el-row>
-
-  </el-main>
+  <el-row style="height: 50px;">
+    <span class="header-title" style="margin: auto,auto,auto,20px;">{{materialInfo['fileNotes']}}</span>
+    
+  </el-row>
+  <el-row v-if="materialInfo['fileType'] == 0">
+    <el-image :src="image.src" />
+  </el-row>
 </template>
 
 <script>
@@ -15,6 +16,44 @@ export default {
     materialInfo:Object,
   },
   watch: {
+    materialInfo(newVal, oldVal){
+      console.log(newVal,oldVal)
+      this.materialInfoLocal = newVal
+      axios.get("http://localhost:8000/perform_problem_material/",{
+        params:this.materialInfoLocal
+      }).then((res)=>{
+        const imageFile = this.base64ImgtoFile(res.data["materialImage"]);
+        this.image.src =
+          window.webkitURL.createObjectURL(imageFile) ||
+          window.URL.createObjectURL(imageFile);
+      }).catch();
+    },
+  },
+  mounted(){
+    console.log("materialInfo",this.materialInfo)
+    axios.get("http://localhost:8000/perform_problem_material/",{
+      params:this.materialInfo
+    }).then((res)=>{
+      console.log("res",res)
+      if(this.materialInfo['fileType'] == 0){
+        const imageFile = this.base64ImgtoFile("" + res.data["materialImage"]);
+        this.image.src =
+          window.webkitURL.createObjectURL(imageFile) ||
+          window.URL.createObjectURL(imageFile);
+      }
+      
+    }).catch();
+  },
+  data(){
+    return {
+      materialInfoLocal:{},
+      image: {
+        src: null,
+        type: null,
+      },
+    }
+  },
+  methods:{
     base64ImgtoFile(dataurl, filename = "file") {
       const arr = dataurl.split(",");
       const mime = arr[0].match(/:(.*?);/)[1];
@@ -29,30 +68,6 @@ export default {
         type: mime,
       });
     },
-    materialInfo(newVal, oldVal){
-      console.log(newVal,oldVal)
-      this.materialInfoLocal = newVal
-      axios.get("http://localhost:8000/perform_problem_material/",{
-        params:this.materialInfoLocal
-      }).then((res)=>{
-        const imageFile = this.base64ImgtoFile(res.data["materialImage"]);
-        this.image.src =
-          window.webkitURL.createObjectURL(imageFile) ||
-          window.URL.createObjectURL(imageFile);
-      }).catch();
-    },
-  },
-  data(){
-    return {
-      materialInfoLocal:{},
-      image: {
-        src: null,
-        type: null,
-      },
-    }
-  },
-  methods:{
-
     clickContentSet(){
       this.dialogVisible = false
     }

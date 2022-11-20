@@ -23,9 +23,19 @@
     </el-row> -->
     <el-row :gutter="20">
       <el-col :span="15">
-        <PerformTaskMaterial
+        <el-row
+          class="main-style"
+          v-for="material in materialList" 
+          :key="material"
         >
+        <!-- {{material['fileNotes']}} -->
+        <PerformTaskMaterial
+          :materialInfo="material"
+        >
+        
         </PerformTaskMaterial>
+        </el-row>
+        
       </el-col>
       <!-- <el-col :span="16" v-for="material in materialList" :key="material">
         <PerformTaskMaterial
@@ -148,15 +158,7 @@ export default {
     return {
       imageFile:null,
       questionList:[],
-      materialList:[{
-                "index": 1, 
-                "fileName": "2 (1).docx", 
-                "fileSize": "28.7 KB", 
-                "totalSize": 29414, 
-                "fileType": "寄了", 
-                "filePath": "./resource/task_materials\\ZDandsomSP_20221118130618\\list4\\2 (1).docx", 
-                "list": "list4"
-            }, ],
+      materialList:[],
       ansList:[],
       lastSelectedList:[],
     }
@@ -177,7 +179,7 @@ export default {
             this.ansList.push([])
             // 初始化对应串
             for(var j = 0;j<tempQuestion['optionList'].length;j++){
-              console.log(j,tempQuestion['optionList'][j])
+              // console.log(j,tempQuestion['optionList'][j])
               this.ansList[i].push({
                 index: tempQuestion['optionList'][j]['index'],
                 name: tempQuestion['optionList'][j]['name'],
@@ -219,20 +221,20 @@ export default {
     // }
     getDeletedRow(selection,questionIndex){
       var judgeList = JSON.parse(JSON.stringify(this.ansList[questionIndex]))
-      console.log("judgeListjudgeListjudgeList",judgeList)
+      // console.log("judgeListjudgeListjudgeList",judgeList)
       for(var tempRow of selection){
         var tempTarget = tempRow['index']
         judgeList[tempTarget]['selected'] = 0
       }
-      console.log("judgeListjudgeListjudgeList",judgeList)
+      // console.log("judgeListjudgeListjudgeList",judgeList)
       var targetIndex = -1;
       for(var tempRow of judgeList){
         if(tempRow['selected']){
           targetIndex = tempRow['index']
         }
       }
-      console.log("targetIndextargetIndextargetIndex",targetIndex)
-      console.log("lastSelectedListlastSelectedListlastSelectedList",this.lastSelectedList[questionIndex])
+      // console.log("targetIndextargetIndextargetIndex",targetIndex)
+      // console.log("lastSelectedListlastSelectedListlastSelectedList",this.lastSelectedList[questionIndex])
       for(var tempRow of this.lastSelectedList[questionIndex]){
         if(tempRow['index'] == targetIndex){
           return tempRow
@@ -242,8 +244,8 @@ export default {
     },
     handleSelectionChange (selection,minOptionNum,maxOptionNum,index) { // section 被选中状态修改后触发事件，根据被选择的数量控制是否还可被选中
       
-      console.log("selection", selection)
-      console.log("this.ansList[index]", this.ansList[index])
+      // console.log("selection", selection)
+      // console.log("this.ansList[index]", this.ansList[index])
       // 如果是单选
       // if(minOptionNum == 1 && maxOptionNum == 1){
 
@@ -271,7 +273,7 @@ export default {
       if (selection.length < minOptionNum && selection.length < lastLen && minOptionNum < maxOptionNum) {
         this.$message.warning(`最少需要选${maxOptionNum}条！`);
         var targetRow = this.getDeletedRow(selection,index)
-        console.log("targetRowtargetRowtargetRow",targetRow)
+        // console.log("targetRowtargetRowtargetRow",targetRow)
         this.$refs.regTable[index].toggleRowSelection(targetRow)
         return
       }
@@ -284,9 +286,9 @@ export default {
         //   name: tempQuestion['optionList'][j]['name'],
         //   selected:0
         // })
-        console.log("tempRow",tempRow)
-        console.log("tempRow['index']",tempRow['index'])
-        console.log("this.ansList[index][tempRow['index']]",this.ansList[index][tempRow['index']])
+        // console.log("tempRow",tempRow)
+        // console.log("tempRow['index']",tempRow['index'])
+        // console.log("this.ansList[index][tempRow['index']]",this.ansList[index][tempRow['index']])
         this.ansList[index][tempRow['index']]['selected'] = 1
       }
       this.lastSelectedList[index] = selection
@@ -341,6 +343,9 @@ export default {
     box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
   }
   .question-row{
+    margin-top: 20px;
+  }
+  .material-row{
     margin-top: 20px;
   }
   

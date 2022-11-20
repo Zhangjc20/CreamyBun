@@ -96,7 +96,28 @@ ALL_TYPE_SET = IMAGE_TYPE_SET | TEXT_TYPE_SET | VIDEO_TYPE_SET | AUDIO_TYPE_SET
 TYPE_SET = [IMAGE_TYPE_SET, TEXT_TYPE_SET, VIDEO_TYPE_SET, AUDIO_TYPE_SET, ALL_TYPE_SET]
 
 fake_ans = {
-    "materialList": [],
+    "materialList": [
+        {
+            "fileType": 0,
+            "filePath": "./resource/task_materials\\ZDandsomSP_20221120152607\\list1\\图片 (2).jpg",
+            "fileNotes": "这是一张图"
+        },
+        {
+            "fileType": 1,
+            "filePath": "./resource/task_materials\\ZDandsomSP_20221120152607\\list2\\文本 (2).doc",
+            "fileNotes": "这是一文本"
+        },
+        {
+            "fileType": 2,
+            "filePath": "./resource/task_materials\\ZDandsomSP_20221120152607\\list3\\视频 (2).mp4",
+            "fileNotes": "这是一视频"
+        },
+        {
+            "fileType": 3,
+            "filePath": "./resource/task_materials\\ZDandsomSP_20221120152607\\list4\\音频 (2).wav",
+            "fileNotes": "这是一音频"
+        },
+    ],
     "questionList": [
         {
             "questionTypeName": "单选",
@@ -158,7 +179,7 @@ fake_ans = {
             "questionTypeName": "填空",
             "questionType": 2,
             "questionDescription": "我是填空题",
-            "optionList": [ ],
+            "optionList": [],
             "minOptionNum": 20,
             "maxOptionNum": 2000,
             "targetIndex": "",
@@ -170,7 +191,7 @@ fake_ans = {
             "questionTypeName": "单选",
             "questionType": 3,
             "questionDescription": "我是框图题",
-            "optionList": [ ],
+            "optionList": [],
             "minOptionNum": 2,
             "maxOptionNum": 10,
             "targetIndex": 1,
