@@ -1,7 +1,7 @@
 <template>
     <el-container class="container">
       <el-header class="header-style">
-        <NavBar :login="true" activeItem="2" :username="username"></NavBar>
+        <NavBar :login="true" activeItem="2" :username="username" :imageUrl="image.src"></NavBar>
       </el-header>
       <el-container>
         <el-aside class="left-menu-area">
@@ -30,6 +30,7 @@
           <PerformTask
           :login="true"
           :username="username"
+          :taskId="taskId"
           />
         </el-main>
       </el-container>
@@ -52,6 +53,11 @@
       return {
         show_content:"MineInfoView",
         username:"",
+        taskId:-1,
+        image:{
+          src:"",
+          type:""
+        },
       }
     },
     methods:{
@@ -109,12 +115,19 @@
           },
 
     },
-    mounted(){
-      if(this.$route.query.username){
-        this.username=this.$route.query.username;
-        console.log(this.username)
+    mounted() {
+      if (this.$route.query.username) {
+        this.username = this.$route.query.username;
+        console.log(this.username);
       }
-    }
+      if (this.$route.query.taskId) {
+        this.taskId = this.$route.query.taskId;
+        console.log(this.taskId)
+      }
+      if (this.$route.query.imageSrc) {
+        this.image.src = this.$route.query.imageSrc;
+      }
+    },
   }
   </script>
   

@@ -383,6 +383,11 @@ export default {
       //todo:进入进行任务页面具体传入什么参数自定义
       this.$router.push({
         name: "perform",
+        query: {
+          username: this.username,
+          taskId: this.id, //任务id
+          imageSrc: this.imageSrc,
+        },
       });
     },
     clickToList() {

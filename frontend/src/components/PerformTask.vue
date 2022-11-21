@@ -130,6 +130,7 @@ export default {
   props: {
     username:String,
     login:Boolean,
+    taskId:Number,
   },
   // watch:{
   //   materialType(newVal){
@@ -164,36 +165,44 @@ export default {
     }
   },
   mounted(){
-    axios.get("http://localhost:8000/uck_me/",{
-      params:{
-        username:this.username
-      }
-    }).then((res)=>{
-        this.questionList = res.data['questionList'];
-        this.materialList = res.data['materialList'];
-        for(var i = 0;i<this.questionList.length;i++){
-          this.lastSelectedList.push(undefined)
-          var tempQuestion = this.questionList[i]
-          // 如果题目是选择题
-          if(tempQuestion['questionType'] == 0 || tempQuestion['questionType'] == 1){
-            this.ansList.push([])
-            // 初始化对应串
-            for(var j = 0;j<tempQuestion['optionList'].length;j++){
-              // console.log(j,tempQuestion['optionList'][j])
-              this.ansList[i].push({
-                index: tempQuestion['optionList'][j]['index'],
-                name: tempQuestion['optionList'][j]['name'],
-                selected:0
-              })
+    //nextTick:加载完参数后再运行下面的
+    this.$nextTick(() => {
+        // dom元素更新后执行，因此这里能正确打印更改之后的值
+      console.log("http://localhost:8000/perform_basic_info/")
+      axios.get("http://localhost:8000/perform_basic_info/",{
+        params:{
+          username:this.username,
+          taskId:this.taskId
+        }
+      }).then((res)=>{
+          console.log("成功加载一个material", res)
+          this.questionList = res.data['questionList'];
+          this.materialList = res.data['materialList'];
+          for(var i = 0;i<this.questionList.length;i++){
+            this.lastSelectedList.push(undefined)
+            var tempQuestion = this.questionList[i]
+            // 如果题目是选择题
+            if(tempQuestion['questionType'] == 0 || tempQuestion['questionType'] == 1){
+              this.ansList.push([])
+              // 初始化对应串
+              for(var j = 0;j<tempQuestion['optionList'].length;j++){
+                // console.log(j,tempQuestion['optionList'][j])
+                this.ansList[i].push({
+                  index: tempQuestion['optionList'][j]['index'],
+                  name: tempQuestion['optionList'][j]['name'],
+                  selected:0
+                })
+              }
+            // 否则
+            }else{
+              this.ansList.push('')
             }
-          // 否则
-          }else{
-            this.ansList.push('')
+            
           }
           
-        }
-        
-    }).catch();
+      }).catch();
+    })
+    
   },
   methods:{
     // rowClick(row,minOptionNum,maxOptionNum,dom) {

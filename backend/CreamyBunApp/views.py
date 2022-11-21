@@ -150,14 +150,14 @@ def get_task_basic_info(request):
         'answerType': ANSWER_TYPE_DICT[t.answer_type],
         'description': t.description,
         'problemTotalNum': t.problem_total_number,
-        'finishedProblemNum':t.finished_problem_number,
+        'finishedProblemNum': t.finished_problem_number,
         'singleBonus': t.single_bonus,
         'starRank': t.star_rank,
         'materialType': TASK_TYPE_DICT[t.task_type],
         'posterName': poster_username,
-        'posterAvatar':get_user_avatr(poster_username),
-        'startTime':t.begin_time.split(" ")[0],
-        'endTime':t.end_time.split(" ")[0]
+        'posterAvatar': get_user_avatr(poster_username),
+        'startTime': t.begin_time.split(" ")[0],
+        'endTime': t.end_time.split(" ")[0]
     }
     return HttpResponse(json.dumps(task_info), content_type='application/json')
 
@@ -220,7 +220,7 @@ def get_user_received_task_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     page_number = query_dict.get("pageNumber", "")
-    sort_choice = query_dict.get("sortChoice","")#int 0是所有 1是正在进行，2是已结束
+    sort_choice = query_dict.get("sortChoice", "")  # int 0是所有 1是正在进行，2是已结束
 
     # 总页数（int），任务信息列表（列表，成员为字典）
     total_number, task_info_list = get_task_info_list(
@@ -228,7 +228,7 @@ def get_user_received_task_info(request):
 
     ret = {
         'status': 'ok',
-        'totalNumber': total_number,# 注意是totalNumber筛选出来的总任务数
+        'totalNumber': total_number,  # 注意是totalNumber筛选出来的总任务数
         'taskInfoList': task_info_list
     }
 
@@ -240,11 +240,11 @@ def get_user_released_task_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     page_number = query_dict.get("pageNumber", "")
-    sort_choice = query_dict.get("sortChoice","")#0是所有，1是暂未发布 2是发布但未结束 3是已结束
+    sort_choice = query_dict.get("sortChoice", "")  # 0是所有，1是暂未发布 2是发布但未结束 3是已结束
 
     # 总页数（int），任务信息列表（列表，成员为字典）
     total_number, task_info_list = get_task_info_list(
-        username, HAS_POSTED, page_number,sort_choice)
+        username, HAS_POSTED, page_number, sort_choice)
 
     ret = {
         'status': 'ok',
@@ -253,11 +253,12 @@ def get_user_released_task_info(request):
     }
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
+
 # 获得任务大厅排序筛选后的任务信息
 def get_sorted_tasks(request):
     query_dict = request.GET
-    username = query_dict.get("username", "") # 用户名用来获取等级啥的
-    seach_content = query_dict.get("searchInput", "") # 搜索框输入的内容，用于模糊搜索
+    username = query_dict.get("username", "")  # 用户名用来获取等级啥的
+    seach_content = query_dict.get("searchInput", "")  # 搜索框输入的内容，用于模糊搜索
     only_level = eval(query_dict.get("onlyLevel", "").capitalize())
     donut_type = eval(query_dict.get("donutType", ""))
     over_type = eval(query_dict.get("overType", ""))
@@ -265,19 +266,20 @@ def get_sorted_tasks(request):
     hard_type = eval(query_dict.get("hardType", ""))
     data_type = eval(query_dict.get("chosenDataType", ""))
     answer_type = eval(query_dict.get("chosenProblemType", ""))
-    page_number = eval(query_dict.get("pageNumber",""))
+    page_number = eval(query_dict.get("pageNumber", ""))
 
-    total_number,task_info_list = sorted_and_selected_tasks(username, seach_content, only_level,\
-                                                            donut_type, over_type, new_type,\
-                                                            hard_type, data_type, answer_type,\
-                                                            page_number)
+    total_number, task_info_list = sorted_and_selected_tasks(username, seach_content, only_level, \
+                                                             donut_type, over_type, new_type, \
+                                                             hard_type, data_type, answer_type, \
+                                                             page_number)
 
     ret = {
-        'status':'ok',
-        "taskInfoList":task_info_list,
-        "totalNumber":total_number,
+        'status': 'ok',
+        "taskInfoList": task_info_list,
+        "totalNumber": total_number,
     }
     return HttpResponse(json.dumps(ret), content_type='application/json')
+
 
 # 修改用户名
 @csrf_exempt
@@ -291,6 +293,7 @@ def update_username(request):
     else:
         update_username_by_username(username, new_username)
         return HttpResponse(json.dumps({'status': 'ok', 'newUsername': new_username}), content_type='application/json')
+
 
 # 修改邮箱
 def update_email(request):
@@ -430,21 +433,22 @@ def submit_feedback(request):
     else:
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')
 
+
 # 任务进行界面基本信息
 def perform_basic_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
-    task_id = query_dict.get("taskId","")
+    task_id = query_dict.get("taskId", "")
     # print("perform_basic_info", username)
 
-    material_list,question_list,is_test,current_problem_index=get_current_problem(username,task_id)
+    material_list, question_list, is_test, current_problem_index = get_current_problem(username, task_id)
 
     basic_info = {
         'status': 'ok',
-        'materialList':material_list,
-        'questionList':question_list,
-        'isTest':is_test,
-        'currentIndex':current_problem_index,
+        'materialList': material_list,
+        'questionList': question_list,
+        'isTest': is_test,
+        'currentIndex': current_problem_index,
     }
     return HttpResponse(json.dumps(basic_info), content_type='application/json')
 
@@ -472,7 +476,7 @@ def perform_problem_material(request):
             'materialImage': "data:image/" + file_suffix + ";base64," + base64_str
         }
         return HttpResponse(json.dumps(return_info), content_type='application/json')
-    return HttpResponse(json.dumps({'status': 'ok',}), content_type='application/json')
+    return HttpResponse(json.dumps({'status': 'ok', }), content_type='application/json')
 
 
 def uck_me(request):
