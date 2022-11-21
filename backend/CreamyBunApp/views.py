@@ -480,3 +480,53 @@ def perform_problem_material(request):
 def uck_me(request):
     print("uck_me")
     return HttpResponse(json.dumps(fake_ans), content_type='application/json')
+
+@csrf_exempt
+def submit_feedback(request):
+    print('hello')
+    image_url = request.FILES.get('image',None)
+    inform_email = request.POST.get('email', '')
+    description = request.POST.get('textarea', '')
+    feedback_type = request.POST.get('questionType', '')
+    create_feedback = add_a_feedback(feedback_type,description,image_url,inform_email)
+    path = "./resource/feedback_image"
+    file_format = image_url.name
+    path_name = os.path.join(path,file_format)
+    handle_uploaded_file(image_url, path_name)
+    print(image_url)
+    if create_feedback:
+        return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+    else:
+        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')
+
+
+@csrf_exempt
+def get_feedback(request):
+    feedback_list = get_all_feedback()
+    feedback_list = list(feedback_list)
+    feedback_list_dict = [{} for _ in range (len(feedback_list))]
+    for i in range (len(feedback_list)):
+        feedback_list_dict[i]['advice'] = feedback_list[i].advice
+        feedback_list_dict[i]['inform_email'] = feedback_list[i].inform_email
+        path = "./resource/feedback_image"
+        path_name = os.path.join(path,feedback_list[i].image_url)
+        with open(path_name, 'rb') as f:
+            data = f.read()
+            feedback_list_dict[i]['image_url'] = bytes.decode(base64.b64encode(data))
+        feedback_list_dict[i]['description'] = feedback_list[i].description
+        if feedback_list[i].feedback_type == 0:
+          feedback_list_dict[i]['feedback_type'] = "功能建议"
+        elif feedback_list[i].feedback_type == 1:
+          feedback_list_dict[i]['feedback_type'] = "界面优化"
+        elif feedback_list[i].feedback_type == 2:
+          feedback_list_dict[i]['feedback_type'] = "产品bug"
+        else:
+          feedback_list_dict[i]['feedback_type'] = "其他问题"
+    #print(feedback_list[].advice)
+    #for i in range(len(feedback_list)):
+        #feedback_list[i] =  feedback_list[i].__dict__  
+    print(feedback_list)
+    if feedback_list:
+        return HttpResponse(json.dumps({'feedback_list': feedback_list_dict}), content_type='application/json')
+    else:
+        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')

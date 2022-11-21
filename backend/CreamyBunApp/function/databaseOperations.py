@@ -328,3 +328,14 @@ def get_current_problem(username, task_id):
         question_list.append(q_info)
 
     return material_list, question_list, is_test, current_problem_index
+
+# 添加一个问题反馈到问题反馈列表中
+def add_a_feedback(feedback_type,description,image_url,inform_email):
+    try:
+        FeedbackInfo.objects.create(feedback_type=feedback_type,description=description,image_url=image_url,inform_email=inform_email)
+        return True
+    except:
+        return False
+
+def get_all_feedback():
+    return FeedbackInfo.objects.all()
