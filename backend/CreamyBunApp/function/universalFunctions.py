@@ -508,3 +508,9 @@ def file_iterator(file_name, chunk_size=8192, offset=0, length=None):
             if remaining:
                 remaining -= len(data)
             yield data
+
+def send_feedback_email(email,message):
+    emailBox = []
+    emailBox.append(email)
+    send_status = send_mail('奶黄包数据标注平台反馈处理结果', message, '1596741408@qq.com', emailBox, fail_silently=False)
+    return send_status

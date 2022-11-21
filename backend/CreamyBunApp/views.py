@@ -573,3 +573,25 @@ def get_feedback(request):
         return HttpResponse(json.dumps({'feedback_list': feedback_list_dict}), content_type='application/json')
     else:
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')
+
+# 发送信息处理反馈的邮件
+@csrf_exempt
+def handle_feedback_email(request):
+    content = request.POST.get("content", "")
+    email = request.POST.get("email", "")
+    print(email)
+    send_status = send_feedback_email(email,content)
+    if send_status==1:
+      return HttpResponse(json.dumps({'status': 'ok', 'type': 'sameEmail'}), content_type='application/json')
+    else:
+      return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameEmail'}), content_type='application/json')
+
+@csrf_exempt
+def delete_feedback(request):
+    content = request.POST.get("description", "")
+    email = request.POST.get("email", "")
+    delete_status = delete_a_feedback(email,content)
+    if delete_status==0:
+      return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameEmail'}), content_type='application/json')
+    else:
+      return HttpResponse(json.dumps({'status': 'ok', 'type': 'sameEmail'}), content_type='application/json')

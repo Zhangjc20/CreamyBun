@@ -339,3 +339,6 @@ def add_a_feedback(feedback_type,description,image_url,inform_email):
 
 def get_all_feedback():
     return FeedbackInfo.objects.all()
+
+def delete_a_feedback(inform_email,description):
+    return FeedbackInfo.objects.filter(inform_email=inform_email,description=description).delete()[0]
