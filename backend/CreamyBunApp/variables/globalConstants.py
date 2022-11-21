@@ -98,16 +98,6 @@ TYPE_SET = [IMAGE_TYPE_SET, TEXT_TYPE_SET, VIDEO_TYPE_SET, AUDIO_TYPE_SET, ALL_T
 fake_ans = {
     "materialList": [
         {
-            "fileType": 0,
-            "filePath": "./resource/task_materials\\ZDandsomSP_20221120152607\\list1\\图片 (2).jpg",
-            "fileNotes": "这是一张图"
-        },
-        {
-            "fileType": 1,
-            "filePath": "./resource/task_materials\\ZDandsomSP_20221120152607\\list2\\文本 (2).doc",
-            "fileNotes": "这是一文本"
-        },
-        {
             "fileType": 2,
             "filePath": "./resource/task_materials\\ZDandsomSP_20221120152607\\list3\\视频 (2).mp4",
             "fileNotes": "这是一视频"
@@ -117,6 +107,17 @@ fake_ans = {
             "filePath": "./resource/task_materials\\ZDandsomSP_20221120152607\\list4\\音频 (2).wav",
             "fileNotes": "这是一音频"
         },
+        {
+            "fileType": 0,
+            "filePath": "./resource/task_materials\\ZDandsomSP_20221120152607\\list1\\图片 (2).jpg",
+            "fileNotes": "这是一张图"
+        },
+        {
+            "fileType": 1,
+            "filePath": "./resource/task_materials\\ZDandsomSP_20221120152607\\list2\\文本 (3).txt",
+            "fileNotes": "这是一文本"
+        },
+
     ],
     "questionList": [
         {

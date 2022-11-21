@@ -266,7 +266,10 @@ def get_current_problem(username, task_id):
         current_problem_index = td.current_problem_index + 1 - td.test_problem_number
 
     # 确定当前的大题
-    p = t.problem_list.filter(id=td.received_problem_id_list[td.current_problem_index]).first()
+    p = None
+    for i, x in enumerate(td.received_problem_id_list.all()):
+        if i == td.current_problem_index:
+            p = t.problem_list.filter(id=x.int_content).first()
 
     material_list = []
     # 封装当前大题的素材信息

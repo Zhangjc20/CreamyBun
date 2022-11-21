@@ -16,13 +16,13 @@
       title="提交任务"
     />
   </el-header>
-  <el-main class="main-style">
     <!-- <el-row :gutter="20">
       <el-col :span="16"><div class="grid-content ep-bg-purple" /></el-col>
       <el-col :span="8"><div class="grid-content ep-bg-purple" /></el-col>
     </el-row> -->
-    <el-row :gutter="20">
-      <el-col :span="15">
+  <el-row :gutter="20" style="margin-top:20px">
+    <el-col :span="15">
+      <el-main class="main-style-two" style="height:calc(100vh - 220px)">
         <el-row
           class="main-style"
           v-for="material in materialList" 
@@ -34,80 +34,81 @@
         >
         
         </PerformTaskMaterial>
-        </el-row>
+      </el-row>
+      </el-main>
+      
+      
+    </el-col>
+    <!-- <el-col :span="16" v-for="material in materialList" :key="material">
+      <PerformTaskMaterial
+      :materialInfo="material"
+      >
+      </PerformTaskMaterial>
+    </el-col> -->
+    <el-col :span="9">
+      <el-main class="main-style-two" style="height:calc(100vh - 220px)">
+      <el-row
+        class="question-row"
+        v-for="question in questionList" 
+        :key="question"
+      >
+      <span class="header-title" style="margin: auto,auto,auto,20px;" >
+        {{question["index"] + '.[' + question["questionTypeName"] + ']: ' + question["questionDescription"]}}
+      </span>
+      <el-table v-if="question['questionType'] == 0 || question['questionType'] == 1"
+        :data="question['optionList']"
+        :style="table"
+        ref="regTable"
+        @selection-change="handleSelectionChange($event, question['minOptionNum'],question['maxOptionNum'],question['index'] - 1)"
+        class="selection-table">
+        <el-table-column
+          type="selection"
+          width="50">
+        </el-table-column>
+        <el-table-column
+          prop="name"
+          label="选项"
+          width="100">
+        </el-table-column>
+        <el-table-column
+          prop="content"
+          label="选项内容"
+          width="200">
+          <template v-slot="scope">
+            <div>{{ (scope.row.content) }}</div>
+          </template>
+        </el-table-column>
         
-      </el-col>
-      <!-- <el-col :span="16" v-for="material in materialList" :key="material">
-        <PerformTaskMaterial
-        :materialInfo="material"
-        >
-        </PerformTaskMaterial>
-      </el-col> -->
-      <el-col :span="9">
-        <el-main class="main-style">
-        <el-row
-          class="question-row"
-          v-for="question in questionList" 
-          :key="question"
-        >
-        <span class="header-title" style="margin: auto,auto,auto,20px;" >
-          {{question["index"] + '.[' + question["questionTypeName"] + ']: ' + question["questionDescription"]}}
-        </span>
-        <el-table v-if="question['questionType'] == 0 || question['questionType'] == 1"
-          :data="question['optionList']"
-          :style="table"
-          ref="regTable"
-          @selection-change="handleSelectionChange($event, question['minOptionNum'],question['maxOptionNum'],question['index'] - 1)"
-          class="selection-table">
-          <el-table-column
-            type="selection"
-            width="50">
-          </el-table-column>
-          <el-table-column
-            prop="name"
-            label="选项"
-            width="100">
-          </el-table-column>
-          <el-table-column
-            prop="content"
-            label="选项内容"
-            width="200">
-            <template v-slot="scope">
-              <div>{{ (scope.row.content) }}</div>
-            </template>
-          </el-table-column>
-          
-          <el-table-column
-            prop=""
-            label=""
-            width="">
-          </el-table-column>
-          
-          <el-table-column
-            prop=""
-            label="删除"
-            width="">
-            <span class="iconfont icon-menu"></span>
-          </el-table-column>
-        </el-table>
-        <el-input
-        v-if="question['questionType'] == 2"
-        v-model="this.ansList[question['index'] - 1]"
-        :rows="3"
-        type="textarea"
-        placeholder="请输入填空题答案"
-        resize="none"
-        :maxlength="question['maxOptionNum']"
-        show-word-limit
-        style="margin: 20px;"
-        />
-        </el-row>
-        </el-main>
+        <el-table-column
+          prop=""
+          label=""
+          width="">
+        </el-table-column>
         
-      </el-col>
-    </el-row>
+        <el-table-column
+          prop=""
+          label="删除"
+          width="">
+          <span class="iconfont icon-menu"></span>
+        </el-table-column>
+      </el-table>
+      <el-input
+      v-if="question['questionType'] == 2"
+      v-model="this.ansList[question['index'] - 1]"
+      :rows="3"
+      type="textarea"
+      placeholder="请输入填空题答案"
+      resize="none"
+      :maxlength="question['maxOptionNum']"
+      show-word-limit
+      style="margin: 20px;"
+      />
+      </el-row>
+      </el-main>
+      
+    </el-col>
+  </el-row>
     <!-- <el-col :span="8" style="border-left: 1px solid #999999;"></el-col> -->
-  </el-main>
   <!-- <el-main class="main-style">
     
   </el-main> -->
@@ -168,8 +169,10 @@ export default {
     //nextTick:加载完参数后再运行下面的
     this.$nextTick(() => {
         // dom元素更新后执行，因此这里能正确打印更改之后的值
-      console.log("http://localhost:8000/perform_basic_info/")
-      axios.get("http://localhost:8000/perform_basic_info/",{
+      console.log("http://localhost:8000/uck_me/")
+      axios.get("http://localhost:8000/uck_me/",{
+      //   console.log("http://localhost:8000/perform_basic_info/")
+      // axios.get("http://localhost:8000/perform_basic_info/",{
         params:{
           username:this.username,
           taskId:this.taskId
@@ -344,6 +347,11 @@ export default {
     float:left;
     font-size:15px;
     font-weight:bold;
+  }
+  .main-style-two{
+    padding: 20px 20px 20px 20px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);   
   }
   .main-style{
     padding: 20px 20px 20px 20px;

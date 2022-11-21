@@ -8,6 +8,7 @@ import shutil
 import zipfile
 import base64
 import math
+import docx
 from ..variables.globalConstants import *
 
 from .databaseOperations import *
@@ -456,3 +457,33 @@ def sorted_and_selected_tasks(username, seach_content, only_level,\
             task_info_list.append(t_info)
 
     return total_number,task_info_list
+
+
+def word_to_str(path):
+    """将word文本转化为字符串"""
+    # 打开word文件
+    file = docx.Document(path)  # 选择文件所在目录
+    # 读取word文本
+    text_list = [x.text for x in file.paragraphs]
+    # 将list中的内容按空格拼接为str
+    text_str = "\n".join(text_list)
+    return text_str
+
+
+def txt_to_str(path):
+    data = ''
+    with open(path, "r", encoding="utf-8") as f:
+        for line in f.readlines():
+            line = line.strip()
+            data += line
+            data += '\n'
+    return data
+
+
+def read_material_str(path, suffix):
+    output = '这是一个临时的字符串'
+    if suffix == 'doc' or suffix == 'docx':
+        output = word_to_str(path)
+    elif suffix == 'txt':
+        output = txt_to_str(path)
+    return output

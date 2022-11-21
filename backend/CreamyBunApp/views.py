@@ -468,12 +468,10 @@ def perform_problem_material(request):
         }
         return HttpResponse(json.dumps(return_info), content_type='application/json')
     elif file_type == 1:
-        base64_str = get_problem_material(file_path)
-        if file_suffix == 'jpg':
-            file_suffix = 'jpeg'
+        content = read_material_str(file_path, file_suffix)
         return_info = {
             'status': 'ok',
-            'materialImage': "data:image/" + file_suffix + ";base64," + base64_str
+            'materialContent': content
         }
         return HttpResponse(json.dumps(return_info), content_type='application/json')
     return HttpResponse(json.dumps({'status': 'ok', }), content_type='application/json')
