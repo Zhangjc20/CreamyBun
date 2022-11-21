@@ -97,34 +97,35 @@ def get_money_to_donut():
     global money_to_donut
     return money_to_donut
 
+
 # 获取指定用户、指定页码、指定状态、指定筛选条件的任务列表
-def get_task_info_list(username,state,page_number,sort_choice):
+def get_task_info_list(username, state, page_number, sort_choice):
     u = get_a_user_data(username)
     page_number = eval(page_number)
     sort_choice = eval(sort_choice)
-    all_task_to_state = u.task_info_list.all() # 返回了字典model对象的列表
+    all_task_to_state = u.task_info_list.all()  # 返回了字典model对象的列表
 
     # 存了所有的符合状态的任务的id 
     needed_task_to_state_list = [x for x in all_task_to_state if x.task_status_for_user == state]
     if sort_choice == 0:
-        needed_task_to_state_list = [x.task_id for x in needed_task_to_state_list] 
+        needed_task_to_state_list = [x.task_id for x in needed_task_to_state_list]
     else:
-        needed_task_to_state_list = [x.task_id for x in needed_task_to_state_list if x.task_status_for_itself == sort_choice]
+        needed_task_to_state_list = [x.task_id for x in needed_task_to_state_list if
+                                     x.task_status_for_itself == sort_choice]
 
     # 反转，最新的在最前面
     needed_task_to_state_list = list(reversed(needed_task_to_state_list))
 
-        
     # 总页数
     total_number = len(needed_task_to_state_list)
-    total_page_number = math.ceil(total_number/TASK_NUMBER_PER_PAGE)
+    total_page_number = math.ceil(total_number / TASK_NUMBER_PER_PAGE)
 
-    begin_index = TASK_NUMBER_PER_PAGE * (page_number -1)
-    if page_number == total_page_number: # 最后一页
+    begin_index = TASK_NUMBER_PER_PAGE * (page_number - 1)
+    if page_number == total_page_number:  # 最后一页
         needed_task_to_state_list = needed_task_to_state_list[begin_index:]
     elif page_number < total_page_number:
         needed_task_to_state_list = needed_task_to_state_list[begin_index:begin_index + TASK_NUMBER_PER_PAGE]
-    else: # 超过页码范围
+    else:  # 超过页码范围
         needed_task_to_state_list = []
 
     task_info_list = []
@@ -133,15 +134,15 @@ def get_task_info_list(username,state,page_number,sort_choice):
         t = get_a_task_data(t_id)
         t_info = {
 
-            'isSpace':False,
-            'id':t_id,
-            'taskName':t.task_name,
-            'starNum':t.star_rank,
-            'donut':t.single_bonus,
-            'dataType':TASK_TYPE_DICT[t.task_type],
-            'problemType':ANSWER_TYPE_DICT[t.answer_type],
-            'startTime':t.begin_time.split(" ")[0],
-            'endTime':t.end_time.split(" ")[0],
+            'isSpace': False,
+            'id': t_id,
+            'taskName': t.task_name,
+            'starNum': t.star_rank,
+            'donut': t.single_bonus,
+            'dataType': TASK_TYPE_DICT[t.task_type],
+            'problemType': ANSWER_TYPE_DICT[t.answer_type],
+            'startTime': t.begin_time.split(" ")[0],
+            'endTime': t.end_time.split(" ")[0],
         }
         t_info.setdefault('index', i)
         task_info_list.append(t_info)
@@ -158,7 +159,8 @@ def get_task_info_list(username,state,page_number,sort_choice):
 
     # 返回 总页数（int），任务信息列表（列表，成员为字典）
 
-    return total_number,task_info_list
+    return total_number, task_info_list
+
 
 # 修改用户头像并保存至后端
 def change_user_avatar(image, username):
@@ -349,23 +351,28 @@ def get_suffix(input_str):
     temp = temp_list[-1]
     return temp
 
+
 def take_single_bonus(elem):
     return elem.single_bonus
+
 
 def take_begin_time(elem):
     return elem.begin_time
 
+
 def take_end_time(elem):
     return elem.end_time
+
 
 def take_star_rank(elem):
     return elem.star_rank
 
-def sorted_and_selected_tasks(username, seach_content, only_level,\
-                              donut_type, over_type, new_type,\
+
+def sorted_and_selected_tasks(username, seach_content, only_level, \
+                              donut_type, over_type, new_type, \
                               hard_type, data_type, answer_type, page_number):
     # seach_content:搜索框输入的内容，用于模糊搜索(TODO:暂时不做)
-    
+
     u = get_a_user_data(username)
 
     # 得到所有的任务列表
@@ -373,22 +380,22 @@ def sorted_and_selected_tasks(username, seach_content, only_level,\
 
     # data_type:int 1:所有 2：图片 3：文本 4：视频  5：音频 6：混合
     if data_type > 1:
-        all_task = all_task.filter(task_type=(data_type-2))
+        all_task = all_task.filter(task_type=(data_type - 2))
 
     # answer_type:int 1:所有 2：单选 3：多选 4：填空 5：框图 6：混合
     if answer_type > 1:
-        all_task = all_task.filter(answer_type=(answer_type-2))
-    
+        all_task = all_task.filter(answer_type=(answer_type - 2))
+
     # 必须是已经发布的任务
     all_task = [x for x in all_task if (get_now_time().strftime('%F %T') >= x.begin_time)]
 
     # over_type: int 1:所有 2：未结束 3：已结束
     if over_type > 1:
         if over_type == 3:
-            all_task = [x for x in all_task if ((x.finished_problem_number == x.problem_total_number)\
+            all_task = [x for x in all_task if ((x.finished_problem_number == x.problem_total_number) \
                                                 or get_now_time().strftime('%F %T') >= x.end_time)]
         else:
-            all_task = [x for x in all_task if ((x.finished_problem_number < x.problem_total_number)\
+            all_task = [x for x in all_task if ((x.finished_problem_number < x.problem_total_number) \
                                                 and get_now_time().strftime('%F %T') < x.end_time)]
     # username:用户名用来获取等级啥的
     # only_level:bool false:所有 true:只选入满足做题者等级的
@@ -396,67 +403,67 @@ def sorted_and_selected_tasks(username, seach_content, only_level,\
         all_task = [x for x in all_task if (x.star_rank <= u.credit_rank)]
 
     # 升序：大的在后面，sort默认升序reverse=False
-    
+
     # hard_type:int 1:默认 2：从难到易 3：从易到难
     if hard_type > 1:
         if hard_type == 2:
-            all_task.sort(key=take_star_rank,reverse=True)
+            all_task.sort(key=take_star_rank, reverse=True)
         else:
             all_task.sort(key=take_star_rank)
 
     # new_type:int 1:默认 2：最新发布 3：最早结束
     if new_type > 1:
         if new_type == 2:
-            all_task.sort(key=take_begin_time,reverse=True)
+            all_task.sort(key=take_begin_time, reverse=True)
         else:
             all_task.sort(key=take_end_time)
 
     # donut_type:int 1:默认 2:从多到少 3:从少到多 
     if donut_type > 1:
         if donut_type == 2:
-            all_task.sort(key=take_single_bonus,reverse=True)
+            all_task.sort(key=take_single_bonus, reverse=True)
         else:
             all_task.sort(key=take_single_bonus)
 
     total_number = len(all_task)
-    total_page_number = math.ceil(total_number/TASK_NUMBER_PER_PAGE)
+    total_page_number = math.ceil(total_number / TASK_NUMBER_PER_PAGE)
 
-    begin_index = TASK_NUMBER_PER_PAGE * (page_number -1)
-    if page_number == total_page_number: # 最后一页
+    begin_index = TASK_NUMBER_PER_PAGE * (page_number - 1)
+    if page_number == total_page_number:  # 最后一页
         all_task = all_task[begin_index:]
     elif page_number < total_page_number:
         all_task = all_task[begin_index:begin_index + TASK_NUMBER_PER_PAGE]
-    else: # 超过页码范围
+    else:  # 超过页码范围
         all_task = []
 
-    task_info_list=[]
+    task_info_list = []
     # i从0开始
     for i, t in enumerate(all_task):
         t_info = {
-            'isSpace':False,
-            'id':t.id,
-            'taskName':t.task_name,
-            'starNum':t.star_rank,
-            'donut':t.single_bonus,
-            'dataType':TASK_TYPE_DICT[t.task_type],
-            'problemType':ANSWER_TYPE_DICT[t.answer_type],
-            'startTime':t.begin_time.split(" ")[0],
-            'endTime':t.end_time.split(" ")[0],
+            'isSpace': False,
+            'id': t.id,
+            'taskName': t.task_name,
+            'starNum': t.star_rank,
+            'donut': t.single_bonus,
+            'dataType': TASK_TYPE_DICT[t.task_type],
+            'problemType': ANSWER_TYPE_DICT[t.answer_type],
+            'startTime': t.begin_time.split(" ")[0],
+            'endTime': t.end_time.split(" ")[0],
         }
-        t_info.setdefault('index',i)
+        t_info.setdefault('index', i)
         task_info_list.append(t_info)
 
     # 填充空白
     info_list_length = len(task_info_list)
     if info_list_length < TASK_NUMBER_PER_PAGE:
-        for i in range(info_list_length,TASK_NUMBER_PER_PAGE):
+        for i in range(info_list_length, TASK_NUMBER_PER_PAGE):
             t_info = {
-                'index':i,
-                'isSpace':True,
+                'index': i,
+                'isSpace': True,
             }
             task_info_list.append(t_info)
 
-    return total_number,task_info_list
+    return total_number, task_info_list
 
 
 def word_to_str(path):
@@ -487,3 +494,17 @@ def read_material_str(path, suffix):
     elif suffix == 'txt':
         output = txt_to_str(path)
     return output
+
+
+def file_iterator(file_name, chunk_size=8192, offset=0, length=None):
+    with open(file_name, "rb") as f:
+        f.seek(offset, os.SEEK_SET)
+        remaining = length
+        while True:
+            bytes_length = chunk_size if remaining is None else min(remaining, chunk_size)
+            data = f.read(bytes_length)
+            if not data:
+                break
+            if remaining:
+                remaining -= len(data)
+            yield data
