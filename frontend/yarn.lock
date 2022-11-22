@@ -1330,11 +1330,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/video.js@7.x":
-  "integrity" "sha512-GtBMH+rm7yyw5DAK7ycQeEd35x/EYoLK/49op+CqDDoNUm9XJEVOfb+EARKKe4TwP5jkaikjWqf5RFjmw8yHoQ=="
-  "resolved" "https://registry.npmmirror.com/@types/video.js/-/video.js-7.3.49.tgz"
-  "version" "7.3.49"
-
 "@types/web-bluetooth@^0.0.16":
   "integrity" "sha512-oh8q2Zc32S6gd/j50GowEjKLoOVOwHP/bWVjKJInBwQqdOYMdPrf1oVlelTlyfFK3CKxL1uahMDAr+vy8T7yMQ=="
   "resolved" "https://registry.npmmirror.com/@types/web-bluetooth/-/web-bluetooth-0.0.16.tgz"
