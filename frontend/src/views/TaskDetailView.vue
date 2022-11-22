@@ -387,6 +387,7 @@ export default {
           username: this.username,
           taskId: this.id, //任务id
           imageSrc: this.imageSrc,
+          taskName: this.taskName,
         },
       });
     },

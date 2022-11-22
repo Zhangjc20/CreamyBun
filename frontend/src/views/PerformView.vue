@@ -29,6 +29,7 @@
           :login="true"
           :username="username"
           :taskId="taskId"
+          :taskName="taskName"
           />
         </el-main>
       </el-container>
@@ -52,6 +53,7 @@
         show_content:"MineInfoView",
         username:"",
         taskId:-1,
+        taskName:'/*这里填写任务名字*/',
         image:{
           src:"",
           type:""
@@ -124,6 +126,9 @@
       }
       if (this.$route.query.imageSrc) {
         this.image.src = this.$route.query.imageSrc;
+      }
+      if (this.$route.query.taskName) {
+        this.taskName = this.$route.query.taskName;
       }
     },
   }

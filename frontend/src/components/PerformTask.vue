@@ -6,7 +6,7 @@
       <el-breadcrumb-item>{{ this.materialTypeName }}</el-breadcrumb-item>
     </el-breadcrumb>
     <span class="header-title">
-      /*这里填写任务名字*/
+      {{taskName}}
     </span>
     <CustomButton isRound="true" style="float: right; right: 50px; top: 100px; position: absolute" height="40px"
       width="150px" title="提交任务" />
@@ -116,6 +116,7 @@ export default {
     username: String,
     login: Boolean,
     taskId: Number,
+    taskName:String,
   },
   // watch:{
   //   materialType(newVal){
