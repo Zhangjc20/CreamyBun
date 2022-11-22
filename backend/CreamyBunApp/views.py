@@ -56,6 +56,15 @@ def log_in(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     password = query_dict.get("password", "")
+    
+    adminU,adminP = get_admin_username_with_password()
+    adminT = get_admin_token()
+    # 查看是否是管理员
+    if username == adminU:
+        if password == adminP:
+            return HttpResponse(json.dumps({'status': 'ok', 'type': 'admin','adminToken':adminT}), content_type='application/json')
+        else:
+            return HttpResponse(json.dumps({'status': 'wrong', 'type': 'wrongPassword'}), content_type='application/json')
 
     # 用户是否存在
     is_user_exist = exist_user_by_name(username)
@@ -67,7 +76,7 @@ def log_in(request):
     if not is_password_right:
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'wrongPassword'}), content_type='application/json')
 
-    return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+    return HttpResponse(json.dumps({'status': 'ok','type':'normalUser'}), content_type='application/json')
 
 
 # 重置密码
@@ -217,6 +226,42 @@ def get_user_settings_info(request):
     }
     return HttpResponse(json.dumps(settings_info), content_type='application/json')
 
+# 获得管理员用户密码
+def get_admin_username_and_password(request):
+    query_dict = request.GET
+    adminT = query_dict.get("adminToken", "")
+    if adminT != get_admin_token():
+        return HttpResponse(json.dumps({'status':"wrong"}), content_type='application/json')
+
+    adminU,adminP = get_admin_username_with_password()
+    ret = {
+        'status': 'ok',
+        'adminUsername': adminU,
+        'adminPassword': adminP
+    }
+    return HttpResponse(json.dumps(ret), content_type='application/json')
+
+# 设置管理员用户密码
+def set_admin_username_and_password(request):
+    query_dict = request.GET
+    adminT = query_dict.get("adminToken", "")
+    if adminT != get_admin_token():
+        return HttpResponse(json.dumps({'status':"wrong"}), content_type='application/json')
+
+    type = query_dict.get("type","")
+    ret = {
+        'status': 'ok',
+    }
+    if type == "username":
+        adminU = query_dict.get("newUsername","")
+        set_admin_username(adminU)
+        ret['adminUsername'] = adminU
+    elif type == "password":
+        adminP = query_dict.get("newPassword","")
+        set_admin_password(adminP)
+        ret['adminPassword'] = adminP
+    return HttpResponse(json.dumps(ret), content_type='application/json')
+
 
 # 获得已领取任务信息
 # 任务信息(包括其id)通过列表传送,列表的每一项是一个字典
@@ -284,6 +329,40 @@ def get_sorted_tasks(request):
     }
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
+# 获得现在甜甜圈与现金之间汇率
+def get_current_rate_info(request):
+    query_dict = request.GET
+    adminT = query_dict.get("adminToken","")
+    if adminT != get_admin_token():
+        return HttpResponse({json.dumps({'status':'wrong'})}, content_type='application/json')
+
+    ret = {
+        'status':'ok',
+        'donutToMoney':get_donut_to_money(),
+        'moneyToDonut':get_money_to_donut()
+    }
+    return HttpResponse(json.dumps(ret), content_type='application/json')
+
+# 修改现在甜甜圈与现金之间汇率
+def change_current_rate_info(request):
+    query_dict = request.GET
+    adminT = query_dict.get("adminToken","")
+    if adminT != get_admin_token():
+        return HttpResponse({json.dumps({'status':'wrong'})}, content_type='application/json')
+
+    ret = {
+        'status':'ok',
+    }
+    type = query_dict.get('type',"")
+    if type == "moneyToDonut":
+        new_rate = eval(query_dict.get('moneyToDonut',""))
+        set_money_to_donut(new_rate)
+        ret['moneyToDonut'] = new_rate
+    elif type == "donutToMoney":
+        new_rate = eval(query_dict.get("donutToMoney",""))
+        set_donut_to_money(new_rate)
+        ret['donutToMoney'] = new_rate
+    return HttpResponse(json.dumps(ret), content_type='application/json')
 
 # 修改用户名
 @csrf_exempt

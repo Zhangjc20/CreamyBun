@@ -69,6 +69,8 @@ export default {
         donutToMoney: "",
         moneyToDonut: "",
       },
+      donutToMoney:0,
+      moneyToDonut:0,
     };
   },
   methods: {
@@ -76,6 +78,7 @@ export default {
       axios
         .get("/change_current_rate_info", {
           params: {
+            adminToken:sessionStorage.getItem('adminToken'),
             type: "donutToMoney",
             donutToMoney: this.form.donutToMoney,
           },
@@ -95,6 +98,7 @@ export default {
       axios
         .get("/change_current_rate_info", {
           params: {
+            adminToken:sessionStorage.getItem('adminToken'),
             type: "moneyToDonut",
             moneyToDonut: this.form.moneyToDonut,
           },
@@ -112,14 +116,24 @@ export default {
     },
   },
   mounted() {
-    //todo:补充该url，不要再忘记配urls.py!!!
     axios
       .get("/get_current_rate_info", {
-        params: {},
+        params: {
+          adminToken:sessionStorage.getItem('adminToken')
+        },
       })
       .then((res) => {
-        this.donutToMoney = res.data["donutToMoney"];
-        this.moneyToDonut = res.data["moneyToDonut"];
+        if(res.data['status']=='wrong'){
+          ElMessage({
+            type:'error',
+            message:"权限不足"
+          })
+          return;
+        }
+        else if(res.data['status']=='ok'){
+          this.donutToMoney = res.data["donutToMoney"];
+          this.moneyToDonut = res.data["moneyToDonut"];
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -174,6 +188,7 @@ export default {
 }
 .donut-rate-box {
   box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
+  border-radius: 10px;
   width: 80%;
   height: 240px;
   display: flex;

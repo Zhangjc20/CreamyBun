@@ -4,7 +4,7 @@
       <span class="header-title" style="margin: auto,auto,auto,20px;">{{ materialInfo['fileNotes'] }}</span>
     </el-header>
     <el-row v-if="type == 0">
-      <el-image :src="image.src" />
+      <ImageFramer :src="image.src" />
     </el-row>
     <el-main v-if="type == 1" style="min-height:50px;max-height:300px; border-left: 2px solid #999999;">
       <div class="material-content">
@@ -46,6 +46,7 @@
 
 <script>
 import axios from "axios";
+import ImageFramer from "./ImageFramer.vue";
 // import { VideoPlayer } from '@videojs-player/vue'
 // import 'video.js/dist/video-js.css'
 export default {
@@ -53,9 +54,9 @@ export default {
   props: {
     materialInfo: Object,
   },
-  // components: {
-  //   VideoPlayer
-  // },
+  components: {
+    ImageFramer
+  },
   watch: {
     materialInfo(newVal, oldVal) {
       console.log(newVal, oldVal)

@@ -1,9 +1,8 @@
 /frontend/node_modules
 /.vscode
 /backend/venv
-/backend/CreamyBunApp/migrations
 __pycache__
-
+migrations/
 package.json
 yarn.lock
 .idea
@@ -11,5 +10,5 @@ temp
 cache
 resource
 .git1
-migrations1
-migrations
+migrations1/
+api.yaml

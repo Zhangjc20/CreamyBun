@@ -170,6 +170,26 @@ def change_user_avatar(image, username):
         for line in image:
             f.write(line)
 
+# 获得管理员用户名和密码
+def get_admin_username_with_password():
+    global admin_username,admin_password
+    return (admin_username,admin_password)
+
+# 获得管理员密令
+def get_admin_token():
+    global admin_token
+    return admin_token
+
+# 修改管理员用户名
+def set_admin_username(new_name):
+    global admin_username
+    admin_username = new_name
+
+# 修改管理员密码
+def set_admin_password(new_password):
+    global admin_password
+    admin_password = new_password
+
 
 # 获取用户头像base64格式
 def get_user_avatr(username):

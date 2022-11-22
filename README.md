@@ -1,4 +1,7 @@
 # CreamyBun
+# git 使用
++ 已经在远程仓库的文件加入gitignore不可行，需要git rm -r --cached ./backend/CreamyBunApp/migrations/之后才有用
++ git status --ignored查看被忽略的文件
 # 前端配色：蓝色#5EABBF #FBE484
 
 # 前端命名统一

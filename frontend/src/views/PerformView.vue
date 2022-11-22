@@ -9,8 +9,6 @@
             default-active="1-1"
             active-text-color="#5EABBF"
             class="el-menu-vertical-demo"
-            @open="handleOpen"
-            @close="handleClose"
             :default-openeds="['1']"
           >
             <el-sub-menu index="1" default-active="1">
