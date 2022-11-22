@@ -211,6 +211,10 @@ export default {
   },
   mounted(){
     window.addEventListener('resize', this.onResize, true)
+    
+    this.$nextTick(() => {
+      this.clearCanvas()
+    })
   },
   beforeUnmount(){
     window.removeEventListener('resize', this.onResize, true)

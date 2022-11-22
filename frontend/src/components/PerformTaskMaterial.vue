@@ -4,7 +4,8 @@
       <span class="header-title" style="margin: auto,auto,auto,20px;">{{ materialInfo['fileNotes'] }}</span>
     </el-header>
     <el-row v-if="type == 0">
-      <ImageFramer :src="image.src" />
+      <ImageFramer v-if="type == 1" :src="image.src" />
+      <el-image :src="image.src"></el-image>
     </el-row>
     <el-main v-if="type == 1" style="min-height:50px;max-height:300px; border-left: 2px solid #999999;">
       <div class="material-content">

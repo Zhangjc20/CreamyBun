@@ -79,11 +79,10 @@
   <el-dialog
       v-model="fillBlankDialogVisible"
       title="设置题目答案"
-      width="90%"
-      height="80%"
+
     >
       <span class="header-title" style="margin: auto,auto,auto,20px;">请进行框图</span>
-      <ImageFramer ref="MyImageFramer" style="width:100%" :minFrameNum="currentMin" :maxFrameNum="currentMax" :imageSrc="currentImage.src"/>
+        <ImageFramer ref="MyImageFramer" style="width:100%" :minFrameNum="currentMin" :maxFrameNum="currentMax" :src="currentImage.src"/>
       <span class="dialog-footer">
         <el-row style="height: 50px;">
           <el-col :span="20">
@@ -200,6 +199,7 @@ export default {
   methods: {
     clickFillBlank(targetIndex,min,max){
       this.currentImage = this.$refs.materialBlock[targetIndex].image
+      console.log("this.currentImage",this.currentImage)
       this.fillBlankDialogVisible = true
       this.currentMax = max
       this.currentMin = min
