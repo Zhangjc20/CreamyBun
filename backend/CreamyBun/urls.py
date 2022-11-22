@@ -52,4 +52,7 @@ urlpatterns = [
     path('submit_feedback/', views.submit_feedback),
     path('get_feedback/', views.get_feedback),
     path('stream_video/<path>/', views.stream_video),
+    path('send_feedback_email/', views.send_feedback_email),
+    path('handle_feedback_email/', views.handle_feedback_email),
+    path('delete_feedback/', views.delete_feedback),
 ]
