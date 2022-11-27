@@ -151,7 +151,7 @@ export default {
   data() {
     return {
       clocked: false,
-      clockinDays: 3,
+      clockinDays: 0,
     };
   },
   methods:{

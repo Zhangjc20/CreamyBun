@@ -4,7 +4,6 @@
       <NavBar :login='username!=""' activeItem="1" :username="username" :imageUrl="image.src"></NavBar>
     </el-header>
     <el-main class="main-style">
-      <ImageFramer :minFrameNum="1" :maxFrameNum="3" imageSrc="https://img1.baidu.com/it/u=730169258,2197609409&fm=253&fmt=auto&app=138&f=JPEG?w=746&h=500"/>
       <div class="custom-box">
         <div class="custom-title-outer"><span class="custom-title">个性化数据标注服务</span></div>
         <el-row>
@@ -124,12 +123,10 @@
 <script>
 // @ is an alias to /src
 import NavBar from "@/components/NavBar.vue";
-import ImageFramer from "@/components/ImageFramer.vue";
 export default {
   name: 'HomeView',
   components: {
     NavBar,
-    ImageFramer
   },
   data(){
     return {

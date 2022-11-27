@@ -1,7 +1,7 @@
 <template>
     <el-container class="container">
       <el-header class="header-style">
-        <NavBar :login="true" activeItem="2" :username="username"></NavBar>
+        <NavBar :login="true" activeItem="2" :username="username" :imageUrl="image.src"></NavBar>
       </el-header>
       <el-container>
         <el-aside class="left-menu-area">
@@ -9,8 +9,6 @@
             default-active="1-1"
             active-text-color="#5EABBF"
             class="el-menu-vertical-demo"
-            @open="handleOpen"
-            @close="handleClose"
             :default-openeds="['1']"
           >
             <el-sub-menu index="1" default-active="1">
@@ -30,6 +28,8 @@
           <PerformTask
           :login="true"
           :username="username"
+          :taskId="taskId"
+          :taskName="taskName"
           />
         </el-main>
       </el-container>
@@ -52,6 +52,12 @@
       return {
         show_content:"MineInfoView",
         username:"",
+        taskId:-1,
+        taskName:'/*这里填写任务名字*/',
+        image:{
+          src:"",
+          type:""
+        },
       }
     },
     methods:{
@@ -109,12 +115,22 @@
           },
 
     },
-    mounted(){
-      if(this.$route.query.username){
-        this.username=this.$route.query.username;
-        console.log(this.username)
+    mounted() {
+      if (this.$route.query.username) {
+        this.username = this.$route.query.username;
+        console.log(this.username);
       }
-    }
+      if (this.$route.query.taskId) {
+        this.taskId = this.$route.query.taskId;
+        console.log(this.taskId)
+      }
+      if (this.$route.query.imageSrc) {
+        this.image.src = this.$route.query.imageSrc;
+      }
+      if (this.$route.query.taskName) {
+        this.taskName = this.$route.query.taskName;
+      }
+    },
   }
   </script>
   

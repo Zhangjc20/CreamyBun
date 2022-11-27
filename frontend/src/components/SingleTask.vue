@@ -1,9 +1,9 @@
 <template>
-    <div class="task-container" v-if="isSpace">
+    <div class="task-container" v-if="isSpace" :style="{cursor:'default'}">
       <div class="task-container-inner">
       </div>
     </div>
-    <div class="task-container" v-else>
+    <div class="task-container" :style="{cursor:'pointer'}" v-else>
       <div class="task-container-inner" style="border: 2px solid #e9e9e9;">
         <el-image :src="require('@/assets/images/recognize.jpeg')" style="width:180px;height:180px;"></el-image>
         <div class="color-bg-box">
@@ -20,10 +20,10 @@
             </el-col>
           </el-row>
           <el-row class="type-font">
-            <el-col :span="12">
+            <el-col :span="15" class="type-container">
               类型：{{props.dataType}}
             </el-col>
-            <el-col :span="12">{{props.problemType}}</el-col>
+            <el-col :span="7">{{props.problemType}}</el-col>
           </el-row>
           <div class="time-font">{{props.startTime}} ~ {{props.endTime}}</div>
         </div>
@@ -57,6 +57,9 @@
   </script>
   
   <style scoped>
+  .type-container{
+    text-align: center;
+  }
   .task-container {
     background-color: transparent;
     width: 200px;

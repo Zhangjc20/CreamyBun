@@ -221,7 +221,7 @@
             </template>
           </el-input>
         </div>
-        <TaskPage :type="0" ref="taskPage"></TaskPage>
+        <TaskPage :type="0" ref="taskPage" :username="username" :imageSrc="image.src"></TaskPage>
       </el-main>
     </el-container>
   </el-container>

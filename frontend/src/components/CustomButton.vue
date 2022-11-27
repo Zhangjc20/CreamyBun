@@ -41,8 +41,8 @@
             default:"#ffffff"
         },
         fontSize:{//字体大小
-            type:Number,
-            default:12
+            type:String,
+            default:"16px"
         },
         fontWeight:{
             type:String,

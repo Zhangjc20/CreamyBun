@@ -41,7 +41,7 @@ AUDIO = 3
 MIXED = 4
 
 # 任务类型中文
-TASK_TYPE_DICT = ["图片", "文本", "视频", "音频", "自定义"]
+TASK_TYPE_DICT = ["图片", "文本", "视频", "音频", "混合"]
 
 # 作答类型常量
 SINGLE_CHOICE = 0
@@ -96,12 +96,34 @@ ALL_TYPE_SET = IMAGE_TYPE_SET | TEXT_TYPE_SET | VIDEO_TYPE_SET | AUDIO_TYPE_SET
 TYPE_SET = [IMAGE_TYPE_SET, TEXT_TYPE_SET, VIDEO_TYPE_SET, AUDIO_TYPE_SET, ALL_TYPE_SET]
 
 fake_ans = {
-    "materialList": [],
+    "materialList": [
+
+        {
+            "fileType": 0,
+            "filePath": "./resource/task_materials\\ZDandsomSP_20221120152607\\list1\\图片 (2).jpg",
+            "fileNotes": "这是一张图"
+        },
+        {
+            "fileType": 1,
+            "filePath": "./resource/task_materials\\ZDandsomSP_20221120152607\\list2\\文本 (3).txt",
+            "fileNotes": "这是一文本"
+        },
+        {
+            "fileType": 2,
+            "filePath": "./resource/task_materials\\ZDandsomSP_20221120152607\\list3\\视频 (5).mp4",
+            "fileNotes": "这是一视频"
+        },
+        {
+            "fileType": 3,
+            "filePath": "./resource/task_materials\\ZDandsomSP_20221120152607\\list4\\音频 (5).mp3",
+            "fileNotes": "这是一音频"
+        },
+    ],
     "questionList": [
         {
             "questionTypeName": "单选",
             "questionType": 0,
-            "questionDescription": "我是第一道单选题",
+            "questionDescription": "我是单选题",
             "optionList": [
                 {
                     "index": 0,
@@ -114,8 +136,9 @@ fake_ans = {
                     "content": "我是单选B"
                 }
             ],
-            "minOptionNum": "",
-            "maxOptionNum": "",
+            "minOptionNum": 1,
+            "maxOptionNum": 1,
+            "targetIndex": "",
             "mustDo": True,
             "questionAns": "",
             "index": 1
@@ -146,8 +169,9 @@ fake_ans = {
                     "content": "我是多选D"
                 }
             ],
-            "minOptionNum": "2",
-            "maxOptionNum": "4",
+            "minOptionNum": 2,
+            "maxOptionNum": 3,
+            "targetIndex": "",
             "mustDo": False,
             "questionAns": "",
             "index": 2
@@ -157,8 +181,9 @@ fake_ans = {
             "questionType": 2,
             "questionDescription": "我是填空题",
             "optionList": [],
-            "minOptionNum": "20",
-            "maxOptionNum": "114514",
+            "minOptionNum": 20,
+            "maxOptionNum": 2000,
+            "targetIndex": "",
             "mustDo": True,
             "questionAns": "",
             "index": 3
@@ -168,8 +193,9 @@ fake_ans = {
             "questionType": 3,
             "questionDescription": "我是框图题",
             "optionList": [],
-            "minOptionNum": "2",
-            "maxOptionNum": "10",
+            "minOptionNum": 2,
+            "maxOptionNum": 10,
+            "targetIndex": 1,
             "mustDo": False,
             "questionAns": "",
             "index": 4
