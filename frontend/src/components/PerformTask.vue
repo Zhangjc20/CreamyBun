@@ -6,10 +6,16 @@
       <el-breadcrumb-item>{{ this.materialTypeName }}</el-breadcrumb-item>
     </el-breadcrumb>
     <span class="header-title">
-      {{taskName}}
+      {{ taskName }}
     </span>
+    <CustomButton @click="previousQuestion" isRound="true" style="float: right; right: 590px; top: 100px; position: absolute" height="40px"
+      width="150px" title="上一题" />
+    <CustomButton @click="jumpDialogVisible = true" isRound="true" style="float: right; right: 410px; top: 100px; position: absolute" height="40px"
+      width="150px" title="题目跳转" />
+    <CustomButton @click="submitAnswers" isRound="true" style="float: right; right: 230px; top: 100px; position: absolute" height="40px"
+      width="150px" title="提交本题" />
     <CustomButton isRound="true" style="float: right; right: 50px; top: 100px; position: absolute" height="40px"
-      width="150px" title="提交任务" />
+      width="150px" title="退出答题" />
   </el-header>
   <!-- <el-row :gutter="20">
       <el-col :span="16"><div class="grid-content ep-bg-purple" /></el-col>
@@ -40,8 +46,10 @@
           <span class="header-title" style="margin: auto,auto,auto,20px;">
             {{ question["index"] + '.[' + question["questionTypeName"] + ']: ' + question["questionDescription"] }}
           </span>
-          <CustomButton @click="currentQuestionIndex = question['index'] - 1;clickFillBlank(question['targetIndex'] - 1,question['minOptionNum'],question['maxOptionNum'] )" v-if="question['questionType'] == 3" isRound="true" style="float: right; right: 0px; top: 5px; position: absolute" height="30px"
-            width="100px" title="点击框图" />
+          <CustomButton
+            @click="currentQuestionIndex = question['index'] - 1; clickFillBlank(question['targetIndex'] - 1, question['minOptionNum'], question['maxOptionNum'])"
+            v-if="question['questionType'] == 3" isRound="true"
+            style="float: right; right: 0px; top: 5px; position: absolute" height="30px" width="100px" title="点击框图" />
           <el-table v-if="question['questionType'] == 0 || question['questionType'] == 1" :data="question['optionList']"
             :style="table" ref="regTable"
             @selection-change="handleSelectionChange($event, question['minOptionNum'], question['maxOptionNum'], question['index'] - 1)"
@@ -66,7 +74,7 @@
           <el-input v-if="question['questionType'] == 2" v-model="this.ansList[question['index'] - 1]" :rows="3"
             type="textarea" placeholder="请输入填空题答案" resize="none" :maxlength="question['maxOptionNum']" show-word-limit
             style="margin: 20px;" />
-            
+
         </el-row>
       </el-main>
 
@@ -76,25 +84,29 @@
   <!-- <el-main class="main-style">
     
   </el-main> -->
-  <el-dialog
-      v-model="fillBlankDialogVisible"
-      title="设置题目答案"
+  <el-dialog v-model="fillBlankDialogVisible" title="请进行框图">
+    <ImageFramer ref="MyImageFramer" style="width:100%" :minFrameNum="currentMin" :maxFrameNum="currentMax"
+      :src="currentImage.src" />
+    <span class="dialog-footer">
+      <el-row style="height: 50px;">
+        <el-col :span="20">
+        </el-col>
+        <el-col :span="4">
+          <CustomButton @click="getFillBlankAns" style="margin-left:20px" isRound="true" title="确定" />
+        </el-col>
+      </el-row>
+    </span>
+  </el-dialog>
 
-    >
-      <span class="header-title" style="margin: auto,auto,auto,20px;">请进行框图</span>
-        <ImageFramer ref="MyImageFramer" style="width:100%" :minFrameNum="currentMin" :maxFrameNum="currentMax" :src="currentImage.src"/>
-      <span class="dialog-footer">
-        <el-row style="height: 50px;">
-          <el-col :span="20">
-          </el-col>
-          <el-col :span="4">
-            <CustomButton @click="getFillBlankAns" style="margin-left:20px" isRound="true" title="确定"/>
-          </el-col>
-        </el-row>
-        
-      </span>
-    
-    </el-dialog>
+  <el-dialog v-model="jumpDialogVisible" title="设置跳转位置" width="22%" style="display: flex;flex-wrap: wrap;">
+      <el-button style="width: 40px;height: 40px;margin: 5px;" :type="state['state']" plain  v-for="state in stateList" :key="state" @click="jumpQuestion(state['index'] - 1)">{{state['index']}}</el-button>
+    <span class="dialog-footer">
+      <el-row style="height: 50px;margin-top: 20px;">
+          <CustomButton @click="jumpDialogVisible = false" style="margin-left:20px;" isRound="true" title="取消跳转" />
+      </el-row>
+    </span>
+  </el-dialog>
+
 </template>
 
 <script>
@@ -116,7 +128,7 @@ export default {
     username: String,
     login: Boolean,
     taskId: Number,
-    taskName:String,
+    taskName: String,
   },
   // watch:{
   //   materialType(newVal){
@@ -148,29 +160,42 @@ export default {
       materialList: [],
       ansList: [],
       lastSelectedList: [],
-      currentImage:undefined,
-      fillBlankDialogVisible:false,
-      currentMin:-1,
-      currentMax:-1,
-      currentQuestionIndex:-1,
+      stateList: [],
+      currentImage: undefined,
+      fillBlankDialogVisible: false,
+      jumpDialogVisible: false,
+      currentMin: -1,
+      currentMax: -1,
+      currentQuestionIndex: -1,
+      isTest:false
     }
   },
   mounted() {
     //nextTick:加载完参数后再运行下面的
     this.$nextTick(() => {
+      this.getProblemInfo('init')
+    })
+
+  },
+  methods: {
+    getProblemInfo(type, jmpTarget = -1) {
       // dom元素更新后执行，因此这里能正确打印更改之后的值
-      console.log("http://localhost:8000/uck_me/")
-      axios.get("http://localhost:8000/uck_me/", {
-        //   console.log("http://localhost:8000/perform_basic_info/")
-        // axios.get("http://localhost:8000/perform_basic_info/",{
+      // console.log("http://localhost:8000/uck_me/")
+      // axios.get("http://localhost:8000/uck_me/", {
+        console.log("http://localhost:8000/perform_basic_info/")
+        axios.get("http://localhost:8000/perform_basic_info/",{
         params: {
           username: this.username,
-          taskId: this.taskId
+          taskId: this.taskId,
+          type:type,
+          jmpTarget:jmpTarget
         }
       }).then((res) => {
         console.log("成功加载一个material", res)
         this.questionList = res.data['questionList'];
         this.materialList = res.data['materialList'];
+        this.stateList = res.data['stateList'];
+        this.isTest = res.data['isTest'];
         for (var i = 0; i < this.questionList.length; i++) {
           this.lastSelectedList.push(undefined)
           var tempQuestion = this.questionList[i]
@@ -194,29 +219,83 @@ export default {
         }
 
       }).catch();
-    })
+    },
+    async previousQuestion(){
+      // var confirmRes = this.$confirm('请问是否需要提交当前答案？', '提示', {
+      //   confirmButtonText: '确定',
+      //   cancelButtonText: '取消',
+      //   type: 'success'
+      // }).catch(err => err)
+      // console.log("confirmResconfirmResconfirmRes", confirmRes)
+      // if ('confirm' === confirmRes){
+      //   this.submitAnswers()
+      // }
+      await this.$confirm('请问是否需要提交当前答案？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.submitAnswers()
+          this.$message({
+            type: 'success',
+            message: '提交成功!'
+          });
+        }).catch(() => {      
+        });
+      //TODO:告诉后端要去上一题并初始化页面
+      this.getProblemInfo('last')
+    },
+    jumpQuestion(index){
+      console.log(index)
+      this.jumpDialogVisible = false
+    },
+    submitAnswers(){
+      console.log("this.ansList",this.ansList)
+      for(var i = 0; i < this.questionList.length;i++){
+        if(this.questionList[i]['questionType'] == 0 
+        || this.questionList[i]['questionType'] == 1){
+          var tempAns = ''
+          console.log("this.ansList[i]",i,this.ansList[i])
+          for(var j = 0;j<this.ansList[i].length;j++){
+            if(this.ansList[i][j]['selected']){
+              tempAns += this.ansList[i][j]['name']
+            }
+          }
+          this.ansList[i] = tempAns
+        }
+      }
+      console.log("this.ansList",this.ansList)
+      axios.post("http://localhost:8000/submit_answer/",{
+        username: this.username,
+        taskId: this.taskId,
+        ansList: this.ansList
+      }).then(res => {
+        this.getProblemInfo('next')
+        console.log(res)
+      }).catch(error => {
+        console.log(error)
+      })
+    },
 
-  },
-  methods: {
-    clickFillBlank(targetIndex,min,max){
+    clickFillBlank(targetIndex, min, max) {
       this.currentImage = this.$refs.materialBlock[targetIndex].image
-      console.log("this.currentImage",this.currentImage)
+      console.log("this.currentImage", this.currentImage)
       this.fillBlankDialogVisible = true
       this.currentMax = max
       this.currentMin = min
     },
-    getFillBlankAns(){
-      this.fillBlankDialogVisible = false; 
+    getFillBlankAns() {
+      this.fillBlankDialogVisible = false;
       var tempAnsList = this.$refs.MyImageFramer.frameRects
-      console.log("tempAnsList",tempAnsList,this.currentQuestionIndex)
+      console.log("tempAnsList", tempAnsList, this.currentQuestionIndex)
       var ans = ''
-      for(var rect of tempAnsList){
+      for (var rect of tempAnsList) {
         var temp = '(' + rect.startX.toString() + ',' + rect.startY.toString()
-         + ',' + (rect.startX + rect.width).toString() + ',' + (rect.startY + rect.height).toString() + ')'
+          + ',' + (rect.startX + rect.width).toString() + ',' + (rect.startY + rect.height).toString() + ')'
         ans += temp
       }
       this.ansList[this.currentQuestionIndex] = ans
-      console.log("this.ansList[this.currentQuestionIndex]",this.ansList[this.currentQuestionIndex])
+      console.log("this.ansList[this.currentQuestionIndex]", this.ansList[this.currentQuestionIndex])
     },
     // rowClick(row,minOptionNum,maxOptionNum,dom) {
     //   // 单击行，设置选中
