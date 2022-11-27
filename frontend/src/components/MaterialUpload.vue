@@ -552,7 +552,7 @@ export default {
                 this.showingList = []
                 this.testList = []
                 this.handleMaterialList = []
-
+                console.log("jcggcw",this.listList)
                 this.fullList = res.data['fullList']
                 this.listList = res.data['listList']
                 if(this.fullList.length == 0 || this.listList.length == 0){

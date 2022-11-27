@@ -14,7 +14,7 @@
       width="150px" title="题目跳转" />
     <CustomButton @click="submitAnswers" isRound="true" style="float: right; right: 230px; top: 100px; position: absolute" height="40px"
       width="150px" title="提交本题" />
-    <CustomButton isRound="true" style="float: right; right: 50px; top: 100px; position: absolute" height="40px"
+    <CustomButton  @click="quitPerform" isRound="true" style="float: right; right: 50px; top: 100px; position: absolute" height="40px"
       width="150px" title="退出答题" />
   </el-header>
   <!-- <el-row :gutter="20">
@@ -99,7 +99,7 @@
   </el-dialog>
 
   <el-dialog v-model="jumpDialogVisible" title="设置跳转位置" width="22%" style="display: flex;flex-wrap: wrap;">
-      <el-button style="width: 40px;height: 40px;margin: 5px;" :type="state['state']" plain  v-for="state in stateList" :key="state" @click="jumpQuestion(state['index'] - 1)">{{state['index']}}</el-button>
+      <el-button style="width: 40px;height: 40px;margin: 5px;" :type="state['state']" plain  v-for="state in stateList" :key="state" @click="jumpQuestion(state['index'])">{{state['index']}}</el-button>
     <span class="dialog-footer">
       <el-row style="height: 50px;margin-top: 20px;">
           <CustomButton @click="jumpDialogVisible = false" style="margin-left:20px;" isRound="true" title="取消跳转" />
@@ -129,6 +129,7 @@ export default {
     login: Boolean,
     taskId: Number,
     taskName: String,
+    imageSrc: String
   },
   // watch:{
   //   materialType(newVal){
@@ -236,24 +237,36 @@ export default {
           type: 'warning'
         }).then(() => {
           this.submitAnswers()
-          this.$message({
-            type: 'success',
-            message: '提交成功!'
-          });
         }).catch(() => {      
         });
       //TODO:告诉后端要去上一题并初始化页面
       this.getProblemInfo('last')
     },
-    jumpQuestion(index){
+    async jumpQuestion(index){
       console.log(index)
+      await this.$confirm('请问是否需要提交当前答案？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.submitAnswers()
+      }).catch(() => {      
+      });
+      this.getProblemInfo('jump', index)
       this.jumpDialogVisible = false
     },
     submitAnswers(){
       console.log("this.ansList",this.ansList)
       for(var i = 0; i < this.questionList.length;i++){
+        if(this.ansList[i] == '' || this.ansList[i] == []){
+          this.$message({
+            message: '您尚未填写第' + i.toString() + '题！',
+            type: 'error'
+          })
+          return
+        }
         if(this.questionList[i]['questionType'] == 0 
-        || this.questionList[i]['questionType'] == 1){
+        || this.questionList[i]['questionType'] == 1){//如果题目是选择题先转换形式
           var tempAns = ''
           console.log("this.ansList[i]",i,this.ansList[i])
           for(var j = 0;j<this.ansList[i].length;j++){
@@ -263,6 +276,62 @@ export default {
           }
           this.ansList[i] = tempAns
         }
+        if(!this.questionList[i]['mustDo'] && this.ansList[i] == ''){//如果该题目不是必做且用户没做
+          continue
+        }
+        if(this.questionList[i]['questionType'] == 0 
+        || this.questionList[i]['questionType'] == 1){//如果题目是选择题
+          if(this.ansList[i].length > this.questionList[i]['maxOptionNum']){
+            this.$message({
+              message: '您的第' + (i + 1).toString() + '题选项过多！',
+              type: 'error'
+            })
+            return
+          }
+          else if(this.ansList[i].length < this.questionList[i]['minOptionNum']){
+            this.$message({
+              message: '您的第' + (i + 1).toString() + '题选项过少！',
+              type: 'error'
+            })
+            return
+          }
+        }else if(this.questionList[i]['questionType'] == 2){//如果题目是填空题
+          if(this.ansList[i].length > this.questionList[i]['maxOptionNum']){
+            this.$message({
+              message: '您的第' + (i + 1).toString() + '题字数过多！',
+              type: 'error'
+            })
+            return
+          }
+          else if(this.ansList[i].length < this.questionList[i]['minOptionNum']){
+            this.$message({
+              message: '您的第' + (i + 1).toString() + '题字数过少！',
+              type: 'error'
+            })
+            return
+          }
+        }else if(this.questionList[i]['questionType'] == 3){//如果题目是框图题
+          var blankNumber = 0
+          for(var i = 0;i<this.ansList[i].length;i++){
+            if(this.ansList[i] == '('){
+              blankNumber ++
+            }
+          }
+          if(blankNumber.length > this.questionList[i]['maxOptionNum']){
+            this.$message({
+              message: '您的第' + (i + 1).toString() + '题图框过多！',
+              type: 'error'
+            })
+            return
+          }
+          else if(blankNumber.length < this.questionList[i]['minOptionNum']){
+            this.$message({
+              message: '您的第' + (i + 1).toString() + '题图框过少！',
+              type: 'error'
+            })
+            return
+          }
+        }
       }
       console.log("this.ansList",this.ansList)
       axios.post("http://localhost:8000/submit_answer/",{
@@ -270,13 +339,36 @@ export default {
         taskId: this.taskId,
         ansList: this.ansList
       }).then(res => {
+        this.$message({
+          type: 'success',
+          message: '提交成功!'
+        });
         this.getProblemInfo('next')
         console.log(res)
       }).catch(error => {
         console.log(error)
       })
     },
-
+    async quitPerform(){
+      await this.$confirm('请问是否需要提交当前答案？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.submitAnswers()
+        
+        
+      }).catch(() => {      
+      });
+      this.$router.push({
+        name: "mine",
+        query: {
+          username: this.username,
+          imageSrc: this.imageSrc,
+          defaultActive: '1'
+        },
+      });
+    },
     clickFillBlank(targetIndex, min, max) {
       this.currentImage = this.$refs.materialBlock[targetIndex].image
       console.log("this.currentImage", this.currentImage)
