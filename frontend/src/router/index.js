@@ -9,7 +9,6 @@ import TaskCenterView from "@/views/TaskCenterView.vue";
 import HelpView from "@/views/HelpView.vue";
 import TaskDetailView from '@/views/TaskDetailView.vue';
 import AdminView from "@/views/AdminView.vue";
-import FeedbackManagerView from "@/views/FeedbackManagerView.vue";
 
 const routes = [
   {
@@ -55,11 +54,6 @@ const routes = [
     path: "/help",
     name: "help",
     component: HelpView,
-  },
-  {
-    path: "/feedbackmanager",
-    name: "feedbackmanager",
-    component: FeedbackManagerView,
   },
   {
     //元数据

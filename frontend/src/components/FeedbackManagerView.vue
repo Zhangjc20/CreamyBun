@@ -71,7 +71,6 @@
       this.show_content = "FeedbackPage";
       axios({method:"Post",url:'http://localhost:8000/get_feedback/',headers: {'Content-Type': 'multipart/form-data',},data:formData})
       .then(res => {
-        //alert(res.data['feedback_list'][1]['image_url']);
         this.items = res.data['feedback_list'];
       })
     },
