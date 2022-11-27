@@ -54,15 +54,15 @@
 <script>
 import { componentSizes } from "element-plus";
 import TaskPage from "@/components/TaskPage.vue";
-import FeedbackPage from "@/components/FeedbackPage.vue";
 import AdminSettings from "@/components/AdminSettings.vue";
 import ChangeParams from "@/components/ChangeParams.vue";
+import FeedbackManagerView from "@/components/FeedbackManagerView.vue";
 // import { ElMessage, ElMessageBox } from "element-plus";
 
 // @ is an alias to /src
 export default {
   name: "AdminView",
-  components: { componentSizes, TaskPage, AdminSettings, ChangeParams, FeedbackPage },
+  components: { componentSizes, TaskPage, AdminSettings, ChangeParams,FeedbackManagerView},
   data() {
     return {
       showContent: "TaskPage",
@@ -75,7 +75,7 @@ export default {
           this.showContent = "TaskPage";
           break;
         case 2:
-          this.showContent = "FeedbackPage";
+          this.showContent = "FeedbackManagerView";
           break;
         case 3:
           this.showContent = "ChangeParams";

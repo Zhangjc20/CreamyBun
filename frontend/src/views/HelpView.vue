@@ -55,13 +55,13 @@
             <el-input
               type="textarea"
               :rows="1"
-              placeholder="请输出邮箱~"
+              placeholder="请输入邮箱~"
               v-model="email"
             ></el-input>
           </el-row>
         </div>
         <div class="feedback-title-outer">
-          <el-button class="help-button" @click="submitFeedback">提交反馈</el-button>
+          <CustomButton title="提交反馈" fontSize="18px" @click="submitFeedback"></CustomButton>
         </div>
         <div class="feedback-title-outer">
           <span class="feedback-title">联系信息</span>
@@ -79,11 +79,14 @@
 <script>
 // @ is an alias to /src
 import NavBar from "@/components/NavBar.vue";
+import CustomButton from "@/components/CustomButton.vue";
+import { ElMessage } from 'element-plus';
 import axios from "axios";
 export default {
   name: "HelpView",
   components: {
     NavBar,
+    CustomButton
   },
   data() {
     return {
@@ -157,7 +160,22 @@ export default {
                 'Content-Type': 'multipart/form-data',
             },
               data:formData
-            })
+      })
+      .then((res)=>{
+        if(res.data['status']==='ok'){
+          ElMessage({
+            type:'success',
+            message:"反馈已经收到，感谢您的支持~"
+          });
+          console.log(res);
+        }
+        else{
+          ElMessage({
+            type:'error',
+            message:"反馈失败"
+          });
+        }
+      })
     },
   },
   mounted() {
@@ -264,16 +282,5 @@ export default {
 }
 .exp-ratio {
   line-height: 22px;
-}
-.el-button--primary {
-  background-color: #5eabbf;
-  border-color: #5eabbf;
-  width: 100%;
-}
-
-.el-button--info {
-  background-color: #fbe484;
-  border-color: #fbe484;
-  color: #4e5969;
 }
 </style>

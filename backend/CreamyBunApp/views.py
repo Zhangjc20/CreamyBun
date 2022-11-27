@@ -508,6 +508,7 @@ def submit_feedback(request):
     inform_email = request.POST.get('email', '')
     description = request.POST.get('textarea', '')
     feedback_type = request.POST.get('questionType', '')
+    print(image_url)
 
     create_feedback = add_a_feedback(
         feedback_type, description, image_url, inform_email)
@@ -515,7 +516,6 @@ def submit_feedback(request):
         return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
     else:
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')
-
 
 # 任务进行界面基本信息
 def perform_basic_info(request):
