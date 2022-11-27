@@ -338,11 +338,7 @@ export default {
           );
           formData.append("username", this.username);
           axios
-            .post("/change_avatar", formData, {
-              query: {
-                username: this.username,
-              },
-            })
+            .post("/change_avatar", formData)
             .then((res) => {
               console.log(res);
             })

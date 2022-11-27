@@ -97,7 +97,6 @@ def get_money_to_donut():
     global money_to_donut
     return money_to_donut
 
-
 # 获取指定用户、指定页码、指定状态、指定筛选条件的任务列表
 def get_task_info_list(username, state, page_number, sort_choice):
     u = get_a_user_data(username)
@@ -534,6 +533,15 @@ def send_feedback_email(email,message):
     emailBox.append(email)
     send_status = send_mail('奶黄包数据标注平台反馈处理结果', message, '1596741408@qq.com', emailBox, fail_silently=False)
     return send_status
+
+def create_a_reported_image(image,path):
+    try:
+        with open(path, 'wb') as f:
+            for line in image:
+                f.write(line)
+        return True
+    except:
+        return False
 
 # 领取任务
 def user_receive_current_task(username,task_id):

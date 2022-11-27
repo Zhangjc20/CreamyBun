@@ -45,7 +45,11 @@
         </el-menu>
       </el-aside>
       <el-main class="main-style">
-        <component :is="showContent" :type="3" :key="showContent" />
+        <component
+          :is="showContent"
+          :type="3"
+          :key="showContent"
+        />
       </el-main>
     </el-container>
   </el-container>
@@ -57,12 +61,17 @@ import TaskPage from "@/components/TaskPage.vue";
 import AdminSettings from "@/components/AdminSettings.vue";
 import ChangeParams from "@/components/ChangeParams.vue";
 import FeedbackManagerView from "@/components/FeedbackManagerView.vue";
-// import { ElMessage, ElMessageBox } from "element-plus";
 
 // @ is an alias to /src
 export default {
   name: "AdminView",
-  components: { componentSizes, TaskPage, AdminSettings, ChangeParams,FeedbackManagerView},
+  components: {
+    componentSizes,
+    TaskPage,
+    AdminSettings,
+    ChangeParams,
+    FeedbackManagerView,
+},
   data() {
     return {
       showContent: "TaskPage",

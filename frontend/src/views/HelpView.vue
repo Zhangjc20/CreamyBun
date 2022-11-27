@@ -15,7 +15,6 @@
           <el-row class="el-row">
             <el-form-item style="width: 100%">
               <el-select v-model="questionID" style="width: 100%">
-                <el-option label="请选择反馈类型" value=""></el-option>
                 <el-option
                   v-for="item in questionTypes"
                   :key="item.id"
@@ -45,7 +44,7 @@
           <el-row>
             <input type='file' id="inputImgFile" style="display:none" accept="image/*"  @change="inputImgFile_onchange"/>
             <!-- 预览图片S -->
-            <img id="show_img" src="@/assets/images/logo.png" width="220" height="160"/>
+            <el-image id="show_img" :src="require('@/assets/images/logo.png')" style="width:160px;height:160px;"/>
             <!-- 预览图片E -->
           </el-row>
           <el-row class="row2">
@@ -147,6 +146,20 @@ export default {
       reader.readAsDataURL(my_data);
     },
     submitFeedback(){
+      if(!this.textarea){
+        ElMessage({
+          type:"warning",
+          message:"描述不可为空"
+        })
+        return;
+      }
+      if(!this.email.match(/[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+/g)){
+        ElMessage({
+          type:"warning",
+          message:"邮箱格式不正确"
+        })
+        return;
+      }
       let formData = new FormData();
       formData.append("email", this.email);
       formData.append("questionType", this.questionID);

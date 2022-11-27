@@ -138,15 +138,13 @@ export default {
     };
     const validateEmail = (rule, value, callback) => {
       if (
-        value.search(
-          /[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+/
-        ) == -1
+        value.match(/[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+/g)
       ) {
-        this.emailRight = false;
-        callback(new Error("邮箱格式不合法"));
-      } else {
         this.emailRight = true;
         callback();
+      } else {
+        this.emailRight = false;
+        callback(new Error("邮箱格式不合法"));
       }
     };
     const validateVerifyCode = (rule, value, callback) => {
@@ -279,7 +277,6 @@ export default {
       });
     },
     clickLogup() {
-      console.log("meishiba");
       if (
         !(
           this.usernameRight &&

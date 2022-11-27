@@ -262,6 +262,25 @@ def set_admin_username_and_password(request):
         ret['adminPassword'] = adminP
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
+# 获得已领取任务信息
+# 任务信息(包括其id)通过列表传送,列表的每一项是一个字典
+def get_examining_tasks(request):
+    query_dict = request.GET
+    admin_token = query_dict.get('adminToken','')
+    if admin_token != get_admin_token():
+        return HttpResponse(json.dumps({'status':'wrong'}), content_type='application/json')
+
+    # 总个数（int），任务信息列表（列表，成员为字典）
+    page_number = query_dict.get("pageNumber", "")
+    total_number, task_info_list = get_reported_task_list(eval(page_number))
+
+    ret = {
+        'status': 'ok',
+        'totalNumber': total_number,  # 注意是totalNumber筛选出来的总任务数
+        'taskInfoList': task_info_list
+    }
+
+    return HttpResponse(json.dumps(ret), content_type='application/json')
 
 # 获得已领取任务信息
 # 任务信息(包括其id)通过列表传送,列表的每一项是一个字典
@@ -501,22 +520,6 @@ def release_task(request):
 
         return HttpResponse(json.dumps({'status': 'get the image', 'url': path_name}), content_type='application/json')
 
-
-@csrf_exempt
-def submit_feedback(request):
-    image_url = request.FILES.get('image', None)
-    inform_email = request.POST.get('email', '')
-    description = request.POST.get('textarea', '')
-    feedback_type = request.POST.get('questionType', '')
-    print(image_url)
-
-    create_feedback = add_a_feedback(
-        feedback_type, description, image_url, inform_email)
-    if create_feedback:
-        return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
-    else:
-        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')
-
 # 任务进行界面基本信息
 def perform_basic_info(request):
     query_dict = request.GET
@@ -605,7 +608,6 @@ def stream_video(request, path):
 
 @csrf_exempt
 def submit_feedback(request):
-    print('hello')
     image_url = request.FILES.get('image', None)
     inform_email = request.POST.get('email', '')
     description = request.POST.get('textarea', '')
@@ -621,6 +623,19 @@ def submit_feedback(request):
     else:
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')
 
+@csrf_exempt
+def add_reported_task(request):
+    image = request.FILES.get('image',None)
+    description = request.POST.get('description',"")
+    username = request.POST.get('username','')
+    id = request.POST.get('id',"")
+    if image == None:
+        create_a_reported_task(description,id,"",username)
+    else:
+        path = os.path.join("./resource/report_image",time.strftime("%Y%m%d-%H%M%S")+image.name)
+        create_a_reported_image(image,path)
+        create_a_reported_task(description,id,path,username)
+    return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
 
 @csrf_exempt
 def get_feedback(request):
