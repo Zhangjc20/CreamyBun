@@ -263,7 +263,7 @@
             </div>
           </el-col>
         </el-row>
-        <el-row>
+        <el-row v-if="mode == 0">
           <el-col :span="4"
             ><CustomButton
               title="领取并开始"
@@ -293,6 +293,23 @@
             ></CustomButton
           ></el-col>
           <el-col :span="8"></el-col>
+        </el-row>
+        <el-row v-else-if="mode == 1">
+          <el-col :span="8"
+            ><CustomButton
+              title="下架该任务"
+              :isRound="true"
+              @click="clickDeleteTask"
+            ></CustomButton
+          ></el-col>
+          <el-col :span="8"
+            ><CustomButton
+              title="返回管理员"
+              :isRound="true"
+              @click.stop="clickToAdmin"
+            ></CustomButton
+          ></el-col>
+          <el-col :span="8"> </el-col>
         </el-row>
       </div>
     </el-main>
@@ -327,7 +344,7 @@ export default {
   },
   data() {
     return {
-      adminMode:false,
+      mode: 0,
       fileList: [],
       textarea: "",
       showModal: false,
@@ -350,6 +367,12 @@ export default {
     };
   },
   methods: {
+    clickDeleteTask() {},
+    clickToAdmin() {
+      this.$router.push({
+        name: "admin",
+      });
+    },
     reportTask() {
       if (this.textarea == "") {
         ElMessage({
@@ -363,17 +386,15 @@ export default {
       if (this.fileList[0]) {
         formData.append("image", this.fileList[0].raw); //上传图片
       }
-      formData.append('username',this.username);
-      formData.append('id',this.id);
-      formData.append('description',this.textarea)
-      axios
-        .post("/add_reported_task", formData)
-        .then(() => {
-          ElMessage({
-            type: "success",
-            message: "举报成功，处理后的结果会发到您的邮箱中",
-          });
+      formData.append("username", this.username);
+      formData.append("id", this.id);
+      formData.append("description", this.textarea);
+      axios.post("/add_reported_task", formData).then(() => {
+        ElMessage({
+          type: "success",
+          message: "举报成功，处理后的结果会发到您的邮箱中",
         });
+      });
     },
     clickReport() {
       this.showModal = true;
@@ -444,8 +465,9 @@ export default {
     if (this.$route.query.imageSrc) {
       this.imageSrc = this.$route.query.imageSrc;
     }
-    if (this.$route.query.adminMode) {
-      this.adminMode = this.$route.query.adminMode;
+    if (this.$route.query.mode && sessionStorage.getItem("adminAuth")) {
+      this.mode = this.$route.query.mode;
+      console.log("nihao");
     }
     axios
       .get("/get_task_basic_info", {

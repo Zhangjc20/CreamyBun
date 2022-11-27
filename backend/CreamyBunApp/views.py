@@ -276,7 +276,7 @@ def get_examining_tasks(request):
 
     ret = {
         'status': 'ok',
-        'totalNumber': total_number,  # 注意是totalNumber筛选出来的总任务数
+        'totalNumber': total_number,
         'taskInfoList': task_info_list
     }
 
@@ -636,6 +636,32 @@ def add_reported_task(request):
         create_a_reported_image(image,path)
         create_a_reported_task(description,id,path,username)
     return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+
+def delete_reported_task(request):
+    query_dict = request.GET
+    report_id = query_dict.get("reportId")
+    delete_a_reported_task_all(report_id)
+    return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+
+def get_reported_task(request):
+    query_dict = request.GET
+    report_id = query_dict.get("reportId")
+    r = get_a_reported_task(report_id)
+    ret = {
+        'status':'ok',
+        'description': r.description,
+        'image': get_reported_image(r.image_url)
+    }
+    return HttpResponse(json.dumps(ret), content_type='application/json')
+
+def send_report_email(request):
+    query_dict = request.GET
+    type = query_dict.get("type")
+    report_id = query_dict.get("reportId")
+    task_id = query_dict.get("taskId")
+    text = query_dict.get("textarea",'')
+    send_report_back_email(type,task_id,report_id,text)
+    return HttpResponse(json.dumps({'status':'ok'}), content_type='application/json')
 
 @csrf_exempt
 def get_feedback(request):

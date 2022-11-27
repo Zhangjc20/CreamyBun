@@ -37,21 +37,27 @@ def exist_user_by_email(email):
         return True
     except:
         return False
+    
+def get_a_reported_task(report_id):
+    return ReportInfo.objects.filter(id=report_id).first()
+
+def delete_a_reported_task(report_id):
+    ReportInfo.objects.filter(id=report_id).first().delete()
 
 def get_reported_task_list(page_number):
-    all_report_id_list = [x.id for x in ReportInfo.objects.all()]
+    all_report_id_list = [[x.id,x.task_id] for x in ReportInfo.objects.all()]
     total_number = len(all_report_id_list)
     if page_number * 10 > len(all_report_id_list):
         all_report_id_list = all_report_id_list[10*(page_number-1):]
     else:
-        all_report_id_list = all_report_id_list[10*(page_number-1),10*page_number]
+        all_report_id_list = all_report_id_list[10*(page_number-1):10*page_number]
     init_list = []
-    for i, id in enumerate(all_report_id_list):
-        t = get_a_task_data(id)
+    for i, x in enumerate(all_report_id_list):
+        t = get_a_task_data(x[1])
         t_info = {
-            'index':i,
+            'index': i,
             'isSpace': False,
-            'id': id,
+            'id': t.id,
             'taskName': t.task_name,
             'starNum': t.star_rank,
             'donut': t.single_bonus,
@@ -59,11 +65,13 @@ def get_reported_task_list(page_number):
             'problemType': ANSWER_TYPE_DICT[t.answer_type],
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
+            'reportId':x[0],
         }
         init_list.append(t_info)
-    if len(all_report_id_list) < 10:
-        for i in range( 10 - len(all_report_id_list)):
-            init_list.append({'isSpace':True,'index': 10 - i})
+    length = len(all_report_id_list)
+    if length < 10:
+        for i in range( 10 - length):
+            init_list.append({'isSpace':True,'index': length + i})
     return total_number, init_list
 
 
