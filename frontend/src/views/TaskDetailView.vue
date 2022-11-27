@@ -327,6 +327,7 @@ export default {
   },
   data() {
     return {
+      adminMode:false,
       fileList: [],
       textarea: "",
       showModal: false,
@@ -359,16 +360,14 @@ export default {
       }
       this.showModal = false;
       var formData = new FormData();
-      if (this.fileList) {
+      if (this.fileList[0]) {
         formData.append("image", this.fileList[0].raw); //上传图片
       }
-      //todo:这里是post注意！！！
+      formData.append('username',this.username);
+      formData.append('id',this.id);
+      formData.append('description',this.textarea)
       axios
-        .post("/add_reported_task", formData, {
-          username: this.username, //用户名
-          id: this.id, //任务id
-          description: this.this.textarea, //理由描述
-        })
+        .post("/add_reported_task", formData)
         .then(() => {
           ElMessage({
             type: "success",
@@ -444,6 +443,9 @@ export default {
     }
     if (this.$route.query.imageSrc) {
       this.imageSrc = this.$route.query.imageSrc;
+    }
+    if (this.$route.query.adminMode) {
+      this.adminMode = this.$route.query.adminMode;
     }
     axios
       .get("/get_task_basic_info", {

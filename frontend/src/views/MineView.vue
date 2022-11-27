@@ -96,7 +96,6 @@ export default {
     },
     changeUsername(newUsername) {
       this.username = newUsername;
-      console.log(this.username);
     },
     initAvatar(src) {
       this.image.src = src;

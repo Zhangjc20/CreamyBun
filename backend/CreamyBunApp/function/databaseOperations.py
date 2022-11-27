@@ -4,6 +4,7 @@ from ..classDefination.userClass import *
 from ..classDefination.taskClass import *
 from ..classDefination.questionClass import *
 from ..classDefination.feedbackInfoClass import *
+from ..classDefination.reportInfoClass import *
 from ..variables.globalVariables import *
 from ..variables.globalConstants import *
 import math
@@ -36,6 +37,34 @@ def exist_user_by_email(email):
         return True
     except:
         return False
+
+def get_reported_task_list(page_number):
+    all_report_id_list = [x.id for x in ReportInfo.objects.all()]
+    total_number = len(all_report_id_list)
+    if page_number * 10 > len(all_report_id_list):
+        all_report_id_list = all_report_id_list[10*(page_number-1):]
+    else:
+        all_report_id_list = all_report_id_list[10*(page_number-1),10*page_number]
+    init_list = []
+    for i, id in enumerate(all_report_id_list):
+        t = get_a_task_data(id)
+        t_info = {
+            'index':i,
+            'isSpace': False,
+            'id': id,
+            'taskName': t.task_name,
+            'starNum': t.star_rank,
+            'donut': t.single_bonus,
+            'dataType': TASK_TYPE_DICT[t.task_type],
+            'problemType': ANSWER_TYPE_DICT[t.answer_type],
+            'startTime': t.begin_time.split(" ")[0],
+            'endTime': t.end_time.split(" ")[0],
+        }
+        init_list.append(t_info)
+    if len(all_report_id_list) < 10:
+        for i in range( 10 - len(all_report_id_list)):
+            init_list.append({'isSpace':True,'index': 10 - i})
+    return total_number, init_list
 
 
 # 从用户列表中删除指定用户
@@ -102,6 +131,10 @@ def update_clock_in_info(username):
 # 修改指定用户的手机号
 def update_mobile_number_of_a_user(username, mobile_number):
     User.objects.filter(username=username).update(mobile_number=mobile_number)
+
+# 创建一个任务举报
+def create_a_reported_task(description,task_id,image_url,username):
+    ReportInfo.objects.create(description=description,task_id=task_id,image_url=image_url,reporter_name=username)
 
 
 # 创建一个任务

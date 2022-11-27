@@ -1,5 +1,52 @@
 <template>
   <div class="task-page-container">
+    <el-dialog title="任务反馈" v-model="dialogVisible" center width="60%">
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        "
+      >
+      <div style="width:100%;display:flex;justify-content: space-around;">
+        <CustomButton title="查看任务详情" @click="checkDetail"/>
+        <CustomButton title="删除举报信息" />
+      </div>
+      <div class="report-title">举报者描述及配图</div>
+      <el-input
+          v-model="textarea0"
+          :rows="2"
+          :maxlength="200"
+          type="textarea"
+          placeholder="举报信息"
+          disabled
+          style="margin-bottom:10px"
+        />
+        <el-image :src="src" style="width:400px;" :preview-src-list="srcList">
+        </el-image>
+        <div class="report-title">反馈信息至发布者</div>
+        <el-input
+          v-model="textarea1"
+          :rows="4"
+          :maxlength="200"
+          type="textarea"
+          placeholder="请输入反馈信息"
+          style="margin-bottom:10px"
+        />
+        <CustomButton title="邮箱发送" />
+        <div class="report-title">反馈信息至举报者</div>
+        <el-input
+          v-model="textarea2"
+          :rows="4"
+          :maxlength="200"
+          type="textarea"
+          placeholder="请输入反馈信息"
+          style="margin-bottom:10px"
+        />
+        <CustomButton title="邮箱发送" />
+      </div>
+    </el-dialog>
     <div class="task-list-title" v-if="type != 0">
       {{
         type === 1 ? "领取任务列表" : type === 2 ? "发布任务列表" : "待审核任务"
@@ -27,7 +74,7 @@
         v-for="item in items"
         :key="item.index"
         :props="item"
-        @click="handleClickTask(item.id)"
+        @click="handleClickTask(item.id,item.isSpace)"
       ></SingleTask>
     </div>
     <div class="pagnation-box">
@@ -46,12 +93,13 @@
 <script>
 import axios from "axios";
 import SingleTask from "./SingleTask.vue";
+import CustomButton from "./CustomButton.vue";
 export default {
   name: "TaskPage",
   props: {
     type: {
       type: Number,
-      default: 1, //0:任务大厅 1:领取列表 2:发布列表
+      default: 1, //0:任务大厅 1:领取列表 2:发布列表 3:管理员界面
     },
     username: {
       type: String,
@@ -64,10 +112,17 @@ export default {
   },
   components: {
     SingleTask,
+    CustomButton
   },
   data() {
     return {
       total: 20,
+      src:"https://img2.baidu.com/it/u=2591611833,3173732768&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500",
+      srcList:["https://img2.baidu.com/it/u=2591611833,3173732768&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500"],
+      textarea0:"",
+      textarea1:"尊敬的任务发布者，您的任务不幸被举报，经核实确实存在如下问题：/并不存在问题",
+      textarea2:"尊敬的奶黄包用户，感谢您的举报，经核实确实存在您所述问题，现已经解决。",
+      dialogVisible: false,
       items: [
         {
           index: 1,
@@ -123,7 +178,13 @@ export default {
     };
   },
   methods: {
-    handleClickTask(id) {
+    checkDetail(){
+      this.$emit('checkDetail',);
+    },
+    handleClickTask(id,isSpace) {
+      if(isSpace===true){
+        return;
+      }
       if (this.type === 0) {
         //管理员任务不触发
         this.$router.push({
@@ -134,6 +195,9 @@ export default {
             imageSrc: this.imageSrc,
           },
         });
+      }
+      else if(this.type == 3){
+        this.dialogVisible = true;
       }
     },
     sort(
@@ -388,6 +452,7 @@ export default {
           .get("/get_examining_tasks", {
             params: {
               pageNumber: 1,
+              adminToken:sessionStorage.getItem("adminToken")
             },
           })
           .then((res) => {
@@ -429,6 +494,13 @@ export default {
   justify-content: center;
   align-items: center;
 }
+.report-title {
+  font-size:16px;
+  text-align:left;
+  width:100%;
+  margin: 10px 0 10px 0;
+}
+
 .radio-box {
   width: 100%;
   display: flex;
