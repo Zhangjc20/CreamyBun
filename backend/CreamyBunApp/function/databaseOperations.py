@@ -202,12 +202,12 @@ def create_task(request_body):
     t.save()
 
     # task的problem列表随机排个序
-    random_list = list(range(len(problem_list)))
-    random.shuffle(random_list)
-    for i,p in enumerate(problem_list):
-        p.index = random_list[i] + 1
-        p.save()
-
+    # random_list = list(range(len(problem_list)))
+    # random.shuffle(random_list)
+    # for i,p in enumerate(problem_list):
+    #     p.index = random_list[i] + 1
+    #     p.save()
+    
     # 返回刚刚创建的任务的id和发布状态给用户
     return basic_info_form['poster'], t.id, t.release_mode
 
@@ -241,7 +241,9 @@ def get_current_problem(username,task_id):
         current_problem_index = td.current_problem_index + 1 - td.test_problem_number
 
     # 确定当前的大题
-    p = t.problem_list.filter(id=td.received_problem_id_list[td.current_problem_index]).first()
+    for i,x in enumerate(td.received_problem_id_list.all()):
+        if i == td.current_problem_index:
+            p = t.problem_list.filter(id=x.int_content).first()
 
     material_list = []
     # 封装当前大题的素材信息

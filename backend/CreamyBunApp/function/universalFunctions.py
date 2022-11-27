@@ -454,3 +454,49 @@ def sorted_and_selected_tasks(username, seach_content, only_level,\
             task_info_list.append(t_info)
 
     return total_number,task_info_list
+
+
+# 领取任务
+def user_receive_current_task(username,task_id):
+    u = get_a_user_data(username)
+    t = get_a_task_data(task_id)
+    p_list = t.problem_list.all()
+
+    # 确定测试题列表（包括资质检测和穿插题目）
+    test_list = []
+    for p in p_list:
+        if p.is_test == True:
+            test_list.append(p)
+    
+    # 随机打乱一下测试题列表，保证各用户使用的是同一套测试题但收到的具体测试题目顺序不同
+    random.shuffle(test_list)
+
+    # 资质测试题目数量
+    before_test_number = math.ceil(len(test_list)/2)
+
+    td = TaskDict.objects.create(task_id=task_id,task_status_for_user=HAS_RECEIVED,\
+                                task_status_for_itself=NOT_FINISHED,test_problem_number=before_test_number)
+
+    # 要做的题目列表
+    normal_test_list = []
+    for p in p_list:
+        if len(normal_test_list) >= t.problem_number_for_single_receiver:
+            break
+        if p.is_test == False and p.current_state == NOT_RECEIVED:
+            normal_test_list.append(p)
+            p.current_state = RECEIVED_BUT_NOT_FINISHED
+            p.save()
+
+    # 要做的题目里面加上插入的测试题
+    for i in range(before_test_number,len(test_list)):
+        normal_test_list.append(test_list[i])
+
+    # 随机打乱要做的题目列表
+    random.shuffle(normal_test_list)
+
+    # 确定被领取的题目列表
+    received_problem_list = test_list[0,before_test_number] + normal_test_list
+    for p in received_problem_list:
+        td.received_problem_id_list.add(p)
+
+    u.task_info_list.add(td)

@@ -465,3 +465,10 @@ def perform_problem_material(request):
 def uck_me(request):
     print("uck_me")
     return HttpResponse(json.dumps(fake_ans), content_type='application/json')
+
+def receive_task(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    task_id = query_dict.get("taskId","")
+    user_receive_current_task(username,task_id)
+    return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')

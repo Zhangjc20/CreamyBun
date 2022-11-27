@@ -43,4 +43,5 @@ urlpatterns = [
     path('submit_feedback/', views.submit_feedback),
     path('perform_basic_info/', views.perform_basic_info),
     path('uck_me/', views.uck_me),
+    path('receive_task/',views.receive_task),
 ]
