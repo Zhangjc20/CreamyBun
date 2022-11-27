@@ -223,10 +223,10 @@ def create_task(request_body):
 
             p.question_list.add(q)
 
-        n = note_info[i]
         # 向problem中加入material
-        for m_info in material_info:
+        for j,m_info in enumerate(material_info):
             m = m_info[i]
+            n = note_info[j]
             m_dict = MaterialDict.objects.create(material_path=m["filePath"], material_type=m["fileType"],
                                                  material_note=n['notes'])
             p.material_info.add(m_dict)
@@ -288,7 +288,8 @@ def add_a_feedback(feedback_type, description, image_url, inform_email):
 def get_current_problem(username, task_id):
     u = get_a_user_data(username)
     t = get_a_task_data(task_id)  # 当前正在进行的任务
-    td = u.task_info_list.filter(task_id=task_id).first()  # 用户正在做的任务的信息
+    td_temp = u.task_info_list.filter(task_id=task_id)  # 用户正在做的任务的信息
+    td = td_temp.filter(task_status_for_user=HAS_RECEIVED).first()
 
     # 确定是否在进行测试
     if td.current_problem_index < td.test_problem_number:
@@ -306,7 +307,7 @@ def get_current_problem(username, task_id):
 
     material_list = []
     # 封装当前大题的素材信息
-    for m in p.material_info:
+    for m in p.material_info.all():
         m_info = {
             'fileType': m.material_type,
             'filePath': m.material_path,
@@ -316,9 +317,9 @@ def get_current_problem(username, task_id):
 
     # 封装当前大题的小题信息
     question_list = []
-    for q in p.question_list:
+    for q in p.question_list.all():
         if q.question_type == CHOICE_QUESTION:
-            cq = ChoiceQuestion(q)
+            cq = ChoiceQuestion.objects.filter(question_ptr_id=q.id).first()
             option_list = []
             for i, op in enumerate(cq.option_list.all()):
                 op_info = {
@@ -329,20 +330,20 @@ def get_current_problem(username, task_id):
                 option_list.append(op_info)
             min_option_num = cq.min_option_num
             max_option_num = cq.max_option_num
-            if min_option_num == max_option_num and eval(max_option_num) == 1:  # 单选
+            if min_option_num == max_option_num and max_option_num == 1:  # 单选
                 question_type = SINGLE_CHOICE
             else:  # 多选
                 question_type = SEVERAL_CHOICES
 
         elif q.question_type == FILL_BLANK_QUESTION:
-            fbq = FillBlankQuestion(q)
+            fbq = FillBlankQuestion.objects.filter(question_ptr_id=q.id).first()
             option_list = []
             question_type = FILL_BLANK
             min_option_num = fbq.min_answer_length
             max_option_num = fbq.max_answer_length
 
         else:
-            fcq = FrameSelectionQuestion(q)
+            fcq = FrameSelectionQuestion.objects.filter(question_ptr_id=q.id).first()
             option_list = []
             question_type = SELECT_FRAME
             min_option_num = fcq.min_frame_number
