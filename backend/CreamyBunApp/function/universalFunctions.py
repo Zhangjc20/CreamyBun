@@ -362,12 +362,12 @@ def walk_file(file, material_type):
                     # 防止混合类型
                     file_type_num = material_type
                     if file_type_num == 4:
-                        i = 0
+                        k = 0
                         for temp_set in TYPE_SET:
                             if file_type in temp_set:
-                                file_type_num = i
+                                file_type_num = k
                                 break
-                            i += 1
+                            k += 1
 
                     fileInfo = os.stat(file_path)
                     sub_list.append({'index': i,

@@ -627,9 +627,6 @@ export default {
           listList:this.$refs.MyMaterialUpload.listList,
       }).then(res => {
         if (res.data['status'] == 'done'){
-          // this.$refs.MyMaterialUpload.initSelected()
-          // this.$refs.MyMaterialUpload.initAllLists()
-          // this.$refs.MyMaterialUpload.updateShowingList()
           var confirmRes = this.$confirm('您已成功创建任务，请问是否要继续创建？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',

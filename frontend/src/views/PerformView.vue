@@ -30,6 +30,7 @@
           :username="username"
           :taskId="taskId"
           :taskName="taskName"
+          :imageSrc="image.src"
           />
         </el-main>
       </el-container>
