@@ -159,10 +159,10 @@ export default {
     //nextTick:加载完参数后再运行下面的
     this.$nextTick(() => {
       // dom元素更新后执行，因此这里能正确打印更改之后的值
-      console.log("http://localhost:8000/uck_me/")
-      axios.get("http://localhost:8000/uck_me/", {
-        //   console.log("http://localhost:8000/perform_basic_info/")
-        // axios.get("http://localhost:8000/perform_basic_info/",{
+      // console.log("http://localhost:8000/uck_me/")
+      // axios.get("http://localhost:8000/uck_me/", {
+          console.log("http://localhost:8000/perform_basic_info/")
+        axios.get("http://localhost:8000/perform_basic_info/",{
         params: {
           username: this.username,
           taskId: this.taskId

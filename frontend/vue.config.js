@@ -42,11 +42,11 @@ module.exports = defineConfig({
           '^/add_reported_task': '' //请求的时候使用这个api就可以
         }
       },
-      '/receive_a_task': {
-        target: 'http://localhost:8000/receive_a_task/', //填写请求的目标地址
+      '/receive_task': {
+        target: 'http://localhost:8000/receive_task/', //填写请求的目标地址
         changOrigin: true, //允许跨域
         pathRewrite: {
-          '^/receive_a_task': '' //请求的时候使用这个api就可以
+          '^/receive_task': '' //请求的时候使用这个api就可以
         }
       },
       '/get_examining_tasks': {

@@ -574,8 +574,9 @@ def user_receive_current_task(username,task_id):
     random.shuffle(normal_test_list)
 
     # 确定被领取的题目列表
-    received_problem_list = test_list[0,before_test_number] + normal_test_list
+    received_problem_list = test_list[0:before_test_number] + normal_test_list
     for p in received_problem_list:
-        td.received_problem_id_list.add(p)
+        p_id = Int.objects.create(int_content=p.id)
+        td.received_problem_id_list.add(p_id)
 
     u.task_info_list.add(td)

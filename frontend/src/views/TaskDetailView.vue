@@ -381,20 +381,8 @@ export default {
     },
     clickReceiveStart() {
       //todo:进入进行任务页面具体传入什么参数自定义
-      this.$router.push({
-        name: "perform",
-        query: {
-          username: this.username,
-          taskId: this.id, //任务id
-          imageSrc: this.imageSrc,
-          taskName: this.taskName,
-        },
-      });
-    },
-    clickToList() {
-      //todo:用户接收一个任务
       axios
-        .get("/receive_a_task", {
+        .get("/receive_task", {
           params: {
             username: this.username,
             taskId: this.id, //任务id
@@ -402,7 +390,31 @@ export default {
         })
         .then((res) => {
           if (res.data["status"] == "ok") {
-            this.$router.push({//跳转到个人中心领取列表
+            this.$router.push({
+              name: "perform",
+              query: {
+                username: this.username,
+                taskId: this.id, //任务id
+                imageSrc: this.imageSrc,
+                taskName: this.taskName,
+              },
+            });
+          }
+        });
+    },
+    clickToList() {
+      //todo:用户接收一个任务
+      axios
+        .get("/receive_task", {
+          params: {
+            username: this.username,
+            taskId: this.id, //任务id
+          },
+        })
+        .then((res) => {
+          if (res.data["status"] == "ok") {
+            this.$router.push({
+              //跳转到个人中心领取列表
               name: "mine",
               query: {
                 username: this.username,
