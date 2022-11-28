@@ -5,7 +5,7 @@
     </div>
     <div class="task-container" :style="{cursor:'pointer'}" v-else>
       <div class="task-container-inner" style="border: 2px solid #e9e9e9;">
-        <el-image :src="require('@/assets/images/recognize.jpeg')" style="width:180px;height:180px;"></el-image>
+        <el-image :src="src" style="width:180px;height:180px;"></el-image>
         <div class="color-bg-box">
           <div class="title-font">{{props.taskName}}</div>
           <el-row class="donut-font">
@@ -43,7 +43,8 @@
     data(){
       return {
         starNum: this.props.starNum,
-        isSpace: this.props.isSpace
+        isSpace: this.props.isSpace,
+        src: this.props.src?this.props.src:require('@/assets/images/recognize.jpeg'),
       }
     },
     methods:{
@@ -52,6 +53,7 @@
     updated(){
       this.isSpace = this.props.isSpace;
       this.starNum = this.props.starNum;
+      this.src = this.props.src?this.props.src:require('@/assets/images/recognize.jpeg');
     }
   }
   </script>

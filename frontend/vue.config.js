@@ -42,6 +42,27 @@ module.exports = defineConfig({
           '^/add_reported_task': '' //请求的时候使用这个api就可以
         }
       },
+      '/get_reported_task': {
+        target: 'http://localhost:8000/get_reported_task/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/get_reported_task': '' //请求的时候使用这个api就可以
+        }
+      },
+      '/delete_reported_task': {
+        target: 'http://localhost:8000/delete_reported_task/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/delete_reported_task': '' //请求的时候使用这个api就可以
+        }
+      },
+      '/send_report_email': {
+        target: 'http://localhost:8000/send_report_email/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/send_report_email': '' //请求的时候使用这个api就可以
+        }
+      },
       '/receive_task': {
         target: 'http://localhost:8000/receive_task/', //填写请求的目标地址
         changOrigin: true, //允许跨域

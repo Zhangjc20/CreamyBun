@@ -9,21 +9,21 @@
           justify-content: center;
         "
       >
-      <div style="width:100%;display:flex;justify-content: space-around;">
-        <CustomButton title="查看任务详情" @click="checkDetail"/>
-        <CustomButton title="删除举报信息" />
-      </div>
-      <div class="report-title">举报者描述及配图</div>
-      <el-input
+        <div style="width: 100%; display: flex; justify-content: space-around">
+          <CustomButton title="查看任务详情" @click="checkDetail" />
+          <CustomButton title="删除举报信息" @click="deleteReport" />
+        </div>
+        <div class="report-title">举报者描述及配图</div>
+        <el-input
           v-model="textarea0"
           :rows="2"
           :maxlength="200"
           type="textarea"
           placeholder="举报信息"
           disabled
-          style="margin-bottom:10px"
+          style="margin-bottom: 10px"
         />
-        <el-image :src="src" style="width:400px;" :preview-src-list="srcList">
+        <el-image :src="src" style="width: 400px" :preview-src-list="srcList">
         </el-image>
         <div class="report-title">反馈信息至发布者</div>
         <el-input
@@ -32,9 +32,9 @@
           :maxlength="200"
           type="textarea"
           placeholder="请输入反馈信息"
-          style="margin-bottom:10px"
+          style="margin-bottom: 10px"
         />
-        <CustomButton title="邮箱发送" />
+        <CustomButton title="邮箱发送" @click="sendReportEmail(0)" />
         <div class="report-title">反馈信息至举报者</div>
         <el-input
           v-model="textarea2"
@@ -42,9 +42,9 @@
           :maxlength="200"
           type="textarea"
           placeholder="请输入反馈信息"
-          style="margin-bottom:10px"
+          style="margin-bottom: 10px"
         />
-        <CustomButton title="邮箱发送" />
+        <CustomButton title="邮箱发送" @click="sendReportEmail(1)" />
       </div>
     </el-dialog>
     <div class="task-list-title" v-if="type != 0">
@@ -74,7 +74,7 @@
         v-for="item in items"
         :key="item.index"
         :props="item"
-        @click="handleClickTask(item.id,item.isSpace)"
+        @click="handleClickTask(item.id, item.isSpace,item.reportId)"
       ></SingleTask>
     </div>
     <div class="pagnation-box">
@@ -94,6 +94,7 @@
 import axios from "axios";
 import SingleTask from "./SingleTask.vue";
 import CustomButton from "./CustomButton.vue";
+import { ElMessage } from 'element-plus';
 export default {
   name: "TaskPage",
   props: {
@@ -112,16 +113,22 @@ export default {
   },
   components: {
     SingleTask,
-    CustomButton
+    CustomButton,
   },
   data() {
     return {
+      curId:-1,
+      curTaskId:-1,
       total: 20,
-      src:"https://img2.baidu.com/it/u=2591611833,3173732768&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500",
-      srcList:["https://img2.baidu.com/it/u=2591611833,3173732768&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500"],
-      textarea0:"",
-      textarea1:"尊敬的任务发布者，您的任务不幸被举报，经核实确实存在如下问题：/并不存在问题",
-      textarea2:"尊敬的奶黄包用户，感谢您的举报，经核实确实存在您所述问题，现已经解决。",
+      src: "",
+      srcList: [
+        "",
+      ],
+      textarea0: "",
+      textarea1:
+        "尊敬的任务发布者，您的任务不幸被举报，经核实确实存在如下问题：/并不存在问题",
+      textarea2:
+        "尊敬的奶黄包用户，感谢您的举报，经核实确实存在您所述问题，现已经解决。",
       dialogVisible: false,
       items: [
         {
@@ -178,26 +185,78 @@ export default {
     };
   },
   methods: {
-    checkDetail(){
-      this.$emit('checkDetail',);
+    sendReportEmail(type){
+      axios.get('/send_report_email',{
+        params:{
+          type:type,
+          reportId:this.curId,
+          taskId:this.curTaskId,
+          textarea:type==0?this.textarea1:this.textarea2
+        }
+      })
+      .then((res)=>{
+        if(res.data['status']=='ok'){
+          ElMessage({
+            type:'success',
+            message:"邮件发送成功"
+        })
+        }
+      })
     },
-    handleClickTask(id,isSpace) {
-      if(isSpace===true){
+    deleteReport(){
+      for(var i = 0; i < this.items.length; i++){
+        if(this.items[i].reportId == this.curId){
+          axios.get("/delete_reported_task",{
+            params:{
+              reportId:this.curId,
+            }
+          })
+          .then((res)=>{
+            if(res.data['status']==='ok'){
+              ElMessage({
+                type:'success',
+                message:"成功删除举报任务信息"
+              });
+              this.dialogVisible = false;
+              this.init();
+            }
+          })
+          break;
+        }
+      }
+    },
+    checkDetail() {
+      this.$emit("checkDetail",this.curTaskId);
+    },
+    handleClickTask(taskId, isSpace, id) {
+      if (isSpace === true) {
         return;
       }
+      this.curTaskId = taskId;
+      this.curId = id;
       if (this.type === 0) {
-        //管理员任务不触发
         this.$router.push({
           name: "taskdetail",
           query: {
-            id: id,
+            id: taskId,
             username: this.username,
             imageSrc: this.imageSrc,
           },
         });
-      }
-      else if(this.type == 3){
-        this.dialogVisible = true;
+      } else if (this.type == 3) {
+        axios.get('/get_reported_task',{
+          params:{
+            reportId:this.curId
+          }
+        })
+        .then((res)=>{
+          if(res.data['status']==='ok'){
+            this.textarea0 = res.data['description'];
+            this.src = "data:image/png;base64," + res.data["image"];
+            this.srcList = [this.src];
+            this.dialogVisible = true;
+          }
+        })
       }
     },
     sort(
@@ -321,11 +380,11 @@ export default {
             console.log(err);
           });
       } else if (this.type === 3) {
-        //todo:获得指定页数待审核任务
         axios
           .get("/get_examining_tasks", {
             params: {
               pageNumber: page,
+              adminToken: sessionStorage.getItem("adminToken"),
             },
           })
           .then((res) => {
@@ -382,8 +441,7 @@ export default {
     init() {
       //初始化任务列表
       this.sortChoice = 0;
-      console.log("username");
-      console.log(this.username);
+      this.currentPage = 1;
       if (this.type === 0) {
         axios
           .get("/get_sorted_tasks", {
@@ -452,7 +510,7 @@ export default {
           .get("/get_examining_tasks", {
             params: {
               pageNumber: 1,
-              adminToken:sessionStorage.getItem("adminToken")
+              adminToken: sessionStorage.getItem("adminToken"),
             },
           })
           .then((res) => {
@@ -495,9 +553,9 @@ export default {
   align-items: center;
 }
 .report-title {
-  font-size:16px;
-  text-align:left;
-  width:100%;
+  font-size: 16px;
+  text-align: left;
+  width: 100%;
   margin: 10px 0 10px 0;
 }
 

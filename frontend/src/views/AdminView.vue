@@ -49,6 +49,7 @@
           :is="showContent"
           :type="3"
           :key="showContent"
+          @checkDetail="checkDetail"
         />
       </el-main>
     </el-container>
@@ -78,6 +79,15 @@ export default {
     };
   },
   methods: {
+    checkDetail(curTaskId){
+      this.$router.push({
+        name:'taskdetail',
+        query:{
+          id:curTaskId,
+          mode:1,
+        }
+      });
+    },
     clickLeftMenu(val) {
       switch (val) {
         case 1:
