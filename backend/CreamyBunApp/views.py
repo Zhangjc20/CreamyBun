@@ -78,6 +78,15 @@ def log_in(request):
 
     return HttpResponse(json.dumps({'status': 'ok','type':'normalUser'}), content_type='application/json')
 
+# 获取用户名对应用户头像
+def get_avatar(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    ret = {
+        'status':'ok',
+        'avatar':get_user_avatr(username)
+    }
+    return HttpResponse(json.dumps(ret), content_type='application/json')
 
 # 重置密码
 def reset_password(request):
@@ -147,7 +156,6 @@ def get_user_basic_info(request):
         'creditRank': u.credit_rank,
         'currentExp': u.current_exp,
         'expForUpgrade': get_exp_for_upgrade(u.credit_rank),
-        'avatarImage': get_user_avatr(username),
     }
     return HttpResponse(json.dumps(user_info), content_type='application/json')
 

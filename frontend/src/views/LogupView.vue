@@ -433,7 +433,7 @@ export default {
   background: url(@/assets/images/background.png);
   background-size: 100% 100%;
 }
-::v-deep .el-form-item__content {
+:deep .el-form-item__content {
   margin-left: 86px !important;
 }
 </style>

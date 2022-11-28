@@ -60,5 +60,6 @@ urlpatterns = [
     path('delete_reported_task/',views.delete_reported_task),
     path('get_reported_task/',views.get_reported_task),
     path('send_report_email/',views.send_report_email),
+    path('get_avatar/',views.get_avatar),
     path('receive_task/',views.receive_task),
 ]

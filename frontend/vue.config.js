@@ -7,6 +7,13 @@ module.exports = defineConfig({
     host: '127.0.0.1',      // 制定域名
     port: 8081,           // 端口号
     proxy: { //配置跨域
+      '/get_avatar': {
+        target: 'http://localhost:8000/get_avatar/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/get_avatar': '' //请求的时候使用这个api就可以
+        }
+      },
       '/log_up': {
         target: 'http://localhost:8000/log_up/', //填写请求的目标地址
         changOrigin: true, //允许跨域

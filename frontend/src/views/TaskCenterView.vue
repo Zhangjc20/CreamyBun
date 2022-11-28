@@ -231,6 +231,7 @@
 import NavBar from "@/components/NavBar.vue";
 import CustomButton from "@/components/CustomButton.vue";
 import TaskPage from "@/components/TaskPage.vue";
+import axios from 'axios';
 export default {
   name: "TaskCenterView",
   components: {
@@ -365,11 +366,24 @@ export default {
     },
   },
   mounted() {
-    if (this.$route.query.username) {
-      this.username = this.$route.query.username;
+    if (localStorage.getItem('username')) {
+      this.username = localStorage.getItem('username');
     }
-    if (this.$route.query.imageSrc) {
-      this.image.src = this.$route.query.imageSrc;
+    if(!localStorage.getItem('avatar')){
+      axios.get('/get_avatar',{
+        params:{
+          username:this.username
+        }
+      })
+      .then((res)=>{
+        if(res.data['status']==='ok'){
+          this.image.src = "data:image/png;base64,"+res.data['avatar'];
+          localStorage.setItem('avatar',this.image.src);
+        }
+      })
+    }
+    else{
+      this.image.src = localStorage.getItem('avatar');
     }
   },
 };
@@ -464,24 +478,5 @@ export default {
   height: 60px;
   box-shadow: 0 0px 8px 0;
   display: flex;
-}
-::-webkit-scrollbar {
-  width: 10px; /*对垂直流动条有效*/
-}
-
-/*定义滚动条的轨道颜色、内阴影及圆角*/
-::-webkit-scrollbar-track {
-  border-radius: 4px;
-}
-
-/*定义滑块颜色、内阴影及圆角*/
-::-webkit-scrollbar-thumb {
-  border-radius: 8px;
-  background-color: #efefef;
-}
-
-/*定义滑块悬停变化颜色、内阴影及圆角*/
-::-webkit-scrollbar-thumb:hover {
-  background-color: #dddddd;
 }
 </style>

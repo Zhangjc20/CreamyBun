@@ -36,7 +36,9 @@ export default {
         }
       )
         .then(() => {
-          sessionStorage.setItem("logined", 'false');
+          localStorage.setItem("logined", 'false');
+          localStorage.removeItem("avatar");
+          localStorage.removeItem("username");
           ElMessage({
             type: 'success',
             message: '退出登录成功',

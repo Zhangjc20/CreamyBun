@@ -365,8 +365,6 @@ export default {
       this.$router.push({
         name: "mine",
         query: {
-          username: this.username,
-          imageSrc: this.imageSrc,
           defaultActive: '1'
         },
       });

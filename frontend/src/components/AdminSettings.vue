@@ -78,7 +78,7 @@ export default {
           params: {
             type: "username",
             newUsername: this.form.username,
-            adminToken: sessionStorage.getItem("adminToken"),
+            adminToken: localStorage.getItem("adminToken"),
           },
         })
         .then((res) => {
@@ -107,7 +107,7 @@ export default {
           params: {
             type: "password",
             newPassword: this.form.password,
-            adminToken: sessionStorage.getItem("adminToken"),
+            adminToken: localStorage.getItem("adminToken"),
           },
         })
         .then((res) => {
@@ -134,8 +134,8 @@ export default {
           type: "success",
           message: "退出登录",
         });
-        sessionStorage.setItem("adminAuth", false);
-        sessionStorage.setItem("adminToken", "");
+        localStorage.setItem("adminAuth", false);
+        localStorage.setItem("adminToken", "");
         this.$router.push({
           name: "home",
         });
@@ -146,7 +146,7 @@ export default {
     axios
       .get("/get_admin_username_and_password", {
         params: {
-          adminToken: sessionStorage.getItem("adminToken"),
+          adminToken: localStorage.getItem("adminToken"),
         },
       })
       .then((res) => {

@@ -66,28 +66,16 @@ export default {
     clickHome() {
       this.$router.push({
         name: "home",
-        query: {
-          username: this.username,
-          imageSrc: this.imageUrl,
-        },
       });
     },
     clickHelp() {
       this.$router.push({
         name: "help",
-        query: {
-          username: this.username,
-          imageSrc: this.imageUrl,
-        },
       });
     },
     clickTask() {
       this.$router.push({
         name: "taskcenter",
-        query: {
-          username: this.username,
-          imageSrc: this.imageUrl,
-        },
       });
     },
     clickLogin() {
@@ -109,19 +97,11 @@ export default {
     clickMine() {
       this.$router.push({
         name: "mine",
-        query: {
-          username: this.username,
-          imageSrc: this.imageUrl,
-        },
       });
     },
     clickRelease() {
       this.$router.push({
         name: "release",
-        query: {
-          username: this.username,
-          imageSrc: this.imageUrl,
-        },
       });
     },
   },

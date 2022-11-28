@@ -1,5 +1,17 @@
 <template>
   <div class="task-page-container">
+    <el-dialog v-model="dialogShow" center width="70%">
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        "
+      >
+      <TaskCheck :mode="type" ref="taskCheck" />
+    </div>
+    </el-dialog>
     <el-dialog title="任务反馈" v-model="dialogVisible" center width="60%">
       <div
         style="
@@ -95,6 +107,7 @@ import axios from "axios";
 import SingleTask from "./SingleTask.vue";
 import CustomButton from "./CustomButton.vue";
 import { ElMessage } from 'element-plus';
+import TaskCheck from '@/components/TaskCheck.vue';
 export default {
   name: "TaskPage",
   props: {
@@ -106,17 +119,15 @@ export default {
       type: String,
       default: "",
     },
-    imageSrc: {
-      type: String,
-      default: "",
-    },
   },
   components: {
     SingleTask,
     CustomButton,
+    TaskCheck
   },
   data() {
     return {
+      dialogShow:false,
       curId:-1,
       curTaskId:-1,
       total: 20,
@@ -232,18 +243,26 @@ export default {
       if (isSpace === true) {
         return;
       }
-      this.curTaskId = taskId;
-      this.curId = id;
       if (this.type === 0) {
         this.$router.push({
           name: "taskdetail",
           query: {
             id: taskId,
-            username: this.username,
-            imageSrc: this.imageSrc,
           },
         });
-      } else if (this.type == 3) {
+      }else if(this.type == 1){
+        this.dialogShow = true;
+        this.$nextTick(()=>{
+          this.$refs.taskCheck.showTaskDetail(taskId);
+        })
+      } 
+      else if(this.type == 2){
+        this.dialogShow = true;
+        this.$nextTick(()=>{
+          this.$refs.taskCheck.showTaskDetail(taskId);
+        })
+      } 
+      else if (this.type == 3) {
         axios.get('/get_reported_task',{
           params:{
             reportId:this.curId
@@ -258,6 +277,8 @@ export default {
           }
         })
       }
+      this.curTaskId = taskId;
+      this.curId = id;
     },
     sort(
       searchInput,
@@ -384,7 +405,7 @@ export default {
           .get("/get_examining_tasks", {
             params: {
               pageNumber: page,
-              adminToken: sessionStorage.getItem("adminToken"),
+              adminToken: localStorage.getItem("adminToken"),
             },
           })
           .then((res) => {
@@ -510,7 +531,7 @@ export default {
           .get("/get_examining_tasks", {
             params: {
               pageNumber: 1,
-              adminToken: sessionStorage.getItem("adminToken"),
+              adminToken: localStorage.getItem("adminToken"),
             },
           })
           .then((res) => {

@@ -1,7 +1,7 @@
 <template>
   <el-container class="container">
     <el-header class="header-style">
-      <NavBar :login="true" activeItem="1" :username="username" :imageUrl="image.src"></NavBar>
+      <NavBar :login="true" activeItem="5" :username="username" :imageUrl="image.src"></NavBar>
     </el-header>
     <el-main class="main-style">
       <div class="feedback-box">
@@ -192,12 +192,24 @@ export default {
     },
   },
   mounted() {
-    if (this.$route.query.username) {
-      this.username = this.$route.query.username;
-      console.log(this.username);
+    if (localStorage.getItem('username')) {
+      this.username = localStorage.getItem('username');
     }
-    if (this.$route.query.imageSrc) {
-      this.image.src = this.$route.query.imageSrc;
+    if(!localStorage.getItem('avatar')){
+      axios.get('/get_avatar',{
+        params:{
+          username:this.username
+        }
+      })
+      .then((res)=>{
+        if(res.data['status']==='ok'){
+          this.image.src = "data:image/png;base64,"+res.data['avatar'];
+          localStorage.setItem('avatar',this.image.src);
+        }
+      })
+    }
+    else{
+      this.image.src = localStorage.getItem('avatar');
     }
   },
 };

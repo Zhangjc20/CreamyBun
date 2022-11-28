@@ -76,4 +76,24 @@ nav {
     }
   }
 }
+
+::-webkit-scrollbar {
+  width: 12px; /*对垂直流动条有效*/
+}
+
+/*定义滚动条的轨道颜色、内阴影及圆角*/
+::-webkit-scrollbar-track {
+  border-radius: 4px;
+}
+
+/*定义滑块颜色、内阴影及圆角*/
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background-color: #efefef;
+}
+
+/*定义滑块悬停变化颜色、内阴影及圆角*/
+::-webkit-scrollbar-thumb:hover {
+  background-color: #dddddd;
+}
 </style>
