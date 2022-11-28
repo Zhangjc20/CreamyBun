@@ -232,7 +232,7 @@
     </el-row>
     <el-row v-else-if="mode == 1">
       <el-col :span="10" style="display: flex; justify-content: center"
-        ><CustomButton title="继续当前任务" :isRound="true"></CustomButton
+        ><CustomButton @click="routerPerform" title="继续当前任务" :isRound="true"></CustomButton
       ></el-col>
       <el-col :span="8" style="display: flex; justify-content: center"
         ><CustomButton title="停止当前任务" :isRound="true"></CustomButton
@@ -284,13 +284,30 @@ export default {
     console.log("niihap");
   },
   methods: {
+    routerPerform(){
+      console.log({
+          username: this.username,
+          taskId: this.id, //任务id
+          taskName: this.taskName,
+          materialType: this.materialType,
+        },"{username: this.username,taskId: this.id, //任务idtaskName: this.taskName,materialType: this.materialType,}")
+      this.$router.push({
+        name: "perform",
+        query: {
+          username: this.username,
+          taskId: this.id, //任务id
+          taskName: this.taskName,
+          materialType: this.materialType,
+        },
+      });
+    },
     clickDownload() {
       //todo数据下载
     },
     clickStopTask() {
       //todo 中断当前任务
     },
-    showTaskDetail(id) {
+    showTaskDetail(id,username) {
       axios
         .get("/get_task_basic_info", {
           params: {
@@ -298,6 +315,7 @@ export default {
           },
         })
         .then((res) => {
+          console.log("chijiba",res)
           this.taskName = "taskName";
           if (res.data["status"] === "ok") {
             this.taskName = res.data["taskName"];
@@ -316,6 +334,8 @@ export default {
             this.posterName = res.data["posterName"];
             this.startTime = res.data["startTime"];
             this.endTime = res.data["endTime"];
+            this.id = id;
+            this.username = username
           }
         })
         .catch((err) => {

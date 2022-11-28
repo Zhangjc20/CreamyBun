@@ -253,13 +253,13 @@ export default {
       }else if(this.type == 1){
         this.dialogShow = true;
         this.$nextTick(()=>{
-          this.$refs.taskCheck.showTaskDetail(taskId);
+          this.$refs.taskCheck.showTaskDetail(taskId,this.username);
         })
       } 
       else if(this.type == 2){
         this.dialogShow = true;
         this.$nextTick(()=>{
-          this.$refs.taskCheck.showTaskDetail(taskId);
+          this.$refs.taskCheck.showTaskDetail(taskId,this.username);
         })
       } 
       else if (this.type == 3) {
