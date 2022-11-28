@@ -3,7 +3,8 @@
     <el-breadcrumb separator="/" class="header-breadcrumb">
       <el-breadcrumb-item :to="{ path: '/' }">奶黄包</el-breadcrumb-item>
       <el-breadcrumb-item>任务选择</el-breadcrumb-item>
-      <el-breadcrumb-item>{{ this.materialTypeName }}</el-breadcrumb-item>
+      <el-breadcrumb-item>{{ materialType }}</el-breadcrumb-item>
+      <el-breadcrumb-item v-if="isTest" ><span style="color:red;font-size=30px;font-weight: bold;">资质测试</span></el-breadcrumb-item>
     </el-breadcrumb>
     <span class="header-title">
       {{ taskName }}
@@ -129,7 +130,8 @@ export default {
     login: Boolean,
     taskId: Number,
     taskName: String,
-    imageSrc: String
+    imageSrc: String,
+    materialType:String,
   },
   // watch:{
   //   materialType(newVal){
@@ -554,7 +556,25 @@ export default {
 .material-row {
   margin-top: 20px;
 }
+::-webkit-scrollbar {
+  width: 10px; /*对垂直流动条有效*/
+}
 
+/*定义滚动条的轨道颜色、内阴影及圆角*/
+::-webkit-scrollbar-track {
+  border-radius: 4px;
+}
+
+/*定义滑块颜色、内阴影及圆角*/
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background-color: #efefef;
+}
+
+/*定义滑块悬停变化颜色、内阴影及圆角*/
+::-webkit-scrollbar-thumb:hover {
+  background-color: #dddddd;
+}
 /*.header-style{
     border-radius: 5px;
     box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);

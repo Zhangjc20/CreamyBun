@@ -396,6 +396,7 @@ export default {
                 taskId: this.id, //任务id
                 imageSrc: this.imageSrc,
                 taskName: this.taskName,
+                materialType: this.materialType,
               },
             });
           }

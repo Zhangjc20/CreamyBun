@@ -31,6 +31,7 @@
           :taskId="taskId"
           :taskName="taskName"
           :imageSrc="image.src"
+          :materialType="materialType"
           />
         </el-main>
       </el-container>
@@ -59,6 +60,7 @@
           src:"",
           type:""
         },
+        materialType:'',
       }
     },
     methods:{
@@ -130,6 +132,9 @@
       }
       if (this.$route.query.taskName) {
         this.taskName = this.$route.query.taskName;
+      }
+      if (this.$route.query.materialType) {
+        this.materialType = this.$route.query.materialType;
       }
     },
   }
