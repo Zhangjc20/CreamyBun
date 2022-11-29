@@ -197,7 +197,7 @@ export default {
         console.log("成功加载一个material", res)
         this.questionList = res.data['questionList'];
         this.materialList = res.data['materialList'];
-        this.stateList = res.data['stateList'];
+        this.stateList = res.data['problemStateList'];
         this.isTest = res.data['isTest'];
         for (var i = 0; i < this.questionList.length; i++) {
           this.lastSelectedList.push(undefined)
