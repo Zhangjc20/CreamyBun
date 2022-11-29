@@ -168,7 +168,7 @@ def get_task_info_list(username, state, page_number, sort_choice):
             'problemType': ANSWER_TYPE_DICT[t.answer_type],
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
-            # TODO: 'src': "data:image/png;base64," + get_base64_image("")
+            'src': "data:image/png;base64," + get_base64_image(t.cover_url),
         }
         t_info.setdefault('index', i)
         task_info_list.append(t_info)
@@ -503,7 +503,7 @@ def sorted_and_selected_tasks(username, seach_content, only_level, \
             'problemType': ANSWER_TYPE_DICT[t.answer_type],
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
-            #TODO: 'src': "data:image/png;base64," + get_base64_image("")
+            'src': "data:image/png;base64," + get_base64_image(t.cover_url),
         }
         t_info.setdefault('index', i)
         task_info_list.append(t_info)
@@ -620,7 +620,79 @@ def user_receive_current_task(username,task_id):
     # 确定被领取的题目列表
     received_problem_list = test_list[0:before_test_number] + normal_test_list
     for p in received_problem_list:
-        p_id = Int.objects.create(int_content=p.id)
+        p_id = IntToInt.objects.create(key=p.id,value=False)
         td.received_problem_id_list.add(p_id)
 
     u.task_info_list.add(td)
+
+def remove_task_from_user(username,task_id):
+    u = get_a_user_data(username)
+    t = get_a_task_data(task_id)
+
+    # 获得用户正在做的任务的信息
+    td_temp = u.task_info_list.filter(task_id=task_id)  
+    td = td_temp.filter(task_status_for_user=HAS_RECEIVED).first()
+
+    for x in td.received_problem_id_list.all():
+        p = t.problem_list.filter(id=x.key).first()
+        p.current_state = NOT_RECEIVED
+        p.save()
+        td.received_problem_id_list.remove(x)
+    td.save()
+    u.task_info_list.remove(td)
+    
+
+def submit_current_answer(username,task_id,answer_list):
+    pass_test = -1
+    test_correct_rate = -1
+
+    u = get_a_user_data(username)
+    t = get_a_task_data(task_id)
+
+    # 获得用户正在做的任务的信息
+    td_temp = u.task_info_list.filter(task_id=task_id)  
+    td = td_temp.filter(task_status_for_user=HAS_RECEIVED).first()
+
+    # 确定当前的大题
+    p = None
+    for i, x in enumerate(td.received_problem_id_list.all()):
+        if i == td.current_problem_index:
+            p = t.problem_list.filter(id=x.key).first()
+
+    # 正在进行测试
+    if td.current_problem_index < td.test_problem_number:
+            
+        # 对答案和存对错
+        flag = True
+        for i,q in enumerate(p.question_list.all()):
+            if q.standard_answer != answer_list[i]:
+                flag = False
+                break
+        td.received_problem_id_list.filter(key=p.id).update(value=flag)
+
+        # 如果现在提交测试题的最后一题
+        if td.current_problem_index == td.test_problem_number - 1:
+            correct_problem_number = 0
+            for i, x in enumerate(td.received_problem_id_list.all()):
+                if i < td.test_problem_number:
+                    if x.value:
+                        correct_problem_number += 1
+
+            test_correct_rate = round(correct_problem_number/td.test_problem_number,4)
+
+            if test_correct_rate >= TEST_PASS_RATE:
+                pass_test = True
+            else:
+                pass_test = False
+                remove_task_from_user(username,task_id)
+
+    # 正在做普通题
+    else:
+        # 存答案
+        for i,q in enumerate(p.question_list.all()):
+            q.answer = answer_list[i]
+            q.save()
+        p.current_state = FINISHED
+        p.save()
+    
+    return test_correct_rate, pass_test

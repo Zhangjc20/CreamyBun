@@ -463,7 +463,7 @@ def get_material_zip(request):
         material_type = eval(query_dict.get("materialType", ""))
         current_time = query_dict.get("currentTime", "")
         dirname = username + '_' + current_time
-        path = os.path.join("./resource/task_materials", dirname)
+        path = os.path.join(TASK_MATERIAL_SAVE_PATH, dirname)
         file = request.FILES['file']
         if not os.path.exists(path):  # 如果目录不存在就创建
             os.makedirs(path)
@@ -520,10 +520,9 @@ def release_task(request):
         username = request.POST.get('username', '')
         file_format = image.name
         current_time = get_now_time().strftime('_%y%m%d%H%M%S.')
-        path = "./resource/task_cover"
-        if not os.path.exists(path):  # 如果目录不存在就创建
-            os.makedirs(path)
-        path_name = os.path.join(path, username + current_time + file_format)
+        if not os.path.exists(TASK_COVER_SAVE_PATH):  # 如果目录不存在就创建
+            os.makedirs(TASK_COVER_SAVE_PATH)
+        path_name = os.path.join(TASK_COVER_SAVE_PATH, username + current_time + file_format)
         handle_uploaded_file(image, path_name)
 
         return HttpResponse(json.dumps({'status': 'get the image', 'url': path_name}), content_type='application/json')
@@ -533,9 +532,12 @@ def perform_basic_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     task_id = query_dict.get("taskId", "")
+    type = query_dict.get("type","")
+    jmp_target = query_dict.get("jmpTarget","")
     # print("perform_basic_info", username)
 
-    material_list, question_list, is_test, current_problem_index = get_current_problem(username, task_id)
+    material_list, question_list, is_test, current_problem_index, current_total_problem_number =\
+                        get_current_problem(username, task_id, type, jmp_target)
 
     basic_info = {
         'status': 'ok',
@@ -546,6 +548,23 @@ def perform_basic_info(request):
     }
     return HttpResponse(json.dumps(basic_info), content_type='application/json')
 
+# 交当前做的题的答案
+def submit_answer(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    task_id = query_dict.get("taskId", "")
+    answer_list = query_dict.get("ansList","")
+
+    # 提交答案的反馈，是字典 
+    test_correct_rate, pass_test = submit_current_answer(username,task_id,answer_list)
+
+    submit_answer_feedback = {
+        'status':'ok',
+        'testCorrectRate':test_correct_rate,
+        'passTest':pass_test,
+    }
+
+    return HttpResponse(json.dumps(submit_answer_feedback), content_type='application/json')
 
 def uck_me(request):
     print("uck_me")

@@ -155,6 +155,7 @@ def create_task(request_body):
 
     task_name = basic_info_form["taskName"]
     description = basic_info_form["description"]
+    cover_url = basic_info_form['coverUrl']
     task_type = basic_info_form["materialType"]
     answer_type = basic_info_form["questionType"]
     problem_total_number = basic_info_form["problemTotalNum"]
@@ -182,7 +183,7 @@ def create_task(request_body):
     t = Task.objects.create(poster=poster_id, task_name=task_name, description=description, \
                             task_type=task_type, answer_type=answer_type, problem_total_number=problem_total_number, \
                             star_rank=star_rank, single_bonus=single_bonus, release_mode=release_mode, \
-                            begin_time=begin_time, end_time=end_time)
+                            begin_time=begin_time, end_time=end_time, cover_url=cover_url)
 
     question_info = request_body["questionList"]
     material_info = request_body["fullList"]
@@ -293,25 +294,64 @@ def add_a_feedback(feedback_type, description, image_url, inform_email):
 
 
 # 获得指定用户当前正在做的指定任务的大题信息
-def get_current_problem(username, task_id):
+def get_current_problem(username, task_id, type, jmp_target):
     u = get_a_user_data(username)
     t = get_a_task_data(task_id)  # 当前正在进行的任务
-    td_temp = u.task_info_list.filter(task_id=task_id)  # 用户正在做的任务的信息
+
+    current_total_problem_number = -1
+    problem_state_list = []
+
+    # 用户正在做的任务的信息
+    td_temp = u.task_info_list.filter(task_id=task_id)  
     td = td_temp.filter(task_status_for_user=HAS_RECEIVED).first()
 
     # 确定是否在进行测试
     if td.current_problem_index < td.test_problem_number:
         is_test = True
         current_problem_index = td.current_problem_index + 1
+        current_total_problem_number = td.test_problem_number
+        for i in range(current_total_problem_number):
+            pass
     else:
         is_test = False
         current_problem_index = td.current_problem_index + 1 - td.test_problem_number
+        current_total_problem_number = len(td.received_problem_id_list.all()) - td.test_problem_number
+        for i in range(current_total_problem_number):
+            pass
+
+    # 下一题
+    if type == 'next':
+        if is_test:
+            if td.current_problem_index < (td.test_problem_number - 1):
+                td.current_problem_index += 1
+        else:
+            if td.current_problem_index < (len(td.received_problem_id_list.all()) - 1):
+                td.current_problem_index += 1
+        td.save()
+    
+    # 上一题
+    elif type == 'last':
+        if is_test:
+            if td.current_problem_index > 0:
+                td.current_problem_index -= 1
+        else:
+            if td.current_problem_index > td.test_problem_number:
+                td.current_problem_index -= 1
+        td.save()
+
+    # 跳转到指定题
+    elif type == 'jump':
+        if is_test:
+            td.current_problem_index = jmp_target - 1
+        else:
+            td.current_problem_index = jmp_target - 1 + td.test_problem_number
+        td.save()
 
     # 确定当前的大题
     p = None
     for i, x in enumerate(td.received_problem_id_list.all()):
         if i == td.current_problem_index:
-            p = t.problem_list.filter(id=x.int_content).first()
+            p = t.problem_list.filter(id=x.key).first()
 
     material_list = []
     # 封装当前大题的素材信息
@@ -369,7 +409,7 @@ def get_current_problem(username, task_id):
         }
         question_list.append(q_info)
 
-    return material_list, question_list, is_test, current_problem_index
+    return material_list, question_list, is_test, current_problem_index, current_total_problem_number
 
 # 添加一个问题反馈到问题反馈列表中
 def add_a_feedback(feedback_type,description,image_url,inform_email):

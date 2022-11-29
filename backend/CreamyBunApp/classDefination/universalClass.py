@@ -11,11 +11,17 @@ class Str(models.Model):
 class Int(models.Model):
     int_content = models.BigIntegerField(default=-1)
 
+class IntToInt(models.Model):
+    key = models.BigIntegerField(default=-1)
+    value = models.BigIntegerField(default=-1)
+
 class TaskDict(models.Model):
     task_id = models.BigIntegerField(default=-1)
     task_status_for_user = models.IntegerField(default=0) # 已领取或已发布
     task_status_for_itself = models.IntegerField(default=-1) # 二级检索，发布模式或者完成状态
-    received_problem_id_list = models.ManyToManyField(Int) # 领取任务中所有problem的id的列表
+
+    # 领取任务中所有problem的id及其是否做对（如果为测试题）的列表
+    received_problem_id_list = models.ManyToManyField(IntToInt) 
 
     # 当前做到第几题了，received_problem_id_list元素的index，注意0开始
     current_problem_index = models.BigIntegerField(default=0)
