@@ -306,27 +306,22 @@ def get_current_problem(username, task_id, type, jmp_target):
 
     # 下一题
     if type == 'next':
-        if is_test:
-            if td.current_problem_index < (td.test_problem_number - 1):
-                td.current_problem_index += 1
-        else:
-            if td.current_problem_index < (len(td.received_problem_id_list.all()) - 1):
+        if td.current_problem_index != (td.test_problem_number - 1)\
+           and td.current_problem_index < (len(td.received_problem_id_list.all()) - 1):
                 td.current_problem_index += 1
         td.save()
     
     # 上一题
     elif type == 'last':
-        if is_test:
-            if td.current_problem_index > 0:
-                td.current_problem_index -= 1
-        else:
-            if td.current_problem_index > td.test_problem_number:
+        if td.current_problem_index > 0\
+           and td.current_problem_index != td.test_problem_number\
+           and td.current_problem_index < len(td.received_problem_id_list.all()):
                 td.current_problem_index -= 1
         td.save()
 
     # 跳转到指定题
     elif type == 'jump':
-        if is_test:
+        if td.current_problem_index < td.test_problem_number:
             td.current_problem_index = jmp_target - 1
         else:
             td.current_problem_index = jmp_target - 1 + td.test_problem_number
@@ -344,13 +339,9 @@ def get_current_problem(username, task_id, type, jmp_target):
             if i >= current_total_problem_number:
                 break
             else:
-                ans_li = []
-                for ans in x.user_answer.all():
-                    ans_li.append(ans.str_content)
                 p_info = {
                     'index': i+1,
-                    'state': False if len(ans_li == 0) else True,
-                    'answerList': ans_li,
+                    'state': False if (x.is_right == -1) else True,
                 }
                 problem_state_list.append(p_info)
     else:
@@ -359,13 +350,9 @@ def get_current_problem(username, task_id, type, jmp_target):
         current_total_problem_number = len(td.received_problem_id_list.all()) - td.test_problem_number
         for i, x in enumerate(td.received_problem_id_list.all()):
             if i >= td.test_problem_number:
-                ans_li = []
-                for ans in x.user_answer.all():
-                    ans_li.append(ans.str_content)
                 p_info = {
                     'index': i+1-td.test_problem_number,
-                    'state': False if len(ans_li == 0) else True,
-                    'answerList': ans_li,
+                    'state': False if (x.is_right == -1) else True,
                 }
                 problem_state_list.append(p_info)
 
@@ -434,9 +421,15 @@ def get_current_problem(username, task_id, type, jmp_target):
             'targetIndex':picture_index,
         }
         question_list.append(q_info)
+    
+    # 封装用户已经作答的答案
+    up = td.received_problem_id_list.filter(problem_id=p.id).first()
+    ans_li = []
+    for ans in up.user_answer.all():
+        ans_li.append(ans.str_content)
 
     return material_list, question_list, is_test, current_problem_index,\
-            current_total_problem_number, problem_state_list
+            current_total_problem_number, problem_state_list, ans_li
 
 # 添加一个问题反馈到问题反馈列表中
 def add_a_feedback(feedback_type,description,image_url,inform_email):

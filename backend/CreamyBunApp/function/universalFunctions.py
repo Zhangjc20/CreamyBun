@@ -608,6 +608,8 @@ def submit_current_answer(username,task_id,answer_list):
             # 存答案
             for ans in answer_list:
                 x.user_answer.add(ans)
+            x.is_right = True
+            x.save()
     
     # 正在进行测试
     if td.current_problem_index < td.test_problem_number:
