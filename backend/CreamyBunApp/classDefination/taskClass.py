@@ -9,7 +9,7 @@ class Task(models.Model):
     description = models.CharField(max_length=MAX_DESCRIPTION_LENGTH, default="task_description")  # 任务描述
     task_type = models.IntegerField(default=-1)  # 任务类型（图像，文本……）
     answer_type = models.IntegerField(default=-1)  # 作答类型（单选，多选，填空，框图，混合）
-    cover_url = models.CharField(max_length=MAX_URL_LENGTH) # 封面路径
+    cover_url = models.CharField(max_length=MAX_URL_LENGTH, default="task_cover") # 封面路径
 
     # 通过以下两个变量计算该任务的完成程度
     problem_total_number = models.IntegerField(default=-1) # 任务中大题总数（不包括测试题目）

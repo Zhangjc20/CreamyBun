@@ -168,7 +168,7 @@ def get_task_info_list(username, state, page_number, sort_choice):
             'problemType': ANSWER_TYPE_DICT[t.answer_type],
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
-            'src': t.cover_url,
+            'src': "data:image/png;base64," + get_base64_image(t.cover_url),
         }
         t_info.setdefault('index', i)
         task_info_list.append(t_info)
@@ -503,7 +503,7 @@ def sorted_and_selected_tasks(username, seach_content, only_level, \
             'problemType': ANSWER_TYPE_DICT[t.answer_type],
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
-            'src': t.cover_url,
+            'src': "data:image/png;base64," + get_base64_image(t.cover_url),
         }
         t_info.setdefault('index', i)
         task_info_list.append(t_info)

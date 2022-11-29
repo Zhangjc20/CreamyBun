@@ -155,6 +155,7 @@ def create_task(request_body):
 
     task_name = basic_info_form["taskName"]
     description = basic_info_form["description"]
+    cover_url = basic_info_form['coverUrl']
     task_type = basic_info_form["materialType"]
     answer_type = basic_info_form["questionType"]
     problem_total_number = basic_info_form["problemTotalNum"]
@@ -182,7 +183,7 @@ def create_task(request_body):
     t = Task.objects.create(poster=poster_id, task_name=task_name, description=description, \
                             task_type=task_type, answer_type=answer_type, problem_total_number=problem_total_number, \
                             star_rank=star_rank, single_bonus=single_bonus, release_mode=release_mode, \
-                            begin_time=begin_time, end_time=end_time)
+                            begin_time=begin_time, end_time=end_time, cover_url=cover_url)
 
     question_info = request_body["questionList"]
     material_info = request_body["fullList"]

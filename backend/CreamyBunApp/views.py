@@ -463,7 +463,7 @@ def get_material_zip(request):
         material_type = eval(query_dict.get("materialType", ""))
         current_time = query_dict.get("currentTime", "")
         dirname = username + '_' + current_time
-        path = os.path.join("./resource/task_materials", dirname)
+        path = os.path.join(TASK_MATERIAL_SAVE_PATH, dirname)
         file = request.FILES['file']
         if not os.path.exists(path):  # 如果目录不存在就创建
             os.makedirs(path)
@@ -520,10 +520,9 @@ def release_task(request):
         username = request.POST.get('username', '')
         file_format = image.name
         current_time = get_now_time().strftime('_%y%m%d%H%M%S.')
-        path = "./resource/task_cover"
-        if not os.path.exists(path):  # 如果目录不存在就创建
-            os.makedirs(path)
-        path_name = os.path.join(path, username + current_time + file_format)
+        if not os.path.exists(TASK_COVER_SAVE_PATH):  # 如果目录不存在就创建
+            os.makedirs(TASK_COVER_SAVE_PATH)
+        path_name = os.path.join(TASK_COVER_SAVE_PATH, username + current_time + file_format)
         handle_uploaded_file(image, path_name)
 
         return HttpResponse(json.dumps({'status': 'get the image', 'url': path_name}), content_type='application/json')

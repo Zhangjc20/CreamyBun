@@ -3,6 +3,12 @@
 # 用户头像储存位置
 USER_AVATAR_SAVE_PATH = "./resource/user_avatar/"
 
+# 任务封面存储位置
+TASK_COVER_SAVE_PATH = "./resource/task_cover/"
+
+# 任务素材存储位置
+TASK_MATERIAL_SAVE_PATH = "./resource/task_materials/"
+
 # 测试通过准确率
 TEST_PASS_RATE = 0.8
 
