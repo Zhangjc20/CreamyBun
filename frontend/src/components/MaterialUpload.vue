@@ -3,6 +3,19 @@
     <el-row style="height: 50px;">
       <span class="header-title" style="margin: auto,auto,auto,20px;">请上传任务素材</span>
       <CustomButton @click="testListDialogVisible = true" isRound="true" style="float: right; right: 20px; position: absolute" v-if="!newOrEdit" title="编辑资质测试列表"/>
+      <el-popover
+        placement="top"
+        title="上传提示"
+        :width="200"
+        trigger="click"
+        content="上传时，请您将每一组相同类型的素材放置于一个文件夹中，将几个文件夹在同级目录下直接压缩至一个zip包，系统会自动根据您的输入生成多个素材列表~"
+      >
+        <template #reference>
+          <el-button  circle style="float: left; left: 130px;top: -5px; position: absolute">
+             ？ 
+          </el-button>   
+        </template>
+      </el-popover>
     </el-row>
     <!-- <el-row style="height: 50px;">
       <el-input
