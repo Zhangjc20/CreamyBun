@@ -56,4 +56,5 @@ urlpatterns = [
     path('handle_feedback_email/', views.handle_feedback_email),
     path('delete_feedback/', views.delete_feedback),
     path('receive_task/',views.receive_task),
+    path('submit_answer/',views.submit_answer),
 ]

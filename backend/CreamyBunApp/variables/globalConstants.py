@@ -3,6 +3,9 @@
 # 用户头像储存位置
 USER_AVATAR_SAVE_PATH = "./resource/user_avatar/"
 
+# 测试通过准确率
+TEST_PASS_RATE = 0.8
+
 # 任务发布模式
 NOW_RELEASE = 0
 NOT_YET_RELEASE = 1

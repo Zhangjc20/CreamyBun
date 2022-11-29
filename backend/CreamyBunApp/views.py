@@ -522,9 +522,12 @@ def perform_basic_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     task_id = query_dict.get("taskId", "")
+    type = query_dict.get("type","")
+    jmp_target = query_dict.get("jmpTarget","")
     # print("perform_basic_info", username)
 
-    material_list, question_list, is_test, current_problem_index = get_current_problem(username, task_id)
+    material_list, question_list, is_test, current_problem_index, current_total_problem_number =\
+                        get_current_problem(username, task_id, type, jmp_target)
 
     basic_info = {
         'status': 'ok',
@@ -535,6 +538,23 @@ def perform_basic_info(request):
     }
     return HttpResponse(json.dumps(basic_info), content_type='application/json')
 
+# 交当前做的题的答案
+def submit_answer(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    task_id = query_dict.get("taskId", "")
+    answer_list = query_dict.get("ansList","")
+
+    # 提交答案的反馈，是字典 
+    test_correct_rate, pass_test = submit_current_answer(username,task_id,answer_list)
+
+    submit_answer_feedback = {
+        'status':'ok',
+        'testCorrectRate':test_correct_rate,
+        'passTest':pass_test,
+    }
+
+    return HttpResponse(json.dumps(submit_answer_feedback), content_type='application/json')
 
 def uck_me(request):
     print("uck_me")
