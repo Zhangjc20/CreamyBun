@@ -2,7 +2,7 @@
 /.vscode
 /backend/venv
 __pycache__
-migrations/
+migrations
 package.json
 yarn.lock
 .idea
