@@ -299,25 +299,10 @@ def get_current_problem(username, task_id, type, jmp_target):
     t = get_a_task_data(task_id)  # 当前正在进行的任务
 
     current_total_problem_number = -1
-    problem_state_list = []
 
     # 用户正在做的任务的信息
     td_temp = u.task_info_list.filter(task_id=task_id)  
     td = td_temp.filter(task_status_for_user=HAS_RECEIVED).first()
-
-    # 确定是否在进行测试
-    if td.current_problem_index < td.test_problem_number:
-        is_test = True
-        current_problem_index = td.current_problem_index + 1
-        current_total_problem_number = td.test_problem_number
-        for i in range(current_total_problem_number):
-            pass
-    else:
-        is_test = False
-        current_problem_index = td.current_problem_index + 1 - td.test_problem_number
-        current_total_problem_number = len(td.received_problem_id_list.all()) - td.test_problem_number
-        for i in range(current_total_problem_number):
-            pass
 
     # 下一题
     if type == 'next':
@@ -347,11 +332,48 @@ def get_current_problem(username, task_id, type, jmp_target):
             td.current_problem_index = jmp_target - 1 + td.test_problem_number
         td.save()
 
+    # 每题的状态，包括下标，是否做完和答案（如果有）
+    problem_state_list = []
+
+    # 确定是否在进行测试
+    if td.current_problem_index < td.test_problem_number:
+        is_test = True
+        current_problem_index = td.current_problem_index + 1
+        current_total_problem_number = td.test_problem_number
+        for i, x in enumerate(td.received_problem_id_list.all()):
+            if i >= current_total_problem_number:
+                break
+            else:
+                ans_li = []
+                for ans in x.user_answer.all():
+                    ans_li.append(ans.str_content)
+                p_info = {
+                    'index': i+1,
+                    'state': False if len(ans_li == 0) else True,
+                    'answerList': ans_li,
+                }
+                problem_state_list.append(p_info)
+    else:
+        is_test = False
+        current_problem_index = td.current_problem_index + 1 - td.test_problem_number
+        current_total_problem_number = len(td.received_problem_id_list.all()) - td.test_problem_number
+        for i, x in enumerate(td.received_problem_id_list.all()):
+            if i >= td.test_problem_number:
+                ans_li = []
+                for ans in x.user_answer.all():
+                    ans_li.append(ans.str_content)
+                p_info = {
+                    'index': i+1-td.test_problem_number,
+                    'state': False if len(ans_li == 0) else True,
+                    'answerList': ans_li,
+                }
+                problem_state_list.append(p_info)
+
     # 确定当前的大题
     p = None
     for i, x in enumerate(td.received_problem_id_list.all()):
         if i == td.current_problem_index:
-            p = t.problem_list.filter(id=x.key).first()
+            p = t.problem_list.filter(id=x.problem_id).first()
 
     material_list = []
     # 封装当前大题的素材信息
@@ -366,6 +388,8 @@ def get_current_problem(username, task_id, type, jmp_target):
     # 封装当前大题的小题信息
     question_list = []
     for q in p.question_list.all():
+        picture_index = -1
+
         if q.question_type == CHOICE_QUESTION:
             cq = ChoiceQuestion.objects.filter(question_ptr_id=q.id).first()
             option_list = []
@@ -396,6 +420,7 @@ def get_current_problem(username, task_id, type, jmp_target):
             question_type = SELECT_FRAME
             min_option_num = fcq.min_frame_number
             max_option_num = fcq.max_frame_number
+            picture_index = fcq.picture_index
 
         q_info = {
             'questionType': question_type,
@@ -406,10 +431,12 @@ def get_current_problem(username, task_id, type, jmp_target):
             'maxOptionNum': max_option_num,
             'mustDo': q.must_do,
             'index': q.index,
+            'targetIndex':picture_index,
         }
         question_list.append(q_info)
 
-    return material_list, question_list, is_test, current_problem_index, current_total_problem_number
+    return material_list, question_list, is_test, current_problem_index,\
+            current_total_problem_number, problem_state_list
 
 # 添加一个问题反馈到问题反馈列表中
 def add_a_feedback(feedback_type,description,image_url,inform_email):

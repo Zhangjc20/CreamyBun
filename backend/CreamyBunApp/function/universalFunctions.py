@@ -272,57 +272,6 @@ def unzip_file(zip_src, target_path) -> None:
                     # 这里基于Zipfile.open()提取文件内容时需要使用原始的乱码文件名
                     shutil.copyfileobj(file.open(file_or_path), z)
 
-
-# # 向已存在的指定文件夹完整解压当前读入的zip文件
-# def unzip_file2(zip_src, dst_dir):
-#     r = zipfile.is_zipfile(zip_src)
-#     if r:
-#         f = zipfile.ZipFile(zip_src, 'r')  # 压缩文件位置
-#         for file in f.namelist():
-#             print(file, dst_dir)
-#             f.extract(file, dst_dir)  # 解压位置
-#         f.close()
-#     else:
-#         print('This is not zip')
-#
-#
-# def unzip_file1(zip_src, dst_dir):
-#     # a = zip_src.encode('cp437').decode('gbk')
-#     # b = dst_dir.encode('cp437').decode('gbk')
-#     # r = zipfile.is_zipfile(zip_src)
-#     #
-#     # if r:
-#     #     f = zipfile.ZipFile(a, 'r')  # 压缩文件位置
-#     #     for file in f.namelist():
-#     #         f.extract(file, b)  # 解压位置
-#     #     f.close()
-#     # else:
-#     #     print('This is not zip')
-#     with zipfile.ZipFile(file=zip_src, mode='r') as zf:
-#         # 解压到指定目录,首先创建一个解压目录
-#         for old_name in zf.namelist():
-#             # 获取文件大小，目的是区分文件夹还是文件，如果是空文件应该不好用。
-#             file_size = zf.getinfo(old_name).file_size
-#             # 由于源码遇到中文是cp437方式，所以解码成gbk，windows即可正常
-#             # old_name = old_name.encode('gbk').decode('cp437')
-#             print("old_name", old_name)
-#             new_name = old_name.encode('cp437').decode('gbk')
-#             print("new_name", new_name)
-#             # 拼接文件的保存路径
-#             new_path = os.path.join(dst_dir, new_name)
-#             # 判断文件是文件夹还是文件
-#             if file_size > 0:
-#                 # 是文件，通过open创建文件，写入数据
-#                 with open(file=new_path, mode='wb') as f:
-#                     # zf.read 是读取压缩包里的文件内容
-#                     try:
-#                         f.write(zf.read(old_name))
-#                     except:
-#                         f.write(zf.read(new_name))
-#             else:
-#                 # 是文件夹，就创建
-#                 os.mkdir(new_path)
-
 # 将大小转化为Bytes/KB/MB/GB形式
 def get_formatted_size_string(sizeInBytes):
     for (cutoff, label) in [(1024 * 1024 * 1024, "GB"), (1024 * 1024, "MB"), (1024, "KB"), ]:
@@ -385,9 +334,6 @@ def walk_file(file, material_type):
                                 'notes': ''})
             j += 1
             output_list.append(sub_list)
-            # 遍历所有的文件夹
-            # for d in dirs:
-            #     print(os.path.join(root, d))
     return output_list, output_dirs
 
 
@@ -620,7 +566,7 @@ def user_receive_current_task(username,task_id):
     # 确定被领取的题目列表
     received_problem_list = test_list[0:before_test_number] + normal_test_list
     for p in received_problem_list:
-        p_id = IntToInt.objects.create(key=p.id,value=False)
+        p_id = UserProblemInfo.objects.create(problem_id=p.id,is_right=False)
         td.received_problem_id_list.add(p_id)
 
     u.task_info_list.add(td)
@@ -634,7 +580,7 @@ def remove_task_from_user(username,task_id):
     td = td_temp.filter(task_status_for_user=HAS_RECEIVED).first()
 
     for x in td.received_problem_id_list.all():
-        p = t.problem_list.filter(id=x.key).first()
+        p = t.problem_list.filter(id=x.problem_id).first()
         p.current_state = NOT_RECEIVED
         p.save()
         td.received_problem_id_list.remove(x)
@@ -657,8 +603,12 @@ def submit_current_answer(username,task_id,answer_list):
     p = None
     for i, x in enumerate(td.received_problem_id_list.all()):
         if i == td.current_problem_index:
-            p = t.problem_list.filter(id=x.key).first()
+            p = t.problem_list.filter(id=x.problem_id).first()
 
+            # 存答案
+            for ans in answer_list:
+                x.user_answer.add(ans)
+    
     # 正在进行测试
     if td.current_problem_index < td.test_problem_number:
             
@@ -668,15 +618,17 @@ def submit_current_answer(username,task_id,answer_list):
             if q.standard_answer != answer_list[i]:
                 flag = False
                 break
-        td.received_problem_id_list.filter(key=p.id).update(value=flag)
+        td.received_problem_id_list.filter(problem_id=p.id).update(is_right=flag)
 
         # 如果现在提交测试题的最后一题
         if td.current_problem_index == td.test_problem_number - 1:
             correct_problem_number = 0
             for i, x in enumerate(td.received_problem_id_list.all()):
                 if i < td.test_problem_number:
-                    if x.value:
+                    if x.is_right:
                         correct_problem_number += 1
+                else:
+                    break
 
             test_correct_rate = round(correct_problem_number/td.test_problem_number,4)
 
@@ -686,13 +638,4 @@ def submit_current_answer(username,task_id,answer_list):
                 pass_test = False
                 remove_task_from_user(username,task_id)
 
-    # 正在做普通题
-    else:
-        # 存答案
-        for i,q in enumerate(p.question_list.all()):
-            q.answer = answer_list[i]
-            q.save()
-        p.current_state = FINISHED
-        p.save()
-    
     return test_correct_rate, pass_test
