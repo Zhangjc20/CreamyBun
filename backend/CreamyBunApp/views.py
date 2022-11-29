@@ -537,7 +537,7 @@ def perform_basic_info(request):
     # print("perform_basic_info", username)
 
     material_list, question_list, is_test, current_problem_index,\
-    current_total_problem_number, problem_state_list =\
+    current_total_problem_number, problem_state_list, answer_list =\
                         get_current_problem(username, task_id, type, jmp_target)
 
     basic_info = {
@@ -548,6 +548,7 @@ def perform_basic_info(request):
         'currentIndex': current_problem_index,
         'currentTotalProblemNum': current_total_problem_number,
         'problemStateList': problem_state_list,
+        'answerList':answer_list,
     }
     return HttpResponse(json.dumps(basic_info), content_type='application/json')
 
