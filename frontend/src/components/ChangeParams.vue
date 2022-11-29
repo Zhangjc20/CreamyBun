@@ -78,7 +78,7 @@ export default {
       axios
         .get("/change_current_rate_info", {
           params: {
-            adminToken:sessionStorage.getItem('adminToken'),
+            adminToken:localStorage.getItem('adminToken'),
             type: "donutToMoney",
             donutToMoney: this.form.donutToMoney,
           },
@@ -98,7 +98,7 @@ export default {
       axios
         .get("/change_current_rate_info", {
           params: {
-            adminToken:sessionStorage.getItem('adminToken'),
+            adminToken:localStorage.getItem('adminToken'),
             type: "moneyToDonut",
             moneyToDonut: this.form.moneyToDonut,
           },
@@ -119,7 +119,7 @@ export default {
     axios
       .get("/get_current_rate_info", {
         params: {
-          adminToken:sessionStorage.getItem('adminToken')
+          adminToken:localStorage.getItem('adminToken')
         },
       })
       .then((res) => {

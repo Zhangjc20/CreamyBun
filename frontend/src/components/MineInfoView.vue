@@ -318,16 +318,25 @@ export default {
     handleCrop() {
       this.crop();
     },
+    blobToBase64(blob, callback) {
+      const fileReader = new FileReader();
+      fileReader.onload = (e) => {
+        callback(e.target.result);
+      };
+      fileReader.readAsDataURL(blob);
+    },
     crop(emit) {
       const { canvas } = this.$refs.cropper.getResult();
       canvas.toBlob((blob) => {
         if (this.image.src) {
           URL.revokeObjectURL(this.image.src);
         }
-        this.image.src = URL.createObjectURL(blob);
-        var formData = new FormData();
+        this.blobToBase64(blob, (dataurl) => {
+          this.image.src = dataurl;
+          var formData = new FormData();
         if (emit) {
           this.$emit("changeAvatar", this.image.src);
+          localStorage.setItem("avatar", this.image.src);
           formData.append(
             "image",
             this.blobToFile(
@@ -338,11 +347,7 @@ export default {
           );
           formData.append("username", this.username);
           axios
-            .post("/change_avatar", formData, {
-              query: {
-                username: this.username,
-              },
-            })
+            .post("/change_avatar", formData)
             .then((res) => {
               console.log(res);
             })
@@ -350,6 +355,7 @@ export default {
               console.log(err);
             });
         }
+        });
       }, this.image.type);
     },
     loadImage(event) {
@@ -563,38 +569,44 @@ export default {
       //留待接口
     },
   },
-  mounted() {
-    //初次挂载获取后端信息
-    this.$nextTick(() => {
+  beforeMount() {
+    if (!localStorage.getItem("avatar")) {
       axios
-        .get("/get_user_basic_info", {
+        .get("/get_avatar", {
           params: {
-            username: this.username,
+            username: localStorage.getItem("username"),
           },
         })
         .then((res) => {
           if (res.data["status"] === "ok") {
-            this.donutNumber = res.data["donutNumber"];
-            this.email = res.data["email"];
-            this.phoneNumber = res.data["mobileNumber"];
-            this.creditRank = res.data["creditRank"];
-            this.currentExp = res.data["currentExp"];
-            this.expForUpgrade = res.data["expForUpgrade"];
-            this.percentage = this.getRatio();
-            const imageFile = this.base64ImgtoFile(
-              "data:image/png;base64," + res.data["avatarImage"]
-            );
-            this.image.src =
-              window.webkitURL.createObjectURL(imageFile) ||
-              window.URL.createObjectURL(imageFile);
-            sessionStorage.setItem("imageSrc", this.image.src);
-            this.$emit("initAvatar", this.image.src);
+            this.image.src = "data:image/png;base64," + res.data["avatar"];
+            localStorage.setItem("avatar", this.image.src);
           }
-        })
-        .catch((err) => {
-          console.log(err);
         });
-    });
+    } else {
+      this.image.src = localStorage.getItem("avatar");
+    }
+    //初次挂载获取后端信息
+    axios
+      .get("/get_user_basic_info", {
+        params: {
+          username: localStorage.getItem("username"),
+        },
+      })
+      .then((res) => {
+        if (res.data["status"] === "ok") {
+          this.donutNumber = res.data["donutNumber"];
+          this.email = res.data["email"];
+          this.phoneNumber = res.data["mobileNumber"];
+          this.creditRank = res.data["creditRank"];
+          this.currentExp = res.data["currentExp"];
+          this.expForUpgrade = res.data["expForUpgrade"];
+          this.percentage = this.getRatio();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   },
 };
 </script>

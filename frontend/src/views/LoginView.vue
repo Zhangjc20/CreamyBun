@@ -110,15 +110,15 @@ export default {
               message: "登录成功",
             });
             if (res.data["type"] === "admin") {
-              sessionStorage.setItem("adminAuth", true);
-              sessionStorage.setItem("adminToken",res.data['adminToken'])
+              localStorage.setItem("adminAuth", true);
+              localStorage.setItem("adminToken",res.data['adminToken'])
               this.$router.push({
                 name: "admin",
               });
               return;
             }
-            sessionStorage.setItem("logined", "true");
-            sessionStorage.setItem("username", this.form.username);
+            localStorage.setItem("logined", "true");
+            localStorage.setItem("username", this.form.username);
             this.$router.push({
               name: "mine",
               query: {
@@ -227,7 +227,7 @@ export default {
   margin-top: 12%;
   padding-left: 60px;
 }
-::v-deep .el-progress-bar__innerText {
+:deep .el-progress-bar__innerText {
   color: #54501d;
 }
 .exp-bar {

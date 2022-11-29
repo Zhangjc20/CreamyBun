@@ -250,6 +250,8 @@ export default {
         tempType = '多选'
       }else if(this.questionType == 2){
         tempType = '填空'
+      }else if(this.questionType == 3){
+        tempType = '框图'
       }
       if(this.questionType == 0){
         this.minOptionNum = 1

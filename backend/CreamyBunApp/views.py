@@ -78,6 +78,15 @@ def log_in(request):
 
     return HttpResponse(json.dumps({'status': 'ok','type':'normalUser'}), content_type='application/json')
 
+# 获取用户名对应用户头像
+def get_avatar(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    ret = {
+        'status':'ok',
+        'avatar':get_user_avatr(username)
+    }
+    return HttpResponse(json.dumps(ret), content_type='application/json')
 
 # 重置密码
 def reset_password(request):
@@ -147,7 +156,6 @@ def get_user_basic_info(request):
         'creditRank': u.credit_rank,
         'currentExp': u.current_exp,
         'expForUpgrade': get_exp_for_upgrade(u.credit_rank),
-        'avatarImage': get_user_avatr(username),
     }
     return HttpResponse(json.dumps(user_info), content_type='application/json')
 
@@ -262,6 +270,25 @@ def set_admin_username_and_password(request):
         ret['adminPassword'] = adminP
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
+# 获得已领取任务信息
+# 任务信息(包括其id)通过列表传送,列表的每一项是一个字典
+def get_examining_tasks(request):
+    query_dict = request.GET
+    admin_token = query_dict.get('adminToken','')
+    if admin_token != get_admin_token():
+        return HttpResponse(json.dumps({'status':'wrong'}), content_type='application/json')
+
+    # 总个数（int），任务信息列表（列表，成员为字典）
+    page_number = query_dict.get("pageNumber", "")
+    total_number, task_info_list = get_reported_task_list(eval(page_number))
+
+    ret = {
+        'status': 'ok',
+        'totalNumber': total_number,
+        'taskInfoList': task_info_list
+    }
+
+    return HttpResponse(json.dumps(ret), content_type='application/json')
 
 # 获得已领取任务信息
 # 任务信息(包括其id)通过列表传送,列表的每一项是一个字典
@@ -501,22 +528,6 @@ def release_task(request):
 
         return HttpResponse(json.dumps({'status': 'get the image', 'url': path_name}), content_type='application/json')
 
-
-@csrf_exempt
-def submit_feedback(request):
-    image_url = request.FILES.get('image', None)
-    inform_email = request.POST.get('email', '')
-    description = request.POST.get('textarea', '')
-    feedback_type = request.POST.get('questionType', '')
-    print(image_url)
-
-    create_feedback = add_a_feedback(
-        feedback_type, description, image_url, inform_email)
-    if create_feedback:
-        return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
-    else:
-        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')
-
 # 任务进行界面基本信息
 def perform_basic_info(request):
     query_dict = request.GET
@@ -625,7 +636,6 @@ def stream_video(request, path):
 
 @csrf_exempt
 def submit_feedback(request):
-    print('hello')
     image_url = request.FILES.get('image', None)
     inform_email = request.POST.get('email', '')
     description = request.POST.get('textarea', '')
@@ -641,6 +651,45 @@ def submit_feedback(request):
     else:
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')
 
+@csrf_exempt
+def add_reported_task(request):
+    image = request.FILES.get('image',None)
+    description = request.POST.get('description',"")
+    username = request.POST.get('username','')
+    id = request.POST.get('id',"")
+    if image == None:
+        create_a_reported_task(description,id,"",username)
+    else:
+        path = os.path.join("./resource/report_image",time.strftime("%Y%m%d-%H%M%S")+image.name)
+        create_a_reported_image(image,path)
+        create_a_reported_task(description,id,path,username)
+    return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+
+def delete_reported_task(request):
+    query_dict = request.GET
+    report_id = query_dict.get("reportId")
+    delete_a_reported_task_all(report_id)
+    return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+
+def get_reported_task(request):
+    query_dict = request.GET
+    report_id = query_dict.get("reportId")
+    r = get_a_reported_task(report_id)
+    ret = {
+        'status':'ok',
+        'description': r.description,
+        'image': get_reported_image(r.image_url)
+    }
+    return HttpResponse(json.dumps(ret), content_type='application/json')
+
+def send_report_email(request):
+    query_dict = request.GET
+    type = query_dict.get("type")
+    report_id = query_dict.get("reportId")
+    task_id = query_dict.get("taskId")
+    text = query_dict.get("textarea",'')
+    send_report_back_email(type,task_id,report_id,text)
+    return HttpResponse(json.dumps({'status':'ok'}), content_type='application/json')
 
 @csrf_exempt
 def get_feedback(request):

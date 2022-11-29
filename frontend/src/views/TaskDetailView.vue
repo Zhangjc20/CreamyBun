@@ -62,7 +62,7 @@
         <div class="detail-title">任务详情</div>
         <el-row>
           <el-col :span="17">
-            <el-row style="height: 520px" class="flex-box">
+            <el-row style="height: 450px;margin-top:20px;" class="flex-box">
               <div class="pic-box flex-box">
                 <el-image
                   style="width: 420px; height: 420px; border-radius: 5px"
@@ -74,50 +74,16 @@
             </el-row>
             <el-row style="height: 80px" class="flex-box">
               <el-col :span="4">
-                <div class="progress-title" style="padding-top: 10px">
-                  <span style="text-align: center; font-size: 20px"
-                    >任务进度：</span
-                  >
-                </div>
               </el-col>
               <el-col :span="16">
-                <div class="progress-bar">
-                  <el-col :span="8">
-                    <div style="padding-top: 10px">
-                      <span
-                        style="
-                          color: orange;
-                          text-align: center;
-                          font-size: 20px;
-                        "
-                        >{{ finishedProblemNum }}</span
-                      >
-                      <span style="text-align: center; font-size: 20px"
-                        >/{{ problemTotalNum }}</span
-                      >
-                    </div>
-                  </el-col>
-                  <el-col :span="25">
-                    <div class="progrss">
-                      <el-progress
-                        class="level-progress"
-                        :text-inside="true"
-                        :stroke-width="25"
-                        :percentage="ratio"
-                        color="#fbe484"
-                        status="warning"
-                      />
-                    </div>
-                  </el-col>
-                </div>
               </el-col>
             </el-row>
           </el-col>
           <el-col
             :span="7"
             style="
-              margin-top: 40px;
-              height: 540px;
+              margin-top: 20px;
+              height: 490px;
               border-left: 4px solid rgba(0, 0, 0, 0.2);
             "
           >
@@ -126,7 +92,7 @@
                 height: 50px;
                 text-align: center;
                 font-size: 20px;
-                margin-top: 40px;
+                margin-top: 30%;
               "
             >
               发布者信息
@@ -175,7 +141,7 @@
             </div>
           </el-col>
         </el-row>
-        <el-row style="margin-top: 10px">
+        <el-row style="margin-top: 0px">
           <el-col :span="8">
             <el-form label-width="100px" class="change-form">
               <el-row style="height: 50px">
@@ -263,7 +229,7 @@
             </div>
           </el-col>
         </el-row>
-        <el-row>
+        <el-row v-if="mode == 0">
           <el-col :span="4"
             ><CustomButton
               title="领取并开始"
@@ -294,6 +260,23 @@
           ></el-col>
           <el-col :span="8"></el-col>
         </el-row>
+        <el-row v-else-if="mode == 1">
+          <el-col :span="8"
+            ><CustomButton
+              title="下架该任务"
+              :isRound="true"
+              @click="clickDeleteTask"
+            ></CustomButton
+          ></el-col>
+          <el-col :span="8"
+            ><CustomButton
+              title="返回管理员"
+              :isRound="true"
+              @click.stop="clickToAdmin"
+            ></CustomButton
+          ></el-col>
+          <el-col :span="8"> </el-col>
+        </el-row>
       </div>
     </el-main>
   </el-container>
@@ -320,13 +303,14 @@ const base64ImgtoFile = (dataurl, filename = "file") => {
   });
 };
 export default {
-  name: "HelpView",
+  name: "TaskDetailView",
   components: {
     NavBar,
     CustomButton,
   },
   data() {
     return {
+      mode: 0,
       fileList: [],
       textarea: "",
       showModal: false,
@@ -349,6 +333,12 @@ export default {
     };
   },
   methods: {
+    clickDeleteTask() {},
+    clickToAdmin() {
+      this.$router.push({
+        name: "admin",
+      });
+    },
     reportTask() {
       if (this.textarea == "") {
         ElMessage({
@@ -359,22 +349,18 @@ export default {
       }
       this.showModal = false;
       var formData = new FormData();
-      if (this.fileList) {
+      if (this.fileList[0]) {
         formData.append("image", this.fileList[0].raw); //上传图片
       }
-      //todo:这里是post注意！！！
-      axios
-        .post("/add_reported_task", formData, {
-          username: this.username, //用户名
-          id: this.id, //任务id
-          description: this.this.textarea, //理由描述
-        })
-        .then(() => {
-          ElMessage({
-            type: "success",
-            message: "举报成功，处理后的结果会发到您的邮箱中",
-          });
+      formData.append("username", this.username);
+      formData.append("id", this.id);
+      formData.append("description", this.textarea);
+      axios.post("/add_reported_task", formData).then(() => {
+        ElMessage({
+          type: "success",
+          message: "举报成功，处理后的结果会发到您的邮箱中",
         });
+      });
     },
     clickReport() {
       this.showModal = true;
@@ -397,13 +383,13 @@ export default {
                 taskId: this.id, //任务id
                 imageSrc: this.imageSrc,
                 taskName: this.taskName,
+                materialType: this.materialType,
               },
             });
           }
         });
     },
     clickToList() {
-      //todo:用户接收一个任务
       axios
         .get("/receive_task", {
           params: {
@@ -435,15 +421,33 @@ export default {
       });
     },
   },
+  beforeMount(){
+    if (localStorage.getItem('username')) {
+      this.username = localStorage.getItem('username');
+    }
+    if(!localStorage.getItem('avatar')){
+      axios.get('/get_avatar',{
+        params:{
+          username:this.username
+        }
+      })
+      .then((res)=>{
+        if(res.data['status']==='ok'){
+          this.imageSrc = "data:image/png;base64,"+res.data['avatar'];
+          localStorage.setItem('avatar',this.imageSrc);
+        }
+      })
+    }
+    else{
+      this.imageSrc = localStorage.getItem('avatar');
+    }
+  },
   mounted() {
     if (this.$route.query.id) {
       this.id = this.$route.query.id;
     }
-    if (this.$route.query.username) {
-      this.username = this.$route.query.username;
-    }
-    if (this.$route.query.imageSrc) {
-      this.imageSrc = this.$route.query.imageSrc;
+    if (this.$route.query.mode && localStorage.getItem("adminAuth")) {
+      this.mode = this.$route.query.mode;
     }
     axios
       .get("/get_task_basic_info", {

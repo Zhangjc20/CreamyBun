@@ -18,9 +18,22 @@ from ..variables.globalVariables import *
 # 获取系统当前时间，为datetime相关类型
 # 可通过成员变量获取年月日时分秒等属性，通过strftime转成字符串返回
 # 参考https://www.cnblogs.com/jszfy/p/11143048.html
+def get_base64_image(url):
+    if not os.path.exists(url):
+        return None
+    else:
+        with open(url, 'rb') as f:
+            data = f.read()
+            return bytes.decode(base64.b64encode(data))
+
 def get_now_time():
     return datetime.datetime.now()
 
+# 删除举报任务信息及对应图片
+def delete_a_reported_task_all(report_id):
+    r = get_a_reported_task(report_id)
+    os.remove(r.image_url)
+    delete_a_reported_task(report_id)
 
 # 发送邮件并返回验证码
 def send_email(email):
@@ -37,6 +50,19 @@ def send_email(email):
     send_mail('奶黄包数据标注平台邮箱验证码', message, '1596741408@qq.com', emailBox, fail_silently=False)
     return varify_code
 
+def send_report_back_email(type,task_id,report_id,text):
+    emailBox = []
+    if type == '0':
+        t = get_a_task_data(task_id)
+        u = get_a_user_data_by_id(t.poster)
+        emailBox.append(u.email)
+    elif type == '1':
+        t = get_a_reported_task(report_id)
+        u = get_a_user_data(t.reporter_name)
+        emailBox.append(u.email)
+    else:
+        return
+    send_mail('奶黄包数据标注平台举报任务反馈信息', text, '1596741408@qq.com', emailBox, fail_silently=False)
 
 # 管理员修改指定等级的升级所需经验
 def set_exp_for_upgrade(rank, exp):
@@ -97,7 +123,6 @@ def get_money_to_donut():
     global money_to_donut
     return money_to_donut
 
-
 # 获取指定用户、指定页码、指定状态、指定筛选条件的任务列表
 def get_task_info_list(username, state, page_number, sort_choice):
     u = get_a_user_data(username)
@@ -143,7 +168,7 @@ def get_task_info_list(username, state, page_number, sort_choice):
             'problemType': ANSWER_TYPE_DICT[t.answer_type],
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
-            'coverUrl': t.cover_url,
+            'src': t.cover_url,
         }
         t_info.setdefault('index', i)
         task_info_list.append(t_info)
@@ -199,6 +224,15 @@ def get_user_avatr(username):
         return None
     else:
         with open(avatar_url, 'rb') as f:
+            data = f.read()
+            return bytes.decode(base64.b64encode(data))
+
+# 获取反馈信息base64格式
+def get_reported_image(image_url):
+    if not os.path.exists(image_url):
+        return None
+    else:
+        with open(image_url, 'rb') as f:
             data = f.read()
             return bytes.decode(base64.b64encode(data))
 
@@ -307,7 +341,6 @@ def walk_file(file, material_type):
     j = 1
     output_dirs = []
     for base, dirs, _ in os.walk(file):
-        print(base, dirs)
         for d in dirs:
 
             dirPath = os.path.join(base, d)
@@ -329,12 +362,12 @@ def walk_file(file, material_type):
                     # 防止混合类型
                     file_type_num = material_type
                     if file_type_num == 4:
-                        i = 0
+                        k = 0
                         for temp_set in TYPE_SET:
                             if file_type in temp_set:
-                                file_type_num = i
+                                file_type_num = k
                                 break
-                            i += 1
+                            k += 1
 
                     fileInfo = os.stat(file_path)
                     sub_list.append({'index': i,
@@ -470,7 +503,7 @@ def sorted_and_selected_tasks(username, seach_content, only_level, \
             'problemType': ANSWER_TYPE_DICT[t.answer_type],
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
-            'coverUrl': t.cover_url,
+            'src': t.cover_url,
         }
         t_info.setdefault('index', i)
         task_info_list.append(t_info)
@@ -536,6 +569,15 @@ def send_feedback_email(email,message):
     emailBox.append(email)
     send_status = send_mail('奶黄包数据标注平台反馈处理结果', message, '1596741408@qq.com', emailBox, fail_silently=False)
     return send_status
+
+def create_a_reported_image(image,path):
+    try:
+        with open(path, 'wb') as f:
+            for line in image:
+                f.write(line)
+        return True
+    except:
+        return False
 
 # 领取任务
 def user_receive_current_task(username,task_id):

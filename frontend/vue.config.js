@@ -7,6 +7,13 @@ module.exports = defineConfig({
     host: '127.0.0.1',      // 制定域名
     port: 8081,           // 端口号
     proxy: { //配置跨域
+      '/get_avatar': {
+        target: 'http://localhost:8000/get_avatar/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/get_avatar': '' //请求的时候使用这个api就可以
+        }
+      },
       '/log_up': {
         target: 'http://localhost:8000/log_up/', //填写请求的目标地址
         changOrigin: true, //允许跨域
@@ -40,6 +47,27 @@ module.exports = defineConfig({
         changOrigin: true, //允许跨域
         pathRewrite: {
           '^/add_reported_task': '' //请求的时候使用这个api就可以
+        }
+      },
+      '/get_reported_task': {
+        target: 'http://localhost:8000/get_reported_task/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/get_reported_task': '' //请求的时候使用这个api就可以
+        }
+      },
+      '/delete_reported_task': {
+        target: 'http://localhost:8000/delete_reported_task/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/delete_reported_task': '' //请求的时候使用这个api就可以
+        }
+      },
+      '/send_report_email': {
+        target: 'http://localhost:8000/send_report_email/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/send_report_email': '' //请求的时候使用这个api就可以
         }
       },
       '/receive_task': {

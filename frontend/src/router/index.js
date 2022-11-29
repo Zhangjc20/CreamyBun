@@ -127,7 +127,7 @@ router.beforeEach((to, from, next) => {
   //中断当前路由 next('route')
   //跳转指定路由 next('error')
   if(to.meta.requireAdminAuth){
-    if(sessionStorage.getItem("adminAuth")){
+    if(localStorage.getItem("adminAuth")){
       next()
     }else{
       next({name:"login"})
@@ -135,7 +135,7 @@ router.beforeEach((to, from, next) => {
   }
   if (to.meta.requireAuth) {
     // 判断该路由是否需要登录权限
-    if (sessionStorage.getItem("logined") == "true") {
+    if (localStorage.getItem("logined") == "true") {
       // 判断本地是否存在token
       next();
     } else {

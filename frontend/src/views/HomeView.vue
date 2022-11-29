@@ -123,6 +123,7 @@
 <script>
 // @ is an alias to /src
 import NavBar from "@/components/NavBar.vue";
+import axios from "axios";
 export default {
   name: 'HomeView',
   components: {
@@ -155,12 +156,24 @@ export default {
     }
   },
   mounted(){
-    if(this.$route.query.username){
-      this.username = this.$route.query.username;
-      console.log(this.username)
+    if (localStorage.getItem('username')) {
+      this.username = localStorage.getItem('username');
     }
-    if (this.$route.query.imageSrc) {
-      this.image.src = this.$route.query.imageSrc;
+    if(!localStorage.getItem('avatar')){
+      axios.get('/get_avatar',{
+        params:{
+          username:this.username
+        }
+      })
+      .then((res)=>{
+        if(res.data['status']==='ok'){
+          this.image.src = "data:image/png;base64,"+res.data['avatar'];
+          localStorage.setItem('avatar',this.image.src);
+        }
+      })
+    }
+    else{
+      this.image.src = localStorage.getItem('avatar');
     }
   }
 }

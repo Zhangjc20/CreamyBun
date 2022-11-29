@@ -51,7 +51,6 @@
             :imageSrc="image.src"
             :type="showTaskType"
             ref="coreComponent"
-            @initAvatar="initAvatar"
             @changeUsername="changeUsername"
             @changeAvatar="changeAvatar"
           ></component>
@@ -67,6 +66,7 @@ import GiftCenter from "@/components/GiftCenter.vue";
 import SettingView from "@/components/SettingView.vue";
 import TaskPage from "@/components/TaskPage.vue";
 import ActivityCenter from "@/components/ActivityCenter.vue";
+import axios from "axios";
 export default {
   name: "MineView",
   components: {
@@ -96,10 +96,6 @@ export default {
     },
     changeUsername(newUsername) {
       this.username = newUsername;
-      console.log(this.username);
-    },
-    initAvatar(src) {
-      this.image.src = src;
     },
     clickLeftMenu(number) {
       switch (number) {
@@ -128,12 +124,24 @@ export default {
     },
   },
   mounted() {
-    if (this.$route.query.username) {
-      this.username = this.$route.query.username;
-      console.log(this.username);
+    if (localStorage.getItem('username')) {
+      this.username = localStorage.getItem('username');
     }
-    if (this.$route.query.imageSrc) {
-      this.image.src = this.$route.query.imageSrc;
+    if(!localStorage.getItem('avatar')){
+      axios.get('/get_avatar',{
+        params:{
+          username:this.username
+        }
+      })
+      .then((res)=>{
+        if(res.data['status']==='ok'){
+          this.image.src = "data:image/png;base64,"+res.data['avatar'];
+          localStorage.setItem('avatar',this.image.src);
+        }
+      })
+    }
+    else{
+      this.image.src = localStorage.getItem('avatar');
     }
     if (this.$route.query.defaultActive) {
       this.defaultActive = this.$route.query.defaultActive;

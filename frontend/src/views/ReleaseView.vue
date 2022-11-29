@@ -48,18 +48,14 @@
 </template>
 
 <script>
-//   import {
-//   Menu as IconMenu,
-// } from '@element-plus/icons-vue'
 import NavBar from "@/components/NavBar.vue";
 import ReleaseData from "@/components/ReleaseData.vue";
-// import ImageUploadCopy from "@/components/ImageUploadCropper.vue";
+import axios from "axios";
 export default {
   name: "MineView",
   components: {
     NavBar,
     ReleaseData,
-    // ImageUploadCopy,
   },
   data() {
     return {
@@ -94,12 +90,24 @@ export default {
     },
   },
   mounted() {
-    if (this.$route.query.username) {
-      this.username = this.$route.query.username;
-      console.log(this.username);
+    if (localStorage.getItem('username')) {
+      this.username = localStorage.getItem('username');
     }
-    if (this.$route.query.imageSrc) {
-      this.image.src = this.$route.query.imageSrc;
+    if(!localStorage.getItem('avatar')){
+      axios.get('/get_avatar',{
+        params:{
+          username:this.username
+        }
+      })
+      .then((res)=>{
+        if(res.data['status']==='ok'){
+          this.image.src = "data:image/png;base64,"+res.data['avatar'];
+          localStorage.setItem('avatar',this.image.src);
+        }
+      })
+    }
+    else{
+      this.image.src = localStorage.getItem('avatar');
     }
   },
 };
@@ -119,21 +127,14 @@ export default {
   border-right: 0;
 }
 .el-aside {
-  /* border-right: 1px solid; */
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 5px 0 rgba(0, 0, 0, 0.19);
 }
-/* .el-aside .el-menu .el-menu-item {
-    border-radius: 20px;
-  } */
 .icon-menu {
   font-size: 30px;
 }
 .el-aside .el-menu .el-menu-item:hover {
   background-color: #f2f2f2;
 }
-/* .el-aside .el-menu .el-menu-item.is-active {
-    background-color: #5EABBF;
-  } */
 .el-button--primary {
   background: #fbe484 !important;
   border-color: #fbe484 !important;

@@ -122,6 +122,50 @@ fake_ans = {
             "fileNotes": "这是一音频"
         },
     ],
+    "stateList": [
+
+        {
+            "index": 1,
+            "state": "success",
+        },
+        {
+            "index": 2,
+            "state": "inf",
+        },
+        {
+            "index": 3,
+            "state": "success",
+        },
+        {
+            "index": 4,
+            "state": "success",
+        },
+        {
+            "index": 5,
+            "state": "in",
+        },
+        {
+            "index": 6,
+            "state": "ino",
+        },
+        {
+            "index": 7,
+            "state": "success",
+        },
+        {
+            "index": 8,
+            "state": "inf",
+        },
+        {
+            "index": 9,
+            "state": "success",
+        },
+        {
+            "index": 10,
+            "state": "ino",
+        },
+
+    ],
     "questionList": [
         {
             "questionTypeName": "单选",
