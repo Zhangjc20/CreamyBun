@@ -56,15 +56,17 @@ def log_in(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     password = query_dict.get("password", "")
-    
-    adminU,adminP = get_admin_username_with_password()
+
+    adminU, adminP = get_admin_username_with_password()
     adminT = get_admin_token()
     # 查看是否是管理员
     if username == adminU:
         if password == adminP:
-            return HttpResponse(json.dumps({'status': 'ok', 'type': 'admin','adminToken':adminT}), content_type='application/json')
+            return HttpResponse(json.dumps({'status': 'ok', 'type': 'admin', 'adminToken': adminT}),
+                                content_type='application/json')
         else:
-            return HttpResponse(json.dumps({'status': 'wrong', 'type': 'wrongPassword'}), content_type='application/json')
+            return HttpResponse(json.dumps({'status': 'wrong', 'type': 'wrongPassword'}),
+                                content_type='application/json')
 
     # 用户是否存在
     is_user_exist = exist_user_by_name(username)
@@ -76,17 +78,19 @@ def log_in(request):
     if not is_password_right:
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'wrongPassword'}), content_type='application/json')
 
-    return HttpResponse(json.dumps({'status': 'ok','type':'normalUser'}), content_type='application/json')
+    return HttpResponse(json.dumps({'status': 'ok', 'type': 'normalUser'}), content_type='application/json')
+
 
 # 获取用户名对应用户头像
 def get_avatar(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     ret = {
-        'status':'ok',
-        'avatar':get_user_avatr(username)
+        'status': 'ok',
+        'avatar': get_user_avatr(username)
     }
     return HttpResponse(json.dumps(ret), content_type='application/json')
+
 
 # 重置密码
 def reset_password(request):
@@ -234,14 +238,15 @@ def get_user_settings_info(request):
     }
     return HttpResponse(json.dumps(settings_info), content_type='application/json')
 
+
 # 获得管理员用户密码
 def get_admin_username_and_password(request):
     query_dict = request.GET
     adminT = query_dict.get("adminToken", "")
     if adminT != get_admin_token():
-        return HttpResponse(json.dumps({'status':"wrong"}), content_type='application/json')
+        return HttpResponse(json.dumps({'status': "wrong"}), content_type='application/json')
 
-    adminU,adminP = get_admin_username_with_password()
+    adminU, adminP = get_admin_username_with_password()
     ret = {
         'status': 'ok',
         'adminUsername': adminU,
@@ -249,34 +254,36 @@ def get_admin_username_and_password(request):
     }
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
+
 # 设置管理员用户密码
 def set_admin_username_and_password(request):
     query_dict = request.GET
     adminT = query_dict.get("adminToken", "")
     if adminT != get_admin_token():
-        return HttpResponse(json.dumps({'status':"wrong"}), content_type='application/json')
+        return HttpResponse(json.dumps({'status': "wrong"}), content_type='application/json')
 
-    type = query_dict.get("type","")
+    type = query_dict.get("type", "")
     ret = {
         'status': 'ok',
     }
     if type == "username":
-        adminU = query_dict.get("newUsername","")
+        adminU = query_dict.get("newUsername", "")
         set_admin_username(adminU)
         ret['adminUsername'] = adminU
     elif type == "password":
-        adminP = query_dict.get("newPassword","")
+        adminP = query_dict.get("newPassword", "")
         set_admin_password(adminP)
         ret['adminPassword'] = adminP
     return HttpResponse(json.dumps(ret), content_type='application/json')
+
 
 # 获得已领取任务信息
 # 任务信息(包括其id)通过列表传送,列表的每一项是一个字典
 def get_examining_tasks(request):
     query_dict = request.GET
-    admin_token = query_dict.get('adminToken','')
+    admin_token = query_dict.get('adminToken', '')
     if admin_token != get_admin_token():
-        return HttpResponse(json.dumps({'status':'wrong'}), content_type='application/json')
+        return HttpResponse(json.dumps({'status': 'wrong'}), content_type='application/json')
 
     # 总个数（int），任务信息列表（列表，成员为字典）
     page_number = query_dict.get("pageNumber", "")
@@ -289,6 +296,7 @@ def get_examining_tasks(request):
     }
 
     return HttpResponse(json.dumps(ret), content_type='application/json')
+
 
 # 获得已领取任务信息
 # 任务信息(包括其id)通过列表传送,列表的每一项是一个字典
@@ -356,40 +364,43 @@ def get_sorted_tasks(request):
     }
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
+
 # 获得现在甜甜圈与现金之间汇率
 def get_current_rate_info(request):
     query_dict = request.GET
-    adminT = query_dict.get("adminToken","")
+    adminT = query_dict.get("adminToken", "")
     if adminT != get_admin_token():
-        return HttpResponse({json.dumps({'status':'wrong'})}, content_type='application/json')
+        return HttpResponse({json.dumps({'status': 'wrong'})}, content_type='application/json')
 
     ret = {
-        'status':'ok',
-        'donutToMoney':get_donut_to_money(),
-        'moneyToDonut':get_money_to_donut()
+        'status': 'ok',
+        'donutToMoney': get_donut_to_money(),
+        'moneyToDonut': get_money_to_donut()
     }
     return HttpResponse(json.dumps(ret), content_type='application/json')
+
 
 # 修改现在甜甜圈与现金之间汇率
 def change_current_rate_info(request):
     query_dict = request.GET
-    adminT = query_dict.get("adminToken","")
+    adminT = query_dict.get("adminToken", "")
     if adminT != get_admin_token():
-        return HttpResponse({json.dumps({'status':'wrong'})}, content_type='application/json')
+        return HttpResponse({json.dumps({'status': 'wrong'})}, content_type='application/json')
 
     ret = {
-        'status':'ok',
+        'status': 'ok',
     }
-    type = query_dict.get('type',"")
+    type = query_dict.get('type', "")
     if type == "moneyToDonut":
-        new_rate = eval(query_dict.get('moneyToDonut',""))
+        new_rate = eval(query_dict.get('moneyToDonut', ""))
         set_money_to_donut(new_rate)
         ret['moneyToDonut'] = new_rate
     elif type == "donutToMoney":
-        new_rate = eval(query_dict.get("donutToMoney",""))
+        new_rate = eval(query_dict.get("donutToMoney", ""))
         set_donut_to_money(new_rate)
         ret['donutToMoney'] = new_rate
     return HttpResponse(json.dumps(ret), content_type='application/json')
+
 
 # 修改用户名
 @csrf_exempt
@@ -527,18 +538,19 @@ def release_task(request):
 
         return HttpResponse(json.dumps({'status': 'get the image', 'url': path_name}), content_type='application/json')
 
+
 # 任务进行界面基本信息
 def perform_basic_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     task_id = query_dict.get("taskId", "")
-    type = query_dict.get("type","")
-    jmp_target = query_dict.get("jmpTarget","")
+    type = query_dict.get("type", "")
+    jmp_target = query_dict.get("jmpTarget", "")
     # print("perform_basic_info", username)
 
-    material_list, question_list, is_test, current_problem_index,\
-    current_total_problem_number, problem_state_list, answer_list =\
-                        get_current_problem(username, task_id, type, jmp_target)
+    material_list, question_list, is_test, current_problem_index, \
+    current_total_problem_number, problem_state_list, answer_list = \
+        get_current_problem(username, task_id, type, jmp_target)
 
     basic_info = {
         'status': 'ok',
@@ -548,27 +560,30 @@ def perform_basic_info(request):
         'currentIndex': current_problem_index,
         'currentTotalProblemNum': current_total_problem_number,
         'problemStateList': problem_state_list,
-        'answerList':answer_list,
+        'answerList': answer_list,
     }
     return HttpResponse(json.dumps(basic_info), content_type='application/json')
 
+
 # 交当前做的题的答案
+@csrf_exempt
 def submit_answer(request):
-    query_dict = request.GET
-    username = query_dict.get("username", "")
-    task_id = query_dict.get("taskId", "")
-    answer_list = query_dict.get("ansList","")
+    request_body = json.loads(request.body)
+    username = request_body["username"]
+    task_id = request_body["taskId"]
+    answer_list = request_body["ansList"]
 
     # 提交答案的反馈，是字典 
-    test_correct_rate, pass_test = submit_current_answer(username,task_id,answer_list)
+    test_correct_rate, pass_test = submit_current_answer(username, task_id, answer_list)
 
     submit_answer_feedback = {
-        'status':'ok',
-        'testCorrectRate':test_correct_rate,
-        'passTest':pass_test,
+        'status': 'ok',
+        'testCorrectRate': test_correct_rate,
+        'passTest': pass_test,
     }
 
     return HttpResponse(json.dumps(submit_answer_feedback), content_type='application/json')
+
 
 def uck_me(request):
     print("uck_me")
@@ -654,19 +669,21 @@ def submit_feedback(request):
     else:
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')
 
+
 @csrf_exempt
 def add_reported_task(request):
-    image = request.FILES.get('image',None)
-    description = request.POST.get('description',"")
-    username = request.POST.get('username','')
-    id = request.POST.get('id',"")
+    image = request.FILES.get('image', None)
+    description = request.POST.get('description', "")
+    username = request.POST.get('username', '')
+    id = request.POST.get('id', "")
     if image == None:
-        create_a_reported_task(description,id,"",username)
+        create_a_reported_task(description, id, "", username)
     else:
-        path = os.path.join("./resource/report_image",time.strftime("%Y%m%d-%H%M%S")+image.name)
-        create_a_reported_image(image,path)
-        create_a_reported_task(description,id,path,username)
+        path = os.path.join("./resource/report_image", time.strftime("%Y%m%d-%H%M%S") + image.name)
+        create_a_reported_image(image, path)
+        create_a_reported_task(description, id, path, username)
     return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+
 
 def delete_reported_task(request):
     query_dict = request.GET
@@ -674,25 +691,28 @@ def delete_reported_task(request):
     delete_a_reported_task_all(report_id)
     return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
 
+
 def get_reported_task(request):
     query_dict = request.GET
     report_id = query_dict.get("reportId")
     r = get_a_reported_task(report_id)
     ret = {
-        'status':'ok',
+        'status': 'ok',
         'description': r.description,
         'image': get_reported_image(r.image_url)
     }
     return HttpResponse(json.dumps(ret), content_type='application/json')
+
 
 def send_report_email(request):
     query_dict = request.GET
     type = query_dict.get("type")
     report_id = query_dict.get("reportId")
     task_id = query_dict.get("taskId")
-    text = query_dict.get("textarea",'')
-    send_report_back_email(type,task_id,report_id,text)
-    return HttpResponse(json.dumps({'status':'ok'}), content_type='application/json')
+    text = query_dict.get("textarea", '')
+    send_report_back_email(type, task_id, report_id, text)
+    return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+
 
 @csrf_exempt
 def get_feedback(request):
@@ -725,31 +745,34 @@ def get_feedback(request):
     else:
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')
 
+
 # 发送信息处理反馈的邮件
 @csrf_exempt
 def handle_feedback_email(request):
     content = request.POST.get("content", "")
     email = request.POST.get("email", "")
     print(email)
-    send_status = send_feedback_email(email,content)
-    if send_status==1:
-      return HttpResponse(json.dumps({'status': 'ok', 'type': 'sameEmail'}), content_type='application/json')
+    send_status = send_feedback_email(email, content)
+    if send_status == 1:
+        return HttpResponse(json.dumps({'status': 'ok', 'type': 'sameEmail'}), content_type='application/json')
     else:
-      return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameEmail'}), content_type='application/json')
+        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameEmail'}), content_type='application/json')
+
 
 @csrf_exempt
 def delete_feedback(request):
     content = request.POST.get("description", "")
     email = request.POST.get("email", "")
-    delete_status = delete_a_feedback(email,content)
-    if delete_status==0:
-      return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameEmail'}), content_type='application/json')
+    delete_status = delete_a_feedback(email, content)
+    if delete_status == 0:
+        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameEmail'}), content_type='application/json')
     else:
-      return HttpResponse(json.dumps({'status': 'ok', 'type': 'sameEmail'}), content_type='application/json')
+        return HttpResponse(json.dumps({'status': 'ok', 'type': 'sameEmail'}), content_type='application/json')
+
 
 def receive_task(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
-    task_id = query_dict.get("taskId","")
-    user_receive_current_task(username,task_id)
+    task_id = query_dict.get("taskId", "")
+    user_receive_current_task(username, task_id)
     return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
