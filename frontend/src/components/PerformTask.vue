@@ -264,10 +264,11 @@ export default {
     },
     submitAnswers(){
       console.log("this.ansList",this.ansList)
+      var submitAnsList = JSON.parse(JSON.stringify(this.ansList));
       for(var i = 0; i < this.questionList.length;i++){
-        if(this.ansList[i] == '' || this.ansList[i] == []){
+        if(submitAnsList[i] == '' || submitAnsList[i] == []){
           this.$message({
-            message: '您尚未填写第' + i.toString() + '题！',
+            message: '您尚未填写第' + (i + 1).toString() + '题！',
             type: 'error'
           })
           return
@@ -275,27 +276,27 @@ export default {
         if(this.questionList[i]['questionType'] == 0 
         || this.questionList[i]['questionType'] == 1){//如果题目是选择题先转换形式
           var tempAns = ''
-          console.log("this.ansList[i]",i,this.ansList[i])
-          for(var j = 0;j<this.ansList[i].length;j++){
-            if(this.ansList[i][j]['selected']){
-              tempAns += this.ansList[i][j]['name']
+          console.log("submitAnsList[i]",i,submitAnsList[i])
+          for(var j = 0;j<submitAnsList[i].length;j++){
+            if(submitAnsList[i][j]['selected']){
+              tempAns += submitAnsList[i][j]['name']
             }
           }
-          this.ansList[i] = tempAns
+          submitAnsList[i] = tempAns
         }
-        if(!this.questionList[i]['mustDo'] && this.ansList[i] == ''){//如果该题目不是必做且用户没做
+        if(!this.questionList[i]['mustDo'] && submitAnsList[i] == ''){//如果该题目不是必做且用户没做
           continue
         }
         if(this.questionList[i]['questionType'] == 0 
         || this.questionList[i]['questionType'] == 1){//如果题目是选择题
-          if(this.ansList[i].length > this.questionList[i]['maxOptionNum']){
+          if(submitAnsList[i].length > this.questionList[i]['maxOptionNum']){
             this.$message({
               message: '您的第' + (i + 1).toString() + '题选项过多！',
               type: 'error'
             })
             return
           }
-          else if(this.ansList[i].length < this.questionList[i]['minOptionNum']){
+          else if(submitAnsList[i].length < this.questionList[i]['minOptionNum']){
             this.$message({
               message: '您的第' + (i + 1).toString() + '题选项过少！',
               type: 'error'
@@ -303,14 +304,14 @@ export default {
             return
           }
         }else if(this.questionList[i]['questionType'] == 2){//如果题目是填空题
-          if(this.ansList[i].length > this.questionList[i]['maxOptionNum']){
+          if(submitAnsList[i].length > this.questionList[i]['maxOptionNum']){
             this.$message({
               message: '您的第' + (i + 1).toString() + '题字数过多！',
               type: 'error'
             })
             return
           }
-          else if(this.ansList[i].length < this.questionList[i]['minOptionNum']){
+          else if(submitAnsList[i].length < this.questionList[i]['minOptionNum']){
             this.$message({
               message: '您的第' + (i + 1).toString() + '题字数过少！',
               type: 'error'
@@ -319,19 +320,30 @@ export default {
           }
         }else if(this.questionList[i]['questionType'] == 3){//如果题目是框图题
           var blankNumber = 0
-          for(var i = 0;i<this.ansList[i].length;i++){
-            if(this.ansList[i] == '('){
+          console.log("submitAnsList",i,submitAnsList)
+          var tempString = submitAnsList[i]
+          console.log("tempString",tempString)
+          console.log("tempString.length",tempString.length)
+          for(var j = 0;j<tempString.length;j++){
+            console.log("submitAnsList[j]",tempString[j])
+            if(tempString[j] == '('){
+              console.log("submitAnsList[j]",tempString[j])
               blankNumber ++
             }
           }
-          if(blankNumber.length > this.questionList[i]['maxOptionNum']){
+          console.log("this.questionList[i]['maxOptionNum']",this.questionList)
+          var tempDict = this.questionList[i]
+          // console.log("tempDict",i,tempDict)
+          // console.log("tempDict['maxOptionNum']",tempDict['maxOptionNum'])
+
+          if(blankNumber > tempDict['maxOptionNum']){
             this.$message({
               message: '您的第' + (i + 1).toString() + '题图框过多！',
               type: 'error'
             })
             return
           }
-          else if(blankNumber.length < this.questionList[i]['minOptionNum']){
+          else if(blankNumber < tempDict['minOptionNum']){
             this.$message({
               message: '您的第' + (i + 1).toString() + '题图框过少！',
               type: 'error'
@@ -340,8 +352,8 @@ export default {
           }
         }
       }
-      console.log("this.ansList",this.ansList)
-      this.stateList[currentIndex]['state'] = true
+      console.log("submitAnsList",submitAnsList)
+      this.stateList[this.currentIndex]['state'] = true
       var isFinished = true;
       // 判断是否所有题目都做完了
       for(var stateItem of this.stateList){
@@ -353,7 +365,7 @@ export default {
       axios.post("http://localhost:8000/submit_answer/",{
         username: this.username,
         taskId: this.taskId,
-        ansList: this.ansList,
+        ansList: submitAnsList,
         isFinished:isFinished,
       }).then(res => {
         this.$message({

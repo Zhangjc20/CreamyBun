@@ -566,11 +566,12 @@ def perform_basic_info(request):
 
 
 # 交当前做的题的答案
+@csrf_exempt
 def submit_answer(request):
-    query_dict = request.GET
-    username = query_dict.get("username", "")
-    task_id = query_dict.get("taskId", "")
-    answer_list = query_dict.get("ansList", "")
+    request_body = json.loads(request.body)
+    username = request_body["username"]
+    task_id = request_body["taskId"]
+    answer_list = request_body["ansList"]
 
     # 提交答案的反馈，是字典 
     test_correct_rate, pass_test = submit_current_answer(username, task_id, answer_list)
