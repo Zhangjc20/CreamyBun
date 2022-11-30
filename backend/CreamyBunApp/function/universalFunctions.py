@@ -566,7 +566,7 @@ def user_receive_current_task(username,task_id):
     # 确定被领取的题目列表
     received_problem_list = test_list[0:before_test_number] + normal_test_list
     for p in received_problem_list:
-        p_id = UserProblemInfo.objects.create(problem_id=p.id,is_right=False)
+        p_id = UserProblemInfo.objects.create(problem_id=p.id)
         td.received_problem_id_list.add(p_id)
 
     u.task_info_list.add(td)
@@ -607,7 +607,7 @@ def submit_current_answer(username,task_id,answer_list):
 
             # 存答案
             for ans in answer_list:
-                x.user_answer.add(ans)
+                x.user_answer.add(Str.objects.create(str_content=ans))
             x.is_right = True
             x.save()
     
