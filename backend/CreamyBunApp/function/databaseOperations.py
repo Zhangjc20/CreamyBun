@@ -306,8 +306,8 @@ def get_current_problem(username, task_id, type, jmp_target):
 
     # 下一题
     if type == 'next':
-        if td.current_problem_index != (td.test_problem_number - 1)\
-           and td.current_problem_index < (len(td.received_problem_id_list.all()) - 1):
+        # td.current_problem_index != (td.test_problem_number - 1) and 
+        if td.current_problem_index < (len(td.received_problem_id_list.all()) - 1):
                 td.current_problem_index += 1
         td.save()
     
