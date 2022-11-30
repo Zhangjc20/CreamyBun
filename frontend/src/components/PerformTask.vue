@@ -100,7 +100,7 @@
   </el-dialog>
 
   <el-dialog v-model="jumpDialogVisible" title="设置跳转位置" width="22%" style="display: flex;flex-wrap: wrap;">
-      <el-button style="width: 40px;height: 40px;margin: 5px;" :type="state['state']" plain  v-for="state in stateList" :key="state" @click="jumpQuestion(state['index'])">{{state['index']}}</el-button>
+      <el-button style="width: 40px;height: 40px;margin: 5px;" :type="getListButtonType(state['state'])" plain  v-for="state in stateList" :key="state" @click="jumpQuestion(state['index'])">{{state['index']}}</el-button>
     <span class="dialog-footer">
       <el-row style="height: 50px;margin-top: 20px;">
           <CustomButton @click="jumpDialogVisible = false" style="margin-left:20px;" isRound="true" title="取消跳转" />
@@ -165,6 +165,7 @@ export default {
       lastSelectedList: [],
       stateList: [],
       currentImage: undefined,
+      currentIndex:-1,
       fillBlankDialogVisible: false,
       jumpDialogVisible: false,
       currentMin: -1,
@@ -181,6 +182,9 @@ export default {
 
   },
   methods: {
+    getListButtonType(input){
+      return input?'success':'jb'
+    },
     getProblemInfo(type, jmpTarget = -1) {
       // dom元素更新后执行，因此这里能正确打印更改之后的值
       // console.log("http://localhost:8000/uck_me/")
@@ -199,6 +203,7 @@ export default {
         this.materialList = res.data['materialList'];
         this.stateList = res.data['problemStateList'];
         this.isTest = res.data['isTest'];
+        this.currentIndex = res.data['currentIndex'] - 1;//计算机地址
         for (var i = 0; i < this.questionList.length; i++) {
           this.lastSelectedList.push(undefined)
           var tempQuestion = this.questionList[i]
@@ -336,10 +341,20 @@ export default {
         }
       }
       console.log("this.ansList",this.ansList)
+      this.stateList[currentIndex]['state'] = true
+      var isFinished = true;
+      // 判断是否所有题目都做完了
+      for(var stateItem of this.stateList){
+        if(!stateItem['state']){
+          isFinished = false
+          break
+        }
+      }
       axios.post("http://localhost:8000/submit_answer/",{
         username: this.username,
         taskId: this.taskId,
-        ansList: this.ansList
+        ansList: this.ansList,
+        isFinished:isFinished,
       }).then(res => {
         this.$message({
           type: 'success',
