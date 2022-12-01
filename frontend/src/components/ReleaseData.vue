@@ -554,6 +554,13 @@ export default {
           });
           return false
         }
+        if(tempLen/this.form.receiverNum < 1){
+          this.$message({
+            message: '您的题目过少，不足以分配！',
+            type: 'error'
+          });
+          return false
+        }
         return true
       }
       return false
