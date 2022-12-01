@@ -246,6 +246,7 @@ export default {
           message: '提交成功!'
         });
         console.log(res)
+        
       }).catch(error => {
         console.log(error)
       })
