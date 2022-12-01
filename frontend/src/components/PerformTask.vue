@@ -237,7 +237,18 @@ export default {
   },
   methods: {
     finalSubmit(){
-
+      axios.post("http://localhost:8000/final_submit/", {
+        username: this.username,
+        taskId: this.taskId,
+      }).then(res => {
+        this.$message({
+          type: 'success',
+          message: '提交成功!'
+        });
+        console.log(res)
+      }).catch(error => {
+        console.log(error)
+      })
     },
     closeTestResultDialog() {
       if (!this.passTest) {//如果没有通过资质测试

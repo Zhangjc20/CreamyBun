@@ -50,6 +50,7 @@ urlpatterns = [
     path('perform_problem_material/', views.perform_problem_material),
     path('uck_me/', views.uck_me),
     path('submit_feedback/', views.submit_feedback),
+    path('final_submit/', views.final_submit),
     path('get_feedback/', views.get_feedback),
     path('stream_video/<path>/', views.stream_video),
     path('send_feedback_email/', views.send_feedback_email),

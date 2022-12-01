@@ -585,6 +585,27 @@ def submit_answer(request):
     return HttpResponse(json.dumps(submit_answer_feedback), content_type='application/json')
 
 
+# 任务总提交
+@csrf_exempt
+def final_submit(request):
+    request_body = json.loads(request.body)
+    username = request_body["username"]
+    task_id = request_body["taskId"]
+
+    # TODO 总提交逻辑
+
+    # 提交答案的反馈，是字典
+    # test_correct_rate, pass_test = submit_current_answer(username, task_id, answer_list)
+    #
+    # submit_answer_feedback = {
+    #     'status': 'ok',
+    #     'testCorrectRate': test_correct_rate,
+    #     'passTest': pass_test,
+    # }
+
+    return HttpResponse(json.dumps({}), content_type='application/json')
+
+
 def uck_me(request):
     print("uck_me")
     return HttpResponse(json.dumps(fake_ans), content_type='application/json')
