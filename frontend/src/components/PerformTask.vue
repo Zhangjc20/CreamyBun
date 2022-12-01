@@ -4,19 +4,20 @@
       <el-breadcrumb-item :to="{ path: '/' }">奶黄包</el-breadcrumb-item>
       <el-breadcrumb-item>任务选择</el-breadcrumb-item>
       <el-breadcrumb-item>{{ materialType }}</el-breadcrumb-item>
-      <el-breadcrumb-item v-if="isTest" ><span style="color:red;font-size=30px;font-weight: bold;">资质测试</span></el-breadcrumb-item>
+      <el-breadcrumb-item v-if="isTest"><span
+          style="color:red;font-size=30px;font-weight: bold;">资质测试</span></el-breadcrumb-item>
     </el-breadcrumb>
     <span class="header-title">
       {{ taskName }}
     </span>
-    <CustomButton @click="previousQuestion" isRound="true" style="float: right; right: 590px; top: 100px; position: absolute" height="40px"
-      width="150px" title="上一题" />
-    <CustomButton @click="jumpDialogVisible = true" isRound="true" style="float: right; right: 410px; top: 100px; position: absolute" height="40px"
-      width="150px" title="题目跳转" />
-    <CustomButton @click="submitAnswers" isRound="true" style="float: right; right: 230px; top: 100px; position: absolute" height="40px"
-      width="150px" title="提交本题" />
-    <CustomButton  @click="quitPerform" isRound="true" style="float: right; right: 50px; top: 100px; position: absolute" height="40px"
-      width="150px" title="退出答题" />
+    <CustomButton @click="previousQuestion" isRound="true"
+      style="float: right; right: 590px; top: 100px; position: absolute" height="40px" width="150px" title="上一题" />
+    <CustomButton @click="jumpDialogVisible = true" isRound="true"
+      style="float: right; right: 410px; top: 100px; position: absolute" height="40px" width="150px" title="题目跳转" />
+    <CustomButton @click="submitAnswers" isRound="true"
+      style="float: right; right: 230px; top: 100px; position: absolute" height="40px" width="150px" title="提交本题" />
+    <CustomButton @click="quitPerform" isRound="true" style="float: right; right: 50px; top: 100px; position: absolute"
+      height="40px" width="150px" title="退出答题" />
   </el-header>
   <!-- <el-row :gutter="20">
       <el-col :span="16"><div class="grid-content ep-bg-purple" /></el-col>
@@ -100,14 +101,87 @@
   </el-dialog>
 
   <el-dialog v-model="jumpDialogVisible" title="设置跳转位置" width="22%" style="display: flex;flex-wrap: wrap;">
-      <el-button style="width: 40px;height: 40px;margin: 5px;" :type="getListButtonType(state['state'])" plain  v-for="state in stateList" :key="state" @click="jumpQuestion(state['index'])">{{state['index']}}</el-button>
+    <el-button style="width: 40px;height: 40px;margin: 5px;" :type="getListButtonType(state['state'])" plain
+      v-for="state in stateList" :key="state" @click="jumpQuestion(state['index'])">{{ state['index'] }}</el-button>
     <span class="dialog-footer">
       <el-row style="height: 50px;margin-top: 20px;">
-          <CustomButton @click="jumpDialogVisible = false" style="margin-left:20px;" isRound="true" title="取消跳转" />
+        <CustomButton @click="jumpDialogVisible = false" style="margin-left:20px;" isRound="true" title="取消跳转" />
       </el-row>
     </span>
   </el-dialog>
 
+  <el-dialog v-model="testResultDialogVisible" @close="closeTestResultDialog" width="40%"
+    style="display: flex;flex-wrap: wrap;">
+    <el-main v-if="!passTest">
+      <el-row style="margin-bottom: 20px;">
+        <span style="font-weight: bold;font-size: 20px;">
+          很抱歉，您未能通过资质测试
+        </span>
+      </el-row>
+      <el-row>
+        <span>
+          您的正答率：
+        </span>
+        <span style="font-weight: bold;font-size: 15px;color: red;">
+          {{ percentage }}
+        </span>
+      </el-row>
+      <span class="dialog-footer">
+        <el-row style="height: 50px;margin-top: 20px;">
+          <CustomButton @click="testResultDialogVisible = false; closeTestResultDialog()" style="margin-left:20px;"
+            isRound="true" title="退出答题" />
+        </el-row>
+      </span>
+    </el-main>
+    <el-main v-else>
+      <el-row style="margin-bottom: 20px;">
+        <span style="font-weight: bold;font-size: 20px;">
+          恭喜您通过资质测试！请继续答题
+        </span>
+      </el-row>
+      <el-row>
+        <span>
+          您的正答率：
+        </span>
+        <span style="font-weight: bold;font-size: 15px;color: red;">
+          {{ percentage }}
+        </span>
+      </el-row>
+      <span class="dialog-footer">
+        <el-row style="height: 50px;margin-top: 20px;">
+          <CustomButton @click="testResultDialogVisible = false; closeTestResultDialog()" style="margin-left:20px;"
+            isRound="true" title="正式答题" />
+        </el-row>
+      </span>
+    </el-main>
+  </el-dialog>
+
+  <el-dialog v-model="finalSubmitDialogVisible" width="40%"
+    style="display: flex;flex-wrap: wrap;">
+    <el-main>
+      <el-row style="margin-bottom: 20px;">
+        <span style="font-weight: bold;font-size: 20px;">
+          您已完成所有题目，请问您现在是否要提交该任务？
+        </span>
+      </el-row>
+      <span class="dialog-footer">
+        <el-row style="height: 50px;margin-top: 20px;">
+          <CustomButton @click="finalSubmit(); finalSubmitDialogVisible = false" style="margin:auto;"
+            isRound="true" title="提交任务" />
+          <CustomButton @click="finalSubmitDialogVisible = false" style="margin:auto;"
+            isRound="true" title="暂不提交" />
+            <!-- <el-col :span="12">
+            <CustomButton @click="finalSubmit(); finalSubmitDialogVisible = false" style="margin-left:20px;"
+              isRound="true" title="提交任务" />
+          </el-col>
+          <el-col :span="12">
+            <CustomButton @click="finalSubmitDialogVisible = false" style="margin-left:120px;" isRound="true"
+              title="暂不提交" />
+          </el-col> -->
+        </el-row>
+      </span>
+    </el-main>
+  </el-dialog>
 </template>
 
 <script>
@@ -131,31 +205,8 @@ export default {
     taskId: Number,
     taskName: String,
     imageSrc: String,
-    materialType:String,
+    materialType: String,
   },
-  // watch:{
-  //   materialType(newVal){
-  //     this.localMaterialType = newVal
-  //     switch(this.localMaterialType)
-  //     {
-  //       case 0:
-  //         this.materialTypeName = '图像'
-  //         break;
-  //       case 1:
-  //         this.materialTypeName = '文本'
-  //         break;
-  //       case 2:
-  //         this.materialTypeName = '视频'
-  //         break;
-  //       case 3:
-  //         this.materialTypeName = '音频'
-  //         break;
-  //       case 4:
-  //         this.materialTypeName = '自定义类型'
-  //         break;
-  //     }
-  //   },
-  // },
   data() {
     return {
       imageFile: null,
@@ -165,13 +216,17 @@ export default {
       lastSelectedList: [],
       stateList: [],
       currentImage: undefined,
-      currentIndex:-1,
+      currentIndex: -1,
       fillBlankDialogVisible: false,
       jumpDialogVisible: false,
       currentMin: -1,
       currentMax: -1,
       currentQuestionIndex: -1,
-      isTest:false
+      isTest: false,
+      passTest: false,
+      testResultDialogVisible: false,
+      finalSubmitDialogVisible: true,
+      percentage: '114.514%'
     }
   },
   mounted() {
@@ -179,23 +234,40 @@ export default {
     this.$nextTick(() => {
       this.getProblemInfo('init')
     })
-
   },
   methods: {
-    getListButtonType(input){
-      return input?'success':'jb'
+    finalSubmit(){
+
+    },
+    closeTestResultDialog() {
+      if (!this.passTest) {//如果没有通过资质测试
+        this.$router.push({
+          //跳转到个人中心领取列表
+          name: "mine",
+          query: {
+            username: this.username,
+            imageSrc: this.imageSrc,
+            defaultActive: "2",
+          },
+        });
+      }else{
+        this.getProblemInfo('next')
+      }
+    },
+    getListButtonType(input) {
+      return input ? 'success' : 'jb'
     },
     getProblemInfo(type, jmpTarget = -1) {
       // dom元素更新后执行，因此这里能正确打印更改之后的值
       // console.log("http://localhost:8000/uck_me/")
       // axios.get("http://localhost:8000/uck_me/", {
-        console.log("http://localhost:8000/perform_basic_info/")
-        axios.get("http://localhost:8000/perform_basic_info/",{
+      console.log("http://localhost:8000/perform_basic_info/")
+      axios.get("http://localhost:8000/perform_basic_info/", {
         params: {
           username: this.username,
           taskId: this.taskId,
-          type:type,
-          jmpTarget:jmpTarget
+          type: type,
+          jmpTarget: jmpTarget
         }
       }).then((res) => {
         console.log("成功加载一个material", res)
@@ -228,7 +300,7 @@ export default {
 
       }).catch();
     },
-    async previousQuestion(){
+    async previousQuestion() {
       // var confirmRes = this.$confirm('请问是否需要提交当前答案？', '提示', {
       //   confirmButtonText: '确定',
       //   cancelButtonText: '取消',
@@ -239,111 +311,111 @@ export default {
       //   this.submitAnswers()
       // }
       await this.$confirm('请问是否需要提交当前答案？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.submitAnswers()
-        }).catch(() => {      
-        });
-      //TODO:告诉后端要去上一题并初始化页面
-      this.getProblemInfo('last')
-    },
-    async jumpQuestion(index){
-      console.log(index)
-      await this.$confirm('请问是否需要提交当前答案？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.submitAnswers()
-      }).catch(() => {      
+      }).catch(() => {
+      });
+      //TODO:告诉后端要去上一题并初始化页面
+      this.getProblemInfo('last')
+    },
+    async jumpQuestion(index) {
+      console.log("async jumpQuestion(index)",index)
+      await this.$confirm('请问是否需要提交当前答案？', '提示', {
+        confirmButtonText: '否',
+        cancelButtonText: '是',
+        type: 'warning'
+      }).then(() => {
+        this.submitAnswers()
+      }).catch(() => {
       });
       this.getProblemInfo('jump', index)
       this.jumpDialogVisible = false
     },
-    submitAnswers(){
-      console.log("this.ansList",this.ansList)
+    submitAnswers() {
+      console.log("this.ansList", this.ansList)
       var submitAnsList = JSON.parse(JSON.stringify(this.ansList));
-      for(var i = 0; i < this.questionList.length;i++){
-        if(submitAnsList[i] == '' || submitAnsList[i] == []){
+      for (var i = 0; i < this.questionList.length; i++) {
+        if (submitAnsList[i] == '' || submitAnsList[i] == []) {
           this.$message({
             message: '您尚未填写第' + (i + 1).toString() + '题！',
             type: 'error'
           })
           return
         }
-        if(this.questionList[i]['questionType'] == 0 
-        || this.questionList[i]['questionType'] == 1){//如果题目是选择题先转换形式
+        if (this.questionList[i]['questionType'] == 0
+          || this.questionList[i]['questionType'] == 1) {//如果题目是选择题先转换形式
           var tempAns = ''
-          console.log("submitAnsList[i]",i,submitAnsList[i])
-          for(var j = 0;j<submitAnsList[i].length;j++){
-            if(submitAnsList[i][j]['selected']){
+          console.log("submitAnsList[i]", i, submitAnsList[i])
+          for (var j = 0; j < submitAnsList[i].length; j++) {
+            if (submitAnsList[i][j]['selected']) {
               tempAns += submitAnsList[i][j]['name']
             }
           }
           submitAnsList[i] = tempAns
         }
-        if(!this.questionList[i]['mustDo'] && submitAnsList[i] == ''){//如果该题目不是必做且用户没做
+        if (!this.questionList[i]['mustDo'] && submitAnsList[i] == '') {//如果该题目不是必做且用户没做
           continue
         }
-        if(this.questionList[i]['questionType'] == 0 
-        || this.questionList[i]['questionType'] == 1){//如果题目是选择题
-          if(submitAnsList[i].length > this.questionList[i]['maxOptionNum']){
+        if (this.questionList[i]['questionType'] == 0
+          || this.questionList[i]['questionType'] == 1) {//如果题目是选择题
+          if (submitAnsList[i].length > this.questionList[i]['maxOptionNum']) {
             this.$message({
               message: '您的第' + (i + 1).toString() + '题选项过多！',
               type: 'error'
             })
             return
           }
-          else if(submitAnsList[i].length < this.questionList[i]['minOptionNum']){
+          else if (submitAnsList[i].length < this.questionList[i]['minOptionNum']) {
             this.$message({
               message: '您的第' + (i + 1).toString() + '题选项过少！',
               type: 'error'
             })
             return
           }
-        }else if(this.questionList[i]['questionType'] == 2){//如果题目是填空题
-          if(submitAnsList[i].length > this.questionList[i]['maxOptionNum']){
+        } else if (this.questionList[i]['questionType'] == 2) {//如果题目是填空题
+          if (submitAnsList[i].length > this.questionList[i]['maxOptionNum']) {
             this.$message({
               message: '您的第' + (i + 1).toString() + '题字数过多！',
               type: 'error'
             })
             return
           }
-          else if(submitAnsList[i].length < this.questionList[i]['minOptionNum']){
+          else if (submitAnsList[i].length < this.questionList[i]['minOptionNum']) {
             this.$message({
               message: '您的第' + (i + 1).toString() + '题字数过少！',
               type: 'error'
             })
             return
           }
-        }else if(this.questionList[i]['questionType'] == 3){//如果题目是框图题
+        } else if (this.questionList[i]['questionType'] == 3) {//如果题目是框图题
           var blankNumber = 0
-          console.log("submitAnsList",i,submitAnsList)
+          console.log("submitAnsList", i, submitAnsList)
           var tempString = submitAnsList[i]
-          console.log("tempString",tempString)
-          console.log("tempString.length",tempString.length)
-          for(var j = 0;j<tempString.length;j++){
-            console.log("submitAnsList[j]",tempString[j])
-            if(tempString[j] == '('){
-              console.log("submitAnsList[j]",tempString[j])
-              blankNumber ++
+          console.log("tempString", tempString)
+          console.log("tempString.length", tempString.length)
+          for (var j = 0; j < tempString.length; j++) {
+            console.log("submitAnsList[j]", tempString[j])
+            if (tempString[j] == '(') {
+              console.log("submitAnsList[j]", tempString[j])
+              blankNumber++
             }
           }
-          console.log("this.questionList[i]['maxOptionNum']",this.questionList)
+          console.log("this.questionList[i]['maxOptionNum']", this.questionList)
           var tempDict = this.questionList[i]
           // console.log("tempDict",i,tempDict)
           // console.log("tempDict['maxOptionNum']",tempDict['maxOptionNum'])
 
-          if(blankNumber > tempDict['maxOptionNum']){
+          if (blankNumber > tempDict['maxOptionNum']) {
             this.$message({
               message: '您的第' + (i + 1).toString() + '题图框过多！',
               type: 'error'
             })
             return
           }
-          else if(blankNumber < tempDict['minOptionNum']){
+          else if (blankNumber < tempDict['minOptionNum']) {
             this.$message({
               message: '您的第' + (i + 1).toString() + '题图框过少！',
               type: 'error'
@@ -352,42 +424,53 @@ export default {
           }
         }
       }
-      console.log("submitAnsList",submitAnsList)
+      console.log("submitAnsList", submitAnsList)
       this.stateList[this.currentIndex]['state'] = true
       var isFinished = true;
       // 判断是否所有题目都做完了
-      for(var stateItem of this.stateList){
-        if(!stateItem['state']){
+      for (var stateItem of this.stateList) {
+        if (!stateItem['state']) {
           isFinished = false
           break
         }
       }
-      axios.post("http://localhost:8000/submit_answer/",{
+      axios.post("http://localhost:8000/submit_answer/", {
         username: this.username,
         taskId: this.taskId,
         ansList: submitAnsList,
-        isFinished:isFinished,
+        isFinished: isFinished,
       }).then(res => {
         this.$message({
           type: 'success',
           message: '提交成功!'
         });
-        this.getProblemInfo('next')
-        console.log(res)
+        console.log("提交成功!", res)
+        if(isFinished){
+          if(this.isTest){
+            this.passTest = res.data['passTest']
+            this.percentage = (Math.round(res.data['testCorrectRate'] * 10000)) / 100 + '%'
+            this.testResultDialogVisible = true
+          }else{
+            this.finalSubmitDialogVisible = true
+          }
+
+        }else{
+          this.getProblemInfo('next')
+        }
       }).catch(error => {
         console.log(error)
       })
     },
-    async quitPerform(){
+    async quitPerform() {
       await this.$confirm('请问是否需要提交当前答案？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.submitAnswers()
-        
-        
-      }).catch(() => {      
+
+
+      }).catch(() => {
       });
       this.$router.push({
         name: "mine",
@@ -581,8 +664,10 @@ export default {
 .material-row {
   margin-top: 20px;
 }
+
 ::-webkit-scrollbar {
-  width: 10px; /*对垂直流动条有效*/
+  width: 10px;
+  /*对垂直流动条有效*/
 }
 
 /*定义滚动条的轨道颜色、内阴影及圆角*/
@@ -600,6 +685,7 @@ export default {
 ::-webkit-scrollbar-thumb:hover {
   background-color: #dddddd;
 }
+
 /*.header-style{
     border-radius: 5px;
     box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);

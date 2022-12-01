@@ -545,7 +545,7 @@ def perform_basic_info(request):
     username = query_dict.get("username", "")
     task_id = query_dict.get("taskId", "")
     type = query_dict.get("type", "")
-    jmp_target = query_dict.get("jmpTarget", "")
+    jmp_target = eval(query_dict.get("jmpTarget", ""))
     # print("perform_basic_info", username)
 
     material_list, question_list, is_test, current_problem_index, \
