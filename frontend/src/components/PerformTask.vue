@@ -225,7 +225,7 @@ export default {
       isTest: false,
       passTest: false,
       testResultDialogVisible: false,
-      finalSubmitDialogVisible: true,
+      finalSubmitDialogVisible: false,
       percentage: '114.514%'
     }
   },

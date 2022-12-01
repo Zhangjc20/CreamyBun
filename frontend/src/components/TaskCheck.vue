@@ -89,10 +89,10 @@
               题目领取情况：
             </div>
             <div style="text-align: center; margin-top: 4%; font-size: 18px">
-              {{ finishedProblemNum }}/{{ problemTotalNum }}
+              {{ receivedProblemNum }}/{{ problemTotalNum }}
             </div>
           </span>
-          <el-progress type="dashboard" :percentage="ratio" status="warning">
+          <el-progress type="dashboard" :percentage="ratioR" status="warning">
             <template #default="{ percentage }">
               <span class="percentage-value">{{ percentage }}%</span>
               <span class="percentage-label">领取进度</span>
@@ -116,7 +116,7 @@
               {{ finishedProblemNum }}/{{ problemTotalNum }}
             </div>
           </span>
-          <el-progress type="dashboard" :percentage="80" status="success">
+          <el-progress type="dashboard" :percentage="ratioF" status="success">
             <template #default="{ percentage }">
               <span class="percentage-value">{{ percentage }}%</span>
               <span class="percentage-label">完成进度</span>
@@ -269,7 +269,8 @@ export default {
       description: "",
       answerType: "",
       problemTotalNum: "",
-      finishedProblemNum: "",
+      finishedProblemNum: -1,
+      receivedProblemNum: -1,
       starRank: "",
       singleBonus: "",
       materialType: "",
@@ -277,7 +278,8 @@ export default {
       posterAvatar: "",
       startTime: "",
       endTime: "",
-      ratio: 0,
+      ratioR: 0,
+      ratioF: 0,
     };
   },
   mounted() {
@@ -323,9 +325,14 @@ export default {
             this.description = res.data["description"];
             this.problemTotalNum = res.data["problemTotalNum"];
             this.finishedProblemNum = res.data["finishedProblemNum"];
-            this.ratio =
+            this.ratioF =
               Math.floor(
                 (this.finishedProblemNum / this.problemTotalNum) * 1000
+              ) / 10;
+            this.receivedProblemNum = res.data['receivedProblemNum'];
+            this.ratioR =
+              Math.floor(
+                (this.receivedProblemNum / this.problemTotalNum) * 1000
               ) / 10;
             this.posterAvatar = "data:image/png;base64," + res.data["posterAvatar"];
             this.singleBonus = res.data["singleBonus"];

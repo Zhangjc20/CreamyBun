@@ -74,6 +74,19 @@ def get_reported_task_list(page_number):
             init_list.append({'isSpace':True,'index': length + i})
     return total_number, init_list
 
+# 获得某任务的已领取题目数量
+def get_task_received_number(t:Task):
+    has_received_problem_number = len(t.receiver_list.all())*t.problem_number_for_single_receiver
+    if has_received_problem_number > t.problem_total_number:
+        has_received_problem_number = t.problem_total_number
+    return has_received_problem_number
+
+# 通过id获取某任务的领取进度，百分比数字
+def get_task_receive_process_by_id(id):
+    t = get_a_task_data(id)
+    has_received_problem_number = get_task_received_number(t)
+    receive_process = round(has_received_problem_number/t.problem_total_number,4)*100
+    return receive_process
 
 # 从用户列表中删除指定用户
 def delete_a_user(username):
@@ -302,7 +315,13 @@ def get_current_problem(username, task_id, type, jmp_target):
 
     # 用户正在做的任务的信息
     td_temp = u.task_info_list.filter(task_id=task_id)  
-    td = td_temp.filter(task_status_for_user=HAS_RECEIVED).first()
+    td_list = td_temp.filter(task_status_for_user=HAS_RECEIVED).all()
+
+    # 找到领取的且第一个未完成的任务
+    td = None
+    for tdd in td_list:
+        if tdd.task_status_for_itself == NOT_FINISHED:
+            td = tdd
 
     # 下一题
     if type == 'next':

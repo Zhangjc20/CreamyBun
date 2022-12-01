@@ -528,6 +528,14 @@ def create_a_reported_image(image,path):
 # 领取任务
 def user_receive_current_task(username,task_id):
     u = get_a_user_data(username)
+
+    # 观察这个用户是否已经领取过该任务而没有完成
+    td_temp = u.task_info_list.filter(task_id=task_id)  
+    td_list = td_temp.filter(task_status_for_user=HAS_RECEIVED).all()
+    for td in td_list:
+        if td.task_status_for_itself == NOT_FINISHED:
+            return False
+
     t = get_a_task_data(task_id)
     p_list = t.problem_list.all()
 
@@ -569,7 +577,12 @@ def user_receive_current_task(username,task_id):
         p_id = UserProblemInfo.objects.create(problem_id=p.id)
         td.received_problem_id_list.add(p_id)
 
+    # 给用户添加领取的任务
     u.task_info_list.add(td)
+
+    # 给任务添加领取者
+    t.receiver_list.add(Int.objects.create(int_content=u.id))
+    return True
 
 def remove_task_from_user(username,task_id):
     u = get_a_user_data(username)
@@ -585,7 +598,13 @@ def remove_task_from_user(username,task_id):
         p.save()
         td.received_problem_id_list.remove(x)
     td.save()
+
+    # 用户删除领取的任务
     u.task_info_list.remove(td)
+
+    # 任务删除其领取者
+    u_id = t.receiver_list.filter(int_content=u.id).first()
+    t.receiver_list.remove(u_id)
     
 
 def submit_current_answer(username,task_id,answer_list):

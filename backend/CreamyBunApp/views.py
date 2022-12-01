@@ -176,13 +176,15 @@ def get_task_basic_info(request):
         'description': t.description,
         'problemTotalNum': t.problem_total_number,
         'finishedProblemNum': t.finished_problem_number,
+        'receivedProblemNum': get_task_received_number(t),
         'singleBonus': t.single_bonus,
         'starRank': t.star_rank,
         'materialType': TASK_TYPE_DICT[t.task_type],
         'posterName': poster_username,
         'posterAvatar': get_user_avatr(poster_username),
         'startTime': t.begin_time.split(" ")[0],
-        'endTime': t.end_time.split(" ")[0]
+        'endTime': t.end_time.split(" ")[0],
+        'receiveProcess':get_task_receive_process_by_id(id),
     }
     return HttpResponse(json.dumps(task_info), content_type='application/json')
 
@@ -795,5 +797,10 @@ def receive_task(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     task_id = query_dict.get("taskId", "")
-    user_receive_current_task(username, task_id)
-    return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+
+    # 领取任务有可能因为原来已经领取过但是没做完而失败 
+    flag = user_receive_current_task(username, task_id)
+    if flag:
+        return HttpResponse(json.dumps({'status': 'ok', 'type': 'success'}), content_type='application/json')
+    else:
+        return HttpResponse(json.dumps({'status': 'ok', 'type': 'fail'}), content_type='application/json')
