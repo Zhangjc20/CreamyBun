@@ -336,8 +336,8 @@ export default {
     async jumpQuestion(index) {
       console.log("async jumpQuestion(index)",index)
       await this.$confirm('请问是否需要提交当前答案？', '提示', {
-        confirmButtonText: '否',
-        cancelButtonText: '是',
+        confirmButtonText: '是',
+        cancelButtonText: '否',
         type: 'warning'
       }).then(() => {
         this.submitAnswers()
