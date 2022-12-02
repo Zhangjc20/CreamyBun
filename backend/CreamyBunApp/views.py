@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .function.databaseOperations import *
 from .variables.globalConstants import *
+from .variables.globalVariables import *
 from .function.universalFunctions import *
 import json
 
@@ -169,6 +170,11 @@ def get_task_basic_info(request):
     id = query_dict.get("id", "")
     t = get_a_task_data(id)
     poster_username = get_a_user_data_by_id(t.poster).username
+
+    # 获取用户领了多少题目，当前做到第几题
+    user_current_problem_index, user_received_total_problem_number\
+                                = get_user_received_problem_info(poster_username,id)
+
     task_info = {
         'status': 'ok',
         'taskName': t.task_name,
@@ -593,19 +599,25 @@ def final_submit(request):
     request_body = json.loads(request.body)
     username = request_body["username"]
     task_id = request_body["taskId"]
+    
+    pass_insertion_test, is_punish, today_violation_number,\
+        is_upgrade, now_credit_rank = final_submit_answer(username, task_id)
 
-    # TODO 总提交逻辑
+    # 总提交的反馈，是字典
+    final_submit_feedback = {
+        'status': 'ok',
+        'passInsertionTest': pass_insertion_test,       # 是否通过穿插测试
 
-    # 提交答案的反馈，是字典
-    # test_correct_rate, pass_test = submit_current_answer(username, task_id, answer_list)
-    #
-    # submit_answer_feedback = {
-    #     'status': 'ok',
-    #     'testCorrectRate': test_correct_rate,
-    #     'passTest': pass_test,
-    # }
+        # 是否受到了降低经验的惩罚，用于提示，未通过穿插测试时才有用，因为用户存在一个每天可以违规的次数上限
+        'isPunish': is_punish,                          
 
-    return HttpResponse(json.dumps({}), content_type='application/json')
+        'todayViolationNum': today_violation_number,    # 今天已经违规多少次了，用于在未通过穿插测试时的提示
+        'perDayViolationNum': violation_number_per_day, # 每天最多可以违规多少次
+        'isUpgrade': is_upgrade,                        # 是否升级了
+        'nowCreditRank': now_credit_rank,               # 升到了几级，如果没升级这个变量是-1
+    }
+
+    return HttpResponse(json.dumps({final_submit_feedback}), content_type='application/json')
 
 
 def uck_me(request):
