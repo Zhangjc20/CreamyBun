@@ -330,7 +330,7 @@ export default {
         this.submitAnswers()
       }).catch(() => {
       });
-      //TODO:告诉后端要去上一题并初始化页面
+      //告诉后端要去上一题并初始化页面
       this.getProblemInfo('last')
     },
     async jumpQuestion(index) {

@@ -371,7 +371,7 @@ def take_star_rank(elem):
 def sorted_and_selected_tasks(username, seach_content, only_level, \
                               donut_type, over_type, new_type, \
                               hard_type, data_type, answer_type, page_number):
-    # seach_content:搜索框输入的内容，用于模糊搜索(TODO:暂时不做)
+    # （TODO:暂时不做）seach_content:搜索框输入的内容，用于模糊搜索
 
     u = get_a_user_data(username)
 
@@ -582,10 +582,17 @@ def user_receive_current_task(username,task_id):
     t.receiver_list.add(Int.objects.create(int_content=u.id))
     return True
     
-def check_answer(stanard_answer,user_answer):
+# 对答案
+def check_answer(stanard_answer,user_answer,q_type):
     is_right = True
-    if stanard_answer != user_answer:
-        is_right = False
+    if q_type == SELECT_FRAME_QUESTION:
+        # 如果框图题标答没有必须被框住的点，则恒对
+        # （TODO:暂时不做）如果是框图题且标答有必须被框住的点，这种情况暂定恒对，对答案的逻辑留待后人增加
+        if len(stanard_answer) != 0:
+            is_right = True
+    else:
+        if stanard_answer != user_answer:
+            is_right = False
     return is_right
 
 def submit_current_answer(username,task_id,answer_list):
@@ -616,7 +623,7 @@ def submit_current_answer(username,task_id,answer_list):
         # 对答案和存对错
         flag = True
         for i,q in enumerate(p.question_list.all()):
-            if not check_answer(q.standard_answer,answer_list[i]):
+            if not check_answer(q.standard_answer,answer_list[i],q.question_type):
                 flag = False
                 break
         td.received_problem_id_list.filter(problem_id=p.id).update(is_right=flag)
@@ -674,10 +681,11 @@ def final_submit_answer(username, task_id):
             if p.is_test:
                 insertion_problem_total_number += 1
                 flag = True
-                q_stdans_list = [q.standard_answer for q in p.question_list.all()]
+                q_list = [q for q in p.question_list.all()]
                 u_ans_list = [ua.str_content for ua in x.user_answer.all()]
-                for j in range(len(q_stdans_list)):
-                    if not check_answer(q_stdans_list[j],u_ans_list[j]):
+                for j in range(len(q_list)):
+                    q = q_list[j]
+                    if not check_answer(q.standard_answer,u_ans_list[j],q.question_type):
                         flag = False
                 if flag:
                     insertion_problem_correct_number += 1
