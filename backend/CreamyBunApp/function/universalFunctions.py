@@ -530,11 +530,9 @@ def user_receive_current_task(username,task_id):
     u = get_a_user_data(username)
 
     # 观察这个用户是否已经领取过该任务而没有完成
-    td_temp = u.task_info_list.filter(task_id=task_id)  
-    td_list = td_temp.filter(task_status_for_user=HAS_RECEIVED).all()
-    for td in td_list:
-        if td.task_status_for_itself == NOT_FINISHED:
-            return False
+    td = get_user_now_taskdict(u,task_id)
+    if not (td is None):
+        return False
 
     t = get_a_task_data(task_id)
     p_list = t.problem_list.all()
@@ -597,9 +595,8 @@ def submit_current_answer(username,task_id,answer_list):
     u = get_a_user_data(username)
     t = get_a_task_data(task_id)
 
-    # 获得用户正在做的任务的信息
-    td_temp = u.task_info_list.filter(task_id=task_id)  
-    td = td_temp.filter(task_status_for_user=HAS_RECEIVED).first()
+    # 获得用户正在做的任务的信息  
+    td = get_user_now_taskdict(u,task_id)
 
     # 确定当前的大题
     p = None
@@ -665,9 +662,8 @@ def final_submit_answer(username, task_id):
     u = get_a_user_data(username)
     t = get_a_task_data(task_id)
 
-    # 获得用户正在做的任务的信息
-    td_temp = u.task_info_list.filter(task_id=task_id)  
-    td = td_temp.filter(task_status_for_user=HAS_RECEIVED).first()
+    # 获得用户正在做的任务的信息 
+    td = get_user_now_taskdict(u,task_id)
 
     # 测穿插测试的准确率（对比标准答案和用户答案）
     insertion_problem_correct_number = 0
@@ -714,9 +710,11 @@ def final_submit_answer(username, task_id):
                 p.current_state = FINISHED
                 p.save()
     
-    # 推进任务进度（增加任务中已完成的大题数）
+    # 推进任务进度（增加任务中已完成的大题数），更新任务完成状态（如果可能的话）
     t.finished_problem_number += common_problem_number
     t.save()
+    td.task_status_for_itself = HAS_FINISHED
+    td.save()
 
     # 最后一个变量是用户每天可违规的次数，也是在未通过穿插测试时才有用，用于警告
     return pass_insertion_test, is_punish, today_violation_number, is_upgrade, now_credit_rank

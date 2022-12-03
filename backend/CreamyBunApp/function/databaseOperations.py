@@ -108,14 +108,20 @@ def add_donut_for_user(u:User,donut_add_number):
     u.donut_number += donut_add_number
     u.save()
 
+# 获得用户当前正在做的任务信息
+def get_user_now_taskdict(u:User,task_id):
+    td_temp = u.task_info_list.filter(task_id=task_id)  
+    td_temp2 = td_temp.filter(task_status_for_user=HAS_RECEIVED)
+    td = td_temp2.filter(ask_status_for_itself=NOT_FINISHED).first()
+    return td
+
 # 将用户领取的某任务的题目打回
 def remove_task_from_user(username,task_id):
     u = get_a_user_data(username)
     t = get_a_task_data(task_id)
 
     # 获得用户正在做的任务的信息
-    td_temp = u.task_info_list.filter(task_id=task_id)  
-    td = td_temp.filter(task_status_for_user=HAS_RECEIVED).first()
+    td = get_user_now_taskdict(u,task_id)
 
     for x in td.received_problem_id_list.all():
         p = t.problem_list.filter(id=x.problem_id).first()
@@ -373,15 +379,8 @@ def get_current_problem(username, task_id, type, jmp_target):
 
     current_total_problem_number = -1
 
-    # 用户正在做的任务的信息
-    td_temp = u.task_info_list.filter(task_id=task_id)  
-    td_list = td_temp.filter(task_status_for_user=HAS_RECEIVED).all()
-
-    # 找到领取的且第一个未完成的任务
-    td = None
-    for tdd in td_list:
-        if tdd.task_status_for_itself == NOT_FINISHED:
-            td = tdd
+    # 用户正在做的任务的信息 
+    td = get_user_now_taskdict(u,task_id)
 
     # 下一题
     if type == 'next':
