@@ -112,7 +112,7 @@ def add_donut_for_user(u:User,donut_add_number):
 def get_user_now_taskdict(u:User,task_id):
     td_temp = u.task_info_list.filter(task_id=task_id)  
     td_temp2 = td_temp.filter(task_status_for_user=HAS_RECEIVED)
-    td = td_temp2.filter(ask_status_for_itself=NOT_FINISHED).first()
+    td = td_temp2.filter(task_status_for_itself=NOT_FINISHED).first()
     return td
 
 # 将用户领取的某任务的题目打回
