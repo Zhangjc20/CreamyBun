@@ -64,4 +64,5 @@ urlpatterns = [
     path('get_avatar/',views.get_avatar),
     path('receive_task/',views.receive_task),
     path('submit_answer/',views.submit_answer),
+    path('get_donut_list/',views.get_donut_list),
 ]
