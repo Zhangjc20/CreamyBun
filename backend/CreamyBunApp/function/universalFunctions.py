@@ -44,7 +44,7 @@ def send_email(email):
 
     # 发送邮件：
     # send_mail的参数分别是  邮件标题，邮件内容，发件箱(settings.py中设置过的那个)，收件箱列表(可以发送给多个人),失败静默(若发送失败，报错提示我们)
-    message = "您的验证码是" + varify_code + "，10分钟内有效，请尽快填写"
+    message = "您的验证码是" + varify_code + "，请尽快填写"
     emailBox = []
     emailBox.append(email)
     send_mail('奶黄包数据标注平台邮箱验证码', message, '1596741408@qq.com', emailBox, fail_silently=False)
@@ -371,7 +371,7 @@ def take_star_rank(elem):
 def sorted_and_selected_tasks(username, seach_content, only_level, \
                               donut_type, over_type, new_type, \
                               hard_type, data_type, answer_type, page_number):
-    # seach_content:搜索框输入的内容，用于模糊搜索(TODO:暂时不做)
+    # （TODO:暂时不做）seach_content:搜索框输入的内容，用于模糊搜索
 
     u = get_a_user_data(username)
 
@@ -528,6 +528,12 @@ def create_a_reported_image(image,path):
 # 领取任务
 def user_receive_current_task(username,task_id):
     u = get_a_user_data(username)
+
+    # 观察这个用户是否已经领取过该任务而没有完成
+    td = get_user_now_taskdict(u,task_id)
+    if not (td is None):
+        return False
+
     t = get_a_task_data(task_id)
     p_list = t.problem_list.all()
 
@@ -569,24 +575,25 @@ def user_receive_current_task(username,task_id):
         p_id = UserProblemInfo.objects.create(problem_id=p.id)
         td.received_problem_id_list.add(p_id)
 
+    # 给用户添加领取的任务
     u.task_info_list.add(td)
 
-def remove_task_from_user(username,task_id):
-    u = get_a_user_data(username)
-    t = get_a_task_data(task_id)
-
-    # 获得用户正在做的任务的信息
-    td_temp = u.task_info_list.filter(task_id=task_id)  
-    td = td_temp.filter(task_status_for_user=HAS_RECEIVED).first()
-
-    for x in td.received_problem_id_list.all():
-        p = t.problem_list.filter(id=x.problem_id).first()
-        p.current_state = NOT_RECEIVED
-        p.save()
-        td.received_problem_id_list.remove(x)
-    td.save()
-    u.task_info_list.remove(td)
+    # 给任务添加领取者
+    t.receiver_list.add(Int.objects.create(int_content=u.id))
+    return True
     
+# 对答案
+def check_answer(stanard_answer,user_answer,q_type):
+    is_right = True
+    if q_type == SELECT_FRAME_QUESTION:
+        # 如果框图题标答没有必须被框住的点，则恒对
+        # （TODO:暂时不做）如果是框图题且标答有必须被框住的点，这种情况暂定恒对，对答案的逻辑留待后人增加
+        if len(stanard_answer) != 0:
+            is_right = True
+    else:
+        if stanard_answer != user_answer:
+            is_right = False
+    return is_right
 
 def submit_current_answer(username,task_id,answer_list):
     pass_test = -1
@@ -595,9 +602,8 @@ def submit_current_answer(username,task_id,answer_list):
     u = get_a_user_data(username)
     t = get_a_task_data(task_id)
 
-    # 获得用户正在做的任务的信息
-    td_temp = u.task_info_list.filter(task_id=task_id)  
-    td = td_temp.filter(task_status_for_user=HAS_RECEIVED).first()
+    # 获得用户正在做的任务的信息  
+    td = get_user_now_taskdict(u,task_id)
 
     # 确定当前的大题
     p = None
@@ -611,13 +617,13 @@ def submit_current_answer(username,task_id,answer_list):
             x.is_right = True
             x.save()
     
-    # 正在进行测试
+    # 正在进行资质测试
     if td.current_problem_index < td.test_problem_number:
             
         # 对答案和存对错
         flag = True
         for i,q in enumerate(p.question_list.all()):
-            if q.standard_answer != answer_list[i]:
+            if not check_answer(q.standard_answer,answer_list[i],q.question_type):
                 flag = False
                 break
         td.received_problem_id_list.filter(problem_id=p.id).update(is_right=flag)
@@ -641,3 +647,82 @@ def submit_current_answer(username,task_id,answer_list):
                 remove_task_from_user(username,task_id)
 
     return test_correct_rate, pass_test
+
+# 总提交接口，暂定做以下事情（可补充）：
+# 测穿插测试的准确率（对比标准答案和用户答案）
+# 决定是否将领取的题目打回和惩罚用户
+# 发奖励，加经验
+# 写入所有用户作答的答案
+# 更新任务中相应大题的完成状态
+# 推进任务进度（增加任务中已完成的大题数）
+def final_submit_answer(username, task_id):
+    pass_insertion_test = True
+
+    # 是否进行了惩罚，只有未通过穿插测试才有用，用户一天可以违规violation_number_per_day次
+    is_punish = False
+
+    is_upgrade = False # 是否升级，用于提示
+    now_credit_rank = -1 # 升到几级了，如果是-1表示没升级
+
+    today_violation_number = -1 # 当天已违规次数，用于提示，也是在未通过穿插测试时才会有用
+
+    u = get_a_user_data(username)
+    t = get_a_task_data(task_id)
+
+    # 获得用户正在做的任务的信息 
+    td = get_user_now_taskdict(u,task_id)
+
+    # 测穿插测试的准确率（对比标准答案和用户答案）
+    insertion_problem_correct_number = 0
+    insertion_problem_total_number = 0
+    for i,x in enumerate(td.received_problem_id_list.all()):
+        if i >= td.test_problem_number:
+            p = get_a_problem_data(x.problem_id)
+            if p.is_test:
+                insertion_problem_total_number += 1
+                flag = True
+                q_list = [q for q in p.question_list.all()]
+                u_ans_list = [ua.str_content for ua in x.user_answer.all()]
+                for j in range(len(q_list)):
+                    q = q_list[j]
+                    if not check_answer(q.standard_answer,u_ans_list[j],q.question_type):
+                        flag = False
+                if flag:
+                    insertion_problem_correct_number += 1
+    
+    # 可能没有穿插测试也
+    if insertion_problem_total_number == 0:
+        insertion_test_correct_rate = 1.00
+    else:
+        insertion_test_correct_rate = insertion_problem_correct_number/insertion_problem_total_number
+
+    # 决定是否将领取的题目打回和惩罚用户
+    if insertion_test_correct_rate < TEST_PASS_RATE:
+        pass_insertion_test = False
+        remove_task_from_user(username,task_id)
+        is_punish, today_violation_number = punish_user_by_rank(u)
+        return pass_insertion_test, is_punish, today_violation_number, is_upgrade, now_credit_rank
+
+    # 给对应用户发奖励，加经验
+    common_problem_number = len(td.received_problem_id_list.all()) - td.test_problem_number - insertion_problem_total_number
+    is_upgrade, now_credit_rank = reward_user(u,t,common_problem_number)
+
+    # 写入用户作答的所有答案，更新任务中对应大题的完成状态
+    for i,x in enumerate(td.received_problem_id_list.all()):
+        if i >= td.test_problem_number:
+            p = get_a_problem_data(x.problem_id)
+            if not p.is_test:
+                u_ans_list = [ua.str_content for ua in x.user_answer.all()]
+                for j,q in enumerate(p.question_list.all()):
+                    write_answer(q,u_ans_list[j])
+                p.current_state = FINISHED
+                p.save()
+    
+    # 推进任务进度（增加任务中已完成的大题数），更新任务完成状态（如果可能的话）
+    t.finished_problem_number += common_problem_number
+    t.save()
+    td.task_status_for_itself = HAS_FINISHED
+    td.save()
+
+    # 最后一个变量是用户每天可违规的次数，也是在未通过穿插测试时才有用，用于警告
+    return pass_insertion_test, is_punish, today_violation_number, is_upgrade, now_credit_rank

@@ -74,11 +74,87 @@ def get_reported_task_list(page_number):
             init_list.append({'isSpace':True,'index': length + i})
     return total_number, init_list
 
+# 获得某任务的已领取题目数量
+def get_task_received_number(t:Task):
+    has_received_problem_number = len(t.receiver_list.all())*t.problem_number_for_single_receiver
+    if has_received_problem_number > t.problem_total_number:
+        has_received_problem_number = t.problem_total_number
+    return has_received_problem_number
+
+# 通过id获取某任务的领取进度，百分比数字
+def get_task_receive_process_by_id(id):
+    t = get_a_task_data(id)
+    has_received_problem_number = get_task_received_number(t)
+    receive_process = round(has_received_problem_number/t.problem_total_number,4)*100
+    return receive_process
+
+# TODO:获取用户领了多少题目，当前做到第几题
+def get_user_received_problem_info(username,task_id):
+    user_current_problem_index = -1
+    user_received_total_problem_number = -1
+    u = get_a_user_data(username)
+
+    # 对指定任务的所有领取情况
+    td_received_list = u.task_info_list.filter(task_id=task_id).filter(task_status_for_user=HAS_RECEIVED)
+    
+    return user_current_problem_index, user_received_total_problem_number
 
 # 从用户列表中删除指定用户
 def delete_a_user(username):
     User.objects.filter(username=username).delete()
 
+# 用户增加甜甜圈
+def add_donut_for_user(u:User,donut_add_number):
+    u.donut_number += donut_add_number
+    u.save()
+
+# 获得用户当前正在做的任务信息
+def get_user_now_taskdict(u:User,task_id):
+    td_temp = u.task_info_list.filter(task_id=task_id)  
+    td_temp2 = td_temp.filter(task_status_for_user=HAS_RECEIVED)
+    td = td_temp2.filter(ask_status_for_itself=NOT_FINISHED).first()
+    return td
+
+# 将用户领取的某任务的题目打回
+def remove_task_from_user(username,task_id):
+    u = get_a_user_data(username)
+    t = get_a_task_data(task_id)
+
+    # 获得用户正在做的任务的信息
+    td = get_user_now_taskdict(u,task_id)
+
+    for x in td.received_problem_id_list.all():
+        p = t.problem_list.filter(id=x.problem_id).first()
+        p.current_state = NOT_RECEIVED
+        p.save()
+        td.received_problem_id_list.remove(x)
+    td.save()
+
+    # 用户删除领取的任务
+    u.task_info_list.remove(td)
+
+    # 任务删除其领取者
+    u_id = t.receiver_list.filter(int_content=u.id).first()
+    t.receiver_list.remove(u_id)
+
+# 在用户穿插测试没通过的时候惩罚用户
+def punish_user_by_rank(u:User):
+    # flag表示是否进行了惩罚，因为一天内违规violation_number_per_day次才会惩罚
+    flag, today_violation_number = u.punish_for_insertion_test()
+    return flag, today_violation_number
+
+# 做完任务时奖励用户
+def reward_user(u:User,t:Task,common_problem_number):
+    # 加经验
+    is_upgrade, now_credit_rank =  u.add_exp_and_upgrade(exp_by_task_rank[t.star_rank])
+    # 加甜甜圈代币
+    add_donut_for_user(u,donut_from_a_problem_by_task_rank[t.star_rank]*common_problem_number)
+    return is_upgrade, now_credit_rank
+    
+# 向某个小题写入答案
+def write_answer(q:Question,user_ans):
+    q.answer = user_ans
+    q.save()
 
 # 获取指定用户的数据
 # 返回的对象可以通过.获取成员变量
@@ -90,6 +166,9 @@ def get_a_user_data(username):
 def get_a_user_data_by_id(id):
     return User.objects.filter(id=id).first()
 
+# 获取指定大题
+def get_a_problem_data(id):
+    return Problem.objects.filter(id=id).first()
 
 # 获取指定任务的数据
 def get_a_task_data(id):
@@ -300,9 +379,8 @@ def get_current_problem(username, task_id, type, jmp_target):
 
     current_total_problem_number = -1
 
-    # 用户正在做的任务的信息
-    td_temp = u.task_info_list.filter(task_id=task_id)  
-    td = td_temp.filter(task_status_for_user=HAS_RECEIVED).first()
+    # 用户正在做的任务的信息 
+    td = get_user_now_taskdict(u,task_id)
 
     # 下一题
     if type == 'next':

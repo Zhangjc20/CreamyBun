@@ -336,8 +336,6 @@ export default {
         this.getProblemInfo('last')
       }).catch(() => {
       });
-      //TODO:告诉后端要去上一题并初始化页面
-      
     },
     async jumpQuestion(index) {
       console.log("async jumpQuestion(index)",index)

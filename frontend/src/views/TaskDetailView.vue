@@ -139,6 +139,15 @@
             >
               结束时间：{{ endTime }}
             </div>
+                  <div class="progress-title" style="padding-top:10px;">
+                    <span style="text-align: center;font-size:20px;">任务进度：</span>
+                  </div>
+                  <div class="progress-bar">
+                      <div style="padding-top:10px;">
+                        <span style="text-align: center;font-size:20px;">{{ratio}}%</span>
+                      </div>
+                      <el-progress class="level-progress" :text-inside="true" :stroke-width="25" :percentage=ratio color="#fbe484" status="warning"/>
+                  </div>
           </el-col>
         </el-row>
         <el-row style="margin-top: 0px">
@@ -376,16 +385,21 @@ export default {
         })
         .then((res) => {
           if (res.data["status"] == "ok") {
-            this.$router.push({
-              name: "perform",
-              query: {
-                username: this.username,
-                taskId: this.id, //任务id
-                imageSrc: this.imageSrc,
-                taskName: this.taskName,
-                materialType: this.materialType,
-              },
-            });
+            if(res.data["type"] == "success"){
+              this.$router.push({
+                name: "perform",
+                query: {
+                  username: this.username,
+                  taskId: this.id, //任务id
+                  imageSrc: this.imageSrc,
+                  taskName: this.taskName,
+                  materialType: this.materialType,
+                },
+              });
+            }
+            else{
+              alert("您已领取该任务！");  
+            }
           }
         });
     },
@@ -399,15 +413,20 @@ export default {
         })
         .then((res) => {
           if (res.data["status"] == "ok") {
-            this.$router.push({
-              //跳转到个人中心领取列表
-              name: "mine",
-              query: {
-                username: this.username,
-                imageSrc: this.imageSrc,
-                defaultActive: "2",
-              },
-            });
+            if(res.data["type"] == "success"){
+              this.$router.push({
+                //跳转到个人中心领取列表
+                name: "mine",
+                query: {
+                  username: this.username,
+                  imageSrc: this.imageSrc,
+                  defaultActive: "2",
+                },
+              });
+            }
+            else{
+              alert("您已领取该任务！");  
+            }
           }
         });
     },
@@ -596,7 +615,8 @@ export default {
   height: 40px;
 }
 .level-progress {
-  width: 300px;
+  position:relative;
+  width: 80%;
   margin: 8px 10px 8px 10px;
 }
 :deep .el-progress-bar__outer {
