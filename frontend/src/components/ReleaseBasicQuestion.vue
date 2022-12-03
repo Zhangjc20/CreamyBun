@@ -340,6 +340,11 @@ export default {
           message: '您尚未设置填空最大字数！',
           type: 'warning'
         })
+      }else if(this.maxOptionNum < this.minOptionNum){
+        this.$message({
+          message: '您的最大量小于最小量！',
+          type: 'warning'
+        })
       }else if(this.targetIndex =='' && this.questionType == 3){
         this.$message({
           message: '您尚未设置框图指向！',

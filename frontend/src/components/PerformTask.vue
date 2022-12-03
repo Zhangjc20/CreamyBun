@@ -6,6 +6,7 @@
       <el-breadcrumb-item>{{ materialType }}</el-breadcrumb-item>
       <el-breadcrumb-item v-if="isTest"><span
           style="color:red;font-size=30px;font-weight: bold;">资质测试</span></el-breadcrumb-item>
+      <el-breadcrumb-item>题目：{{ currentIndex + 1 }}</el-breadcrumb-item>
     </el-breadcrumb>
     <span class="header-title">
       {{ taskName }}
@@ -101,7 +102,7 @@
   </el-dialog>
 
   <el-dialog v-model="jumpDialogVisible" title="设置跳转位置" width="22%" style="display: flex;flex-wrap: wrap;">
-    <el-button style="width: 40px;height: 40px;margin: 5px;" :type="getListButtonType(state['state'])" plain
+    <el-button style="width: 40px;height: 40px;margin: 5px;" :type="getListButtonType(state['state'],state['index'])" plain
       v-for="state in stateList" :key="state" @click="jumpQuestion(state['index'])">{{ state['index'] }}</el-button>
     <span class="dialog-footer">
       <el-row style="height: 50px;margin-top: 20px;">
@@ -266,8 +267,12 @@ export default {
         this.getProblemInfo('next')
       }
     },
-    getListButtonType(input) {
-      return input ? 'success' : 'jb'
+    getListButtonType(input,index) {
+      var output = input ? 'success' : 'amy'
+      if(index - 1 == this.currentIndex){
+        output = 'primary'
+      }
+      return output
     },
     getProblemInfo(type, jmpTarget = -1) {
       // dom元素更新后执行，因此这里能正确打印更改之后的值
@@ -328,10 +333,11 @@ export default {
         type: 'warning'
       }).then(() => {
         this.submitAnswers()
+        this.getProblemInfo('last')
       }).catch(() => {
       });
       //TODO:告诉后端要去上一题并初始化页面
-      this.getProblemInfo('last')
+      
     },
     async jumpQuestion(index) {
       console.log("async jumpQuestion(index)",index)
@@ -346,7 +352,7 @@ export default {
       this.getProblemInfo('jump', index)
       this.jumpDialogVisible = false
     },
-    submitAnswers() {
+    async submitAnswers() {
       console.log("this.ansList", this.ansList)
       var submitAnsList = JSON.parse(JSON.stringify(this.ansList));
       for (var i = 0; i < this.questionList.length; i++) {
@@ -409,9 +415,7 @@ export default {
           console.log("tempString", tempString)
           console.log("tempString.length", tempString.length)
           for (var j = 0; j < tempString.length; j++) {
-            console.log("submitAnsList[j]", tempString[j])
             if (tempString[j] == '(') {
-              console.log("submitAnsList[j]", tempString[j])
               blankNumber++
             }
           }
