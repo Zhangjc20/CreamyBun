@@ -8,7 +8,7 @@
           style="color:red;font-size=30px;font-weight: bold;">资质测试</span></el-breadcrumb-item>
       <el-breadcrumb-item>题目：{{ currentIndex + 1 }}</el-breadcrumb-item>
     </el-breadcrumb>
-    <span class="header-title">
+    <span style="float: left;font-size: 25px;font-weight: bold;">
       {{ taskName }}
     </span>
     <CustomButton @click="previousQuestion" isRound="true"
@@ -167,7 +167,7 @@
       </el-row>
       <span class="dialog-footer">
         <el-row style="height: 50px;margin-top: 20px;">
-          <CustomButton @click="finalSubmit(); finalSubmitDialogVisible = false" style="margin:auto;"
+          <CustomButton @click="finalSubmitDialogVisible = false;finalSubmit()" style="margin:auto;"
             isRound="true" title="提交任务" />
           <CustomButton @click="finalSubmitDialogVisible = false" style="margin:auto;"
             isRound="true" title="暂不提交" />
@@ -179,6 +179,76 @@
             <CustomButton @click="finalSubmitDialogVisible = false" style="margin-left:120px;" isRound="true"
               title="暂不提交" />
           </el-col> -->
+        </el-row>
+      </span>
+    </el-main>
+  </el-dialog>
+
+  <el-dialog v-model="submitOutcomeDialogVisible" @close="closeSubmitOutcomeDialog" width="40%"
+    style="display: flex;flex-wrap: wrap;">
+    <el-main v-if="!passInsertionTest">
+      <el-row style="margin-bottom: 20px;">
+        <span style="font-weight: bold;font-size: 40px;">
+          任务结算
+        </span>
+      </el-row>
+      <el-row style="margin-bottom: 20px;">
+        <span style="font-weight: bold;font-size: 20px;">
+          很抱歉，由于您本次答题状态不佳，
+        </span>
+      </el-row>
+      <el-row>
+        <span>
+          今天已经违规：
+        </span>
+        <span style="font-weight: bold;font-size: 15px;color: red;">
+          {{ todayViolationNum }}
+        </span>
+        <span>
+          次，最多可以违规：
+        </span>
+        <span style="font-weight: bold;font-size: 15px;color: red;">
+          {{ perDayViolationNum }}
+        </span>
+        <span>
+          次。
+        </span>
+      </el-row>
+      <el-row v-if="isPunish">
+        <span style="font-weight: bold;font-size: 15px;color: red;">
+          您由于今日违规次数过多，将损失部分经验！
+        </span>
+      </el-row>
+      <span class="dialog-footer">
+        <el-row style="height: 50px;margin-top: 20px;">
+          <CustomButton @click="submitOutcomeDialogVisible = false; closeSubmitOutcomeDialog()" style="margin-left:20px;"
+            isRound="true" title="退出任务" />
+        </el-row>
+      </span>
+    </el-main>
+    <el-main v-else>
+      <el-row style="margin-bottom: 20px;">
+        <span style="font-weight: bold;font-size: 40px;">
+          任务结算
+        </span>
+      </el-row>
+      <el-row style="margin-bottom: 20px;">
+        <span style="font-weight: bold;color: red;font-size: 20px;">
+          恭喜您顺利完成本次任务！
+        </span>
+      </el-row>
+      <el-row v-if="isUpgrade">
+        <span>
+          同时恭喜您的等级提升！您当前的等级为
+        </span>
+        <span style="font-weight: bold;font-size: 15px;color: red;">
+          {{ nowCreditRank }}
+        </span>
+      </el-row>
+      <span class="dialog-footer">
+        <el-row style="height: 50px;margin-top: 20px;">
+          <CustomButton @click="submitOutcomeDialogVisible = false; closeSubmitOutcomeDialog()" style="margin-left:20px;"
+            isRound="true" title="退出任务" />
         </el-row>
       </span>
     </el-main>
@@ -227,7 +297,15 @@ export default {
       passTest: false,
       testResultDialogVisible: false,
       finalSubmitDialogVisible: false,
-      percentage: '114.514%'
+      submitOutcomeDialogVisible: false,
+      percentage: '114.514%',
+      //提交之后的临时量
+      passInsertionTest:false,
+      isPunish:false,
+      todayViolationNum:-1,
+      perDayViolationNum:-1,
+      isUpgrade:false,
+      nowCreditRank:-2,
     }
   },
   mounted() {
@@ -247,8 +325,18 @@ export default {
           message: '提交成功!'
         });
         console.log(res)
-        
+        this.passInsertionTest = res.data['passInsertionTest']
+        this.isPunish = res.data['isPunish']
+        this.todayViolationNum = res.data['todayViolationNum']
+        this.perDayViolationNum = res.data['perDayViolationNum']
+        this.isUpgrade = res.data['isUpgrade']
+        this.nowCreditRank = res.data['nowCreditRank']
+        this.submitOutcomeDialogVisible = true;
       }).catch(error => {
+        this.$message({
+          type: 'error',
+          message: '提交失败!'
+        });
         console.log(error)
       })
     },
@@ -266,6 +354,17 @@ export default {
       }else{
         this.getProblemInfo('next')
       }
+    },
+    closeSubmitOutcomeDialog() {
+      this.$router.push({
+          //跳转到个人中心领取列表
+        name: "mine",
+        query: {
+          username: this.username,
+          imageSrc: this.imageSrc,
+          defaultActive: "2",
+        },
+      });
     },
     getListButtonType(input,index) {
       var output = input ? 'success' : 'amy'
@@ -293,6 +392,8 @@ export default {
         this.stateList = res.data['problemStateList'];
         this.isTest = res.data['isTest'];
         this.currentIndex = res.data['currentIndex'] - 1;//计算机地址
+        console.log("TOODOO")
+        this.ansList = [];
         for (var i = 0; i < this.questionList.length; i++) {
           this.lastSelectedList.push(undefined)
           var tempQuestion = this.questionList[i]
@@ -332,7 +433,9 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.submitAnswers()
+        if(!this.submitAnswers()){
+          return
+        }
         this.getProblemInfo('last')
       }).catch(() => {
       });
@@ -344,7 +447,9 @@ export default {
         cancelButtonText: '否',
         type: 'warning'
       }).then(() => {
-        this.submitAnswers()
+        if(!this.submitAnswers()){
+          return
+        }
       }).catch(() => {
       });
       this.getProblemInfo('jump', index)
@@ -359,7 +464,7 @@ export default {
             message: '您尚未填写第' + (i + 1).toString() + '题！',
             type: 'error'
           })
-          return
+          return false
         }
         if (this.questionList[i]['questionType'] == 0
           || this.questionList[i]['questionType'] == 1) {//如果题目是选择题先转换形式
@@ -382,14 +487,14 @@ export default {
               message: '您的第' + (i + 1).toString() + '题选项过多！',
               type: 'error'
             })
-            return
+            return false
           }
           else if (submitAnsList[i].length < this.questionList[i]['minOptionNum']) {
             this.$message({
               message: '您的第' + (i + 1).toString() + '题选项过少！',
               type: 'error'
             })
-            return
+            return false
           }
         } else if (this.questionList[i]['questionType'] == 2) {//如果题目是填空题
           if (submitAnsList[i].length > this.questionList[i]['maxOptionNum']) {
@@ -397,14 +502,14 @@ export default {
               message: '您的第' + (i + 1).toString() + '题字数过多！',
               type: 'error'
             })
-            return
+            return false
           }
           else if (submitAnsList[i].length < this.questionList[i]['minOptionNum']) {
             this.$message({
               message: '您的第' + (i + 1).toString() + '题字数过少！',
               type: 'error'
             })
-            return
+            return false
           }
         } else if (this.questionList[i]['questionType'] == 3) {//如果题目是框图题
           var blankNumber = 0
@@ -427,14 +532,14 @@ export default {
               message: '您的第' + (i + 1).toString() + '题图框过多！',
               type: 'error'
             })
-            return
+            return false
           }
           else if (blankNumber < tempDict['minOptionNum']) {
             this.$message({
               message: '您的第' + (i + 1).toString() + '题图框过少！',
               type: 'error'
             })
-            return
+            return false
           }
         }
       }
@@ -448,6 +553,7 @@ export default {
           break
         }
       }
+      console.log("提交前检查：",submitAnsList)
       axios.post("http://localhost:8000/submit_answer/", {
         username: this.username,
         taskId: this.taskId,
@@ -481,9 +587,9 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.submitAnswers()
-
-
+        if(!this.submitAnswers()){
+          return
+        }
       }).catch(() => {
       });
       this.$router.push({
@@ -511,31 +617,7 @@ export default {
         ans += temp
       }
       this.ansList[this.currentQuestionIndex] = ans
-      console.log("this.ansList[this.currentQuestionIndex]", this.ansList[this.currentQuestionIndex])
     },
-    // rowClick(row,minOptionNum,maxOptionNum,dom) {
-    //   // 单击行，设置选中
-    //   console.log(":::::::::",row,minOptionNum,maxOptionNum,dom)
-    //   const check = this.checkTableList.find((v) => {return v.id == row.id})
-    //   if (!check && this.checkTableList.length >= maxOptionNum) {
-    //     this.$message.warning(`最多只能选minOptionNum条！`)
-    //     return
-    //   }
-    //   if (check && this.checkTableList.length <= minOptionNum) {
-    //     this.$message.warning(`最少需要选minOptionNum条！`)
-    //     return
-    //   }
-    //   dom.toggleRowSelection(row)
-    // },
-    // checkboxInit(row) {
-    //   // 设置checkbox，选中状态，是否可选
-    //   const check = this.checkTableList.find((v) => {return v.id == row.id})
-    //   if (!check && this.checkTableList.length == this.checkNumber) {
-    //     return 0
-    //   } else {
-    //     return 1
-    //   }
-    // }
     getDeletedRow(selection, questionIndex) {
       var judgeList = JSON.parse(JSON.stringify(this.ansList[questionIndex]))
       // console.log("judgeListjudgeListjudgeList",judgeList)
@@ -561,12 +643,7 @@ export default {
     },
     handleSelectionChange(selection, minOptionNum, maxOptionNum, index) { // section 被选中状态修改后触发事件，根据被选择的数量控制是否还可被选中
 
-      // console.log("selection", selection)
-      // console.log("this.ansList[index]", this.ansList[index])
-      // 如果是单选
-      // if(minOptionNum == 1 && maxOptionNum == 1){
 
-      // }else{
       if (selection.length > maxOptionNum) {
         // 如果这个题是单选
         if (minOptionNum == 1 && maxOptionNum == 1) {
@@ -598,35 +675,9 @@ export default {
         tempRow['selected'] = 0
       }
       for (var tempRow of selection) {
-        // this.ansList[i].push({
-        //   index: tempQuestion['optionList'][j]['index'],
-        //   name: tempQuestion['optionList'][j]['name'],
-        //   selected:0
-        // })
-        // console.log("tempRow",tempRow)
-        // console.log("tempRow['index']",tempRow['index'])
-        // console.log("this.ansList[index][tempRow['index']]",this.ansList[index][tempRow['index']])
         this.ansList[index][tempRow['index']]['selected'] = 1
       }
       this.lastSelectedList[index] = selection
-      //  else if (selection.length <= minOptionNum) {
-      //   this.$message.warning(`最少只能选${minOptionNum}条！`);
-      //   for (let j of this.popTableData) {
-      //     j.status = 0;
-      //     for (let i of selection) {
-      //      if (i.id == j.id) {
-      //       j.status = 1;
-      //      }
-      //     }
-      //   }
-      //   return
-      //  } 
-      // else {
-      // for (let i in this.popTableData) {
-      //   this.popTableData[i].status = 1;
-      // }
-      // }
-      // }
 
     }
   }

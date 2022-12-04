@@ -99,9 +99,6 @@ export default {
         console.log("this.image.src", this.image.src)
       } else if (this.type == 1) {
         this.docContent = res.data["materialContent"]
-        console.log("docContent", this.docContent)
-      } else if (this.type == 2) {
-        this.getVideoStream()
       }
 
     }).catch();
