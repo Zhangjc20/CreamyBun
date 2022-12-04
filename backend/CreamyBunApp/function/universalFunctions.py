@@ -532,9 +532,14 @@ def user_receive_current_task(username,task_id):
     # 观察这个用户是否已经领取过该任务而没有完成
     td = get_user_now_taskdict(u,task_id)
     if not (td is None):
-        return False
+        return False, 'hasReceived'
 
     t = get_a_task_data(task_id)
+
+    # 观察这个用户的星级是否达标
+    if u.credit_rank < t.star_rank:
+        return False, 'lowRank'
+
     p_list = t.problem_list.all()
 
     # 确定测试题列表（包括资质检测和穿插题目）
@@ -580,7 +585,7 @@ def user_receive_current_task(username,task_id):
 
     # 给任务添加领取者
     t.receiver_list.add(Int.objects.create(int_content=u.id))
-    return True
+    return True, 'ok'
     
 # 对答案
 def check_answer(stanard_answer,user_answer,q_type):
@@ -612,10 +617,17 @@ def submit_current_answer(username,task_id,answer_list):
             p = t.problem_list.filter(id=x.problem_id).first()
 
             # 存答案
-            for ans in answer_list:
-                x.user_answer.add(Str.objects.create(str_content=ans))
-            x.is_right = True
-            x.save()
+            if len(x.user_answer.all()) == 0: # 如果这是第一次做
+                for ans in answer_list:
+                    x.user_answer.add(Str.objects.create(str_content=ans))
+                x.is_right = True
+                x.save()
+            else: # 如果原来已经做过了，那么是覆盖原来的答案
+                for i,xans in enumerate(x.user_answer.all()):
+                    xans.str_content = answer_list[i]
+                x.is_right = True
+                x.save()
+            break
     
     # 正在进行资质测试
     if td.current_problem_index < td.test_problem_number:

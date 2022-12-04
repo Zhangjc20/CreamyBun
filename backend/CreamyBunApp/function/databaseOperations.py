@@ -376,16 +376,9 @@ def create_task(request_body):
     t.problem_number_for_single_receiver = math.ceil(1.00 * t.problem_total_number / receiver_number)
     t.save()
 
-    # task的problem列表随机排个序
-    # random_list = list(range(len(problem_list)))
-    # random.shuffle(random_list)
-    # for i,p in enumerate(problem_list):
-    #     p.index = random_list[i] + 1
-    #     p.save()
-    
-    # 返回刚刚创建的任务的id和发布状态给用户
-    return basic_info_form['poster'], t.id, t.release_mode
-
+    # 返回刚刚创建的任务的id和发布状态等信息给用户
+    return basic_info_form['poster'], t.id, t.release_mode,\
+           t.problem_total_number*donut_from_a_problem_by_task_rank[t.star_rank-1]
 
 # 为用户增加一个任务，包括状态（已领取/已发布和发布模式/完成状态）
 def add_task_to_user(username, task_id, state_for_user, state_for_task):

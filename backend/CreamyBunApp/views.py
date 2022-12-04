@@ -561,15 +561,17 @@ def release_task(request):
 
     if request_type == 'application/json':
         request_body = json.loads(request.body)
-        username, t_id, t_release_mode = create_task(request_body)
+        username, t_id, t_release_mode, sub_donut_number = create_task(request_body)
 
         # 给相应用户加上任务和状态
-
         if t_release_mode == NOT_YET_RELEASE or t_release_mode == TIMED_RELEASE:
             state_for_task = NOT_RELEASE
         else:
             state_for_task = RELEASE_BUT_NOT_FINISHED
         add_task_to_user(username, t_id, HAS_POSTED, state_for_task)
+
+        # 扣钱
+        sub_donut_for_user(get_a_user_data(username),sub_donut_number)
 
         return HttpResponse(json.dumps({'status': 'done'}), content_type='application/json')
     else:
@@ -867,12 +869,14 @@ def receive_task(request):
     username = query_dict.get("username", "")
     task_id = query_dict.get("taskId", "")
 
-    # 领取任务有可能因为原来已经领取过但是没做完而失败 
-    flag = user_receive_current_task(username, task_id)
+    # 领取任务有可能因为原来已经领取过但是没做完或者用户星级不达标而失败 
+    flag, fail_type = user_receive_current_task(username, task_id)
     if flag:
         return HttpResponse(json.dumps({'status': 'ok', 'type': 'success'}), content_type='application/json')
     else:
-        return HttpResponse(json.dumps({'status': 'ok', 'type': 'fail'}), content_type='application/json')
+
+        # failType有'hasReceived'或者'lowRank'
+        return HttpResponse(json.dumps({'status': 'ok', 'type': 'fail', 'failType':fail_type}), content_type='application/json')
 
 @csrf_exempt
 def download_task_answer(request):
