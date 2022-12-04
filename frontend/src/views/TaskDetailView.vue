@@ -452,8 +452,10 @@ export default {
       })
       .then((res)=>{
         if(res.data['status']==='ok'){
-          this.imageSrc = "data:image/png;base64,"+res.data['avatar'];
-          localStorage.setItem('avatar',this.imageSrc);
+          if(res.data['avatar']){
+              this.image.src = "data:image/png;base64," + res.data["avatar"];
+              localStorage.setItem("avatar", this.image.src);
+            }
         }
       })
     }
