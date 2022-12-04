@@ -167,7 +167,7 @@
           prop=""
           label="删除"
           width="">
-          <span class="iconfont icon-menu"></span>
+          <el-icon><DeleteFilled /></el-icon>
         </el-table-column>
       </el-table>
   </el-main>
