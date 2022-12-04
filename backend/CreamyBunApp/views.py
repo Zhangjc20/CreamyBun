@@ -825,3 +825,15 @@ def receive_task(request):
         return HttpResponse(json.dumps({'status': 'ok', 'type': 'success'}), content_type='application/json')
     else:
         return HttpResponse(json.dumps({'status': 'ok', 'type': 'fail'}), content_type='application/json')
+
+@csrf_exempt
+def download_task_answer(request):
+    excel_data = download_task_answer_byid(1)
+    temp = [{}]
+    temp[0]['excel_data'] = bytes.decode(excel_data)
+    # path_name = './task_answer.xlsx'
+    # with open(path_name, 'rb') as f:
+    #         data = f.read()
+    #         temp[0]['excel_data'] = bytes.decode(base64.b64encode(data))
+    # print(temp[0]['excel_data'])
+    return HttpResponse(json.dumps({'status': 'ok','task_answer_excel': temp}), content_type='application/json')

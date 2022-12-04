@@ -726,3 +726,22 @@ def final_submit_answer(username, task_id):
 
     # 最后一个变量是用户每天可违规的次数，也是在未通过穿插测试时才有用，用于警告
     return pass_insertion_test, is_punish, today_violation_number, is_upgrade, now_credit_rank
+
+def download_task_answer_byid(task_id):
+    t = get_a_task_data(task_id)
+    p_list = t.problem_list.all()
+    ans = []
+    for p in p_list:
+        q_list = p.question_list.all()
+        ans_temp = []
+        for q in q_list:
+            ans_temp.append(q.answer)
+        ans.append(ans_temp)
+
+    #ans = [['腾讯', '北京'], ['阿里巴巴', '杭州'], ['字节跳动', '北京', '南京']]
+    df = pd.DataFrame(ans)
+    df.to_excel("task_answer.xlsx", index=False)
+    with open("task_answer.xlsx", 'rb') as f:
+        data = f.read()
+        data = base64.b64encode(data)
+    return data

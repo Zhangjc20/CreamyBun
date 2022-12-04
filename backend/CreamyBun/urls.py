@@ -65,4 +65,5 @@ urlpatterns = [
     path('receive_task/',views.receive_task),
     path('submit_answer/',views.submit_answer),
     path('get_donut_list/',views.get_donut_list),
+    path('download_task_answer/',views.download_task_answer),
 ]
