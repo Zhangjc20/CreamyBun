@@ -354,7 +354,7 @@ export default {
           },
         });
       }else{
-        this.getProblemInfo('init')
+        this.getProblemInfo('next')
       }
     },
     closeSubmitOutcomeDialog() {
@@ -525,17 +525,17 @@ export default {
             return false
           }
         } else if (this.questionList[i]['questionType'] == 3) {//如果题目是框图题
-          var blankNumber = 0
-          console.log("submitAnsList", i, submitAnsList)
-          var tempString = submitAnsList[i]
-          console.log("tempString", tempString)
-          console.log("tempString.length", tempString.length)
-          for (var j = 0; j < tempString.length; j++) {
-            if (tempString[j] == '(') {
-              blankNumber++
-            }
-          }
-          console.log("this.questionList[i]['maxOptionNum']", this.questionList)
+          var blankNumber = JSON.parse(submitAnsList[i]).length
+          // console.log("submitAnsList", i, submitAnsList)
+          // var tempString = submitAnsList[i]
+          // console.log("tempString", tempString)
+          // console.log("tempString.length", tempString.length)
+          // for (var j = 0; j < tempString.length; j++) {
+          //   if (tempString[j] == '(') {
+          //     blankNumber++
+          //   }
+          // }
+          // console.log("this.questionList[i]['maxOptionNum']", this.questionList)
           var tempDict = this.questionList[i]
           // console.log("tempDict",i,tempDict)
           // console.log("tempDict['maxOptionNum']",tempDict['maxOptionNum'])
@@ -636,12 +636,14 @@ export default {
         this.currentImageSrc =
           window.webkitURL.createObjectURL(imageFile) ||
           window.URL.createObjectURL(imageFile);
-          this.currentImageSrc = this.$refs.materialBlock[targetIndex].image
           console.log("this.currentImageSrc", this.currentImageSrc)
           this.fillBlankDialogVisible = true
           this.currentMax = max
           this.currentMin = min
-          this.initRects = JSON.parse(this.initAnsList[questionIndex])
+          if(this.initAnsList[questionIndex]){
+            this.initRects = JSON.parse(this.initAnsList[questionIndex])
+          }
+          
       }).catch();
 
     },
