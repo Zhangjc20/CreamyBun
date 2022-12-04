@@ -271,7 +271,7 @@ import CustomButton from './CustomButton.vue';
 import ReleaseBasicQuestion from '@/components/ReleaseBasicQuestion.vue';
 import UploadCropper from '@/components/ImageUploadCropper.vue';
 import MaterialUpload from '@/components/MaterialUpload.vue';
-// import { ElMessageBox } from "element-plus";
+import { ElMessageBox } from "element-plus";
 
 export default {
   name: 'ReleasePicture',
@@ -382,9 +382,21 @@ export default {
       editingQuestion:'',
       newOrEdit:0,
       materialTypeName:'图像',
+      donutList:[],
+      userDonutNum:-1,
     }
   },
   mounted(){
+    this.$nextTick(() => {
+      axios.get("http://localhost:8000/get_release_info/", {
+        params: {
+          username:this.username
+        }
+      }).then((res) => {
+        this.donutList = res.data["donutList"];
+        this.userDonutNum = res.data["userDonutNum"];
+      }).catch();
+    })
 
   },
   methods:{
@@ -457,16 +469,6 @@ export default {
     editQuestion(row, index){
       this.editingQuestion = index
       this.newOrEdit = 1
-      // var deleteTarget = index + 1
-      // console.log(deleteTarget)
-      // this.questionList.forEach(function (item,index,arr){
-      //     if (item.index == deleteTarget) {
-      //         arr.splice(index,1);
-      //     }
-      // });
-      // for(let i = 0; i<this.questionList.length;i++){
-      //   this.questionList[i]['index'] = i + 1
-      // }
     },
     deleteQuestion(row, index){
       var deleteTarget = index + 1
@@ -561,12 +563,29 @@ export default {
           });
           return false
         }
+        if((tempLen - this.testList.length) * this.form.singleBonus < this.userDonutNum){
+          this.$message({
+            message: '您的甜甜圈余额不足！',
+            type: 'error'
+          });
+          return false
+        }
         return true
       }
       return false
     },
     blobToFile(blob, fileName, mimeType) {
       return new File([blob], fileName, { type: mimeType });
+    },
+    preCheck(){
+      ElMessageBox.confirm("您现在的甜甜圈余额为"+ this.userDonutNum.toString() + "请问是否要继续发布？", "确认发布", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+        draggable: true,
+      }).then(() => {
+        this.finalSubmit()
+      });
     },
     async finalSubmit(){
       this.form.poster = this.username
@@ -590,12 +609,12 @@ export default {
       }
       var formData = new FormData();
       // var tempFile = new Blob(this.imageFile)
-      console.log("我是个jb", this.imageFile)
-      formData.append("image",this.imageFile);
-      formData.append("username", this.username);
-      formData.append("fileName", 'image')
-      formData.append("size", '-1')
-      console.log("jbjbjbjjbjjbjbjbjbjbjbjjbjbjbjjb")
+      // console.log("我是个jb", this.imageFile)
+      // formData.append("image",this.imageFile);
+      // formData.append("username", this.username);
+      // formData.append("fileName", 'image')
+      // formData.append("size", '-1')
+      // console.log("jbjbjbjjbjjbjbjbjbjbjbjjbjbjbjjb")
       await axios({
               method:"Post",
               url:'http://localhost:8000/release_task/',
