@@ -427,7 +427,6 @@ def update_username(request):
 # 修改邮箱
 def update_email(request):
     query_dict = request.GET
-    print(query_dict)
     username = query_dict.get("username", "")
     type = query_dict.get("type", "")
     new_email = query_dict.get("newEmail", "")
@@ -459,15 +458,42 @@ def change_avatar(request):
         return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
 
 
-# 注销
+# （TODO:暂时不做）注销
 def log_off(request):
     pass
 
 
-# 修改手机号
+# （TODO:暂时不做）修改手机号
 def update_mobile(request):
     pass
 
+# （TODO:待完善）充值接口，暂时是伪装充值功能
+def top_up(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    money_number = query_dict.get("money", "")
+    current_donut_number = user_top_up(username,money_number)
+    res = {
+        'status':'ok',
+        'donutNum':current_donut_number,
+    }
+    return HttpResponse(json.dumps(res), content_type='application/json')
+
+# （TODO:待完善）提现接口，暂时是伪装提现功能
+def withdraw_money(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    money_number = query_dict.get("money", "")
+    is_success, current_donut_number = user_withdraw_money(username,money_number)
+    res = {
+        'status':'ok',
+
+        # 判断提现是否成功，因为有可能余额不足，这时候应该给出提示
+        'withdrawStatus':is_success,
+
+        'donutNum':current_donut_number,
+    }
+    return HttpResponse(json.dumps(res), content_type='application/json')
 
 # 接收前端分片上传的素材压缩包
 @csrf_exempt

@@ -20,7 +20,6 @@ def add_a_user(username, password, email):
     except:
         return False
 
-
 # 通过用户名检查用户是否存在
 def exist_user_by_name(username):
     try:
@@ -28,7 +27,6 @@ def exist_user_by_name(username):
         return True
     except:
         return False
-
 
 # 通过邮箱检查用户是否存在
 def exist_user_by_email(email):
@@ -107,6 +105,28 @@ def delete_a_user(username):
 def add_donut_for_user(u:User,donut_add_number):
     u.donut_number += donut_add_number
     u.save()
+
+# 用户充值
+def user_top_up(username,money_number):
+    u = get_a_user_data(username)
+    add_donut_for_user(u,money_number * money_to_donut)
+    return u.donut_number
+
+# 用户减少甜甜圈
+def sub_donut_for_user(u:User,donut_sub_number):
+    if u.donut_number >= donut_sub_number:
+        u.donut_number -= donut_sub_number
+        u.save()
+        return True
+    else:
+        return False
+
+# 用户提现
+def user_withdraw_money(username,money_number):
+    u = get_a_user_data(username)
+    is_success = sub_donut_for_user(u,money_number * donut_to_money)
+    return is_success, u.donut_number
+
 
 # 获得用户当前正在做的任务信息
 def get_user_now_taskdict(u:User,task_id):
