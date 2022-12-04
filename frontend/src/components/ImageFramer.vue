@@ -73,6 +73,8 @@ export default {
   },
   data() {
     return {
+      srcUpdated:false,
+      initRectsUpdated:false,
       ratioST: 1,
       ratioHW: 1,
       penWidth: 2,
@@ -103,6 +105,24 @@ export default {
       },
     };
   },
+  watch: {
+    src() {
+      this.srcUpdated = true;
+      if(this.srcUpdated && this.initRectsUpdated){
+        this.init();
+        this.srcUpdated = false;
+        this.initRectsUpdated = false;
+      }
+    },
+    initRects(){
+      this.initRectsUpdated = true;
+      if(this.srcUpdated && this.initRectsUpdated){
+        this.init();
+        this.srcUpdated = false;
+        this.initRectsUpdated = false;
+      }
+    }
+  },
   methods: {
     clearCanvas() {
       var img = new Image();
@@ -116,7 +136,7 @@ export default {
         .getContext("2d")
         .clearRect(0, 0, this.canvas.width, this.canvas.height);
     },
-    draw(clear) {
+    draw(clear,rect) {
       if (this.frameRects.length >= this.maxFrameNum) {
         return;
       }
@@ -131,10 +151,10 @@ export default {
           ctx.setLineDash([]);
         }
         ctx.strokeRect(
-          this.rect.startX,
-          this.rect.startY,
-          this.rect.width,
-          this.rect.height
+          rect.startX,
+          rect.startY,
+          rect.width,
+          rect.height
         );
       } else if (this.mouse.down) {
         let canvas = this.$refs.canvas;
@@ -148,10 +168,10 @@ export default {
         }
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         ctx.strokeRect(
-          this.rect.startX,
-          this.rect.startY,
-          this.rect.width,
-          this.rect.height
+          rect.startX,
+          rect.startY,
+          rect.width,
+          rect.height
         );
       }
     },
@@ -165,7 +185,6 @@ export default {
         x: event.offsetX,
         y: event.offsetY,
       };
-      console.log(this.mouse.current)
       this.rect.startX = this.mouse.current.x * this.ratioST;
       this.rect.startY = this.mouse.current.y * this.ratioST;
     },
@@ -183,7 +202,7 @@ export default {
             this.image.width,
             this.image.height,
           );
-        this.draw(false);
+        this.draw(false,this.rect);
         this.frameRects.push(Object.assign({},this.rect));
         this.$refs.canvas.toBlob((blob) => {
           var img = new Image();
@@ -203,20 +222,23 @@ export default {
       if (this.mouse.down) {
         this.rect.width = this.mouse.current.x*this.ratioST - this.rect.startX;
         this.rect.height = this.mouse.current.y*this.ratioST - this.rect.startY;
-        this.draw(true);
+        this.draw(true,this.rect);
       }
     },
     onResize(){
       if(this.src){
         this.ratioST = this.image.width/this.$refs.framerContainer.clientWidth;
       }
-    }
-  },
-  mounted(){
-    window.addEventListener('resize', this.onResize, true)
-    this.$nextTick(()=>{
-      this.inited = true;
-      this.$nextTick(() => {
+    },
+    initRectConvert(rect){
+      return {
+        startX:Math.floor(rect.startX/this.ratioST),
+        startY:Math.floor(rect.startY/this.ratioST),
+        width:Math.floor(rect.width/this.ratioST),
+        height:Math.floor(rect.height/this.ratioST)
+      }
+    },
+    init(){
       var canvas = this.$refs.canvas;
       var ctx = canvas.getContext("2d");
       ctx.translate(0, 0);
@@ -231,10 +253,21 @@ export default {
         canvas.style.width = "100%";
         this.image = img;
         this.canvas = canvas;
+        if(this.initRects){
+          this.frameRects = this.initRects
+          for(var rect of this.initRects){
+            this.draw(false,rect)
+          }
+        }
       };
       img.setAttribute("crossOrigin", "anonymous");
       img.src = this.src;
-    });
+    }
+  },
+  mounted(){
+    window.addEventListener('resize', this.onResize, true)
+    this.$nextTick(()=>{
+      this.init()
     });
   },
   beforeUnmount(){
