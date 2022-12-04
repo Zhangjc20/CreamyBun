@@ -68,4 +68,5 @@ urlpatterns = [
     path('download_task_answer/',views.download_task_answer),
     path('top_up/',views.top_up),
     path('withdraw_money/',views.withdraw_money),
+    path('update_phone/',views.update_phone)
 ]

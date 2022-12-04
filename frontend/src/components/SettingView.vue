@@ -1,70 +1,103 @@
 <template>
-  <div>
+  <div class="cloud-box">
+    <div style="font-size: 28px; font-family: YouSheRound">设置</div>
     <div class="div-first">
-      <span class="darkmode-title">暗色模式</span>
-      <el-switch class="darkmode-switch" v-model="darkmode" />
+      <span>我的页面 : 默认入口</span>
+    </div>
+    <div
+      style="
+        margin-top: 20px;
+        padding-left: 6%;
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+      "
+    >
+      <el-radio-group v-model="defaultMine" @change="handleRadio">
+        <el-radio :label="1">个人信息</el-radio>
+        <el-radio :label="2">领取列表</el-radio>
+        <el-radio :label="3">发布列表</el-radio>
+        <el-radio :label="4">奖励中心</el-radio>
+        <el-radio :label="5">活动中心</el-radio>
+        <el-radio :label="6">设置</el-radio>
+      </el-radio-group>
     </div>
     <div class="logout-button-outer">
-      <CustomButton title="退出登录" fontColor="#ffffff" normalColor="#5EABBF" focusColor="#4E98AB" hoverColor="#4E98AB" :clickBack="handleClickLogout"/>
+      <CustomButton
+        title="退出登录"
+        fontColor="#ffffff"
+        normalColor="#5EABBF"
+        focusColor="#4E98AB"
+        hoverColor="#4E98AB"
+        :clickBack="handleClickLogout"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import CustomButton from "@/components/CustomButton.vue";
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessage, ElMessageBox } from "element-plus";
 export default {
   name: "SettingView",
-  components:{
-    CustomButton
+  components: {
+    CustomButton,
   },
-  props: {},
   data() {
     return {
-      darkmode: false,
+      defaultMine: 1,
     };
   },
   methods: {
-    handleClickLogout(){//退出登录按钮触发函数
-      ElMessageBox.confirm(
-        '确定要退出登录吗？',
-        '提示',
-        {
-          confirmButtonText: '确认',
-          cancelButtonText: '取消',
-          type: 'info',
-        }
-      )
+    handleRadio(val){
+      localStorage.setItem('defaultMine',val);
+    },
+    handleClickLogout() {
+      //退出登录按钮触发函数
+      ElMessageBox.confirm("确定要退出登录吗？", "提示", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "info",
+      })
         .then(() => {
-          localStorage.setItem("logined", 'false');
+          localStorage.setItem("logined", "false");
           localStorage.removeItem("avatar");
           localStorage.removeItem("username");
+          localStorage.removeItem("defaultMine");
           ElMessage({
-            type: 'success',
-            message: '退出登录成功',
+            type: "success",
+            message: "退出登录成功",
           });
-          this.$router.push({name:"home"});
+          this.$router.push({ name: "home" });
         })
         .catch(() => {
           ElMessage({
-            type: 'info',
-            message: '取消',
-          })
-        })
-    }
+            type: "info",
+            message: "取消",
+          });
+        });
+    },
   },
+  beforeMount(){
+    if(localStorage.getItem('defaultMine')){
+      this.defaultMine = Number(localStorage.getItem('defaultMine'));
+    }
+  }
 };
 </script>
 
 <style scoped>
 .div-first {
-  margin: 40px 0 0 0;
+  padding: 40px 0 0 6%;
   width: 100%;
+  display: flex;
+  justify-content: flex-start;
 }
-.darkmode-title {
-  float: left;
-  margin-top: 4px;
-  margin-left: 20px;
+.cloud-box {
+  margin-top: 10px;
+  padding: 20px 0 20px 0;
+  box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
+  border-radius: 10px;
 }
 .darkmode-switch {
   float: left;
@@ -73,8 +106,7 @@ export default {
   float: left;
 }
 .logout-button-outer {
-  padding-top: 80px;
-  padding-left: 40px;
+  padding-top: 30px;
 }
 .darkmode-title {
   margin-right: 20px;

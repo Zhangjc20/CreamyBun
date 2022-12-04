@@ -62,21 +62,23 @@
         <div class="detail-title">任务详情</div>
         <el-row>
           <el-col :span="17">
-            <el-row style="height: 450px;margin-top:20px;" class="flex-box">
+            <el-row style="height: 450px; margin-top: 20px" class="flex-box">
               <div class="pic-box flex-box">
                 <el-image
                   style="width: 420px; height: 420px; border-radius: 5px"
-                  :src="require('@/assets/images/pet1.jpeg')"
+                  :src="
+                    coverImage
+                      ? coverImage
+                      : require('@/assets/images/default.jpg')
+                  "
                   fit="cover"
                 >
                 </el-image>
               </div>
             </el-row>
             <el-row style="height: 80px" class="flex-box">
-              <el-col :span="4">
-              </el-col>
-              <el-col :span="16">
-              </el-col>
+              <el-col :span="4"> </el-col>
+              <el-col :span="16"> </el-col>
             </el-row>
           </el-col>
           <el-col
@@ -139,15 +141,26 @@
             >
               结束时间：{{ endTime }}
             </div>
-                  <div class="progress-title" style="padding-top:10px;">
-                    <span style="text-align: center;font-size:20px;">任务进度：</span>
-                  </div>
-                  <div class="progress-bar">
-                      <div style="padding-top:10px;">
-                        <span style="text-align: center;font-size:20px;">{{ratio}}%</span>
-                      </div>
-                      <el-progress class="level-progress" :text-inside="true" :stroke-width="25" :percentage=ratio color="#fbe484" status="warning"/>
-                  </div>
+            <div class="progress-title" style="padding-top: 10px">
+              <span style="text-align: center; font-size: 20px"
+                >任务进度：</span
+              >
+            </div>
+            <div class="progress-bar">
+              <div style="padding-top: 10px">
+                <span style="text-align: center; font-size: 20px"
+                  >{{ ratio }}%</span
+                >
+              </div>
+              <el-progress
+                class="level-progress"
+                :text-inside="true"
+                :stroke-width="25"
+                :percentage="ratio"
+                color="#fbe484"
+                status="warning"
+              />
+            </div>
           </el-col>
         </el-row>
         <el-row style="margin-top: 0px">
@@ -319,6 +332,7 @@ export default {
   },
   data() {
     return {
+      coverImage: "",
       mode: 0,
       fileList: [],
       textarea: "",
@@ -385,7 +399,7 @@ export default {
         })
         .then((res) => {
           if (res.data["status"] == "ok") {
-            if(res.data["type"] == "success"){
+            if (res.data["type"] == "success") {
               this.$router.push({
                 name: "perform",
                 query: {
@@ -396,9 +410,8 @@ export default {
                   materialType: this.materialType,
                 },
               });
-            }
-            else{
-              alert("您已领取该任务！");  
+            } else {
+              alert("您已领取该任务！");
             }
           }
         });
@@ -413,7 +426,7 @@ export default {
         })
         .then((res) => {
           if (res.data["status"] == "ok") {
-            if(res.data["type"] == "success"){
+            if (res.data["type"] == "success") {
               this.$router.push({
                 //跳转到个人中心领取列表
                 name: "mine",
@@ -423,9 +436,8 @@ export default {
                   defaultActive: "2",
                 },
               });
-            }
-            else{
-              alert("您已领取该任务！");  
+            } else {
+              alert("您已领取该任务！");
             }
           }
         });
@@ -440,27 +452,27 @@ export default {
       });
     },
   },
-  beforeMount(){
-    if (localStorage.getItem('username')) {
-      this.username = localStorage.getItem('username');
+  beforeMount() {
+    if (localStorage.getItem("username")) {
+      this.username = localStorage.getItem("username");
     }
-    if(!localStorage.getItem('avatar')){
-      axios.get('/get_avatar',{
-        params:{
-          username:this.username
-        }
-      })
-      .then((res)=>{
-        if(res.data['status']==='ok'){
-          if(res.data['avatar']){
+    if (!localStorage.getItem("avatar")) {
+      axios
+        .get("/get_avatar", {
+          params: {
+            username: this.username,
+          },
+        })
+        .then((res) => {
+          if (res.data["status"] === "ok") {
+            if (res.data["avatar"]) {
               this.image.src = "data:image/png;base64," + res.data["avatar"];
               localStorage.setItem("avatar", this.image.src);
             }
-        }
-      })
-    }
-    else{
-      this.imageSrc = localStorage.getItem('avatar');
+          }
+        });
+    } else {
+      this.imageSrc = localStorage.getItem("avatar");
     }
   },
   mounted() {
@@ -479,6 +491,7 @@ export default {
       .then((res) => {
         this.taskName = "taskName";
         if (res.data["status"] === "ok") {
+          this.coverImage = res.data["coverImage"];
           this.taskName = res.data["taskName"];
           this.answerType = res.data["answerType"];
           this.description = res.data["description"];
@@ -617,7 +630,7 @@ export default {
   height: 40px;
 }
 .level-progress {
-  position:relative;
+  position: relative;
   width: 80%;
   margin: 8px 10px 8px 10px;
 }

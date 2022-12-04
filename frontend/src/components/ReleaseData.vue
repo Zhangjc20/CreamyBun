@@ -393,6 +393,7 @@ export default {
           username:this.username
         }
       }).then((res) => {
+        console.log("get_release_info",res.data)
         this.donutList = res.data["donutList"];
         this.userDonutNum = res.data["userDonutNum"];
       }).catch();
@@ -556,14 +557,14 @@ export default {
           });
           return false
         }
-        if(tempLen/this.form.receiverNum < 1){
+        if((tempLen - this.$refs.MyMaterialUpload.testList.length)/this.form.receiverNum < 1){
           this.$message({
             message: '您的题目过少，不足以分配！',
             type: 'error'
           });
           return false
         }
-        if((tempLen - this.testList.length) * this.form.singleBonus < this.userDonutNum){
+        if((tempLen - this.$refs.MyMaterialUpload.testList.length) * this.form.singleBonus < this.userDonutNum){
           this.$message({
             message: '您的甜甜圈余额不足！',
             type: 'error'
@@ -608,13 +609,10 @@ export default {
           this.form.releaseModeInt = 2;
       }
       var formData = new FormData();
-      // var tempFile = new Blob(this.imageFile)
-      // console.log("我是个jb", this.imageFile)
-      // formData.append("image",this.imageFile);
-      // formData.append("username", this.username);
-      // formData.append("fileName", 'image')
-      // formData.append("size", '-1')
-      // console.log("jbjbjbjjbjjbjbjbjbjbjbjjbjbjbjjb")
+      formData.append("image",this.imageFile);
+      formData.append("username", this.username);
+      formData.append("fileName", 'image')
+      formData.append("size", '-1')
       await axios({
               method:"Post",
               url:'http://localhost:8000/release_task/',

@@ -9,7 +9,9 @@
           <div class="pic-box flex-box">
             <el-image
               style="width: 100%; height: 100%; border-radius: 5px"
-              :src="require('@/assets/images/pet1.jpeg')"
+              :src="
+                coverImage ? coverImage : require('@/assets/images/pet1.jpeg')
+              "
               fit="cover"
             >
             </el-image>
@@ -61,10 +63,20 @@
         </div>
         <div
           v-if="mode == 1"
-          style="width: 60%; border-top: 2px solid rgba(0, 0, 0, 0.2);margin-top:18px;padding-top: 26px;"
+          style="
+            width: 60%;
+            border-top: 2px solid rgba(0, 0, 0, 0.2);
+            margin-top: 18px;
+            padding-top: 26px;
+          "
           class="finish-progress"
         >
-          <span style="font-family: YouSheRound; font-size: 22px;margin-bottom: 10px;"
+          <span
+            style="
+              font-family: YouSheRound;
+              font-size: 22px;
+              margin-bottom: 10px;
+            "
             >完成进度：8/10</span
           >
           <el-progress
@@ -218,6 +230,7 @@
         ><CustomButton
           title="答案数据下载"
           :isRound="true"
+          :disabled="true"
           @click.stop="clickDownload"
         ></CustomButton
       ></el-col>
@@ -232,7 +245,11 @@
     </el-row>
     <el-row v-else-if="mode == 1">
       <el-col :span="10" style="display: flex; justify-content: center"
-        ><CustomButton @click="routerPerform" title="继续当前任务" :isRound="true"></CustomButton
+        ><CustomButton
+          @click="routerPerform"
+          title="继续当前任务"
+          :isRound="true"
+        ></CustomButton
       ></el-col>
       <el-col :span="8" style="display: flex; justify-content: center"
         ><CustomButton title="停止当前任务" :isRound="true"></CustomButton
@@ -260,6 +277,7 @@ export default {
   },
   data() {
     return {
+      coverImage: "",
       fileList: [],
       textarea: "",
       showModal: false,
@@ -287,9 +305,11 @@ export default {
   },
   methods: {
     base64ToBlob(code) {
-      code = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,'+ code
-      const parts = code.split(';base64,');
-      const contentType = parts[0].split(':')[1];
+      code =
+        "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64," +
+        code;
+      const parts = code.split(";base64,");
+      const contentType = parts[0].split(":")[1];
       const raw = window.atob(parts[1]);
       const rawLength = raw.length;
       const uInt8Array = new Uint8Array(rawLength);
@@ -298,13 +318,7 @@ export default {
       }
       return new Blob([uInt8Array], { type: contentType });
     },
-    routerPerform(){
-      console.log({
-          username: this.username,
-          taskId: this.id, //任务id
-          taskName: this.taskName,
-          materialType: this.materialType,
-        },"{username: this.username,taskId: this.id, //任务idtaskName: this.taskName,materialType: this.materialType,}")
+    routerPerform() {
       this.$router.push({
         name: "perform",
         query: {
@@ -318,34 +332,33 @@ export default {
     clickDownload() {
       //todo数据下载
       let formData = new FormData();
-      formData.append('hello','hello')
-      formData.append('id',this.id)
+      formData.append("hello", "hello");
+      formData.append("id", this.id);
       axios({
-              method:"Post",
-              url:'http://localhost:8000/download_task_answer/',
-              headers: {
-            //请求头这个一定要写
-                'Content-Type': 'multipart/form-data',
-            },
-            data:formData
-      })
-      .then((res)=>{
-        if(res.data['status']==='ok'){
-          console.log(res.data['task_answer_excel'])
-          const temp = res.data['task_answer_excel'][0]['excel_data']
-          const blob = this.base64ToBlob(temp)
-          const a = document.createElement('a')
-          a.download = 'awswer.xlsx'
-          a.href = window.URL.createObjectURL(blob)
-          a.click()
-          a.remove()
+        method: "Post",
+        url: "http://localhost:8000/download_task_answer/",
+        headers: {
+          //请求头这个一定要写
+          "Content-Type": "multipart/form-data",
+        },
+        data: formData,
+      }).then((res) => {
+        if (res.data["status"] === "ok") {
+          console.log(res.data["task_answer_excel"]);
+          const temp = res.data["task_answer_excel"][0]["excel_data"];
+          const blob = this.base64ToBlob(temp);
+          const a = document.createElement("a");
+          a.download = "awswer.xlsx";
+          a.href = window.URL.createObjectURL(blob);
+          a.click();
+          a.remove();
         }
-      })
+      });
     },
     clickStopTask() {
       //todo 中断当前任务
     },
-    showTaskDetail(id,username) {
+    showTaskDetail(id, username) {
       axios
         .get("/get_task_basic_info", {
           params: {
@@ -353,9 +366,9 @@ export default {
           },
         })
         .then((res) => {
-          console.log("chijiba",res)
           this.taskName = "taskName";
           if (res.data["status"] === "ok") {
+            this.coverImage = res.data["coverImage"];
             this.taskName = res.data["taskName"];
             this.answerType = res.data["answerType"];
             this.description = res.data["description"];
@@ -365,12 +378,13 @@ export default {
               Math.floor(
                 (this.finishedProblemNum / this.problemTotalNum) * 1000
               ) / 10;
-            this.receivedProblemNum = res.data['receivedProblemNum'];
+            this.receivedProblemNum = res.data["receivedProblemNum"];
             this.ratioR =
               Math.floor(
                 (this.receivedProblemNum / this.problemTotalNum) * 1000
               ) / 10;
-            this.posterAvatar = "data:image/png;base64," + res.data["posterAvatar"];
+            this.posterAvatar =
+              "data:image/png;base64," + res.data["posterAvatar"];
             this.singleBonus = res.data["singleBonus"];
             this.starRank = res.data["starRank"];
             this.materialType = res.data["materialType"];
@@ -378,7 +392,7 @@ export default {
             this.startTime = res.data["startTime"];
             this.endTime = res.data["endTime"];
             this.id = id;
-            this.username = username
+            this.username = username;
           }
         })
         .catch((err) => {
