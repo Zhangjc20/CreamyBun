@@ -6,6 +6,7 @@ from django.core.mail import send_mail
 import os
 import shutil
 import zipfile
+import pandas as pd
 import base64
 import math
 import docx
