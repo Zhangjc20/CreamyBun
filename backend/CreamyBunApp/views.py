@@ -657,7 +657,7 @@ def final_submit(request):
         'nowCreditRank': now_credit_rank,               # 升到了几级，如果没升级这个变量是-1
     }
 
-    return HttpResponse(json.dumps({final_submit_feedback}), content_type='application/json')
+    return HttpResponse(json.dumps(final_submit_feedback), content_type='application/json')
 
 
 def uck_me(request):
@@ -874,7 +874,7 @@ def receive_task(request):
     if flag:
         return HttpResponse(json.dumps({'status': 'ok', 'type': 'success'}), content_type='application/json')
     else:
-
+        print(fail_type)
         # failType有'hasReceived'或者'lowRank'
         return HttpResponse(json.dumps({'status': 'ok', 'type': 'fail', 'failType':fail_type}), content_type='application/json')
 
