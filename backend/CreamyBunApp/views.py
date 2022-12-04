@@ -650,13 +650,23 @@ def uck_me(request):
     print("uck_me")
     return HttpResponse(json.dumps(fake_ans), content_type='application/json')
 
-def get_donut_list(request):
+# 发布任务时可能会用到的一些信息
+def get_release_info(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    u = get_a_user_data(username)
     re_info ={
         'status':'ok',
 
         # 各星级任务的单题保底甜甜圈报酬，但是本列表下标从0开始
         # 也就是说，前端donutList[0]表示1星任务对应的单题甜甜圈报酬，以此类推
         'donutList':donut_from_a_problem_by_task_rank,
+
+        # 用户当前有多少甜甜圈，用于判断余额够不够发布，不够前端要给出提示
+        'userDonutNum':u.donut_number,
+
+        # 用户当前等级，发布任务时不能发布超过自身等级的星级任务
+        'userRank':u.credit_rank, 
     }
     return HttpResponse(json.dumps(re_info), content_type='application/json')
 

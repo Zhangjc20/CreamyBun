@@ -64,7 +64,7 @@ urlpatterns = [
     path('get_avatar/',views.get_avatar),
     path('receive_task/',views.receive_task),
     path('submit_answer/',views.submit_answer),
-    path('get_donut_list/',views.get_donut_list),
+    path('get_release_info/',views.get_release_info),
     path('download_task_answer/',views.download_task_answer),
     path('top_up/',views.top_up),
     path('withdraw_money/',views.withdraw_money),
