@@ -50,7 +50,7 @@
             {{ question["index"] + '.[' + question["questionTypeName"] + ']: ' + question["questionDescription"] }}
           </span>
           <CustomButton
-            @click="currentQuestionIndex = question['index'] - 1; clickFillBlank(question['targetIndex'] - 1, question['minOptionNum'], question['maxOptionNum'])"
+            @click="currentQuestionIndex = question['index'] - 1; clickFillBlank(question['targetIndex'] - 1, question['minOptionNum'], question['maxOptionNum'], question['index'] - 1)"
             v-if="question['questionType'] == 3" isRound="true"
             style="float: right; right: 0px; top: 5px; position: absolute" height="30px" width="100px" title="点击框图" />
           <el-table v-if="question['questionType'] == 0 || question['questionType'] == 1" :data="question['optionList']"
@@ -89,7 +89,7 @@
   </el-main> -->
   <el-dialog v-model="fillBlankDialogVisible" title="请进行框图">
     <ImageFramer ref="MyImageFramer" style="width:100%" :minFrameNum="currentMin" :maxFrameNum="currentMax"
-      :src="currentImage.src" />
+      :src="currentImageSrc" :initRects="initRects"/>
     <span class="dialog-footer">
       <el-row style="height: 50px;">
         <el-col :span="20">
@@ -286,7 +286,7 @@ export default {
       ansList: [],
       lastSelectedList: [],
       stateList: [],
-      currentImage: undefined,
+      currentImageSrc: undefined,
       currentIndex: -1,
       fillBlankDialogVisible: false,
       jumpDialogVisible: false,
@@ -306,6 +306,8 @@ export default {
       perDayViolationNum:-1,
       isUpgrade:false,
       nowCreditRank:-2,
+      initRects:[],
+      initAnsList:[],
     }
   },
   mounted() {
@@ -394,6 +396,8 @@ export default {
         this.currentIndex = res.data['currentIndex'] - 1;//计算机地址
         console.log("TOODOO")
         this.ansList = [];
+        var tempAnswerList = res.data['answerList']
+        this.initAnsList = res.data['answerList']
         for (var i = 0; i < this.questionList.length; i++) {
           this.lastSelectedList.push(undefined)
           var tempQuestion = this.questionList[i]
@@ -401,6 +405,7 @@ export default {
           if (tempQuestion['questionType'] == 0 || tempQuestion['questionType'] == 1) {
             this.ansList.push([])
             // 初始化对应串
+            var k = 0;
             for (var j = 0; j < tempQuestion['optionList'].length; j++) {
               // console.log(j,tempQuestion['optionList'][j])
               this.ansList[i].push({
@@ -408,9 +413,17 @@ export default {
                 name: tempQuestion['optionList'][j]['name'],
                 selected: 0
               })
+              if(k < tempAnswerList.length){
+                if(this.ansList[i][j]['name'] == tempAnswerList[i][k]){
+                  this.ansList[i][j]['selected'] = 1;
+                  k ++;
+                }
+              }
             }
             // 否则
-          } else {
+          } else if(tempQuestion['questionType'] == 2){//如果是填空题
+            this.ansList.push(tempAnswerList[i])
+          }else{
             this.ansList.push('')
           }
 
@@ -512,17 +525,17 @@ export default {
             return false
           }
         } else if (this.questionList[i]['questionType'] == 3) {//如果题目是框图题
-          var blankNumber = 0
-          console.log("submitAnsList", i, submitAnsList)
-          var tempString = submitAnsList[i]
-          console.log("tempString", tempString)
-          console.log("tempString.length", tempString.length)
-          for (var j = 0; j < tempString.length; j++) {
-            if (tempString[j] == '(') {
-              blankNumber++
-            }
-          }
-          console.log("this.questionList[i]['maxOptionNum']", this.questionList)
+          var blankNumber = JSON.parse(submitAnsList[i]).length
+          // console.log("submitAnsList", i, submitAnsList)
+          // var tempString = submitAnsList[i]
+          // console.log("tempString", tempString)
+          // console.log("tempString.length", tempString.length)
+          // for (var j = 0; j < tempString.length; j++) {
+          //   if (tempString[j] == '(') {
+          //     blankNumber++
+          //   }
+          // }
+          // console.log("this.questionList[i]['maxOptionNum']", this.questionList)
           var tempDict = this.questionList[i]
           // console.log("tempDict",i,tempDict)
           // console.log("tempDict['maxOptionNum']",tempDict['maxOptionNum'])
@@ -599,24 +612,52 @@ export default {
         },
       });
     },
-    clickFillBlank(targetIndex, min, max) {
-      this.currentImage = this.$refs.materialBlock[targetIndex].image
-      console.log("this.currentImage", this.currentImage)
-      this.fillBlankDialogVisible = true
-      this.currentMax = max
-      this.currentMin = min
+    base64ImgtoFile(dataurl, filename = "file") {
+      const arr = dataurl.split(",");
+      const mime = arr[0].match(/:(.*?);/)[1];
+      const suffix = mime.split("/")[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new File([u8arr], `${filename}.${suffix}`, {
+        type: mime,
+      });
+    },
+    clickFillBlank(targetIndex, min, max, questionIndex) {
+      console.log("this.materialList[targetIndex]",this.materialList[targetIndex])
+      axios.get("http://localhost:8000/perform_problem_material/", {
+        params: this.materialList[targetIndex]
+      }).then((res) => {
+
+        const imageFile = this.base64ImgtoFile(res.data["materialImage"]);
+        this.currentImageSrc =
+          window.webkitURL.createObjectURL(imageFile) ||
+          window.URL.createObjectURL(imageFile);
+          console.log("this.currentImageSrc", this.currentImageSrc)
+          this.fillBlankDialogVisible = true
+          this.currentMax = max
+          this.currentMin = min
+          if(this.initAnsList[questionIndex]){
+            this.initRects = JSON.parse(this.initAnsList[questionIndex])
+          }
+          
+      }).catch();
+
     },
     getFillBlankAns() {
       this.fillBlankDialogVisible = false;
       var tempAnsList = this.$refs.MyImageFramer.frameRects
       console.log("tempAnsList", tempAnsList, this.currentQuestionIndex)
-      var ans = ''
-      for (var rect of tempAnsList) {
-        var temp = '(' + rect.startX.toString() + ',' + rect.startY.toString()
-          + ',' + (rect.startX + rect.width).toString() + ',' + (rect.startY + rect.height).toString() + ')'
-        ans += temp
-      }
-      this.ansList[this.currentQuestionIndex] = ans
+      // var ans = ''
+      // for (var rect of tempAnsList) {
+      //   var temp = '(' + rect.startX.toString() + ',' + rect.startY.toString()
+      //     + ',' + (rect.startX + rect.width).toString() + ',' + (rect.startY + rect.height).toString() + ')'
+      //   ans += temp
+      // }
+      this.ansList[this.currentQuestionIndex] = JSON.stringify(tempAnsList)
     },
     getDeletedRow(selection, questionIndex) {
       var judgeList = JSON.parse(JSON.stringify(this.ansList[questionIndex]))

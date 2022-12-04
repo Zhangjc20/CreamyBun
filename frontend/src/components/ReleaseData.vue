@@ -364,8 +364,8 @@ export default {
         problemTotalNum: "",
         releaseMode: "",
         releaseModeInt: "",
-        singleBonus: "",
-        starRank: "",
+        singleBonus: -1,
+        starRank: -1,
         startLine1: "",
         startLine2: "",
         deadLine1: "",
@@ -538,7 +538,13 @@ export default {
           message: '您尚未上传任何素材列表！',
           type: 'error'
         })
+      }else if(this.donutList[this.form.starRank - 1] > this.form.singleBonus){
+        this.$message({
+          message: '您的设置的单个题目奖励过低！最低为：'+ this.donutList[this.form.starRank - 1].toString() + "个甜甜圈！",
+          type: 'error'
+        })
       }else{
+        console.log("离开单个题目奖励测试！",this.donutList,[this.form.starRank - 1],this.form.singleBonus)
         let tempLen = this.$refs.MyMaterialUpload.fullList[0].length
         console.log("releaseData:this.$refs.MyMaterialUpload.fullList",this.$refs.MyMaterialUpload.fullListt)
         for(var subList of this.$refs.MyMaterialUpload.fullList){
@@ -557,6 +563,7 @@ export default {
           });
           return false
         }
+        console.log("进入分配测试：",tempLen,this.$refs.MyMaterialUpload.testList.length,this.form.receiverNum)
         if((tempLen - this.$refs.MyMaterialUpload.testList.length)/this.form.receiverNum < 1){
           this.$message({
             message: '您的题目过少，不足以分配！',
@@ -564,7 +571,9 @@ export default {
           });
           return false
         }
-        if((tempLen - this.$refs.MyMaterialUpload.testList.length) * this.form.singleBonus < this.userDonutNum){
+        console.log("进入甜甜圈余额测试",tempLen,this.$refs.MyMaterialUpload.testList.length,this.form.singleBonus,this.userDonutNum)
+        console.log("进入甜甜圈余额测试",(tempLen - this.$refs.MyMaterialUpload.testList.length),(tempLen - this.$refs.MyMaterialUpload.testList.length) * this.form.singleBonus)
+        if((tempLen - this.$refs.MyMaterialUpload.testList.length) * this.form.singleBonus > this.userDonutNum){
           this.$message({
             message: '您的甜甜圈余额不足！',
             type: 'error'
