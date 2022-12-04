@@ -109,7 +109,7 @@ export default {
     src() {
       this.srcUpdated = true;
       if(this.srcUpdated && this.initRectsUpdated){
-        this.init(true);
+        this.init();
         this.srcUpdated = false;
         this.initRectsUpdated = false;
       }
@@ -117,7 +117,7 @@ export default {
     initRects(){
       this.initRectsUpdated = true;
       if(this.srcUpdated && this.initRectsUpdated){
-        this.init(true);
+        this.init();
         this.srcUpdated = false;
         this.initRectsUpdated = false;
       }
@@ -254,8 +254,7 @@ export default {
         this.image = img;
         this.canvas = canvas;
         if(this.initRects){
-          this.frameRects = this.initRects
-          for(var rect of this.initRects){
+          this.frameRects = this.initRects;
             let ctx = this.canvas
               .getContext("2d")
               ctx
@@ -266,7 +265,9 @@ export default {
                 this.image.width,
                 this.image.height,
               );
+              for(var rect of this.initRects){
               this.draw(false,rect);
+              }
               this.$refs.canvas.toBlob((blob) => {
                 var img = new Image();
                 img.setAttribute("crossOrigin", "anonymous");
@@ -276,7 +277,6 @@ export default {
                 img.src = URL.createObjectURL(blob);
               });
           }
-        }
       };
       img.setAttribute("crossOrigin", "anonymous");
       img.src = this.src;
