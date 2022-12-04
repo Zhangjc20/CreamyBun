@@ -549,15 +549,17 @@ def release_task(request):
 
     if request_type == 'application/json':
         request_body = json.loads(request.body)
-        username, t_id, t_release_mode = create_task(request_body)
+        username, t_id, t_release_mode, sub_donut_number = create_task(request_body)
 
         # 给相应用户加上任务和状态
-
         if t_release_mode == NOT_YET_RELEASE or t_release_mode == TIMED_RELEASE:
             state_for_task = NOT_RELEASE
         else:
             state_for_task = RELEASE_BUT_NOT_FINISHED
         add_task_to_user(username, t_id, HAS_POSTED, state_for_task)
+
+        # 扣钱
+        sub_donut_for_user(get_a_user_data(username),sub_donut_number)
 
         return HttpResponse(json.dumps({'status': 'done'}), content_type='application/json')
     else:
@@ -650,13 +652,23 @@ def uck_me(request):
     print("uck_me")
     return HttpResponse(json.dumps(fake_ans), content_type='application/json')
 
-def get_donut_list(request):
+# 发布任务时可能会用到的一些信息
+def get_release_info(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    u = get_a_user_data(username)
     re_info ={
         'status':'ok',
 
         # 各星级任务的单题保底甜甜圈报酬，但是本列表下标从0开始
         # 也就是说，前端donutList[0]表示1星任务对应的单题甜甜圈报酬，以此类推
         'donutList':donut_from_a_problem_by_task_rank,
+
+        # 用户当前有多少甜甜圈，用于判断余额够不够发布，不够前端要给出提示
+        'userDonutNum':u.donut_number,
+
+        # 用户当前等级，发布任务时不能发布超过自身等级的星级任务
+        'userRank':u.credit_rank, 
     }
     return HttpResponse(json.dumps(re_info), content_type='application/json')
 
@@ -845,12 +857,14 @@ def receive_task(request):
     username = query_dict.get("username", "")
     task_id = query_dict.get("taskId", "")
 
-    # 领取任务有可能因为原来已经领取过但是没做完而失败 
-    flag = user_receive_current_task(username, task_id)
+    # 领取任务有可能因为原来已经领取过但是没做完或者用户星级不达标而失败 
+    flag, fail_type = user_receive_current_task(username, task_id)
     if flag:
         return HttpResponse(json.dumps({'status': 'ok', 'type': 'success'}), content_type='application/json')
     else:
-        return HttpResponse(json.dumps({'status': 'ok', 'type': 'fail'}), content_type='application/json')
+
+        # failType有'hasReceived'或者'lowRank'
+        return HttpResponse(json.dumps({'status': 'ok', 'type': 'fail', 'failType':fail_type}), content_type='application/json')
 
 @csrf_exempt
 def download_task_answer(request):

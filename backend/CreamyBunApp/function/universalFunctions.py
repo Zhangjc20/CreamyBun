@@ -221,7 +221,7 @@ def set_admin_password(new_password):
 def get_user_avatr(username):
     avatar_url = get_a_user_data(username).avatar_url
     if not os.path.exists(avatar_url):
-        return None
+        return ""
     else:
         with open(avatar_url, 'rb') as f:
             data = f.read()
@@ -532,9 +532,14 @@ def user_receive_current_task(username,task_id):
     # 观察这个用户是否已经领取过该任务而没有完成
     td = get_user_now_taskdict(u,task_id)
     if not (td is None):
-        return False
+        return False, 'hasReceived'
 
     t = get_a_task_data(task_id)
+
+    # 观察这个用户的星级是否达标
+    if u.credit_rank < t.star_rank:
+        return False, 'lowRank'
+
     p_list = t.problem_list.all()
 
     # 确定测试题列表（包括资质检测和穿插题目）
@@ -580,7 +585,7 @@ def user_receive_current_task(username,task_id):
 
     # 给任务添加领取者
     t.receiver_list.add(Int.objects.create(int_content=u.id))
-    return True
+    return True, 'ok'
     
 # 对答案
 def check_answer(stanard_answer,user_answer,q_type):

@@ -98,7 +98,7 @@ export default {
         });
     },
   },
-  mounted() {
+  beforeMount() {
     axios
       .get("/get_user_bonus_info", {
         params: {
