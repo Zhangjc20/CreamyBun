@@ -617,10 +617,17 @@ def submit_current_answer(username,task_id,answer_list):
             p = t.problem_list.filter(id=x.problem_id).first()
 
             # 存答案
-            for ans in answer_list:
-                x.user_answer.add(Str.objects.create(str_content=ans))
-            x.is_right = True
-            x.save()
+            if len(x.user_answer.all()) == 0: # 如果这是第一次做
+                for ans in answer_list:
+                    x.user_answer.add(Str.objects.create(str_content=ans))
+                x.is_right = True
+                x.save()
+            else: # 如果原来已经做过了，那么是覆盖原来的答案
+                for i,xans in enumerate(x.user_answer.all()):
+                    xans.str_content = answer_list[i]
+                x.is_right = True
+                x.save()
+            break
     
     # 正在进行资质测试
     if td.current_problem_index < td.test_problem_number:
