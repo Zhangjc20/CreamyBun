@@ -857,12 +857,14 @@ def receive_task(request):
     username = query_dict.get("username", "")
     task_id = query_dict.get("taskId", "")
 
-    # 领取任务有可能因为原来已经领取过但是没做完而失败 
-    flag = user_receive_current_task(username, task_id)
+    # 领取任务有可能因为原来已经领取过但是没做完或者用户星级不达标而失败 
+    flag, fail_type = user_receive_current_task(username, task_id)
     if flag:
         return HttpResponse(json.dumps({'status': 'ok', 'type': 'success'}), content_type='application/json')
     else:
-        return HttpResponse(json.dumps({'status': 'ok', 'type': 'fail'}), content_type='application/json')
+
+        # failType有'hasReceived'或者'lowRank'
+        return HttpResponse(json.dumps({'status': 'ok', 'type': 'fail', 'failType':fail_type}), content_type='application/json')
 
 @csrf_exempt
 def download_task_answer(request):
