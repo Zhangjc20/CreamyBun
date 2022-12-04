@@ -28,6 +28,16 @@ def exist_user_by_name(username):
     except:
         return False
 
+# 通过手机号检查用户是否存在
+def exist_user_by_mobile_number(mobile_number):
+    try:
+        User.objects.get(mobile_number=mobile_number)
+        print(User.objects.get(mobile_number=mobile_number).username)
+        print(mobile_number)
+        return True
+    except:
+        return False
+
 # 通过邮箱检查用户是否存在
 def exist_user_by_email(email):
     try:
@@ -209,6 +219,9 @@ def update_username_by_username(username, new_username):
 def update_email_by_username(username, new_email):
     User.objects.filter(username=username).update(email=new_email)
 
+# 通过用户名修改用户手机号
+def update_user_by_mobile_number(username, new_mobile):
+    User.objects.filter(username=username).update(mobile_number=new_mobile)
 
 # 通过邮箱修改密码
 def update_password_by_email(email, password):

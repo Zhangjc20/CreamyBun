@@ -78,16 +78,17 @@ export default {
     ActivityCenter,
   },
   data() {
+    const choices = ['MineInfoView','TaskPage','TaskPage','GiftCenter','ActivityCenter','SettingView'];
     return {
       image: {
         src: "",
         type: "",
       },
-      showContent: "MineInfoView",
+      showContent: localStorage.getItem('defaultMine')?choices[Number(localStorage.getItem('defaultMine'))-1]:choices[0],
       total: 4,
-      showTaskType:1,
+      showTaskType:localStorage.getItem('defaultMine')=='2'?1:2,
       username: "",
-      defaultActive:"1",
+      defaultActive:localStorage.getItem('defaultMine')?localStorage.getItem('defaultMine'):"1",
     };
   },
   methods: {

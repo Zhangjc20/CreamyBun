@@ -20,11 +20,11 @@ from ..variables.globalVariables import *
 # 参考https://www.cnblogs.com/jszfy/p/11143048.html
 def get_base64_image(url):
     if not os.path.exists(url):
-        return None
+        return ""
     else:
         with open(url, 'rb') as f:
             data = f.read()
-            return bytes.decode(base64.b64encode(data))
+            return 'data:image/png;base64,' + bytes.decode(base64.b64encode(data))
 
 def get_now_time():
     return datetime.datetime.now()
@@ -168,7 +168,7 @@ def get_task_info_list(username, state, page_number, sort_choice):
             'problemType': ANSWER_TYPE_DICT[t.answer_type],
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
-            'src': "data:image/png;base64," + get_base64_image(t.cover_url),
+            'src': get_base64_image(t.cover_url),
         }
         t_info.setdefault('index', i)
         task_info_list.append(t_info)
@@ -449,7 +449,7 @@ def sorted_and_selected_tasks(username, seach_content, only_level, \
             'problemType': ANSWER_TYPE_DICT[t.answer_type],
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
-            'src': "data:image/png;base64," + get_base64_image(t.cover_url),
+            'src':get_base64_image(t.cover_url),
         }
         t_info.setdefault('index', i)
         task_info_list.append(t_info)

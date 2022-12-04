@@ -1,47 +1,48 @@
 <template>
   <div class="gift-container">
-    <div class="gift-title">奖励中心</div>
-    <div class="exchange-rate-title">
-      当前汇率: {{ donutToMoney }}
-      <svg class="icon" aria-hidden="true">
-        <use xlink:href="#icon-tiantianquan"></use>
-      </svg>
-      => 1 元&emsp;&emsp;&emsp; 1 元 => {{ moneyToDonut }}
-      <svg class="icon" aria-hidden="true">
-        <use xlink:href="#icon-tiantianquan"></use>
-      </svg>
-      &emsp;&emsp;&emsp;
-      拥有
-      <svg class="icon" aria-hidden="true">
-        <use xlink:href="#icon-tiantianquan"></use>
-      </svg>
-      = {{ donutNumber }}
-    </div>
-    <div class="exchange-area">
-      兑换甜甜圈 ：
-      <el-input
-        class="value-input"
-        v-model="donutInput"
-        placeholder="请输入金额"
-        clearable
-      />
-      &nbsp;&nbsp;元
-      <el-button class="confirm-exchange-btn" @click="handleClickExchange"
-        >确认兑换</el-button
-      >
-    </div>
-    <div class="exchange-area">
-      兑换现金 ：
-      <el-input
-        class="value-input"
-        v-model="valueInput"
-        placeholder="请输入金额"
-        clearable
-      />
-      &nbsp;&nbsp;元
-      <el-button class="confirm-exchange-btn" @click="handleClickExchange"
-        >确认兑换</el-button
-      >
+    <div class="back-box">
+      <div class="gift-title">奖励中心</div>
+      <div class="exchange-rate-title">
+        当前汇率: {{ donutToMoney }}
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-tiantianquan"></use>
+        </svg>
+        &nbsp;=> 1 元&emsp;&emsp; 1 元 => {{ moneyToDonut }}
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-tiantianquan"></use>
+        </svg>
+        &emsp;&emsp; 拥有
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-tiantianquan"></use>
+        </svg>
+        &nbsp;= {{ donutNumber }}
+      </div>
+      <div class="exchange-area">
+        兑换甜甜圈 ：
+        <el-input
+          class="value-input"
+          v-model="donutInput"
+          placeholder="请输入金额"
+          clearable
+        />
+        &nbsp;&nbsp;元
+        <el-button class="confirm-exchange-btn" @click="handleTopUp"
+          >确认兑换</el-button
+        >
+      </div>
+      <div class="exchange-area">
+        兑换现金 ：
+        <el-input
+          class="value-input"
+          v-model="valueInput"
+          placeholder="请输入金额"
+          clearable
+        />
+        &nbsp;&nbsp;元
+        <el-button class="confirm-exchange-btn" @click="handleWithdraw"
+          >确认兑换</el-button
+        >
+      </div>
     </div>
   </div>
 </template>
@@ -51,28 +52,79 @@ import axios from "axios";
 import { ElMessage, ElMessageBox } from "element-plus";
 export default {
   name: "GiftCenter",
-  props: {
-    username: {
-      type: String,
-      default: "",
-    },
-  },
   data() {
     return {
       valueInput: "",
+      donutInput: "",
       donutToMoney: -1,
       moneyToDonut: -1,
       donutNumber: -1,
     };
   },
   methods: {
-    getEqualDonuts(rate) {
-      return Number(this.valueInput) * rate;
-    },
-    handleClickExchange() {
+    handleTopUp() {
+      if (!this.donutInput.match(/^[1-9]\d*$/g)) {
+        ElMessage({
+          type: "error",
+          message: "请输入正整数",
+        });
+        return;
+      }
       ElMessageBox.confirm(
         "您将要花费" +
-          this.getEqualDonuts(120) +
+          this.donutInput +
+          "元兑换" +
+          this.getEqualDonuts(this.donutInput, this.moneyToDonut) +
+          "甜甜圈",
+        "确认兑换",
+        {
+          confirmButtonText: "OK",
+          cancelButtonText: "Cancel",
+          type: "warning",
+          draggable: true,
+        }
+      )
+        .then(() => {
+          axios
+            .get("/top_up", {
+              params: {
+                username: localStorage.getItem('username'),
+                money: this.donutInput,
+              },
+            })
+            .then((res) => {
+              if (res.data["status"] === "ok") {
+                ElMessage({
+                  type: "success",
+                  message: "兑换成功",
+                });
+                this.donutNumber = res.data["donutNum"];
+              }
+            });
+        })
+        .catch(() => {});
+    },
+    getEqualDonuts(money, rate) {
+      return Number(money) * rate;
+    },
+    handleWithdraw() {
+      if (!this.valueInput.match(/^[1-9]\d*$/g)) {
+        ElMessage({
+          type: "error",
+          message: "请输入正整数",
+        });
+        return;
+      }
+      if(this.getEqualDonuts(this.valueInput, this.donutToMoney)>this.donutNumber){
+        ElMessage({
+          type: "error",
+          message: "您的甜甜圈余额不足",
+        });
+        return;
+      }
+      ElMessageBox.confirm(
+        "您将要花费" +
+          this.getEqualDonuts(this.valueInput, this.donutToMoney) +
           "甜甜圈兑换" +
           this.valueInput +
           "元",
@@ -85,24 +137,39 @@ export default {
         }
       )
         .then(() => {
-          ElMessage({
-            type: "success",
-            message: "兑换成功",
-          });
+          axios
+            .get("/withdraw_money", {
+              params: {
+                username: localStorage.getItem('username'),
+                money: this.valueInput,
+              },
+            })
+            .then((res) => {
+              if (res.data["status"] === "ok") {
+                if(res.data['withdrawStatus']== true){
+                  ElMessage({
+                    type: "success",
+                    message: "兑换成功",
+                  });
+                  this.donutNumber = res.data["donutNum"];
+                }
+                else{
+                  ElMessage({
+                    type: "error",
+                    message: "您的甜甜圈余额不足",
+                  });
+                }
+              }
+            });
         })
-        .catch(() => {
-          ElMessage({
-            type: "info",
-            message: "取消兑换",
-          });
-        });
+        .catch(() => {});
     },
   },
   beforeMount() {
     axios
       .get("/get_user_bonus_info", {
         params: {
-          username: this.username,
+          username: localStorage.getItem('username'),
         },
       })
       .then((res) => {
@@ -125,8 +192,13 @@ export default {
   justify-content: center;
   align-items: center;
 }
-.gift-box {
+.back-box {
+  width: 80%;
   box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
+  border-radius: 10px;
+  padding-top: 10px;
+  padding-bottom: 38px;
+  margin-top: 20px;
 }
 .confirm-exchange-btn {
   background-color: #fbe484;
@@ -178,11 +250,9 @@ export default {
   justify-content: center;
   align-items: center;
   margin-top: 20px;
-  width: 80%;
   height: 60px;
   font-family: YouSheBlack;
   color: #5eabbf;
-  font-size: 22px;
-  box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
+  font-size: 25px;
 }
 </style>
