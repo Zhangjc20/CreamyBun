@@ -221,7 +221,7 @@ def set_admin_password(new_password):
 def get_user_avatr(username):
     avatar_url = get_a_user_data(username).avatar_url
     if not os.path.exists(avatar_url):
-        return None
+        return ""
     else:
         with open(avatar_url, 'rb') as f:
             data = f.read()
