@@ -191,6 +191,7 @@ def get_task_basic_info(request):
         'startTime': t.begin_time.split(" ")[0],
         'endTime': t.end_time.split(" ")[0],
         'receiveProcess':get_task_receive_process_by_id(id),
+        'coverImage': get_base64_image(t.cover_url)
     }
     return HttpResponse(json.dumps(task_info), content_type='application/json')
 
@@ -423,6 +424,17 @@ def update_username(request):
         update_username_by_username(username, new_username)
         return HttpResponse(json.dumps({'status': 'ok', 'newUsername': new_username}), content_type='application/json')
 
+# 修改手机号
+def update_phone(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    new_phone = query_dict.get("newPhone", "")
+    is_new_phone_exist = exist_user_by_mobile_number(new_phone)
+    if is_new_phone_exist:
+        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'samePhone'}), content_type='application/json')
+    else:
+        update_user_by_mobile_number(username, new_phone)
+        return HttpResponse(json.dumps({'status': 'ok', 'newPhone': new_phone}), content_type='application/json')
 
 # 修改邮箱
 def update_email(request):
@@ -471,7 +483,7 @@ def update_mobile(request):
 def top_up(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
-    money_number = query_dict.get("money", "")
+    money_number = eval(query_dict.get("money", ""))
     current_donut_number = user_top_up(username,money_number)
     res = {
         'status':'ok',
@@ -483,7 +495,7 @@ def top_up(request):
 def withdraw_money(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
-    money_number = query_dict.get("money", "")
+    money_number = eval(query_dict.get("money", ""))
     is_success, current_donut_number = user_withdraw_money(username,money_number)
     res = {
         'status':'ok',

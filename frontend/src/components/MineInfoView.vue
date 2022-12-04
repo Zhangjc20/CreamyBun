@@ -66,7 +66,21 @@
                     手机号
                   </div>
                 </template>
-                {{ phoneNumber }}
+                <span style="display: flex; align-items: center"
+                  >{{ showHiddenPhone ? hidePhone(phoneNumber) : phoneNumber
+                  }}<span
+                    style="
+                      display: flex;
+                      align-items: center;
+                      width: 100%;
+                      justify-content: flex-end;
+                    "
+                    ><el-icon
+                      @click.prevent="showHiddenPhone = !showHiddenPhone"
+                      class="hide-icon"
+                      ><View v-if="showHiddenPhone" /><Hide
+                        v-else /></el-icon></span
+                ></span>
               </el-descriptions-item>
               <el-descriptions-item :span="1">
                 <template #label>
@@ -88,7 +102,21 @@
                     邮箱
                   </div>
                 </template>
-                {{ email }}
+                <span style="display: flex; align-items: center"
+                  >{{ showHiddenEmail ? hideEmail(email) : email
+                  }}<span
+                    style="
+                      display: flex;
+                      align-items: center;
+                      width: 100%;
+                      justify-content: flex-end;
+                    "
+                    ><el-icon
+                      @click.prevent="showHiddenEmail = !showHiddenEmail"
+                      class="hide-icon"
+                      ><View v-if="showHiddenEmail" /><Hide
+                        v-else /></el-icon></span
+                ></span>
               </el-descriptions-item>
             </el-descriptions>
             <div class="level-box">
@@ -290,9 +318,34 @@ export default {
       email: "",
       percentage: 0,
       codeEmail: "",
+      showHiddenPhone: true,
+      showHiddenEmail: true,
     };
   },
   methods: {
+    hideEmail() {
+      const [front, end] = this.email.split("@");
+      if (front.length >= 6) {
+        return (
+          front.substring(0, 2) +
+          "*".repeat(front.length - 4) +
+          front.substring(front.length - 2) +
+          "@" +
+          end
+        );
+      } else if (front.length >= 3) {
+        return front.substring(0, 2) + "*".repeat(front.length - 2) + "@" + end;
+      } else {
+        return "*".repeat(front.length) + "@" + end;
+      }
+    },
+    hidePhone() {
+      return (
+        this.phoneNumber.substring(0, 3) +
+        "*****" +
+        this.phoneNumber.substring(8, 11)
+      );
+    },
     base64ImgtoFile(dataurl, filename = "file") {
       const arr = dataurl.split(",");
       const mime = arr[0].match(/:(.*?);/)[1];
@@ -334,27 +387,27 @@ export default {
         this.blobToBase64(blob, (dataurl) => {
           this.image.src = dataurl;
           var formData = new FormData();
-        if (emit) {
-          this.$emit("changeAvatar", this.image.src);
-          localStorage.setItem("avatar", this.image.src);
-          formData.append(
-            "image",
-            this.blobToFile(
-              blob,
-              this.image.type.split("/")[1],
-              this.image.type
-            )
-          );
-          formData.append("username", this.username);
-          axios
-            .post("/change_avatar", formData)
-            .then((res) => {
-              console.log(res);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        }
+          if (emit) {
+            this.$emit("changeAvatar", this.image.src);
+            localStorage.setItem("avatar", this.image.src);
+            formData.append(
+              "image",
+              this.blobToFile(
+                blob,
+                this.image.type.split("/")[1],
+                this.image.type
+              )
+            );
+            formData.append("username", this.username);
+            axios
+              .post("/change_avatar", formData)
+              .then((res) => {
+                console.log(res);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          }
         });
       }, this.image.type);
     },
@@ -566,7 +619,48 @@ export default {
         .catch(() => {});
     },
     handleChangePhone() {
-      //留待接口
+      if (!this.changeForm.phone.match(/^\d{11}$/g)) {
+        ElMessage({
+          type: "error",
+          message: "手机号格式错误",
+        });
+        return;
+      }
+      ElMessageBox.confirm(
+        "确定要修改手机号为" + this.changeForm.phone,
+        "修改手机号",
+        {
+          confirmButtonText: "确认",
+          cancelButtonText: "取消",
+          type: "info",
+        }
+      )
+        .then(() => {
+          axios
+            .get("/update_phone", {
+              params: {
+                username: this.username,
+                newPhone: this.changeForm.phone,
+              },
+            })
+            .then((res) => {
+              if (res.data["status"] === "ok") {
+                ElMessage({
+                  type: "success",
+                  message: "手机号修改成功",
+                });
+                this.phoneNumber = res.data["newPhone"];
+              } else if (res.data["status"] === "wrong") {
+                if (res.data["type"] === "samePhone") {
+                  ElMessage({
+                    type: "error",
+                    message: "该手机号已经被使用",
+                  });
+                }
+              }
+            });
+        })
+        .catch(() => {});
     },
   },
   beforeMount() {
@@ -579,7 +673,7 @@ export default {
         })
         .then((res) => {
           if (res.data["status"] === "ok") {
-            if(res.data['avatar']){
+            if (res.data["avatar"]) {
               this.image.src = "data:image/png;base64," + res.data["avatar"];
               localStorage.setItem("avatar", this.image.src);
             }
@@ -615,6 +709,13 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.hide-icon {
+  font-size: 16px;
+}
+.hide-icon:hover {
+  opacity: 0.5;
+  cursor: pointer;
+}
 .mine-info-container {
   display: flex;
   flex-direction: column;
@@ -692,7 +793,7 @@ export default {
 }
 .level-progress {
   width: 200px;
-  margin: 0 10px 0 10px;
+  margin: 0 20px 0 20px;
 }
 .level-box {
   margin-top: 20px;
