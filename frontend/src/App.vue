@@ -13,8 +13,6 @@ export default {
       locale: zhCn,
     };
   },
-  beforeUnmount() {
-  },
 };
 </script>
 

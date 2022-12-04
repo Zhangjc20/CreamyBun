@@ -1,4 +1,5 @@
 <template>
+  <div >
   <el-header class="header-style">
     <el-breadcrumb separator="/" class="header-breadcrumb">
       <el-breadcrumb-item :to="{ path: '/' }">奶黄包</el-breadcrumb-item>
@@ -253,6 +254,7 @@
       </span>
     </el-main>
   </el-dialog>
+  </div>
 </template>
 
 <script>

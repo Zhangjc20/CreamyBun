@@ -109,7 +109,7 @@ export default {
     src() {
       this.srcUpdated = true;
       if(this.srcUpdated && this.initRectsUpdated){
-        this.init();
+        this.init(true);
         this.srcUpdated = false;
         this.initRectsUpdated = false;
       }
@@ -117,7 +117,7 @@ export default {
     initRects(){
       this.initRectsUpdated = true;
       if(this.srcUpdated && this.initRectsUpdated){
-        this.init();
+        this.init(true);
         this.srcUpdated = false;
         this.initRectsUpdated = false;
       }
@@ -226,7 +226,7 @@ export default {
       }
     },
     onResize(){
-      if(this.src){
+      if(this.src && this.$refs.framerContainer.clientWidth){
         this.ratioST = this.image.width/this.$refs.framerContainer.clientWidth;
       }
     },
@@ -256,7 +256,25 @@ export default {
         if(this.initRects){
           this.frameRects = this.initRects
           for(var rect of this.initRects){
-            this.draw(false,rect)
+            let ctx = this.canvas
+              .getContext("2d")
+              ctx
+              .drawImage(
+                this.image,
+                0,
+                0,
+                this.image.width,
+                this.image.height,
+              );
+              this.draw(false,rect);
+              this.$refs.canvas.toBlob((blob) => {
+                var img = new Image();
+                img.setAttribute("crossOrigin", "anonymous");
+                img.onload = () => {
+                  this.image = img;
+                };
+                img.src = URL.createObjectURL(blob);
+              });
           }
         }
       };
@@ -267,7 +285,7 @@ export default {
   mounted(){
     window.addEventListener('resize', this.onResize, true)
     this.$nextTick(()=>{
-      this.init()
+      this.init(false)
     });
   },
   beforeUnmount(){
