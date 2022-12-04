@@ -66,10 +66,13 @@ export default {
       type: Number,
       default: 3,
     },
+    initRects:{
+      type: Array,
+      default: undefined
+    }
   },
   data() {
     return {
-      inited:false,
       ratioST: 1,
       ratioHW: 1,
       penWidth: 2,
@@ -211,16 +214,7 @@ export default {
   },
   mounted(){
     window.addEventListener('resize', this.onResize, true)
-    
-    this.$nextTick(() => {
-      this.clearCanvas()
-    })
-  },
-  beforeUnmount(){
-    window.removeEventListener('resize', this.onResize, true)
-  },
-  updated() {
-    if(!this.inited && this.src){
+    this.$nextTick(()=>{
       this.inited = true;
       this.$nextTick(() => {
       var canvas = this.$refs.canvas;
@@ -241,8 +235,11 @@ export default {
       img.setAttribute("crossOrigin", "anonymous");
       img.src = this.src;
     });
-    }
+    });
   },
+  beforeUnmount(){
+    window.removeEventListener('resize', this.onResize, true)
+  }
 };
 </script>
 
