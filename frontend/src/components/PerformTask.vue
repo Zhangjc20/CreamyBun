@@ -395,6 +395,7 @@ export default {
         this.isTest = res.data['isTest'];
         this.currentIndex = res.data['currentIndex'] - 1;//计算机地址
         console.log("TOODOO")
+        console.log("更新前的this.ansList",this.ansList)
         this.ansList = [];
         var tempAnswerList = res.data['answerList']
         this.initAnsList = res.data['answerList']
@@ -426,10 +427,32 @@ export default {
           }else{
             this.ansList.push('')
           }
+          console.log("更新后的this.ansList",this.ansList)
+        }
+        this.updateSelect();
+      }).catch();
+    },
+    updateSelect(){//更新列表
+      this.$nextTick(() => {
+        for(var i = 0;i<this.questionList.length;i++){
+          if(this.questionList[i]['questionType'] == 0
+          || this.questionList[i]['questionType'] == 1){//如果本题是选择题
+            let table = this.questionList[i]['optionList']; 
+            console.log("table",table)
+            table.forEach(row => {
+              // console.log("正在遍历：", row,row['index'] - 1, this.handleMaterialList[this.currentShowingSubList][row['index'] - 1]['selected'])
+              console.log("正在遍历：",row['index'],this.ansList[i])
+              if (this.ansList[i][row['index']]['selected'] == 1){
+                console.log("发现选中！进：",row)
+                this.$refs.regTable[i].toggleRowSelection(row, true);
+                console.log("发现选中！出：",row)
+              }
+            });
+            }
 
         }
 
-      }).catch();
+      })
     },
     async previousQuestion() {
       // var confirmRes = this.$confirm('请问是否需要提交当前答案？', '提示', {
@@ -673,8 +696,8 @@ export default {
           targetIndex = tempRow['index']
         }
       }
-      // console.log("targetIndextargetIndextargetIndex",targetIndex)
-      // console.log("lastSelectedListlastSelectedListlastSelectedList",this.lastSelectedList[questionIndex])
+      console.log("targetIndextargetIndextargetIndex",targetIndex)
+      console.log("lastSelectedListlastSelectedListlastSelectedList",this.lastSelectedList,questionIndex,this.lastSelectedList[questionIndex])
       for (var tempRow of this.lastSelectedList[questionIndex]) {
         if (tempRow['index'] == targetIndex) {
           return tempRow
@@ -683,14 +706,14 @@ export default {
       return
     },
     handleSelectionChange(selection, minOptionNum, maxOptionNum, index) { // section 被选中状态修改后触发事件，根据被选择的数量控制是否还可被选中
-
-
+      console.log("handleSelectionChange",selection,minOptionNum,maxOptionNum,index)
       if (selection.length > maxOptionNum) {
         // 如果这个题是单选
         if (minOptionNum == 1 && maxOptionNum == 1) {
           for (var tempRow of this.ansList[index]) {
             tempRow['selected'] = 0
           }
+          console.log("// 如果这个题是单选",index,this.ansList[index],selection[1]['index'],this.ansList[index][selection[1]['index']])
           this.ansList[index][selection[1]['index']]['selected'] = 1
           this.$refs.regTable[index].toggleRowSelection(selection[0], false)
           return
@@ -706,7 +729,7 @@ export default {
         }
       }
       if (selection.length < minOptionNum && selection.length < lastLen && minOptionNum < maxOptionNum) {
-        this.$message.warning(`最少需要选${maxOptionNum}条！`);
+        this.$message.warning(`最少需要选${minOptionNum}条！`);
         var targetRow = this.getDeletedRow(selection, index)
         // console.log("targetRowtargetRowtargetRow",targetRow)
         this.$refs.regTable[index].toggleRowSelection(targetRow)

@@ -635,7 +635,12 @@ export default {
         table.forEach(row => {
           // console.log("正在遍历：", row,row['index'] - 1, this.handleMaterialList[this.currentShowingSubList][row['index'] - 1]['selected'])
           if (this.handleMaterialList[this.currentShowingSubList][row['index'] - 1]['selected'] == 1){
-            this.$refs.materialShowingTable.toggleRowSelection(row, true);
+            // TOODOO：这一行进行不下去
+            try{
+              this.$refs.materialShowingTable.toggleRowSelection(row, true);
+            }catch(e){
+              console.log(e)
+            }
             //这一行不管用！！！！！
             // console.log("更新了一个！", row, this.handleMaterialList[this.currentShowingSubList][row['index'] - 1]['selected'])
           }
