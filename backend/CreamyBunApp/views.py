@@ -654,6 +654,7 @@ def uck_me(request):
 def get_release_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
+    u = get_a_user_data(username)
     re_info ={
         'status':'ok',
 
@@ -662,7 +663,10 @@ def get_release_info(request):
         'donutList':donut_from_a_problem_by_task_rank,
 
         # 用户当前有多少甜甜圈，用于判断余额够不够发布，不够前端要给出提示
-        'userDonutNum':get_a_user_data(username).donut_number, 
+        'userDonutNum':u.donut_number,
+
+        # 用户当前等级，发布任务时不能发布超过自身等级的星级任务
+        'userRank':u.credit_rank, 
     }
     return HttpResponse(json.dumps(re_info), content_type='application/json')
 
