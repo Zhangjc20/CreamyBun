@@ -828,7 +828,8 @@ def receive_task(request):
 
 @csrf_exempt
 def download_task_answer(request):
-    excel_data = download_task_answer_byid(1)
+    task_id = request.POST.get("id", "")
+    excel_data = download_task_answer_byid(task_id)
     temp = [{}]
     temp[0]['excel_data'] = bytes.decode(excel_data)
     # path_name = './task_answer.xlsx'

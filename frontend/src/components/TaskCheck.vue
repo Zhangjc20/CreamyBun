@@ -286,6 +286,18 @@ export default {
     console.log("niihap");
   },
   methods: {
+    base64ToBlob(code) {
+      code = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,'+ code
+      const parts = code.split(';base64,');
+      const contentType = parts[0].split(':')[1];
+      const raw = window.atob(parts[1]);
+      const rawLength = raw.length;
+      const uInt8Array = new Uint8Array(rawLength);
+      for (let i = 0; i < rawLength; ++i) {
+        uInt8Array[i] = raw.charCodeAt(i);
+      }
+      return new Blob([uInt8Array], { type: contentType });
+    },
     routerPerform(){
       console.log({
           username: this.username,
@@ -305,6 +317,30 @@ export default {
     },
     clickDownload() {
       //todo数据下载
+      let formData = new FormData();
+      formData.append('hello','hello')
+      formData.append('id',this.id)
+      axios({
+              method:"Post",
+              url:'http://localhost:8000/download_task_answer/',
+              headers: {
+            //请求头这个一定要写
+                'Content-Type': 'multipart/form-data',
+            },
+            data:formData
+      })
+      .then((res)=>{
+        if(res.data['status']==='ok'){
+          console.log(res.data['task_answer_excel'])
+          const temp = res.data['task_answer_excel'][0]['excel_data']
+          const blob = this.base64ToBlob(temp)
+          const a = document.createElement('a')
+          a.download = 'awswer.xlsx'
+          a.href = window.URL.createObjectURL(blob)
+          a.click()
+          a.remove()
+        }
+      })
     },
     clickStopTask() {
       //todo 中断当前任务
