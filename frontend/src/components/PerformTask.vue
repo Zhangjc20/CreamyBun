@@ -356,7 +356,7 @@ export default {
           },
         });
       }else{
-        this.getProblemInfo('next')
+        this.getProblemInfo('init')
       }
     },
     closeSubmitOutcomeDialog() {
@@ -605,6 +605,7 @@ export default {
         console.log("提交成功!", res)
         if(isFinished){
           if(this.isTest){
+            this.getProblemInfo('next')
             this.passTest = res.data['passTest']
             this.percentage = (Math.round(res.data['testCorrectRate'] * 10000)) / 100 + '%'
             this.testResultDialogVisible = true
@@ -684,7 +685,7 @@ export default {
       // }
       this.ansList[this.currentQuestionIndex] = JSON.stringify(tempAnsList)
     },
-    getDeletedRow(selection, questionIndex) {
+    getDeletedRow(selection, questionIndex) {//删除项目，由于需要前后对比才能知道删除了哪一项所以需要涉及到judgeList
       var judgeList = JSON.parse(JSON.stringify(this.ansList[questionIndex]))
       // console.log("judgeListjudgeListjudgeList",judgeList)
       for (var tempRow of selection) {
@@ -733,7 +734,7 @@ export default {
       if (selection.length < minOptionNum && selection.length < lastLen && minOptionNum < maxOptionNum) {
         this.$message.warning(`最少需要选${minOptionNum}条！`);
         var targetRow = this.getDeletedRow(selection, index)
-        // console.log("targetRowtargetRowtargetRow",targetRow)
+        console.log("targetRowtargetRowtargetRow",targetRow)
         this.$refs.regTable[index].toggleRowSelection(targetRow)
         return
       }
