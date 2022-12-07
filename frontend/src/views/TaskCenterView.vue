@@ -206,22 +206,26 @@
           <CustomButton :props="confirmProps" title="确认筛选" @click.stop="handleSort"></CustomButton>
         </div>
       </el-aside>
-      <el-main class="main-style">
-        <div class="search-area">
-          搜索任务
-          <el-input
-            v-model="searchInput"
-            placeholder="请输入搜索的任务"
-            class="search-input"
-          >
-            <template #append>
-              <el-button @click="handleSort"
-                ><el-icon><Search /></el-icon
-              ></el-button>
-            </template>
-          </el-input>
-        </div>
-        <TaskPage :type="0" ref="taskPage" :username="username" :imageSrc="image.src"></TaskPage>
+      <el-main>
+        <el-header style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 5px 0 rgba(0, 0, 0, 0.19);">
+            <div class="search-area">
+            搜索任务
+            <el-input
+              v-model="searchInput"
+              placeholder="请输入搜索的任务"
+              class="search-input"
+            >
+              <template #append>
+                <el-button @click="handleSort"
+                  ><el-icon><Search /></el-icon
+                ></el-button>
+              </template>
+            </el-input>
+          </div>
+        </el-header>
+        <el-main>
+          <TaskPage :type="0" ref="taskPage" :username="username" :imageSrc="image.src"></TaskPage>
+        </el-main>
       </el-main>
     </el-container>
   </el-container>
@@ -408,8 +412,10 @@ export default {
   justify-content: space-evenly;
 }
 .search-area {
-  margin-bottom: 20px;
+  margin-top: 15px;
+  margin-left: 40px;
   color: #555555;
+  float:left;
 }
 .main-area {
   height: 100%;
@@ -474,6 +480,9 @@ export default {
   border-right: 1px solid #e9e9e9;
   overflow-x: hidden;
 }
+.el-aside {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 5px 0 rgba(0, 0, 0, 0.19);
+}
 .header-style {
   background-image: url(@/assets/images/nav-background.png);
   background-size: cover;
@@ -481,4 +490,10 @@ export default {
   box-shadow: 0 0px 8px 0;
   display: flex;
 }
+.main-style{
+    padding: 20px 20px 20px 40px;
+    margin-left: 20px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
+  }
 </style>
