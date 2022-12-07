@@ -408,7 +408,6 @@ export default {
           if (tempQuestion['questionType'] == 0 || tempQuestion['questionType'] == 1) {
             this.ansList.push([])
             // 初始化对应串
-            var k = 0;
             for (var j = 0; j < tempQuestion['optionList'].length; j++) {
               // console.log(j,tempQuestion['optionList'][j])
               this.ansList[i].push({
@@ -416,12 +415,6 @@ export default {
                 name: tempQuestion['optionList'][j]['name'],
                 selected: 0
               })
-              if(k < tempAnswerList.length){
-                if(this.ansList[i][j]['name'] == tempAnswerList[i][k]){
-                  this.ansList[i][j]['selected'] = 1;
-                  k ++;
-                }
-              }
             }
             // 否则
           } else if(tempQuestion['questionType'] == 2){//如果是填空题
@@ -733,10 +726,10 @@ export default {
       }
       if (selection.length < minOptionNum && selection.length < lastLen && minOptionNum < maxOptionNum) {
         this.$message.warning(`最少需要选${minOptionNum}条！`);
-        var targetRow = this.getDeletedRow(selection, index)
-        console.log("targetRowtargetRowtargetRow",targetRow)
-        this.$refs.regTable[index].toggleRowSelection(targetRow)
-        return
+        // var targetRow = this.getDeletedRow(selection, index)
+        // console.log("targetRowtargetRowtargetRow",targetRow)
+        // this.$refs.regTable[index].toggleRowSelection(targetRow)
+        // return
       }
       for (var tempRow of this.ansList[index]) {
         tempRow['selected'] = 0
