@@ -3,7 +3,38 @@
     <el-header class="header-style">
       <NavBar :login="true" activeItem="2" :imageUrl="imageSrc"></NavBar>
     </el-header>
-    <el-main>
+    <el-container>
+      <!-- <el-aside class="left-menu-area">
+        <el-menu
+          default-active="1-1"
+          active-text-color="#5EABBF"
+          class="el-menu-vertical-demo"
+          :default-openeds="['1']"
+        >
+          <el-sub-menu index="1">
+            <template #title>
+              <span class="iconfont icon-menu"></span>
+              <span>任务选择</span>
+            </template>
+            <el-menu-item index="1-1" @click="materialType = 0"
+              >图像</el-menu-item
+            >
+            <el-menu-item index="1-2" @click="materialType = 1"
+              >文本</el-menu-item
+            >
+            <el-menu-item index="1-3" @click="materialType = 2"
+              >视频</el-menu-item
+            >
+            <el-menu-item index="1-4" @click="materialType = 3"
+              >音频</el-menu-item
+            >
+            <el-menu-item index="1-5" @click="materialType = 4"
+              >自定义</el-menu-item
+            >
+          </el-sub-menu>
+        </el-menu>
+      </el-aside> -->
+    <el-main class="main-style">
       <vue-final-modal
         v-model="showModal"
         classes="modal-container"
@@ -86,15 +117,16 @@
             style="
               margin-top: 20px;
               height: 490px;
-              border-left: 4px solid rgba(0, 0, 0, 0.2);
+              box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
             "
           >
-            <div
+            <div style="padding : 20px">
+              <div
               style="
                 height: 50px;
                 text-align: center;
                 font-size: 20px;
-                margin-top: 30%;
+                margin-top: 10%;
               "
             >
               发布者信息
@@ -149,7 +181,7 @@
             <div class="progress-bar">
               <div style="padding-top: 10px">
                 <span style="text-align: center; font-size: 20px"
-                  >{{ ratio }}%</span
+                  ></span
                 >
               </div>
               <el-progress
@@ -160,6 +192,7 @@
                 color="#fbe484"
                 status="warning"
               />
+            </div>
             </div>
           </el-col>
         </el-row>
@@ -301,6 +334,7 @@
         </el-row>
       </div>
     </el-main>
+    </el-container>
   </el-container>
 </template>
 
@@ -632,7 +666,7 @@ export default {
 .level-progress {
   position: relative;
   width: 80%;
-  margin: 8px 10px 8px 10px;
+  margin: 8px 10px 8px 30px;
 }
 :deep .el-progress-bar__outer {
   background-color: #5eabbf;
@@ -648,5 +682,34 @@ export default {
   font-size: 26px;
   color: #5eabbf;
   font-family: YouSheBlack;
+}
+.left-menu-area {
+  margin-top: 4px;
+  padding-top: 40px;
+  padding-left: 0px;
+  padding-right: 10px;
+  padding-bottom: 60px;
+  border-right: 1px solid #e9e9e9;
+  overflow-x: hidden;
+}
+.main-style {
+  background-color: transparent;
+}
+.el-menu {
+  border-radius: 0;
+}
+.el-menu-item {
+  height: 50px;
+  font-size: 16px;
+  padding-top: 4px;
+}
+.el-menu-item.is-active {
+  border-left: 5px solid #5eabbf;
+}
+.el-menu--horizontal .el-menu-item:not(.is-disabled):focus {
+  background-color: transparent;
+}
+.el-menu--horizontal .el-menu-item:not(.is-disabled):hover {
+  background-color: #f8f8f8;
 }
 </style>
