@@ -1,7 +1,7 @@
 <template>
   <el-container class="container">
     <div class="detail-title">
-      {{ mode == 1 ? "领取任务详情" : "发布任务详情（进行中）" }}
+      {{ mode == 1 ? ("领取任务详情" + getReceiveTaskStatus() ) : ("发布任务详情" + getPostTaskStatus()) }}
     </div>
     <el-row>
       <el-col :span="15">
@@ -10,7 +10,7 @@
             <el-image
               style="width: 100%; height: 100%; border-radius: 5px"
               :src="
-                coverImage ? coverImage : require('@/assets/images/pet1.jpeg')
+                coverImage ? coverImage : require('@/assets/images/default.jpg')
               "
               fit="cover"
             >
@@ -77,13 +77,13 @@
               font-size: 22px;
               margin-bottom: 10px;
             "
-            >完成进度：8/10</span
+            >完成进度：{{userFinishedNum}}/{{userTotalNum}}</span
           >
           <el-progress
             style="width: 100%"
             :text-inside="true"
             :stroke-width="22"
-            :percentage="80"
+            :percentage="ratioUF"
             status="warning"
           />
         </div>
@@ -262,7 +262,7 @@
       ></el-col>
       <el-col :span="6"></el-col>
     </el-row>
-    <el-row v-else-if="mode == 1">
+    <el-row v-else-if="(mode == 1 && receiveStatus == 1)">
       <el-col :span="10" style="display: flex; justify-content: center"
         ><CustomButton
           @click="routerPerform"
@@ -272,6 +272,16 @@
       ></el-col>
       <el-col :span="8" style="display: flex; justify-content: center"
         ><CustomButton title="停止当前任务" :isRound="true"></CustomButton
+      ></el-col>
+      <el-col :span="6"> </el-col>
+    </el-row>
+    <el-row v-else-if="(mode == 1 && receiveStatus == 2)">
+      <el-col :span="18" style="display: flex; justify-content: center"
+        ><CustomButton
+          title="任务已结束"
+          :isRound="true"
+          :disabled="true"
+        ></CustomButton
       ></el-col>
       <el-col :span="6"> </el-col>
     </el-row>
@@ -317,14 +327,38 @@ export default {
       endTime: "",
       ratioR: 0,
       ratioF: 0,
+      ratioUF: 0,
       userFinishedNum:0,
       userTotalNum:0,
       postStatus:0,
+      receiveStatus:0,//1正在进行 2已结束
     };
   },
   mounted() {
   },
   methods: {
+    getReceiveTaskStatus(){
+      switch(this.receiveStatus){
+        case 1:
+          return "（进行中）";
+        case 2:
+          return "（已结束/已完成）";
+        default:
+          return "";
+      }
+    },
+    getPostTaskStatus(){
+      switch(this.postStatus){
+        case 1:
+          return "（暂未发布）";
+        case 2:
+          return "（进行中）";
+        case 3:
+          return "（已结束/已完成）";
+        default:
+          return "";
+      }
+    },
     clickPostTask(){
       //todo 立刻发布暂未发布的任务
     },
@@ -395,7 +429,17 @@ export default {
         })
         .then((res) => {
           if (res.data["status"] === "ok") {
-            if(this.mode == 2){
+            if(this.mode == 1){
+              this.userFinishedNum = res.data['userFinishedNum'];
+              this.userTotalNum = res.data['userTotalNum'];
+              this.ratioUF = Math.floor(
+                (this.userFinishedNum / this.userTotalNum) * 1000
+              ) / 10;
+            }
+            if(this.mode == 1){
+              this.receiveStatus = res.data['taskStatus'];
+            }
+            else if(this.mode == 2){
               this.postStatus = res.data['taskStatus'];
             }
             this.coverImage = res.data["coverImage"];

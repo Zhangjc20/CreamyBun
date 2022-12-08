@@ -6,8 +6,8 @@
     <el-main class="main-style">
       <div class="custom-box">
         <div class="custom-title-outer"><span class="custom-title">个性化数据标注服务</span></div>
-        <el-row>
-          <el-col :span="6">
+        <el-row style="width:90%;padding-top: 58px;">
+          <el-col :span="6" class="type-box">
             <div class="round-background">
               <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-text"></use>
@@ -15,7 +15,7 @@
             </div>
             <span class="round-back-font">文本</span>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="6" class="type-box">
             <div class="round-background">
               <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-tupian"></use>
@@ -23,7 +23,7 @@
             </div>
             <span class="round-back-font">图片</span>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="6" class="type-box">
             <div class="round-background">
               <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-a-5Jyinboyinpin"></use>
@@ -31,7 +31,7 @@
             </div>
             <span class="round-back-font">音频</span>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="6" class="type-box">
             <div class="round-background">
               <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-shipin"></use>
@@ -187,6 +187,11 @@ export default {
   margin:0;
   height:100%;
 }
+.type-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .tag-area {
   display: flex;
   margin: 20px 0 0 15px;
@@ -230,17 +235,15 @@ export default {
   overflow: hidden;
 }
 .round-back-font {
-  position: relative;
-  top:70px;
+  padding-top: 10px;
+  width:100%;
   font-size: 26px;
-  margin-left: 16px;
+  text-align: center;
   font-family: YouSheBlack;
   color:#E8BF19;
 }
 .round-background {
-  position: relative;
   top:50px;
-  left:60px;
   background-color: #ffffff;
   box-shadow: 0 0 6px 1px rgba(0,0,0,0.4);
   border-radius: 50px;
@@ -261,6 +264,9 @@ export default {
   width:60%;
   margin-left: 20%;
   box-shadow: 0 0 5px 1px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .main-style {
   background-color:transparent;
