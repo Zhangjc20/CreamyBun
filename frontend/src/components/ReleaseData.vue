@@ -18,7 +18,7 @@
       title="阴险的临时按钮"
     />
     <CustomButton 
-      @click="finalSubmit" 
+      @click="preCheck" 
       isRound="true" 
       style="float: right; right: 50px; top: 100px; position: absolute"
       height="40px"
@@ -360,7 +360,7 @@ export default {
         poster: "",
         description: "",
         questionType: "",
-        receiverNum:0,
+        receiverNum:"",
         problemTotalNum: "",
         releaseMode: "",
         releaseModeInt: "",
@@ -387,18 +387,17 @@ export default {
     }
   },
   mounted(){
-    this.$nextTick(() => {
-      axios.get("http://localhost:8000/get_release_info/", {
-        params: {
-          username:this.username
-        }
-      }).then((res) => {
-        console.log("get_release_info",res.data)
-        this.donutList = res.data["donutList"];
-        this.userDonutNum = res.data["userDonutNum"];
-      }).catch();
-    })
-
+    // this.$nextTick(() => {
+    //   axios.get("http://localhost:8000/get_release_info/", {
+    //     params: {
+    //       username:this.username
+    //     }
+    //   }).then((res) => {
+    //     console.log("get_release_info",res.data)
+    //     this.donutList = res.data["donutList"];
+    //     this.userDonutNum = res.data["userDonutNum"];
+    //   }).catch();
+    // })
   },
   methods:{
     getImage(file){
@@ -543,6 +542,11 @@ export default {
           message: '您的设置的单个题目奖励过低！最低为：'+ this.donutList[this.form.starRank - 1].toString() + "个甜甜圈！",
           type: 'error'
         })
+      }else if(this.form.receiverNum <= 0){
+        this.$message({
+          message: '您的设置的领取人数不合法！',
+          type: 'error'
+        })
       }else{
         console.log("离开单个题目奖励测试！",this.donutList,[this.form.starRank - 1],this.form.singleBonus)
         let tempLen = this.$refs.MyMaterialUpload.fullList[0].length
@@ -587,8 +591,17 @@ export default {
     blobToFile(blob, fileName, mimeType) {
       return new File([blob], fileName, { type: mimeType });
     },
-    preCheck(){
-      ElMessageBox.confirm("您现在的甜甜圈余额为"+ this.userDonutNum.toString() + "请问是否要继续发布？", "确认发布", {
+    async preCheck(){
+      await axios.get("http://localhost:8000/get_release_info/", {
+        params: {
+          username:this.username
+        }
+      }).then((res) => {
+        console.log("get_release_info",res.data)
+        this.donutList = res.data["donutList"];
+        this.userDonutNum = res.data["userDonutNum"];
+      }).catch();
+      await ElMessageBox.confirm("您现在的甜甜圈余额为"+ this.userDonutNum.toString() + "请问是否要继续发布？", "确认发布", {
         confirmButtonText: "确认",
         cancelButtonText: "取消",
         type: "warning",
@@ -600,6 +613,13 @@ export default {
     async finalSubmit(){
       this.form.poster = this.username
       this.form.materialType = this.materialType
+      if(!this.$refs.MyMaterialUpload.fullList[0]){
+        this.$message({
+          message: '您尚未提供任务素材！',
+          type: 'error'
+        });
+        return false
+      }
       this.form.problemTotalNum = this.$refs.MyMaterialUpload.fullList[0].length
       if(this.questionTypeMixed){
         this.form.questionType = 4
