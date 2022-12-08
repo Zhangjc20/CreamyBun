@@ -9,8 +9,8 @@
           justify-content: center;
         "
       >
-      <TaskCheck :mode="type" ref="taskCheck" />
-    </div>
+        <TaskCheck :mode="type" ref="taskCheck" />
+      </div>
     </el-dialog>
     <el-dialog title="任务反馈" v-model="dialogVisible" center width="60%">
       <div
@@ -86,7 +86,9 @@
         v-for="item in items"
         :key="item.index"
         :props="item"
-        @click="handleClickTask(item.id, item.isSpace,item.reportId)"
+        @click="
+          handleClickTask(item.id, item.isSpace, item.reportId, item.index)
+        "
       ></SingleTask>
     </div>
     <div class="pagnation-box">
@@ -106,8 +108,8 @@
 import axios from "axios";
 import SingleTask from "./SingleTask.vue";
 import CustomButton from "./CustomButton.vue";
-import { ElMessage } from 'element-plus';
-import TaskCheck from '@/components/TaskCheck.vue';
+import { ElMessage } from "element-plus";
+import TaskCheck from "@/components/TaskCheck.vue";
 export default {
   name: "TaskPage",
   props: {
@@ -123,18 +125,16 @@ export default {
   components: {
     SingleTask,
     CustomButton,
-    TaskCheck
+    TaskCheck,
   },
   data() {
     return {
-      dialogShow:false,
-      curId:-1,
-      curTaskId:-1,
+      dialogShow: false,
+      curId: -1,
+      curTaskId: -1,
       total: 20,
       src: "",
-      srcList: [
-        "",
-      ],
+      srcList: [""],
       textarea0: "",
       textarea1:
         "尊敬的任务发布者，您的任务不幸被举报，经核实确实存在如下问题：/并不存在问题",
@@ -196,50 +196,52 @@ export default {
     };
   },
   methods: {
-    sendReportEmail(type){
-      axios.get('/send_report_email',{
-        params:{
-          type:type,
-          reportId:this.curId,
-          taskId:this.curTaskId,
-          textarea:type==0?this.textarea1:this.textarea2
-        }
-      })
-      .then((res)=>{
-        if(res.data['status']=='ok'){
-          ElMessage({
-            type:'success',
-            message:"邮件发送成功"
+    sendReportEmail(type) {
+      axios
+        .get("/send_report_email", {
+          params: {
+            type: type,
+            reportId: this.curId,
+            taskId: this.curTaskId,
+            textarea: type == 0 ? this.textarea1 : this.textarea2,
+          },
         })
-        }
-      })
+        .then((res) => {
+          if (res.data["status"] == "ok") {
+            ElMessage({
+              type: "success",
+              message: "邮件发送成功",
+            });
+          }
+        });
     },
-    deleteReport(){
-      for(var i = 0; i < this.items.length; i++){
-        if(this.items[i].reportId == this.curId){
-          axios.get("/delete_reported_task",{
-            params:{
-              reportId:this.curId,
-            }
-          })
-          .then((res)=>{
-            if(res.data['status']==='ok'){
-              ElMessage({
-                type:'success',
-                message:"成功删除举报任务信息"
-              });
-              this.dialogVisible = false;
-              this.init();
-            }
-          })
+    deleteReport() {
+      for (var i = 0; i < this.items.length; i++) {
+        if (this.items[i].reportId == this.curId) {
+          axios
+            .get("/delete_reported_task", {
+              params: {
+                reportId: this.curId,
+              },
+            })
+            .then((res) => {
+              if (res.data["status"] === "ok") {
+                ElMessage({
+                  type: "success",
+                  message: "成功删除举报任务信息",
+                });
+                this.dialogVisible = false;
+                this.init();
+              }
+            });
           break;
         }
       }
     },
     checkDetail() {
-      this.$emit("checkDetail",this.curTaskId);
+      this.$emit("checkDetail", this.curTaskId);
     },
-    handleClickTask(taskId, isSpace, id) {
+    handleClickTask(taskId, isSpace, id, index) {
       if (isSpace === true) {
         return;
       }
@@ -250,32 +252,41 @@ export default {
             id: taskId,
           },
         });
-      }else if(this.type == 1){
+      } else if (this.type == 1) {
         this.dialogShow = true;
-        this.$nextTick(()=>{
-          this.$refs.taskCheck.showTaskDetail(taskId,this.username);
-        })
-      } 
-      else if(this.type == 2){
+        this.$nextTick(() => {
+          this.$refs.taskCheck.showTaskDetail(
+            taskId,
+            this.username,
+            this.sortChoice,
+            index
+          );
+        });
+      } else if (this.type == 2) {
         this.dialogShow = true;
-        this.$nextTick(()=>{
-          this.$refs.taskCheck.showTaskDetail(taskId,this.username);
-        })
-      } 
-      else if (this.type == 3) {
-        axios.get('/get_reported_task',{
-          params:{
-            reportId:this.curId
-          }
-        })
-        .then((res)=>{
-          if(res.data['status']==='ok'){
-            this.textarea0 = res.data['description'];
-            this.src = "data:image/png;base64," + res.data["image"];
-            this.srcList = [this.src];
-            this.dialogVisible = true;
-          }
-        })
+        this.$nextTick(() => {
+          this.$refs.taskCheck.showTaskDetail(
+            taskId,
+            this.username,
+            this.sortChoice,
+            index
+          );
+        });
+      } else if (this.type == 3) {
+        axios
+          .get("/get_reported_task", {
+            params: {
+              reportId: this.curId,
+            },
+          })
+          .then((res) => {
+            if (res.data["status"] === "ok") {
+              this.textarea0 = res.data["description"];
+              this.src = "data:image/png;base64," + res.data["image"];
+              this.srcList = [this.src];
+              this.dialogVisible = true;
+            }
+          });
       }
       this.curTaskId = taskId;
       this.curId = id;

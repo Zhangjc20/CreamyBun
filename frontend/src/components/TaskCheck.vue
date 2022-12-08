@@ -225,13 +225,22 @@
         </div>
       </el-col>
     </el-row>
-    <el-row v-if="mode == 2">
+    <el-row v-if="mode == 2 && (postStatus == 1)">
+      <el-col :span="18" style="display: flex; justify-content: center"
+        ><CustomButton
+          title="立即发布任务"
+          :isRound="true"
+          @click.stop="clickPostTask"
+        ></CustomButton
+      ></el-col>
+      <el-col :span="6"></el-col>
+    </el-row>
+    <el-row v-if="mode == 2 && (postStatus == 2)">
       <el-col :span="10" style="display: flex; justify-content: center"
         ><CustomButton
           title="答案数据下载"
           :isRound="true"
-          :disabled="hasOver"
-          @click.stop="clickDownload"
+          :disabled="true"
         ></CustomButton
       ></el-col>
       <el-col :span="8" style="display: flex; justify-content: center"
@@ -239,6 +248,16 @@
           title="中断当前任务"
           :isRound="true"
           @click.stop="clickStopTask"
+        ></CustomButton
+      ></el-col>
+      <el-col :span="6"></el-col>
+    </el-row>
+    <el-row v-if="mode == 2 && (postStatus == 3)">
+      <el-col :span="18" style="display: flex; justify-content: center"
+        ><CustomButton
+          title="答案数据下载"
+          :isRound="true"
+          @click.stop="clickDownload"
         ></CustomButton
       ></el-col>
       <el-col :span="6"></el-col>
@@ -270,7 +289,7 @@ export default {
     CustomButton,
   },
   props: {
-    mode: {
+    mode: {//1领取列表 2发布列表
       type: Number,
       default: 1,
     },
@@ -298,13 +317,17 @@ export default {
       endTime: "",
       ratioR: 0,
       ratioF: 0,
-      hasOver: false,
+      userFinishedNum:0,
+      userTotalNum:0,
+      postStatus:0,
     };
   },
   mounted() {
-    console.log("niihap");
   },
   methods: {
+    clickPostTask(){
+      //todo 立刻发布暂未发布的任务
+    },
     base64ToBlob(code) {
       code =
         "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64," +
@@ -359,18 +382,21 @@ export default {
     clickStopTask() {
       //todo 中断当前任务
     },
-    showTaskDetail(id, username) {
+    showTaskDetail(id, username, sortChoice, index) {
       axios
         .get("/get_task_basic_info", {
           params: {
+            username: this.mode == 1?localStorage.getItem('username'):"",
+            sortChoice: this.mode == 1?sortChoice:"",
+            tag: this.mode == 1?'receiveTask':"",
             id: id,
+            index:this.mode == 1?index:"",
           },
         })
         .then((res) => {
-          this.taskName = "taskName";
           if (res.data["status"] === "ok") {
-            if(res.data['taskStatus']==3){
-              this.hasOver = true;  
+            if(this.mode == 2){
+              this.postStatus = res.data['taskStatus'];
             }
             this.coverImage = res.data["coverImage"];
             this.taskName = res.data["taskName"];
