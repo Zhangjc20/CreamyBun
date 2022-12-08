@@ -561,9 +561,9 @@ def release_task(request):
 
         # 给相应用户加上任务和状态
         if t_release_mode == NOT_YET_RELEASE or t_release_mode == TIMED_RELEASE:
-            state_for_task = NOT_RELEASE
+            state_for_task = NOT_RELEASE_YET
         else:
-            state_for_task = RELEASE_BUT_NOT_FINISHED
+            state_for_task = RELEASE_BUT_NOT_OVER
         add_task_to_user(username, t_id, HAS_POSTED, state_for_task)
 
         # 扣钱

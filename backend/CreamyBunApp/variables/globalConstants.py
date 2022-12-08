@@ -12,11 +12,6 @@ TASK_MATERIAL_SAVE_PATH = "./resource/task_materials/"
 # 测试通过准确率
 TEST_PASS_RATE = 0.8
 
-# 任务状态
-NOT_RELEASE_YET = 1 # 任务尚未发布
-RELEASE_BUT_NOT_OVER = 2 # 任务发布了还没结束
-OVER = 3 # 任务已结束（超过结束时间或者已经做完）
-
 # 任务发布模式
 NOW_RELEASE = 0
 NOT_YET_RELEASE = 1
@@ -26,10 +21,10 @@ TIMED_RELEASE = 2
 NOT_FINISHED = 1
 HAS_FINISHED = 2
 
-# 用户字典里的任务自身状态常量（发布）
-NOT_RELEASE = 1
-RELEASE_BUT_NOT_FINISHED = 2
-FINISHED = 3
+# 任务状态和用户字典里的任务自身状态常量（发布）
+NOT_RELEASE_YET = 1 # 任务尚未发布
+RELEASE_BUT_NOT_OVER = 2 # 任务发布了还没结束
+OVER = 3 # 任务已结束（超过结束时间或者已经做完）
 
 # 用户任务状态常量
 HAS_RECEIVED = 1
