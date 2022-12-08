@@ -5,7 +5,7 @@
     </div>
     <div class="task-container" :style="{cursor:'pointer'}" v-else>
       <div class="task-container-inner" style="border: 2px solid #e9e9e9;">
-        <el-image :src="src" style="width:180px;height:180px;"></el-image>
+        <el-image :src="src" style="width:180px;height:180px;box-shadow: 3px 3px 12px 0 rgba(0, 0, 0, 0.315);"></el-image>
         <div class="color-bg-box">
           <div class="title-font">{{props.taskName}}</div>
           <el-row class="donut-font">
@@ -85,6 +85,7 @@
   }
   .color-bg-box {
     background-color: #4dafc7;
+    box-shadow: 3px 3px 12px 0 rgba(0, 0, 0, 0.315);
   }
   .icon {
   width: 1em;
