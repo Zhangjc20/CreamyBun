@@ -172,8 +172,16 @@ def get_task_basic_info(request):
     poster_username = get_a_user_data_by_id(t.poster).username
 
     # 获取用户领了多少题目，当前做到第几题
-    user_current_problem_index, user_received_total_problem_number\
-                                = get_user_received_problem_info(poster_username,id)
+    user_current_problem_finish_number = -1
+    user_received_total_problem_number = -1
+    task_status = get_task_status(t)
+    tag = query_dict.get("tag","") # 表明当前是否在领取任务界面
+    if tag == 'receiveTask':
+        receiver_name = query_dict.get("username","")
+        sort_choice = query_dict.get("sortChoice","") # int 0是所有 1是正在进行，2是已结束
+        task_index = query_dict.get("index","") # 这个列表中的第几个任务
+        user_current_problem_finish_number, user_received_total_problem_number\
+                                    = get_user_received_problem_info(receiver_name,eval(sort_choice),eval(task_index))
 
     task_info = {
         'status': 'ok',
@@ -191,7 +199,10 @@ def get_task_basic_info(request):
         'startTime': t.begin_time.split(" ")[0],
         'endTime': t.end_time.split(" ")[0],
         'receiveProcess':get_task_receive_process_by_id(id),
-        'coverImage': get_base64_image(t.cover_url)
+        'coverImage': get_base64_image(t.cover_url),
+        'taskStatus': task_status,
+        'userFinishedNum':user_current_problem_finish_number,
+        'userTotalNum':user_received_total_problem_number,
     }
     return HttpResponse(json.dumps(task_info), content_type='application/json')
 
@@ -424,7 +435,7 @@ def update_username(request):
         update_username_by_username(username, new_username)
         return HttpResponse(json.dumps({'status': 'ok', 'newUsername': new_username}), content_type='application/json')
 
-# 修改手机号
+# （TODO:暂时是伪装的没验证）修改手机号
 def update_phone(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
@@ -472,11 +483,6 @@ def change_avatar(request):
 
 # （TODO:暂时不做）注销
 def log_off(request):
-    pass
-
-
-# （TODO:暂时不做）修改手机号
-def update_mobile(request):
     pass
 
 # （TODO:待完善）充值接口，暂时是伪装充值功能
@@ -565,9 +571,9 @@ def release_task(request):
 
         # 给相应用户加上任务和状态
         if t_release_mode == NOT_YET_RELEASE or t_release_mode == TIMED_RELEASE:
-            state_for_task = NOT_RELEASE
+            state_for_task = NOT_RELEASE_YET
         else:
-            state_for_task = RELEASE_BUT_NOT_FINISHED
+            state_for_task = RELEASE_BUT_NOT_OVER
         add_task_to_user(username, t_id, HAS_POSTED, state_for_task)
 
         # 扣钱
@@ -842,7 +848,6 @@ def get_feedback(request):
         return HttpResponse(json.dumps({'feedback_list': feedback_list_dict}), content_type='application/json')
     else:
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')
-
 
 # 发送信息处理反馈的邮件
 @csrf_exempt

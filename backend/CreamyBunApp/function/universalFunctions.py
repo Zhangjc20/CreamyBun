@@ -136,8 +136,12 @@ def get_task_info_list(username, state, page_number, sort_choice):
     if sort_choice == 0:
         needed_task_to_state_list = [x.task_id for x in needed_task_to_state_list]
     else:
-        needed_task_to_state_list = [x.task_id for x in needed_task_to_state_list if
-                                     x.task_status_for_itself == sort_choice]
+        if state == HAS_RECEIVED:
+            needed_task_to_state_list = [x.task_id for x in needed_task_to_state_list if
+                                        x.task_status_for_itself == sort_choice]
+        else:
+            needed_task_to_state_list = [x.task_id for x in needed_task_to_state_list if
+                                        get_task_status(get_a_task_data(x.task_id)) == sort_choice]
 
     # 反转，最新的在最前面
     needed_task_to_state_list = list(reversed(needed_task_to_state_list))
@@ -159,7 +163,6 @@ def get_task_info_list(username, state, page_number, sort_choice):
     for i, t_id in enumerate(needed_task_to_state_list):
         t = get_a_task_data(t_id)
         t_info = {
-
             'isSpace': False,
             'id': t_id,
             'taskName': t.task_name,
@@ -170,6 +173,7 @@ def get_task_info_list(username, state, page_number, sort_choice):
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
             'src': get_base64_image(t.cover_url),
+            'taskStatus':get_task_status(t),
         }
         t_info.setdefault('index', i)
         task_info_list.append(t_info)
@@ -388,7 +392,7 @@ def sorted_and_selected_tasks(username, seach_content, only_level, \
         all_task = all_task.filter(answer_type=(answer_type - 2))
 
     # 必须是已经发布的任务
-    all_task = [x for x in all_task if (get_now_time().strftime('%F %T') >= x.begin_time)]
+    all_task = [x for x in all_task if (x.begin_time != "begin_time" and get_now_time().strftime('%F %T') >= x.begin_time)]
 
     # over_type: int 1:所有 2：未结束 3：已结束
     if over_type > 1:
@@ -451,6 +455,7 @@ def sorted_and_selected_tasks(username, seach_content, only_level, \
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
             'src':get_base64_image(t.cover_url),
+            'taskStatus':get_task_status(t),
         }
         t_info.setdefault('index', i)
         task_info_list.append(t_info)

@@ -26,7 +26,7 @@
       class="avatar"
     ></el-avatar>
     <span class="user-area">
-      <span class="user-center" @click="clickUser">个人中心</span>
+      <span class="user-center" @click="clickMine">个人中心</span>
     </span>
   </span>
   <span class="log-buttons" v-else>
