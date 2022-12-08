@@ -74,6 +74,7 @@ def get_reported_task_list(page_number):
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
             'reportId':x[0],
+            'taskStatus':get_task_status(t),
         }
         init_list.append(t_info)
     length = len(all_report_id_list)
@@ -192,7 +193,6 @@ def write_answer(q:Question,user_ans):
 def get_a_user_data(username):
     return User.objects.filter(username=username).first()
 
-
 # 通过id获得用户
 def get_a_user_data_by_id(id):
     return User.objects.filter(id=id).first()
@@ -205,6 +205,14 @@ def get_a_problem_data(id):
 def get_a_task_data(id):
     return Task.objects.filter(id=id).first()
 
+# 获取指定任务的状态
+def get_task_status(t:Task):
+    current_time = datetime.datetime.now().strftime('%F %T')
+    if t.begin_time > current_time or t.begin_time == "begin_time":
+        return NOT_RELEASE_YET
+    if t.end_time <= current_time or t.finished_problem_number == t.problem_total_number:
+        return OVER
+    return RELEASE_BUT_NOT_OVER
 
 # 通过用户名修改密码
 def update_password_by_username(username, password):
@@ -283,8 +291,10 @@ def create_task(request_body):
         temp_begin_time.append(basic_info_form["startLine1"])
         temp_begin_time.append(basic_info_form["startLine2"])
         begin_time = " ".join(temp_begin_time)
-    else:
+    elif release_mode == NOW_RELEASE:
         begin_time = datetime.datetime.now().strftime('%F %T')
+    else: # 暂不发布
+        begin_time = "begin_time"
 
     # 获得结束时间
     temp_end_time = []
@@ -374,7 +384,7 @@ def create_task(request_body):
 
     # 计算每个用户每次可领取的题目数量
     receiver_number = basic_info_form["receiverNum"]
-    t.problem_number_for_single_receiver = math.ceil(1.00 * t.problem_total_number / receiver_number)
+    t.problem_number_for_single_receiver = math.ceil(1.00 * t.problem_total_number / receiver_number) # TODO:需要更新
     t.save()
 
     # 返回刚刚创建的任务的id和发布状态等信息给用户

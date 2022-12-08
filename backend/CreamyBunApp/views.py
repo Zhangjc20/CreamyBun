@@ -191,7 +191,8 @@ def get_task_basic_info(request):
         'startTime': t.begin_time.split(" ")[0],
         'endTime': t.end_time.split(" ")[0],
         'receiveProcess':get_task_receive_process_by_id(id),
-        'coverImage': get_base64_image(t.cover_url)
+        'coverImage': get_base64_image(t.cover_url),
+        'taskStatus': get_task_status(t),
     }
     return HttpResponse(json.dumps(task_info), content_type='application/json')
 
@@ -424,7 +425,7 @@ def update_username(request):
         update_username_by_username(username, new_username)
         return HttpResponse(json.dumps({'status': 'ok', 'newUsername': new_username}), content_type='application/json')
 
-# 修改手机号
+# （TODO:暂时是伪装的没验证）修改手机号
 def update_phone(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
@@ -472,11 +473,6 @@ def change_avatar(request):
 
 # （TODO:暂时不做）注销
 def log_off(request):
-    pass
-
-
-# （TODO:暂时不做）修改手机号
-def update_mobile(request):
     pass
 
 # （TODO:待完善）充值接口，暂时是伪装充值功能
@@ -842,7 +838,6 @@ def get_feedback(request):
         return HttpResponse(json.dumps({'feedback_list': feedback_list_dict}), content_type='application/json')
     else:
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknown'}), content_type='application/json')
-
 
 # 发送信息处理反馈的邮件
 @csrf_exempt

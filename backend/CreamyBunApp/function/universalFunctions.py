@@ -159,7 +159,6 @@ def get_task_info_list(username, state, page_number, sort_choice):
     for i, t_id in enumerate(needed_task_to_state_list):
         t = get_a_task_data(t_id)
         t_info = {
-
             'isSpace': False,
             'id': t_id,
             'taskName': t.task_name,
@@ -170,6 +169,7 @@ def get_task_info_list(username, state, page_number, sort_choice):
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
             'src': get_base64_image(t.cover_url),
+            'taskStatus':get_task_status(t),
         }
         t_info.setdefault('index', i)
         task_info_list.append(t_info)
@@ -451,6 +451,7 @@ def sorted_and_selected_tasks(username, seach_content, only_level, \
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
             'src':get_base64_image(t.cover_url),
+            'taskStatus':get_task_status(t),
         }
         t_info.setdefault('index', i)
         task_info_list.append(t_info)
