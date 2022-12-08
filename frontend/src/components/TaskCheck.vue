@@ -230,7 +230,7 @@
         ><CustomButton
           title="答案数据下载"
           :isRound="true"
-          :disabled="true"
+          :disabled="hasOver"
           @click.stop="clickDownload"
         ></CustomButton
       ></el-col>
@@ -298,6 +298,7 @@ export default {
       endTime: "",
       ratioR: 0,
       ratioF: 0,
+      hasOver: false,
     };
   },
   mounted() {
@@ -368,6 +369,9 @@ export default {
         .then((res) => {
           this.taskName = "taskName";
           if (res.data["status"] === "ok") {
+            if(res.data['taskStatus']==3){
+              this.hasOver = true;  
+            }
             this.coverImage = res.data["coverImage"];
             this.taskName = res.data["taskName"];
             this.answerType = res.data["answerType"];
