@@ -98,15 +98,28 @@ def get_task_receive_process_by_id(id):
     return receive_process
 
 # TODO:获取用户领了多少题目，当前做到第几题
-def get_user_received_problem_info(username,task_id):
-    user_current_problem_index = -1
+def get_user_received_problem_info(username,sort_choice,task_index):
+    user_current_problem_finish_number = 0
     user_received_total_problem_number = -1
     u = get_a_user_data(username)
 
     # 对指定任务的所有领取情况
-    td_received_list = u.task_info_list.filter(task_id=task_id).filter(task_status_for_user=HAS_RECEIVED)
+    td_received_list = u.task_info_list.filter(task_status_for_user=HAS_RECEIVED)
+
+    # sort_choice: int,0是所有 1是正在进行，2是已结束
+    if sort_choice != 0:
+        td_received_list = td_received_list.filter(task_status_for_itself=sort_choice)
     
-    return user_current_problem_index, user_received_total_problem_number
+    td_received_list = list(reversed(td_received_list.all()))
+    td = td_received_list[task_index - 1]
+
+    user_received_total_problem_number = len(td.received_problem_id_list.all())-td.test_problem_number
+
+    for i,upinfo in enumerate(td.received_problem_id_list.all()):
+        if i >= td.test_problem_number and upinfo.is_right != -1:
+            user_current_problem_finish_number += 1
+    
+    return user_current_problem_finish_number, user_received_total_problem_number
 
 # 从用户列表中删除指定用户
 def delete_a_user(username):

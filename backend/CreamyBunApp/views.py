@@ -172,8 +172,16 @@ def get_task_basic_info(request):
     poster_username = get_a_user_data_by_id(t.poster).username
 
     # 获取用户领了多少题目，当前做到第几题
-    user_current_problem_index, user_received_total_problem_number\
-                                = get_user_received_problem_info(poster_username,id)
+    user_current_problem_finish_number = -1
+    user_received_total_problem_number = -1
+    task_status = get_task_status(t)
+    tag = query_dict.get("tag","") # 表明当前是否在领取任务界面
+    if tag == 'receiveTask':
+        receiver_name = query_dict.get("username","")
+        sort_choice = query_dict.get("sortChoice","") # int 0是所有 1是正在进行，2是已结束
+        task_index = query_dict.get("index","") # 这个列表中的第几个任务
+        user_current_problem_finish_number, user_received_total_problem_number\
+                                    = get_user_received_problem_info(receiver_name,sort_choice,task_index)
 
     task_info = {
         'status': 'ok',
@@ -192,7 +200,9 @@ def get_task_basic_info(request):
         'endTime': t.end_time.split(" ")[0],
         'receiveProcess':get_task_receive_process_by_id(id),
         'coverImage': get_base64_image(t.cover_url),
-        'taskStatus': get_task_status(t),
+        'taskStatus': task_status,
+        'userFinishedNum':user_current_problem_finish_number,
+        'userTotalNum':user_received_total_problem_number,
     }
     return HttpResponse(json.dumps(task_info), content_type='application/json')
 
