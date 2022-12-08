@@ -207,7 +207,7 @@
         </div>
       </el-aside>
       <el-main>
-        <el-header style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 5px 0 rgba(0, 0, 0, 0.19);">
+        <el-header style="display: flex;justify-content: center;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);border-radius: 5px;">
             <div class="search-area">
             搜索任务
             <el-input
