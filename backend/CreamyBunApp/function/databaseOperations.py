@@ -178,8 +178,9 @@ def reward_user(u:User,t:Task,common_problem_number):
     # 加经验
     is_upgrade, now_credit_rank =  u.add_exp_and_upgrade(exp_by_task_rank[t.star_rank])
     # 加甜甜圈代币
-    add_donut_for_user(u,donut_from_a_problem_by_task_rank[t.star_rank]*common_problem_number)
-    return is_upgrade, now_credit_rank
+    get_donut_num = donut_from_a_problem_by_task_rank[t.star_rank]*common_problem_number
+    add_donut_for_user(u,get_donut_num)
+    return is_upgrade, now_credit_rank, exp_by_task_rank[t.star_rank], get_donut_num
     
 # 向某个小题写入答案
 def write_answer(q:Question,user_ans):

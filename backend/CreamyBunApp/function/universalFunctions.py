@@ -676,9 +676,9 @@ def final_submit_answer(username, task_id):
     is_punish = False
 
     is_upgrade = False # 是否升级，用于提示
-    now_credit_rank = -1 # 升到几级了，如果是-1表示没升级
-
     today_violation_number = -1 # 当天已违规次数，用于提示，也是在未通过穿插测试时才会有用
+    get_exp_num = 0 # 做本次任务获得的经验
+    get_donut_num = 0 # 做本次任务获得的甜甜圈数量
 
     u = get_a_user_data(username)
     t = get_a_task_data(task_id)
@@ -715,11 +715,12 @@ def final_submit_answer(username, task_id):
         pass_insertion_test = False
         remove_task_from_user(username,task_id)
         is_punish, today_violation_number = punish_user_by_rank(u)
-        return pass_insertion_test, is_punish, today_violation_number, is_upgrade, now_credit_rank
+        return pass_insertion_test, is_punish, today_violation_number,\
+               is_upgrade, u.credit_rank, get_exp_num, get_donut_num, u.donut_number
 
     # 给对应用户发奖励，加经验
     common_problem_number = len(td.received_problem_id_list.all()) - td.test_problem_number - insertion_problem_total_number
-    is_upgrade, now_credit_rank = reward_user(u,t,common_problem_number)
+    is_upgrade, now_credit_rank, get_exp_num, get_donut_num = reward_user(u,t,common_problem_number)
 
     # 写入用户作答的所有答案，更新任务中对应大题的完成状态
     for i,x in enumerate(td.received_problem_id_list.all()):
@@ -739,7 +740,8 @@ def final_submit_answer(username, task_id):
     td.save()
 
     # 最后一个变量是用户每天可违规的次数，也是在未通过穿插测试时才有用，用于警告
-    return pass_insertion_test, is_punish, today_violation_number, is_upgrade, now_credit_rank
+    return pass_insertion_test, is_punish, today_violation_number,\
+           is_upgrade, now_credit_rank, get_exp_num, get_donut_num, u.donut_number
 
 def download_task_answer_byid(task_id):
     t = get_a_task_data(task_id)

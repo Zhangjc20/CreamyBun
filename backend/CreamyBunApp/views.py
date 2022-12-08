@@ -641,7 +641,8 @@ def final_submit(request):
     task_id = request_body["taskId"]
     
     pass_insertion_test, is_punish, today_violation_number,\
-        is_upgrade, now_credit_rank = final_submit_answer(username, task_id)
+    is_upgrade, now_credit_rank, get_exp_number,\
+    get_donut_number, now_donut_number = final_submit_answer(username, task_id)
 
     # 总提交的反馈，是字典
     final_submit_feedback = {
@@ -653,8 +654,11 @@ def final_submit(request):
 
         'todayViolationNum': today_violation_number,    # 今天已经违规多少次了，用于在未通过穿插测试时的提示
         'perDayViolationNum': violation_number_per_day, # 每天最多可以违规多少次
+        'getExpNum': get_exp_number,                    # 做本次任务获得了多少经验，如果没通过穿插测试那就是0
+        'getDonutNum': get_donut_number,                # 做本次任务获得了多少甜甜圈，没通过穿插测试是0
         'isUpgrade': is_upgrade,                        # 是否升级了
-        'nowCreditRank': now_credit_rank,               # 升到了几级，如果没升级这个变量是-1
+        'nowCreditRank': now_credit_rank,               # 用户当前等级
+        'nowDonutNumber': now_donut_number,             # 用户当前甜甜圈数量
     }
 
     return HttpResponse(json.dumps(final_submit_feedback), content_type='application/json')
