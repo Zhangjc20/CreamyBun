@@ -97,7 +97,7 @@ def get_task_receive_process_by_id(id):
     receive_process = round(has_received_problem_number/t.problem_total_number,4)*100
     return receive_process
 
-# TODO:获取用户领了多少题目，当前做到第几题
+# 获取用户领了多少题目，当前做到第几题
 def get_user_received_problem_info(username,sort_choice,task_index):
     user_current_problem_finish_number = 0
     user_received_total_problem_number = -1
@@ -119,7 +119,7 @@ def get_user_received_problem_info(username,sort_choice,task_index):
         if i >= td.test_problem_number and upinfo.is_right != -1:
             user_current_problem_finish_number += 1
     
-    return user_current_problem_finish_number, user_received_total_problem_number
+    return user_current_problem_finish_number, user_received_total_problem_number, td.task_status_for_itself
 
 # 从用户列表中删除指定用户
 def delete_a_user(username):
@@ -218,14 +218,35 @@ def get_a_problem_data(id):
 def get_a_task_data(id):
     return Task.objects.filter(id=id).first()
 
+# 更新任务状态
+def update_task_status(t:Task,task_status):
+    t.task_status = task_status
+    t.save()
+
+    # 如果结束了，所有领取者和发布者的所有相关任务dict状态均要更新为结束
+    if task_status == OVER:
+        for u in User.objects.all():
+            td_list = u.task_info_list.filter(task_id=t.id).all()
+            for td in td_list:
+                if td.task_status_for_user == HAS_POSTED:
+                    td.task_status_for_itself = OVER
+                else:
+                    td.task_status_for_itself = HAS_FINISHED
+                td.save()
+
 # 获取指定任务的状态
 def get_task_status(t:Task):
     current_time = datetime.datetime.now().strftime('%F %T')
+    task_status = RELEASE_BUT_NOT_OVER
     if t.begin_time > current_time or t.begin_time == "begin_time":
-        return NOT_RELEASE_YET
-    if t.end_time <= current_time or t.finished_problem_number == t.problem_total_number:
-        return OVER
-    return RELEASE_BUT_NOT_OVER
+        task_status =  NOT_RELEASE_YET
+    elif t.end_time <= current_time or t.finished_problem_number == t.problem_total_number:
+        task_status =  OVER
+    
+    if t.task_status != task_status:
+        update_task_status(t,task_status)
+
+    return task_status
 
 # 通过用户名修改密码
 def update_password_by_username(username, password):
@@ -249,17 +270,14 @@ def update_user_by_mobile_number(username, new_mobile):
 def update_password_by_email(email, password):
     User.objects.filter(email=email).update(password=password)
 
-
 # 通过用户名修改用户头像url
 def update_avatar_url_by_username(username, avatar_url):
     User.objects.filter(username=username).update(avatar_url=avatar_url)
-
 
 # 检查用户名和密码是否匹配
 def match_username_with_password(username, password):
     cur_user = get_a_user_data(username)
     return cur_user.validate_password(password)
-
 
 # 让用户签到
 def update_clock_in_info(username):
@@ -269,7 +287,6 @@ def update_clock_in_info(username):
         u.continue_sign_in_days += 1
     return u.is_today_sign_in, u.continue_sign_in_days
 
-
 # 修改指定用户的手机号
 def update_mobile_number_of_a_user(username, mobile_number):
     User.objects.filter(username=username).update(mobile_number=mobile_number)
@@ -277,7 +294,6 @@ def update_mobile_number_of_a_user(username, mobile_number):
 # 创建一个任务举报
 def create_a_reported_task(description,task_id,image_url,username):
     ReportInfo.objects.create(description=description,task_id=task_id,image_url=image_url,reporter_name=username)
-
 
 # 创建一个任务
 def create_task(request_body):
@@ -304,10 +320,13 @@ def create_task(request_body):
         temp_begin_time.append(basic_info_form["startLine1"])
         temp_begin_time.append(basic_info_form["startLine2"])
         begin_time = " ".join(temp_begin_time)
+        task_status = NOT_RELEASE_YET
     elif release_mode == NOW_RELEASE:
         begin_time = datetime.datetime.now().strftime('%F %T')
+        task_status = RELEASE_BUT_NOT_OVER
     else: # 暂不发布
         begin_time = "begin_time"
+        task_status = NOT_RELEASE_YET
 
     # 获得结束时间
     temp_end_time = []
@@ -319,7 +338,8 @@ def create_task(request_body):
     t = Task.objects.create(poster=poster_id, task_name=task_name, description=description, \
                             task_type=task_type, answer_type=answer_type, problem_total_number=problem_total_number, \
                             star_rank=star_rank, single_bonus=single_bonus, release_mode=release_mode, \
-                            begin_time=begin_time, end_time=end_time, cover_url=cover_url)
+                            begin_time=begin_time, end_time=end_time, cover_url=cover_url,\
+                            task_status=task_status)
 
     question_info = request_body["questionList"]
     material_info = request_body["fullList"]
@@ -411,7 +431,6 @@ def add_task_to_user(username, task_id, state_for_user, state_for_task):
                                  task_status_for_itself=state_for_task)
     u.task_info_list.add(td)
 
-
 # 添加一个问题反馈到问题反馈列表中
 def add_a_feedback(feedback_type, description, image_url, inform_email):
     try:
@@ -420,7 +439,6 @@ def add_a_feedback(feedback_type, description, image_url, inform_email):
         return True
     except:
         return False
-
 
 # 获得指定用户当前正在做的指定任务的大题信息
 def get_current_problem(username, task_id, type, jmp_target):

@@ -180,8 +180,8 @@ def get_task_basic_info(request):
         receiver_name = query_dict.get("username","")
         sort_choice = query_dict.get("sortChoice","") # int 0是所有 1是正在进行，2是已结束
         task_index = query_dict.get("index","") # 这个列表中的第几个任务
-        user_current_problem_finish_number, user_received_total_problem_number\
-                                    = get_user_received_problem_info(receiver_name,eval(sort_choice),eval(task_index))
+        user_current_problem_finish_number, user_received_total_problem_number,\
+            task_status = get_user_received_problem_info(receiver_name,eval(sort_choice),eval(task_index))
 
     task_info = {
         'status': 'ok',
@@ -200,7 +200,10 @@ def get_task_basic_info(request):
         'endTime': t.end_time.split(" ")[0],
         'receiveProcess':get_task_receive_process_by_id(id),
         'coverImage': get_base64_image(t.cover_url),
+
+        # 芝士任务状态，在领取任务界面查看时该状态对应用户领取部分的状态，其它情况下为任务整体的状态
         'taskStatus': task_status,
+
         'userFinishedNum':user_current_problem_finish_number,
         'userTotalNum':user_received_total_problem_number,
     }
