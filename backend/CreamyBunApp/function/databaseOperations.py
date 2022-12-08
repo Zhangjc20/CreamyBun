@@ -178,7 +178,7 @@ def remove_task_from_user(username,task_id):
     u.task_info_list.remove(td)
 
     # 任务删除其领取者
-    u_id = t.receiver_list.filter(int_content=u.id).first()
+    u_id = t.receiver_list.filter(int_content=u.id).last()
     t.receiver_list.remove(u_id)
 
 # 在用户穿插测试没通过的时候惩罚用户
