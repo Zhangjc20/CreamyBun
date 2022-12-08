@@ -137,6 +137,9 @@ def get_task_info_list(username, state, page_number, sort_choice):
         needed_task_to_state_list = [x.task_id for x in needed_task_to_state_list]
     else:
         if state == HAS_RECEIVED:
+            for x in needed_task_to_state_list:
+                print(x.task_status_for_itself,end=" ")
+                print(sort_choice)
             needed_task_to_state_list = [x.task_id for x in needed_task_to_state_list if
                                         x.task_status_for_itself == sort_choice]
         else:
