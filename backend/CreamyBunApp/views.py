@@ -181,7 +181,7 @@ def get_task_basic_info(request):
         sort_choice = query_dict.get("sortChoice","") # int 0是所有 1是正在进行，2是已结束
         task_index = query_dict.get("index","") # 这个列表中的第几个任务
         user_current_problem_finish_number, user_received_total_problem_number\
-                                    = get_user_received_problem_info(receiver_name,sort_choice,task_index)
+                                    = get_user_received_problem_info(receiver_name,eval(sort_choice),eval(task_index))
 
     task_info = {
         'status': 'ok',

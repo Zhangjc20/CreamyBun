@@ -110,8 +110,8 @@ def get_user_received_problem_info(username,sort_choice,task_index):
     if sort_choice != 0:
         td_received_list = td_received_list.filter(task_status_for_itself=sort_choice)
     
-    td_received_list = list(reversed(td_received_list.all()))
-    td = td_received_list[task_index - 1]
+    td_received_list = list(reversed(list(td_received_list.all())))
+    td = td_received_list[task_index]
 
     user_received_total_problem_number = len(td.received_problem_id_list.all())-td.test_problem_number
 
