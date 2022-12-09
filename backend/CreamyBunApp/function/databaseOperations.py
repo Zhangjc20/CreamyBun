@@ -192,7 +192,7 @@ def reward_user(u:User,t:Task,common_problem_number):
     # 加经验
     is_upgrade, now_credit_rank =  u.add_exp_and_upgrade(exp_by_task_rank[t.star_rank])
     # 加甜甜圈代币
-    get_donut_num = donut_from_a_problem_by_task_rank[t.star_rank]*common_problem_number
+    get_donut_num = donut_from_a_problem_by_task_rank[t.star_rank-1]*common_problem_number
     add_donut_for_user(u,get_donut_num)
     return is_upgrade, now_credit_rank, exp_by_task_rank[t.star_rank], get_donut_num
     
@@ -590,3 +590,7 @@ def get_all_feedback():
 
 def delete_a_feedback(inform_email,description):
     return FeedbackInfo.objects.filter(inform_email=inform_email,description=description).delete()[0]
+
+def set_task_end_time(t:Task,end_time):
+    t.end_time = end_time
+    t.save()

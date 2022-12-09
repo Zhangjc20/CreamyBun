@@ -631,12 +631,13 @@ def submit_answer(request):
     answer_list = request_body["ansList"]
 
     # 提交答案的反馈，是字典 
-    test_correct_rate, pass_test = submit_current_answer(username, task_id, answer_list)
+    test_correct_rate, pass_test, task_over = submit_current_answer(username, task_id, answer_list)
 
     submit_answer_feedback = {
         'status': 'ok',
         'testCorrectRate': test_correct_rate,
         'passTest': pass_test,
+        'taskOver': task_over,
     }
 
     return HttpResponse(json.dumps(submit_answer_feedback), content_type='application/json')
@@ -902,3 +903,14 @@ def download_task_answer(request):
     #         temp[0]['excel_data'] = bytes.decode(base64.b64encode(data))
     # print(temp[0]['excel_data'])
     return HttpResponse(json.dumps({'status': 'ok','task_answer_excel': temp}), content_type='application/json')
+
+# 发布者中断当前任务
+def interrupt_task(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    task_id = query_dict.get("taskId", "")
+    poster_interrupt_current_task(username,task_id)
+    res = {
+        'status': 'ok',
+    }
+    return HttpResponse(json.dumps(res), content_type='application/json')

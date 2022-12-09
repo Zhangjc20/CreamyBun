@@ -612,9 +612,14 @@ def check_answer(stanard_answer,user_answer,q_type):
 def submit_current_answer(username,task_id,answer_list):
     pass_test = -1
     test_correct_rate = -1
+    task_over = False
 
     u = get_a_user_data(username)
     t = get_a_task_data(task_id)
+
+    if t.task_status == OVER:
+        task_over = True
+        return test_correct_rate, pass_test, task_over
 
     # 获得用户正在做的任务的信息  
     td = get_user_now_taskdict(u,task_id)
@@ -668,7 +673,7 @@ def submit_current_answer(username,task_id,answer_list):
                 pass_test = False
                 remove_task_from_user(username,task_id)
 
-    return test_correct_rate, pass_test
+    return test_correct_rate, pass_test, task_over
 
 # 总提交接口，暂定做以下事情（可补充）：
 # 测穿插测试的准确率（对比标准答案和用户答案）
@@ -769,3 +774,17 @@ def download_task_answer_byid(task_id):
         data = f.read()
         data = base64.b64encode(data)
     return data
+
+# 发布者中断当前任务
+def poster_interrupt_current_task(username,task_id):
+    u = get_a_user_data(username)
+    t = get_a_task_data(task_id)
+
+    # 修改任务结束时间，更新任务状态
+    now_time = get_now_time().strftime('%F %T')
+    set_task_end_time(t,now_time)
+    get_task_status(t)
+
+    # 退还剩下的甜甜圈
+    left_problem_number = t.problem_total_number - t.finished_problem_number
+    add_donut_for_user(u,left_problem_number*donut_from_a_problem_by_task_rank[t.star_rank - 1])
