@@ -9,7 +9,7 @@
           justify-content: center;
         "
       >
-        <TaskCheck :mode="type" ref="taskCheck" @stopTask="stopTask"/>
+        <TaskCheck :mode="type" ref="taskCheck" @stopTask="stopTask" />
       </div>
     </el-dialog>
     <el-dialog title="任务反馈" v-model="dialogVisible" center width="60%">
@@ -81,27 +81,41 @@
         <el-radio :label="3" v-if="type === 2">已结束</el-radio>
       </el-radio-group>
       <el-popover
-          placement="left"
-          title="条件说明"
-          :width="230"
-          trigger="hover"
-          :content="type==1?'&emsp;&emsp;已结束包括领取题目全部完成和本身已结束的任务':'&emsp;&emsp;已结束包括截止时间已过、任务全部完成和已中断任务'"
-        >
-          <template #reference>
-            <span class="iconfont icon-infofill tip-box"></span>
-          </template>
-        </el-popover>
-    </div>
-    <div class="task-box">
-      <SingleTask
-        v-for="item in items"
-        :key="item.index"
-        :props="item"
-        @click="
-          handleClickTask(item.id, item.isSpace, item.reportId, item.index)
+        placement="left"
+        title="条件说明"
+        :width="230"
+        trigger="hover"
+        :content="
+          type == 1
+            ? '&emsp;&emsp;已结束包括领取题目全部完成和本身已结束的任务'
+            : '&emsp;&emsp;已结束包括截止时间已过、任务全部完成和已中断任务'
         "
-      ></SingleTask>
+      >
+        <template #reference>
+          <span class="iconfont icon-infofill tip-box"></span>
+        </template>
+      </el-popover>
     </div>
+    <el-row class="task-box">
+      <el-col :span="4.8" v-for="item in items.slice(0, 5)" :key="item.index">
+        <SingleTask
+          :props="item"
+          @click="
+            handleClickTask(item.id, item.isSpace, item.reportId, item.index)
+          "
+        ></SingleTask>
+      </el-col>
+    </el-row>
+    <el-row class="task-box">
+      <el-col :span="4.8" v-for="item in items.slice(5, 10)" :key="item.index">
+        <SingleTask
+          :props="item"
+          @click="
+            handleClickTask(item.id, item.isSpace, item.reportId, item.index)
+          "
+        ></SingleTask>
+      </el-col>
+    </el-row>
     <div class="pagnation-box">
       <el-pagination
         background
@@ -207,7 +221,7 @@ export default {
     };
   },
   methods: {
-    stopTask(){
+    stopTask() {
       this.dialogShow = false;
       this.init(2);
     },
@@ -487,10 +501,9 @@ export default {
     },
     init(sortChoice) {
       //初始化任务列表
-      if(sortChoice){
+      if (sortChoice) {
         this.sortChoice = sortChoice;
-      }
-      else{
+      } else {
         this.sortChoice = 0;
       }
       this.currentPage = 1;
@@ -608,6 +621,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 .report-title {
   font-size: 16px;
@@ -635,9 +649,9 @@ export default {
 }
 .task-box {
   display: flex;
-  width: 1080px;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-evenly;
+  width: 100%;
 }
 </style>

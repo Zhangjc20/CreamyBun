@@ -206,7 +206,7 @@
           <CustomButton :props="confirmProps" title="确认筛选" @click.stop="handleSort"></CustomButton>
         </div>
       </el-aside>
-      <el-main>
+      <el-main style="width:100%;">
         <el-header style="display: flex;justify-content: center;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);border-radius: 5px;">
             <div class="search-area">
             搜索任务
@@ -223,9 +223,9 @@
             </el-input>
           </div>
         </el-header>
-        <el-main>
+        <div style="margin-top:24px;">
           <TaskPage :type="0" ref="taskPage" :username="username" :imageSrc="image.src"></TaskPage>
-        </el-main>
+        </div>
       </el-main>
     </el-container>
   </el-container>
