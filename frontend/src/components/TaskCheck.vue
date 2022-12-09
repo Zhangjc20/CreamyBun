@@ -275,7 +275,7 @@
         ></CustomButton
       ></el-col>
       <el-col :span="8" style="display: flex; justify-content: center"
-        ><CustomButton title="停止当前任务" :isRound="true"></CustomButton
+        ><CustomButton title="放弃当前任务" :isRound="true" @click="giveUpThisTask"></CustomButton
       ></el-col>
       <el-col :span="6"> </el-col>
     </el-row>
@@ -342,6 +342,27 @@ export default {
   },
   mounted() {},
   methods: {
+    giveUpThisTask(){
+      axios
+        .get("/give_up_task", {
+          params: {
+            username: localStorage.getItem('username'),
+            taskId: this.id,
+          },
+        })
+        .then((res) => {
+          if (res.data["status"] === "ok") {
+            this.$emit('giveUpTask');
+            ElMessage({
+              type: "success",
+              message: "成功放弃该任务"
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     getReceiveTaskStatus() {
       switch (this.receiveStatus) {
         case 1:
@@ -365,7 +386,24 @@ export default {
       }
     },
     clickPostTask() {
-      //todo 立刻发布暂未发布的任务
+      axios
+        .get("/post_task_immediately", {
+          params: {
+            taskId: this.id,
+          },
+        })
+        .then((res) => {
+          if (res.data["status"] === "ok") {
+            this.$emit('postTaskImmediately');
+            ElMessage({
+              type: "success",
+              message: "成功发布该任务"
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     base64ToBlob(code) {
       code =

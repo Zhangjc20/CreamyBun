@@ -189,7 +189,7 @@
       </el-row>
       <el-row style="height: 50px;">
         <el-form-item label="领取人数" :required="true">
-          <el-input v-model="form.receiverNum" placeholder="请输如本任务的领取人数" type="number" @blur="form.receiverNum=Number(form.receiverNum)" oninput="value=value.replace(/[^\d]/g,'')"/>
+          <el-input v-model="form.receiverNum" placeholder="请输入本任务的领取人数" type="number" @blur="form.receiverNum=Number(form.receiverNum)" oninput="value=value.replace(/[^\d]/g,'')"/>
         </el-form-item>
       </el-row>
       <el-row style="height: 50px;">

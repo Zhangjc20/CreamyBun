@@ -9,7 +9,7 @@
           justify-content: center;
         "
       >
-        <TaskCheck :mode="type" ref="taskCheck" @stopTask="stopTask" />
+        <TaskCheck :mode="type" ref="taskCheck" @postTaskImmediately="postTaskImmediately" @stopTask="stopTask" @giveUpTask="giveUpTask"/>
       </div>
     </el-dialog>
     <el-dialog title="任务反馈" v-model="dialogVisible" center width="60%">
@@ -221,6 +221,14 @@ export default {
     };
   },
   methods: {
+    postTaskImmediately(){
+      this.dialogShow = false;
+      this.init(1);
+    },
+    giveUpTask(){
+      this.dialogShow = false;
+      this.init(1);
+    },
     stopTask() {
       this.dialogShow = false;
       this.init(2);
@@ -564,6 +572,7 @@ export default {
             if (res.data["status"] === "ok") {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
+              console.log(this.items);
             }
           })
           .catch((err) => {
