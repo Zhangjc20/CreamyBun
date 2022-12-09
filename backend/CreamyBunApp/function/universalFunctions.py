@@ -791,3 +791,10 @@ def poster_interrupt_current_task(task_id):
     add_donut_for_user(u,add_donut_number)
 
     return left_problem_number, add_donut_number
+
+# 领取者放弃当前任务
+def receiver_give_up_task(username,task_id):
+    u = get_a_user_data(username)
+
+    # 获得当前用户正在做的任务信息
+    td = get_user_now_taskdict(u,task_id)

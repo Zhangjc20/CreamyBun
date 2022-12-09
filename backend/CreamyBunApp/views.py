@@ -921,3 +921,8 @@ def give_up_task(request):
     query_dict = request.GET
     username = query_dict.get("username","")
     task_id = query_dict.get("taskId", "") 
+    receiver_give_up_task(username,task_id)
+    res = {
+        'status': 'ok',
+    }
+    return HttpResponse(json.dumps(res), content_type='application/json')
