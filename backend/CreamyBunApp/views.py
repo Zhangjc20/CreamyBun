@@ -907,10 +907,11 @@ def download_task_answer(request):
 # 发布者中断当前任务
 def interrupt_task(request):
     query_dict = request.GET
-    username = query_dict.get("username", "")
     task_id = query_dict.get("taskId", "")
-    poster_interrupt_current_task(username,task_id)
+    poster_interrupt_current_task(task_id)
     res = {
         'status': 'ok',
     }
     return HttpResponse(json.dumps(res), content_type='application/json')
+
+# def 

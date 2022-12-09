@@ -776,9 +776,9 @@ def download_task_answer_byid(task_id):
     return data
 
 # 发布者中断当前任务
-def poster_interrupt_current_task(username,task_id):
-    u = get_a_user_data(username)
+def poster_interrupt_current_task(task_id):
     t = get_a_task_data(task_id)
+    u = get_a_user_data_by_id(t.poster)
 
     # 修改任务结束时间，更新任务状态
     now_time = get_now_time().strftime('%F %T')
