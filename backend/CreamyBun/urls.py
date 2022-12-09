@@ -69,4 +69,5 @@ urlpatterns = [
     path('withdraw_money/',views.withdraw_money),
     path('update_phone/',views.update_phone),
     path('interrupt_task/',views.interrupt_task),
+    path('give_up_task/',views.give_up_task),
 ]

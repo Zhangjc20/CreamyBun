@@ -908,10 +908,16 @@ def download_task_answer(request):
 def interrupt_task(request):
     query_dict = request.GET
     task_id = query_dict.get("taskId", "")
-    poster_interrupt_current_task(task_id)
+    left_problem_number, add_donut_number = poster_interrupt_current_task(task_id)
     res = {
         'status': 'ok',
+        'leftProblemNum': left_problem_number, # 该任务剩了几题没做，用于提示
+        'returnDonutNum': add_donut_number,    # 共退还多少甜甜圈，用于提示
     }
     return HttpResponse(json.dumps(res), content_type='application/json')
 
-# def 
+# 领取者放弃当前任务
+def give_up_task(request):
+    query_dict = request.GET
+    username = query_dict.get("username","")
+    task_id = query_dict.get("taskId", "") 

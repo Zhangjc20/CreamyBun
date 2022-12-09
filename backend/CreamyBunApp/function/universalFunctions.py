@@ -787,4 +787,7 @@ def poster_interrupt_current_task(task_id):
 
     # 退还剩下的甜甜圈
     left_problem_number = t.problem_total_number - t.finished_problem_number
-    add_donut_for_user(u,left_problem_number*donut_from_a_problem_by_task_rank[t.star_rank - 1])
+    add_donut_number = left_problem_number*donut_from_a_problem_by_task_rank[t.star_rank - 1]
+    add_donut_for_user(u,add_donut_number)
+
+    return left_problem_number, add_donut_number
