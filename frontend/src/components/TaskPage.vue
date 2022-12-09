@@ -570,7 +570,6 @@ export default {
             console.log(err);
           });
       } else if (this.type === 3) {
-        //todo:获得所有需要审核的任务
         axios
           .get("/get_examining_tasks", {
             params: {

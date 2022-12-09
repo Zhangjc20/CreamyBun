@@ -259,7 +259,6 @@
               ><CustomButton
                 title="任务已结束"
                 :isRound="true"
-                @click="clickReceiveStart"
                 :disabled="true"
               ></CustomButton
             ></el-col>
@@ -422,6 +421,9 @@ export default {
       this.showModal = true;
     },
     clickReceiveStart() {
+      if(this.cantReceive){
+        return;
+      }
       //todo:进入进行任务页面具体传入什么参数自定义
       axios
         .get("/receive_task", {
@@ -479,6 +481,9 @@ export default {
         });
     },
     clickToList() {
+      if(this.cantReceive){
+        return;
+      }
       axios
         .get("/receive_task", {
           params: {
