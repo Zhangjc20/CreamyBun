@@ -206,7 +206,7 @@
           <CustomButton :props="confirmProps" title="确认筛选" @click.stop="handleSort"></CustomButton>
         </div>
       </el-aside>
-      <el-main style="width:100%;">
+      <el-main>
         <el-header style="display: flex;justify-content: center;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);border-radius: 5px;">
             <div class="search-area">
             搜索任务

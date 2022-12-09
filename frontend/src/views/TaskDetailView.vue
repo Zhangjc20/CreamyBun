@@ -253,7 +253,33 @@
               </div>
             </el-col>
           </el-row>
-          <el-row v-if="mode == 0">
+          <el-row v-if="(mode == 0 && hasOver)">
+            <el-col :span="1"></el-col>
+            <el-col :span="5"
+              ><CustomButton
+                title="任务已结束"
+                :isRound="true"
+                @click="clickReceiveStart"
+                :disabled="true"
+              ></CustomButton
+            ></el-col>
+            <el-col :span="5"
+              ><CustomButton
+                title="举报该任务"
+                :isRound="true"
+                @click.stop="clickReport"
+              ></CustomButton
+            ></el-col>
+            <el-col :span="5"
+              ><CustomButton
+                title="取消并返回"
+                :isRound="true"
+                @click.stop="clickCancel"
+              ></CustomButton
+            ></el-col>
+            <el-col :span="8"></el-col>
+          </el-row>
+          <el-row v-if="(mode == 0 && !hasOver)">
             <el-col :span="4"
               ><CustomButton
                 title="领取并开始"
@@ -359,6 +385,7 @@ export default {
       endTime: "",
       ratio: 0,
       cantReceive:false,
+      hasOver:false,
     };
   },
   methods: {
@@ -554,6 +581,9 @@ export default {
       .then((res) => {
         this.taskName = "taskName";
         if (res.data["status"] === "ok") {
+          if(res.data['taskStatus']==3){
+            this.hasOver = true;
+          }
           this.coverImage = res.data["coverImage"];
           this.taskName = res.data["taskName"];
           this.answerType = res.data["answerType"];
