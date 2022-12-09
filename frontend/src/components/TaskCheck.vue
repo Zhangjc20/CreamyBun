@@ -1,7 +1,11 @@
 <template>
   <el-container class="container">
     <div class="detail-title">
-      {{ mode == 1 ? ("领取任务详情" + getReceiveTaskStatus() ) : ("发布任务详情" + getPostTaskStatus()) }}
+      {{
+        mode == 1
+          ? "领取任务详情" + getReceiveTaskStatus()
+          : "发布任务详情" + getPostTaskStatus()
+      }}
     </div>
     <el-row>
       <el-col :span="15">
@@ -77,7 +81,7 @@
               font-size: 22px;
               margin-bottom: 10px;
             "
-            >完成进度：{{userFinishedNum}}/{{userTotalNum}}</span
+            >完成进度：{{ userFinishedNum }}/{{ userTotalNum }}</span
           >
           <el-progress
             style="width: 100%"
@@ -225,7 +229,7 @@
         </div>
       </el-col>
     </el-row>
-    <el-row v-if="mode == 2 && (postStatus == 1)">
+    <el-row v-if="mode == 2 && postStatus == 1">
       <el-col :span="18" style="display: flex; justify-content: center"
         ><CustomButton
           title="立即发布任务"
@@ -235,7 +239,7 @@
       ></el-col>
       <el-col :span="6"></el-col>
     </el-row>
-    <el-row v-if="mode == 2 && (postStatus == 2)">
+    <el-row v-if="mode == 2 && postStatus == 2">
       <el-col :span="10" style="display: flex; justify-content: center"
         ><CustomButton
           title="答案数据下载"
@@ -252,7 +256,7 @@
       ></el-col>
       <el-col :span="6"></el-col>
     </el-row>
-    <el-row v-if="mode == 2 && (postStatus == 3)">
+    <el-row v-if="mode == 2 && postStatus == 3">
       <el-col :span="18" style="display: flex; justify-content: center"
         ><CustomButton
           title="答案数据下载"
@@ -262,7 +266,7 @@
       ></el-col>
       <el-col :span="6"></el-col>
     </el-row>
-    <el-row v-else-if="(mode == 1 && receiveStatus == 1)">
+    <el-row v-else-if="mode == 1 && receiveStatus == 1">
       <el-col :span="10" style="display: flex; justify-content: center"
         ><CustomButton
           @click="routerPerform"
@@ -275,7 +279,7 @@
       ></el-col>
       <el-col :span="6"> </el-col>
     </el-row>
-    <el-row v-else-if="(mode == 1 && receiveStatus == 2)">
+    <el-row v-else-if="mode == 1 && receiveStatus == 2">
       <el-col :span="18" style="display: flex; justify-content: center"
         ><CustomButton
           title="任务已结束"
@@ -292,6 +296,7 @@
 // import axios from "axios";
 import CustomButton from "@/components/CustomButton.vue";
 import axios from "axios";
+import { ElMessage, ElMessageBox } from "element-plus";
 // import { ElMessage } from "element-plus";
 export default {
   name: "TaskCheck",
@@ -299,7 +304,8 @@ export default {
     CustomButton,
   },
   props: {
-    mode: {//1领取列表 2发布列表
+    mode: {
+      //1领取列表 2发布列表
       type: Number,
       default: 1,
     },
@@ -328,38 +334,37 @@ export default {
       ratioR: 0,
       ratioF: 0,
       ratioUF: 0,
-      userFinishedNum:0,
-      userTotalNum:0,
-      postStatus:0,
-      receiveStatus:0,//1正在进行 2已结束
+      userFinishedNum: 0,
+      userTotalNum: 0,
+      postStatus: 0,
+      receiveStatus: 0, //1正在进行 2已结束
     };
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
-    getReceiveTaskStatus(){
-      switch(this.receiveStatus){
+    getReceiveTaskStatus() {
+      switch (this.receiveStatus) {
         case 1:
           return "（进行中）";
         case 2:
-          return "（已结束/已完成）";
+          return "（已结束）";
         default:
           return "";
       }
     },
-    getPostTaskStatus(){
-      switch(this.postStatus){
+    getPostTaskStatus() {
+      switch (this.postStatus) {
         case 1:
           return "（暂未发布）";
         case 2:
           return "（进行中）";
         case 3:
-          return "（已结束/已完成）";
+          return "（已结束）";
         default:
           return "";
       }
     },
-    clickPostTask(){
+    clickPostTask() {
       //todo 立刻发布暂未发布的任务
     },
     base64ToBlob(code) {
@@ -414,33 +419,62 @@ export default {
       });
     },
     clickStopTask() {
-      //todo 中断当前任务
+      ElMessageBox.confirm("确定要中断当前任务吗？该操作不可逆。", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+        draggable: true,
+      })
+        .then(() => {
+          axios
+            .get("/interrupt_task", {
+              params: {
+                taskId: this.id,
+              },
+            })
+            .then((res) => {
+              if (res.data["status"] === "ok") {
+                this.$emit("stopTask");
+                ElMessage({
+                  type: "success",
+                  message:
+                    "中断任务操作成功，该任务剩余" +
+                    res.data["leftProblemNum"] +
+                    "题尚未完成，共退还甜甜圈" +
+                    res.data["returnDonutNum"],
+                });
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .catch(() => {});
     },
     showTaskDetail(id, username, sortChoice, index) {
       axios
         .get("/get_task_basic_info", {
           params: {
-            username: this.mode == 1?localStorage.getItem('username'):"",
-            sortChoice: this.mode == 1?sortChoice:"",
-            tag: this.mode == 1?'receiveTask':"",
+            username: this.mode == 1 ? localStorage.getItem("username") : "",
+            sortChoice: this.mode == 1 ? sortChoice : "",
+            tag: this.mode == 1 ? "receiveTask" : "",
             id: id,
-            index:this.mode == 1?index:"",
+            index: this.mode == 1 ? index : "",
           },
         })
         .then((res) => {
           if (res.data["status"] === "ok") {
-            if(this.mode == 1){
-              this.userFinishedNum = res.data['userFinishedNum'];
-              this.userTotalNum = res.data['userTotalNum'];
-              this.ratioUF = Math.floor(
-                (this.userFinishedNum / this.userTotalNum) * 1000
-              ) / 10;
+            if (this.mode == 1) {
+              this.userFinishedNum = res.data["userFinishedNum"];
+              this.userTotalNum = res.data["userTotalNum"];
+              this.ratioUF =
+                Math.floor((this.userFinishedNum / this.userTotalNum) * 1000) /
+                10;
             }
-            if(this.mode == 1){
-              this.receiveStatus = res.data['taskStatus'];
-            }
-            else if(this.mode == 2){
-              this.postStatus = res.data['taskStatus'];
+            if (this.mode == 1) {
+              this.receiveStatus = res.data["taskStatus"];
+            } else if (this.mode == 2) {
+              this.postStatus = res.data["taskStatus"];
             }
             this.coverImage = res.data["coverImage"];
             this.taskName = res.data["taskName"];
