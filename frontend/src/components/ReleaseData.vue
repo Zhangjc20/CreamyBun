@@ -205,17 +205,14 @@
       </el-row>
       <el-row v-if="form.releaseMode == '定时发布'" style="height: 50px;">
         <el-form-item label="发布时间" :required="true" >
-          <!-- <el-time-picker
-            v-model="form.startLine"
-            placeholder="请选择发布时间"
-            style="width: 100%"
-          /> -->
           <el-col :span="11">
             <el-date-picker
               v-model="form.startLine1"
               type="date"
               placeholder="请选择发布日期"
               style="width: 100%"
+              value-format="YYYY-MM-DD"
+              :disabled-date="disabledDate"
             />
           </el-col>
           <el-col :span="2" class="text-center">
@@ -226,36 +223,34 @@
               v-model="form.startLine2"
               placeholder="请选择发布时间"
               style="width: 100%"
+              value-format="HH:mm:ss"
+              :disabled-date="disabledDate"
             />
           </el-col>
         </el-form-item>
       </el-row>
       <el-row style="height: 50px;">
         <el-form-item label="截止时间" :required="true">
-
-          <!-- <el-time-picker
-            v-model="form.deadLine"
-            placeholder="请选择截止时间"
-            style="width: 100%"
-          /> -->
           <el-col :span="11">
             <el-date-picker
               v-model="form.deadLine1"
               type="date"
               placeholder="请选择截止日期"
-              style="width: 200px"
+              style="width: 100%"
               value-format="YYYY-MM-DD"
+              :disabled-date="disabledDate"
             />
           </el-col>
           <el-col :span="2" class="text-center">
-            <!-- <span class="text-gray-500">  :</span> -->
+            <span class="text-gray-500">  :</span>
           </el-col>
           <el-col :span="11">
             <el-time-picker
               v-model="form.deadLine2"
               placeholder="请选择截止时间"
-              style="width: 200px"
+              style="width: 100%"
               value-format="HH:mm:ss"
+              :picker-options="disabledDate"
             />
           </el-col>
         </el-form-item>
@@ -384,6 +379,11 @@ export default {
       materialTypeName:'图像',
       donutList:[],
       userDonutNum:-1,
+      disabledDate: (time) => {
+        console.log(time.getTime(),new Date().getTime() - 86400000)
+        return time.getTime() < new Date().getTime() - 86400000;
+      }
+  
     }
   },
   mounted(){
@@ -580,6 +580,33 @@ export default {
         if((tempLen - this.$refs.MyMaterialUpload.testList.length) * this.form.singleBonus > this.userDonutNum){
           this.$message({
             message: '您的甜甜圈余额不足！',
+            type: 'error'
+          });
+          return false
+        }
+        var startLine  = new Date(this.form.startLine1 + ' ' + this.form.startLine2)
+        var deadLine  = new Date(this.form.deadLine1 + ' ' + this.form.deadLine2)
+        var date = new Date();
+        console.log("startLine",startLine,this.form.startLine1 + ' ' + this.form.startLine2)
+        console.log("deadLine",deadLine,this.form.deadLine1 + ' ' + this.form.deadLine2)
+        console.log("date",date)
+        if(startLine < date){
+          this.$message({
+            message: '您的任务发布时间不能早于现在！',
+            type: 'error'
+          });
+          return false
+        }
+        if(deadLine < date){
+          this.$message({
+            message: '您的任务截止时间不能早于现在！',
+            type: 'error'
+          });
+          return false
+        }
+        if(deadLine < startLine){
+          this.$message({
+            message: '您的任务截止时间不能早于任务发布时间！',
             type: 'error'
           });
           return false
