@@ -223,9 +223,9 @@
             </el-input>
           </div>
         </el-header>
-        <el-main>
+        <div style="margin-top:24px;">
           <TaskPage :type="0" ref="taskPage" :username="username" :imageSrc="image.src"></TaskPage>
-        </el-main>
+        </div>
       </el-main>
     </el-container>
   </el-container>

@@ -131,17 +131,19 @@ def get_task_info_list(username, state, page_number, sort_choice):
     sort_choice = eval(sort_choice)
     all_task_to_state = u.task_info_list.all()  # 返回了字典model对象的列表
 
-    # 存了所有的符合状态的任务的id 
+    # 存了所有的符合状态的任务字典 
     needed_task_to_state_list = [x for x in all_task_to_state if x.task_status_for_user == state]
-    if sort_choice == 0:
-        needed_task_to_state_list = [x.task_id for x in needed_task_to_state_list]
-    else:
+    t_status_list = []
+    for x in needed_task_to_state_list:
+        t = get_a_task_data(x.task_id)
+        t_status_list.append(get_task_status(t))
+    if sort_choice != 0:
         if state == HAS_RECEIVED:
-            needed_task_to_state_list = [x.task_id for x in needed_task_to_state_list if
+            needed_task_to_state_list = [x for x in needed_task_to_state_list if
                                         x.task_status_for_itself == sort_choice]
         else:
-            needed_task_to_state_list = [x.task_id for x in needed_task_to_state_list if
-                                        get_task_status(get_a_task_data(x.task_id)) == sort_choice]
+            needed_task_to_state_list = [x for i,x in enumerate(needed_task_to_state_list) if
+                                        t_status_list[i] == sort_choice]
 
     # 反转，最新的在最前面
     needed_task_to_state_list = list(reversed(needed_task_to_state_list))
@@ -160,11 +162,12 @@ def get_task_info_list(username, state, page_number, sort_choice):
 
     task_info_list = []
     # i从0开始
-    for i, t_id in enumerate(needed_task_to_state_list):
-        t = get_a_task_data(t_id)
+    for i, td in enumerate(needed_task_to_state_list):
+        t = get_a_task_data(td.task_id)
+        task_status = get_task_status(t)
         t_info = {
             'isSpace': False,
-            'id': t_id,
+            'id': td.task_id,
             'taskName': t.task_name,
             'starNum': t.star_rank,
             'donut': t.single_bonus,
@@ -173,7 +176,7 @@ def get_task_info_list(username, state, page_number, sort_choice):
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
             'src': get_base64_image(t.cover_url),
-            'taskStatus':get_task_status(t),
+            'taskStatus':task_status if state == HAS_POSTED else td.task_status_for_itself,
         }
         t_info.setdefault('index', i)
         task_info_list.append(t_info)
@@ -609,9 +612,14 @@ def check_answer(stanard_answer,user_answer,q_type):
 def submit_current_answer(username,task_id,answer_list):
     pass_test = -1
     test_correct_rate = -1
+    task_over = False
 
     u = get_a_user_data(username)
     t = get_a_task_data(task_id)
+
+    if t.task_status == OVER:
+        task_over = True
+        return test_correct_rate, pass_test, task_over
 
     # 获得用户正在做的任务的信息  
     td = get_user_now_taskdict(u,task_id)
@@ -665,7 +673,7 @@ def submit_current_answer(username,task_id,answer_list):
                 pass_test = False
                 remove_task_from_user(username,task_id)
 
-    return test_correct_rate, pass_test
+    return test_correct_rate, pass_test, task_over
 
 # 总提交接口，暂定做以下事情（可补充）：
 # 测穿插测试的准确率（对比标准答案和用户答案）
@@ -766,3 +774,27 @@ def download_task_answer_byid(task_id):
         data = f.read()
         data = base64.b64encode(data)
     return data
+
+# 发布者中断当前任务
+def poster_interrupt_current_task(task_id):
+    t = get_a_task_data(task_id)
+    u = get_a_user_data_by_id(t.poster)
+
+    # 修改任务结束时间，更新任务状态
+    now_time = get_now_time().strftime('%F %T')
+    set_task_end_time(t,now_time)
+    get_task_status(t)
+
+    # 退还剩下的甜甜圈
+    left_problem_number = t.problem_total_number - t.finished_problem_number
+    add_donut_number = left_problem_number*donut_from_a_problem_by_task_rank[t.star_rank - 1]
+    add_donut_for_user(u,add_donut_number)
+
+    return left_problem_number, add_donut_number
+
+# 领取者放弃当前任务
+def receiver_give_up_task(username,task_id):
+    u = get_a_user_data(username)
+
+    # 获得当前用户正在做的任务信息
+    td = get_user_now_taskdict(u,task_id)

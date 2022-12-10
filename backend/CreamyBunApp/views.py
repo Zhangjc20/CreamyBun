@@ -180,8 +180,8 @@ def get_task_basic_info(request):
         receiver_name = query_dict.get("username","")
         sort_choice = query_dict.get("sortChoice","") # int 0是所有 1是正在进行，2是已结束
         task_index = query_dict.get("index","") # 这个列表中的第几个任务
-        user_current_problem_finish_number, user_received_total_problem_number\
-                                    = get_user_received_problem_info(receiver_name,eval(sort_choice),eval(task_index))
+        user_current_problem_finish_number, user_received_total_problem_number,\
+            task_status = get_user_received_problem_info(receiver_name,eval(sort_choice),eval(task_index))
 
     task_info = {
         'status': 'ok',
@@ -200,7 +200,10 @@ def get_task_basic_info(request):
         'endTime': t.end_time.split(" ")[0],
         'receiveProcess':get_task_receive_process_by_id(id),
         'coverImage': get_base64_image(t.cover_url),
+
+        # 芝士任务状态，在领取任务界面查看时该状态对应用户领取部分的状态，其它情况下为任务整体的状态
         'taskStatus': task_status,
+
         'userFinishedNum':user_current_problem_finish_number,
         'userTotalNum':user_received_total_problem_number,
     }
@@ -628,12 +631,13 @@ def submit_answer(request):
     answer_list = request_body["ansList"]
 
     # 提交答案的反馈，是字典 
-    test_correct_rate, pass_test = submit_current_answer(username, task_id, answer_list)
+    test_correct_rate, pass_test, task_over = submit_current_answer(username, task_id, answer_list)
 
     submit_answer_feedback = {
         'status': 'ok',
         'testCorrectRate': test_correct_rate,
         'passTest': pass_test,
+        'taskOver': task_over,
     }
 
     return HttpResponse(json.dumps(submit_answer_feedback), content_type='application/json')
@@ -899,3 +903,26 @@ def download_task_answer(request):
     #         temp[0]['excel_data'] = bytes.decode(base64.b64encode(data))
     # print(temp[0]['excel_data'])
     return HttpResponse(json.dumps({'status': 'ok','task_answer_excel': temp}), content_type='application/json')
+
+# 发布者中断当前任务
+def interrupt_task(request):
+    query_dict = request.GET
+    task_id = query_dict.get("taskId", "")
+    left_problem_number, add_donut_number = poster_interrupt_current_task(task_id)
+    res = {
+        'status': 'ok',
+        'leftProblemNum': left_problem_number, # 该任务剩了几题没做，用于提示
+        'returnDonutNum': add_donut_number,    # 共退还多少甜甜圈，用于提示
+    }
+    return HttpResponse(json.dumps(res), content_type='application/json')
+
+# 领取者放弃当前任务
+def give_up_task(request):
+    query_dict = request.GET
+    username = query_dict.get("username","")
+    task_id = query_dict.get("taskId", "") 
+    receiver_give_up_task(username,task_id)
+    res = {
+        'status': 'ok',
+    }
+    return HttpResponse(json.dumps(res), content_type='application/json')

@@ -6,7 +6,28 @@ module.exports = defineConfig({
     open: true,           // 是否自动打开项目
     host: '127.0.0.1',      // 制定域名
     port: 8081,           // 端口号
-    proxy: { //配置跨域
+    proxy: { //配置跨域interrupt_task
+      '/give_up_task':{
+        target: 'http://localhost:8000/give_up_task/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/give_up_task': '' //请求的时候使用这个api就可以
+        }
+      },
+      '/post_task_immediately':{
+        target: 'http://localhost:8000/post_task_immediately/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/post_task_immediately': '' //请求的时候使用这个api就可以
+        }
+      },
+      '/interrupt_task':{
+        target: 'http://localhost:8000/interrupt_task/', //填写请求的目标地址
+        changOrigin: true, //允许跨域
+        pathRewrite: {
+          '^/interrupt_task': '' //请求的时候使用这个api就可以
+        }
+      },
       '/update_phone':{
         target: 'http://localhost:8000/update_phone/', //填写请求的目标地址
         changOrigin: true, //允许跨域

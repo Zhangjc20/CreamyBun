@@ -9,7 +9,7 @@
           justify-content: center;
         "
       >
-        <TaskCheck :mode="type" ref="taskCheck" />
+        <TaskCheck :mode="type" ref="taskCheck" @postTaskImmediately="postTaskImmediately" @stopTask="stopTask" @giveUpTask="giveUpTask"/>
       </div>
     </el-dialog>
     <el-dialog title="任务反馈" v-model="dialogVisible" center width="60%">
@@ -80,17 +80,42 @@
         }}</el-radio>
         <el-radio :label="3" v-if="type === 2">已结束</el-radio>
       </el-radio-group>
-    </div>
-    <div class="task-box">
-      <SingleTask
-        v-for="item in items"
-        :key="item.index"
-        :props="item"
-        @click="
-          handleClickTask(item.id, item.isSpace, item.reportId, item.index)
+      <el-popover
+        placement="left"
+        title="条件说明"
+        :width="230"
+        trigger="hover"
+        :content="
+          type == 1
+            ? '&emsp;&emsp;已结束包括领取题目全部完成和本身已结束的任务'
+            : '&emsp;&emsp;已结束包括截止时间已过、任务全部完成和已中断任务'
         "
-      ></SingleTask>
+      >
+        <template #reference>
+          <span class="iconfont icon-infofill tip-box"></span>
+        </template>
+      </el-popover>
     </div>
+    <el-row class="task-box">
+      <el-col :span="4.8" v-for="item in items.slice(0, 5)" :key="item.index">
+        <SingleTask
+          :props="item"
+          @click="
+            handleClickTask(item.id, item.isSpace, item.reportId, item.index)
+          "
+        ></SingleTask>
+      </el-col>
+    </el-row>
+    <el-row class="task-box">
+      <el-col :span="4.8" v-for="item in items.slice(5, 10)" :key="item.index">
+        <SingleTask
+          :props="item"
+          @click="
+            handleClickTask(item.id, item.isSpace, item.reportId, item.index)
+          "
+        ></SingleTask>
+      </el-col>
+    </el-row>
     <div class="pagnation-box">
       <el-pagination
         background
@@ -196,6 +221,18 @@ export default {
     };
   },
   methods: {
+    postTaskImmediately(){
+      this.dialogShow = false;
+      this.init(1);
+    },
+    giveUpTask(){
+      this.dialogShow = false;
+      this.init(1);
+    },
+    stopTask() {
+      this.dialogShow = false;
+      this.init(2);
+    },
     sendReportEmail(type) {
       axios
         .get("/send_report_email", {
@@ -470,9 +507,13 @@ export default {
           });
       }
     },
-    init() {
+    init(sortChoice) {
       //初始化任务列表
-      this.sortChoice = 0;
+      if (sortChoice) {
+        this.sortChoice = sortChoice;
+      } else {
+        this.sortChoice = 0;
+      }
       this.currentPage = 1;
       if (this.type === 0) {
         axios
@@ -504,7 +545,7 @@ export default {
           .get("/get_user_received_task_info", {
             params: {
               username: this.username, //String 用户名
-              sortChoice: 0, //int 1是所有 2是正在进行，3是已结束
+              sortChoice: this.sortChoice, //int 1是所有 2是正在进行，3是已结束
               pageNumber: 1, //int页码
             },
           })
@@ -523,7 +564,7 @@ export default {
           .get("/get_user_released_task_info", {
             params: {
               username: this.username, //String 用户名
-              sortChoice: 0, //int 1是所有，2是暂未发布 3是发布但未结束 4是已结束
+              sortChoice: this.sortChoice, //int 1是所有，2是暂未发布 3是发布但未结束 4是已结束
               pageNumber: 1, //int页码
             },
           })
@@ -531,13 +572,13 @@ export default {
             if (res.data["status"] === "ok") {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
+              console.log(this.items);
             }
           })
           .catch((err) => {
             console.log(err);
           });
       } else if (this.type === 3) {
-        //todo:获得所有需要审核的任务
         axios
           .get("/get_examining_tasks", {
             params: {
@@ -578,11 +619,17 @@ export default {
 </script>
 
 <style scoped>
+.tip-box {
+  color: #e6a23c;
+  font-size: 18px;
+  margin-left: 4px;
+}
 .task-page-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 .report-title {
   font-size: 16px;
@@ -610,9 +657,9 @@ export default {
 }
 .task-box {
   display: flex;
-  width: 1080px;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-evenly;
+  width: 100%;
 }
 </style>
