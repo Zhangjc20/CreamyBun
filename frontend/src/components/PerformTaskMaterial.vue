@@ -76,7 +76,7 @@ export default {
     this.type = this.materialInfo['fileType']
     if(this.type == 2 || this.type == 3){
       this.streamSrc = "http://localhost:8000/stream_video/" + this.materialInfo['filePath'].replace(/\//g,"<").replace(/\\/g,"<")
-      console.log("this.streamSrc",this.streamSrc)
+      // console.log("this.streamSrc",this.streamSrc)
     }
     if(this.type == 3){
       var tempList = this.materialInfo['filePath'].split('.')
@@ -86,17 +86,17 @@ export default {
       }
       this.audioSuffix += tempType
     }
-    console.log("materialInfo", this.materialInfo)
+    // console.log("materialInfo", this.materialInfo)
     axios.get("http://localhost:8000/perform_problem_material/", {
       params: this.materialInfo
     }).then((res) => {
-      console.log("res", res)
+      // console.log("res", res)
       if (this.type == 0) {
         const imageFile = this.base64ImgtoFile("" + res.data["materialImage"]);
         this.image.src =
           window.webkitURL.createObjectURL(imageFile) ||
           window.URL.createObjectURL(imageFile);
-        console.log("this.image.src", this.image.src)
+        // console.log("this.image.src", this.image.src)
       } else if (this.type == 1) {
         this.docContent = res.data["materialContent"]
       }
@@ -126,12 +126,12 @@ export default {
         params: this.materialInfo,
         responseType: 'blob'
       }).then((res) => {
-        console.log("res getVideoStream", res)
+        // console.log("res getVideoStream", res)
         const blob = new Blob([res.data], { type: 'video/mp4' })
-        console.log("res getVideoStream", blob)
+        // console.log("res getVideoStream", blob)
         this.sources[0]['src'] = window.webkitURL.createObjectURL(blob) ||
             window.URL.createObjectURL(blob);
-        console.log("res getVideoStream", this.sources)
+        // console.log("res getVideoStream", this.sources)
 
       }).catch();
     },

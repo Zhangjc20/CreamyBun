@@ -6,14 +6,14 @@
         <el-breadcrumb-item>任务选择</el-breadcrumb-item>
         <el-breadcrumb-item>{{ materialType }}</el-breadcrumb-item>
         <el-breadcrumb-item v-if="isTest"><span
-            style="color:#5EABBF;font-size=30px;font-weight: bold;">资质测试</span></el-breadcrumb-item>
+            style="color:red;font-size=30px;font-weight: bold;">资质测试</span></el-breadcrumb-item>
         <el-breadcrumb-item>题目：{{ currentIndex + 1 }}</el-breadcrumb-item>
       </el-breadcrumb>
       <span style="float: left;font-size: 25px;font-weight: bold;">
         {{ taskName }}
       </span>
-      <CustomButton @click="finalSubmit" isRound="true" v-if="isFinished" normalColor="#FBE484"
-        style="float: right; right: 590px; top: 100px; position: absolute" height="40px" width="150px" title="提交任务" />
+      <CustomButton @click="previousQuestion" isRound="true"
+        style="float: right; right: 590px; top: 100px; position: absolute" height="40px" width="150px" title="上一题" />
       <CustomButton @click="jumpDialogVisible = true" isRound="true"
         style="float: right; right: 410px; top: 100px; position: absolute" height="40px" width="150px" title="题目跳转" />
       <CustomButton @click="submitAnswers" isRound="true"
@@ -125,7 +125,7 @@
           <span>
             您的正答率：
           </span>
-          <span style="font-weight: bold;font-size: 15px;color: #5EABBF;">
+          <span style="font-weight: bold;font-size: 15px;color: red;">
             {{ percentage }}
           </span>
         </el-row>
@@ -146,7 +146,7 @@
           <span>
             您的正答率：
           </span>
-          <span style="font-weight: bold;font-size: 15px;color: #5EABBF;">
+          <span style="font-weight: bold;font-size: 15px;color: red;">
             {{ percentage }}
           </span>
         </el-row>
@@ -171,6 +171,14 @@
             <CustomButton @click="finalSubmitDialogVisible = false; finalSubmit()" style="margin:auto;" isRound="true"
               title="提交任务" />
             <CustomButton @click="finalSubmitDialogVisible = false" style="margin:auto;" isRound="true" title="暂不提交" />
+            <!-- <el-col :span="12">
+            <CustomButton @click="finalSubmit(); finalSubmitDialogVisible = false" style="margin-left:20px;"
+              isRound="true" title="提交任务" />
+          </el-col>
+          <el-col :span="12">
+            <CustomButton @click="finalSubmitDialogVisible = false" style="margin-left:120px;" isRound="true"
+              title="暂不提交" />
+          </el-col> -->
           </el-row>
         </span>
       </el-main>
@@ -225,7 +233,7 @@
           </span>
         </el-row>
         <el-row style="margin-bottom: 20px;">
-          <span style="font-weight: bold;color: #5EABBF;font-size: 20px;">
+          <span style="font-weight: bold;color: red;font-size: 20px;">
             恭喜您顺利完成本次任务！
           </span>
         </el-row>
@@ -233,13 +241,13 @@
           <span>
             您在本次任务中获得甜甜圈：
           </span>
-          <span style="font-weight: bold;font-size: 15px;color: #5EABBF;">
+          <span style="font-weight: bold;font-size: 15px;color: red;">
             {{ getDonutNum }}
           </span>
           <span>
             您当前的甜甜圈余额为：
           </span>
-          <span style="font-weight: bold;font-size: 15px;color: #5EABBF;">
+          <span style="font-weight: bold;font-size: 15px;color: red;">
             {{ nowDonutNumber }}
           </span>
         </el-row>
@@ -247,7 +255,7 @@
           <span>
             您在本次任务中获得经验：
           </span>
-          <span style="font-weight: bold;font-size: 15px;color: #5EABBF;">
+          <span style="font-weight: bold;font-size: 15px;color: red;">
             {{ getExpNum }}
           </span>
         </el-row>
@@ -255,7 +263,7 @@
           <span>
             同时恭喜您的等级提升！您当前的等级为
           </span>
-          <span style="font-weight: bold;font-size: 15px;color: #5EABBF;">
+          <span style="font-weight: bold;font-size: 15px;color: red;">
             {{ nowCreditRank }}
           </span>
         </el-row>
@@ -300,7 +308,7 @@ import ImageFramer from "@/components/ImageFramer.vue";
 
 export default {
   name: 'PerformTask',
-  inject: ['reload'],
+
   components: {
     CustomButton,
     PerformTaskMaterial,
@@ -348,10 +356,8 @@ export default {
       nowDonutNumber: -1,
       initRects: [],
       initAnsList: [],
-      initAnsListStr: '',
       initingSelection: true,
       tableKey:0,
-      isFinished:false
     }
   },
   mounted() {
@@ -426,7 +432,6 @@ export default {
       // dom元素更新后执行，因此这里能正确打印更改之后的值
       // console.log("http://localhost:8000/uck_me/")
       // axios.get("http://localhost:8000/uck_me/", {
-        
       console.log("http://localhost:8000/perform_basic_info/")
       axios.get("http://localhost:8000/perform_basic_info/", {
         params: {
@@ -436,7 +441,6 @@ export default {
           jmpTarget: jmpTarget
         }
       }).then((res) => {
-        this.ansChanged = false;
         console.log("成功加载一个material", res)
         this.questionList = res.data['questionList'];
         this.materialList = res.data['materialList'];
@@ -503,8 +507,6 @@ export default {
           }
           console.log("更新后的this.ansList", JSON.parse(JSON.stringify(this.ansList)))
         }
-        this.initAnsListStr = JSON.stringify(this.ansList)
-        console.log("this.initAnsListStr", this.initAnsListStr)
         this.updateSelect();
       }).catch();
     },
@@ -532,48 +534,44 @@ export default {
       })
     },
     async previousQuestion() {
-
-      if(this.initAnsListStr != JSON.stringify(this.ansList)){
-        await this.$confirm('请问是否需要提交当前答案？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          if (!this.submitAnswers()) {
-            return
-          }
-
-        }).catch(() => {
-        });
-      }
-      this.reload()
-      this.getProblemInfo('last')
-      this.reload()
+      // var confirmRes = this.$confirm('请问是否需要提交当前答案？', '提示', {
+      //   confirmButtonText: '确定',
+      //   cancelButtonText: '取消',
+      //   type: 'success'
+      // }).catch(err => err)
+      // console.log("confirmResconfirmResconfirmRes", confirmRes)
+      // if ('confirm' === confirmRes){
+      //   this.submitAnswers()
+      // }
+      await this.$confirm('请问是否需要提交当前答案？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        if (!this.submitAnswers()) {
+          return
+        }
+        this.getProblemInfo('last')
+      }).catch(() => {
+      });
     },
     async jumpQuestion(index) {
       console.log("async jumpQuestion(index)", index)
-      console.log("async jumpQuestion(index)", JSON.stringify(this.ansList))
-      console.log("async jumpQuestion(index)", this.initAnsListStr)
-      if(this.initAnsListStr != JSON.stringify(this.ansList)){
-        await this.$confirm('请问是否需要提交当前答案？', '提示', {
-          confirmButtonText: '是',
-          cancelButtonText: '否',
-          type: 'warning'
-        }).then(() => {
-          if (!this.submitAnswers()) {
-            return
-          }
-        }).catch(() => {
-        });
-      }
-
+      await this.$confirm('请问是否需要提交当前答案？', '提示', {
+        confirmButtonText: '是',
+        cancelButtonText: '否',
+        type: 'warning'
+      }).then(() => {
+        if (!this.submitAnswers()) {
+          return
+        }
+      }).catch(() => {
+      });
 
 
       this.jumpDialogVisible = false
       this.$nextTick(() => {
-        this.reload()
         this.getProblemInfo('jump', index)
-        this.reload()
       })
     },
     async submitAnswers() {
@@ -666,11 +664,11 @@ export default {
       }
       console.log("submitAnsList", submitAnsList)
       this.stateList[this.currentIndex]['state'] = true
-      this.isFinished = true;
+      var isFinished = true;
       // 判断是否所有题目都做完了
       for (var stateItem of this.stateList) {
         if (!stateItem['state']) {
-          this.isFinished = false
+          isFinished = false
           break
         }
       }
@@ -679,19 +677,18 @@ export default {
         username: this.username,
         taskId: this.taskId,
         ansList: submitAnsList,
-        isFinished: this.isFinished,
+        isFinished: isFinished,
       }).then(res => {
         this.$message({
           type: 'success',
           message: '提交成功!'
         });
-        console.log("提交成功!", res,this.isFinished)
-        if (this.isFinished) {
+        console.log("提交成功!", res)
+        if (isFinished) {
           if (res.data['taskOver']) {
             this.taskOverDialogVisible = true
             return
           }
-          console.log("提交成功!111", this.isTest)
           if (this.isTest) {
 
             this.passTest = res.data['passTest']
@@ -700,48 +697,31 @@ export default {
             }
             this.percentage = (Math.round(res.data['testCorrectRate'] * 10000)) / 100 + '%'
             this.testResultDialogVisible = true
-            
           } else {
             this.finalSubmitDialogVisible = true
           }
 
         } else {
-          this.reload()
           this.getProblemInfo('next')
-          this.reload()
         }
       }).catch(error => {
         console.log(error)
       })
     },
-    // async comfirmSubmit() {
-    //   if(this.initAnsListStr != JSON.stringify(this.ansList)){
-    //     await this.$confirm('请问是否需要提交当前答案？', '提示', {
-    //       confirmButtonText: '是',
-    //       cancelButtonText: '否',
-    //       type: 'warning'
-    //     }).then(() => {
-    //       if (!this.submitAnswers()) {
-    //         return
-    //       }
-    //     }).catch(() => {
-    //     });
-    //   }
-    // },
+    async taskOver() {
+
+    },
     async quitPerform() {
-      if(this.initAnsListStr != JSON.stringify(this.ansList)){
-        await this.$confirm('请问是否需要提交当前答案？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          if (!this.submitAnswers()) {
-            return
-          }
-        }).catch(() => {
-        });
-      }
-      
+      await this.$confirm('请问是否需要提交当前答案？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        if (!this.submitAnswers()) {
+          return
+        }
+      }).catch(() => {
+      });
       this.$router.push({
         name: "mine",
         query: {

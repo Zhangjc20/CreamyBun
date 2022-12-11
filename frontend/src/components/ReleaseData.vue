@@ -380,7 +380,6 @@ export default {
       donutList:[],
       userDonutNum:-1,
       disabledDate: (time) => {
-        console.log(time.getTime(),new Date().getTime() - 86400000)
         return time.getTime() < new Date().getTime() - 86400000;
       }
   

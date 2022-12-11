@@ -1,6 +1,6 @@
 <template>
   <el-config-provider :locale="locale">
-    <router-view />
+    <router-view v-if="isRouterAlive"/>
   </el-config-provider>
 </template>
 
@@ -8,11 +8,25 @@
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
 export default {
   components: {},
+  provide () {
+   return{
+     reload: this.reload,
+   }
+ },
   data() {
     return {
       locale: zhCn,
+      isRouterAlive: true
     };
   },
+  methods:{
+   reload(){
+     this.isRouterAlive = false
+     this.$nextTick(function(){
+       this.isRouterAlive = true
+     })
+   }
+ }
 };
 </script>
 

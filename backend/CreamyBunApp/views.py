@@ -604,7 +604,7 @@ def perform_basic_info(request):
     type = query_dict.get("type", "")
     jmp_target = eval(query_dict.get("jmpTarget", ""))
     # print("perform_basic_info", username)
-
+    print("perform_basic_info",type)
     material_list, question_list, is_test, current_problem_index, \
     current_total_problem_number, problem_state_list, answer_list = \
         get_current_problem(username, task_id, type, jmp_target)
@@ -629,7 +629,7 @@ def submit_answer(request):
     username = request_body["username"]
     task_id = request_body["taskId"]
     answer_list = request_body["ansList"]
-
+    print('answer_list',answer_list)
     # 提交答案的反馈，是字典 
     test_correct_rate, pass_test, task_over = submit_current_answer(username, task_id, answer_list)
 
