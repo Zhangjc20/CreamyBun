@@ -146,7 +146,7 @@ export default {
       formData.append("content", this.emailContent);
       axios({
         method: "Post",
-        url: "http://localhost:8000/handle_feedback_email/",
+        url: "http://101.42.118.80:8000/handle_feedback_email/",
         headers: {
           //请求头这个一定要写
           "Content-Type": "multipart/form-data",
@@ -178,7 +178,7 @@ export default {
       formData.append("type", this.props.feedback_type);
       axios({
         method: "Post",
-        url: "http://localhost:8000/delete_feedback/",
+        url: "http://101.42.118.80:8000/delete_feedback/",
         headers: {
           //请求头这个一定要写
           "Content-Type": "multipart/form-data",

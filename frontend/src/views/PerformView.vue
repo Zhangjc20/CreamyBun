@@ -128,7 +128,7 @@
         console.log(this.taskId)
       }
       if(!localStorage.getItem('avatar')){
-      axios.get('/get_avatar',{
+      axios.get('http://101.42.118.80:8000/get_avatar',{
         params:{
           username:this.username
         }

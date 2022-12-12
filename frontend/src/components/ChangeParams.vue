@@ -76,7 +76,7 @@ export default {
   methods: {
     changeDonutToMoney() {
       axios
-        .get("/change_current_rate_info", {
+        .get("http://101.42.118.80:8000/change_current_rate_info", {
           params: {
             adminToken:localStorage.getItem('adminToken'),
             type: "donutToMoney",
@@ -96,7 +96,7 @@ export default {
     },
     changeMoneyToDonut() {
       axios
-        .get("/change_current_rate_info", {
+        .get("http://101.42.118.80:8000/change_current_rate_info", {
           params: {
             adminToken:localStorage.getItem('adminToken'),
             type: "moneyToDonut",
@@ -117,7 +117,7 @@ export default {
   },
   mounted() {
     axios
-      .get("/get_current_rate_info", {
+      .get("http://101.42.118.80:8000/get_current_rate_info", {
         params: {
           adminToken:localStorage.getItem('adminToken')
         },

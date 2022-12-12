@@ -170,7 +170,7 @@ export default {
   created(){
     //从后端获得该用户的连续签到天数
     //从后端获得该用户是否已经签到
-    axios.get("/get_user_activity_info",{
+    axios.get("http://101.42.118.80:8000/get_user_activity_info",{
       params:{
         username:this.username
       }

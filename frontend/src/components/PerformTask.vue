@@ -362,7 +362,7 @@ export default {
   },
   methods: {
     finalSubmit() {
-      axios.post("http://localhost:8000/final_submit/", {
+      axios.post("http://101.42.118.80:8000/final_submit/", {
         username: this.username,
         taskId: this.taskId,
       }).then(res => {
@@ -427,8 +427,8 @@ export default {
       // console.log("http://localhost:8000/uck_me/")
       // axios.get("http://localhost:8000/uck_me/", {
         
-      console.log("http://localhost:8000/perform_basic_info/")
-      axios.get("http://localhost:8000/perform_basic_info/", {
+      console.log("http://101.42.118.80:8000/perform_basic_info/")
+      axios.get("http://101.42.118.80:8000/perform_basic_info/", {
         params: {
           username: this.username,
           taskId: this.taskId,
@@ -675,7 +675,7 @@ export default {
         }
       }
       console.log("提交前检查：", submitAnsList)
-      axios.post("http://localhost:8000/submit_answer/", {
+      axios.post("http://101.42.118.80:8000/submit_answer/", {
         username: this.username,
         taskId: this.taskId,
         ansList: submitAnsList,
@@ -765,7 +765,7 @@ export default {
     },
     clickFillBlank(targetIndex, min, max, questionIndex) {
       console.log("this.materialList[targetIndex]", this.materialList[targetIndex],"this.ansList",this.ansList)
-      axios.get("http://localhost:8000/perform_problem_material/", {
+      axios.get("http://101.42.118.80:8000/perform_problem_material/", {
         params: this.materialList[targetIndex]
       }).then((res) => {
 

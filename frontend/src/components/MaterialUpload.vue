@@ -429,7 +429,7 @@ export default {
         console.log("开始上传", formData)
         axios({
           method: "Post",
-          url: 'http://localhost:8000/get_material_zip/',
+          url: 'http://101.42.118.80:8000/get_material_zip/',
           headers: {
             //请求头这个一定要写
             'Content-Type': 'multipart/form-data',
@@ -795,7 +795,7 @@ export default {
       let act = 'delete'
       console.log(row, index)
       let msgList = this.getActionMsg(act)
-      axios.post("http://localhost:8000/handle_release_action/",
+      axios.post("http://101.42.118.80:8000/handle_release_action/",
         {
           act: act,
           msgList: msgList,
