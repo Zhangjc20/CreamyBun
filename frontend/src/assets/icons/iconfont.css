@@ -1,0 +1,67 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 3728246 */
+  src: url('iconfont.woff2?t=1670576414637') format('woff2'),
+       url('iconfont.woff?t=1670576414637') format('woff'),
+       url('iconfont.ttf?t=1670576414637') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-infofill:before {
+  content: "\e6e4";
+}
+
+.icon-question:before {
+  content: "\e7fe";
+}
+
+.icon-menu:before {
+  content: "\e6ec";
+}
+
+.icon-rmb-full:before {
+  content: "\e8c4";
+}
+
+.icon-tiantianquan:before {
+  content: "\e60e";
+}
+
+.icon-text:before {
+  content: "\e791";
+}
+
+.icon-tupian:before {
+  content: "\e8ba";
+}
+
+.icon-shipin:before {
+  content: "\e6c9";
+}
+
+.icon-a-5Jyinboyinpin:before {
+  content: "\e671";
+}
+
+.icon-lock:before {
+  content: "\e666";
+}
+
+.icon-user:before {
+  content: "\e606";
+}
+
+.icon-verify-fill:before {
+  content: "\e63e";
+}
+
+.icon-email-fill:before {
+  content: "\e77e";
+}
+

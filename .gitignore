@@ -1,2 +1,14 @@
-/app/node_modules
+/frontend/node_modules
 /.vscode
+/backend/venv
+__pycache__
+migrations
+package.json
+yarn.lock
+.idea
+temp
+cache
+resource
+.git1
+migrations1/
+api.yaml
