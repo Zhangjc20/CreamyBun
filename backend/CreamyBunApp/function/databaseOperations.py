@@ -220,9 +220,6 @@ def get_a_task_data(id):
 
 # 更新任务状态
 def update_task_status(t:Task,task_status):
-    t.task_status = task_status
-    t.save()
-
     # 如果结束了，所有领取者和发布者的所有相关任务dict状态均要更新为结束
     if task_status == OVER:
         for u in User.objects.all():
@@ -233,6 +230,15 @@ def update_task_status(t:Task,task_status):
                 else:
                     td.task_status_for_itself = HAS_FINISHED
                 td.save()
+    # 如果是未发布的任务发布了，发布者那边的状态也需要更新
+    elif task_status == RELEASE_BUT_NOT_OVER and t.task_status == NOT_RELEASE_YET:
+        u = get_a_user_data_by_id(t.poster)
+        td = u.task_info_list.filter(task_id=t.id).filter(task_status_for_user=HAS_POSTED).first()
+        td.task_status_for_itself = RELEASE_BUT_NOT_OVER
+        td.save()
+
+    t.task_status = task_status
+    t.save()
 
 # 获取指定任务的状态
 def get_task_status(t:Task):
@@ -593,4 +599,8 @@ def delete_a_feedback(inform_email,description):
 
 def set_task_end_time(t:Task,end_time):
     t.end_time = end_time
+    t.save()
+
+def set_task_begin_time(t:Task,begin_time):
+    t.begin_time = begin_time
     t.save()

@@ -809,3 +809,14 @@ def poster_interrupt_current_task(task_id):
 # 领取者放弃当前任务
 def receiver_give_up_task(username,task_id):
     remove_task_from_user(username,task_id)
+
+# 立即发布当前未发布的任务
+def force_release_task(task_id):
+    t = get_a_task_data(task_id)
+    u = get_a_user_data_by_id(t.poster)
+    now_time = get_now_time().strftime('%F %T')
+    set_task_begin_time(t,now_time)
+    get_task_status(t)
+    sub_donut_number = t.single_bonus*t.problem_total_number
+    flag = sub_donut_for_user(u,sub_donut_number)
+    return flag, sub_donut_number, u.donut_number
