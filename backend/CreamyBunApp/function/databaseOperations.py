@@ -192,7 +192,7 @@ def reward_user(u:User,t:Task,common_problem_number):
     # 加经验
     is_upgrade, now_credit_rank =  u.add_exp_and_upgrade(exp_by_task_rank[t.star_rank])
     # 加甜甜圈代币
-    get_donut_num = donut_from_a_problem_by_task_rank[t.star_rank-1]*common_problem_number
+    get_donut_num = t.single_bonus*common_problem_number
     add_donut_for_user(u,get_donut_num)
     return is_upgrade, now_credit_rank, exp_by_task_rank[t.star_rank], get_donut_num
     
@@ -422,7 +422,7 @@ def create_task(request_body):
 
     # 返回刚刚创建的任务的id和发布状态等信息给用户
     return basic_info_form['poster'], t.id, t.release_mode,\
-           t.problem_total_number*donut_from_a_problem_by_task_rank[t.star_rank-1]
+           t.problem_total_number*t.single_bonus
 
 # 为用户增加一个任务，包括状态（已领取/已发布和发布模式/完成状态）
 def add_task_to_user(username, task_id, state_for_user, state_for_task):
