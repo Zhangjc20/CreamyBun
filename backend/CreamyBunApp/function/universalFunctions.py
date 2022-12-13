@@ -200,7 +200,7 @@ def get_task_info_list(username, state, page_number, sort_choice):
 def change_user_avatar(image, username):
     avatar_url = USER_AVATAR_SAVE_PATH + username + "." + image.name
     update_avatar_url_by_username(username, avatar_url)
-    with open(avatar_url, 'wb') as f:
+    with open(avatar_url, 'wb+') as f:
         for line in image:
             f.write(line)
 
@@ -227,7 +227,10 @@ def set_admin_password(new_password):
 
 # 获取用户头像base64格式
 def get_user_avatr(username):
-    avatar_url = get_a_user_data(username).avatar_url
+    u = get_a_user_data(username)
+    if not u:
+        return ""
+    avatar_url = u.avatar_url
     if not os.path.exists(avatar_url):
         return ""
     else:
