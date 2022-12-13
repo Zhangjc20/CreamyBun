@@ -34,6 +34,7 @@
 
 # 部署注意事项
 + 服务器 http://101.42.118.80/ 密码 lu4l5xft.0
++ 连接方式:ssh -o ServerAliveInterval=60 ubuntu@101.42.118.80
 + 前端vue.config.js跨域配置仅作用于开发模式，以后axios中地址请直接写全
 + 重新部署步骤：
 + + 后端部分删除CreamyBunApp下migrations/除了__init__.py
@@ -42,6 +43,7 @@
 + ubuntu@VM-0-17-ubuntu:~/bighw/frontend$ npm run build
 + ubuntu@VM-0-17-ubuntu:~/bighw/frontend$ cp -r dist/ ../compose/nginx/
 + ubuntu@VM-0-17-ubuntu:~/bighw/frontend$ cd ..
++ ubuntu@VM-0-17-ubuntu:~/bighw$ sudo docker-compose down(如果后台正在运行要先停止现有，可通过docker ps查看)
 + ubuntu@VM-0-17-ubuntu:~/bighw$ sudo docker-compose build
 + ubuntu@VM-0-17-ubuntu:~/bighw$ sudo docker-compose up (-d) #此时需要等全部部署完才生效，一分钟以内可完成 -d代表在后台运行
 + 先运行sudo docker-compose build，成功后运行sudo docker-compose up
