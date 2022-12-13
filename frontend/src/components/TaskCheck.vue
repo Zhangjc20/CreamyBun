@@ -394,11 +394,19 @@ export default {
         })
         .then((res) => {
           if (res.data["status"] === "ok") {
-            this.$emit('postTaskImmediately');
-            ElMessage({
-              type: "success",
-              message: "成功发布该任务"
-            });
+            if(res.data['isSucceed']){
+              this.$emit('postTaskImmediately');
+              ElMessage({
+                type: "success",
+                message: "成功发布该任务，您当前的甜甜圈余额为"+String(res.data['leftDonutNum'])
+              });
+            }
+            else{
+              ElMessage({
+                type: "error",
+                message: "您的余额不足，发布任务需要"+String(res.data['needDonutNum'])+"，您的余额为"+String(res.data['leftDonutNum'])
+              }); 
+            }
           }
         })
         .catch((err) => {
