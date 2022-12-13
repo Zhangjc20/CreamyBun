@@ -34,6 +34,7 @@
 
 # 部署注意事项
 + 重新部署第一步：上传github为最新代码
++ 服务器拉取最新代码: git pull origin dev
 + 服务器 http://101.42.118.80/ 密码 lu4l5xft.0
 + 连接方式:ssh -o ServerAliveInterval=60 ubuntu@101.42.118.80
 + 前端vue.config.js跨域配置仅作用于开发模式，以后axios中地址请直接写全
