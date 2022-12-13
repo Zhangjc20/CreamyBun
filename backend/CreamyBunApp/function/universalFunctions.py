@@ -395,16 +395,30 @@ def sorted_and_selected_tasks(username, seach_content, only_level, \
         all_task = all_task.filter(answer_type=(answer_type - 2))
 
     # 必须是已经发布的任务
-    all_task = [x for x in all_task if (x.begin_time != "begin_time" and get_now_time().strftime('%F %T') >= x.begin_time)]
+    temp_all_task:list[Task] = []
+    for x in all_task.all():
+        if x.begin_time != "begin_time" and get_now_time().strftime('%F %T') >= x.begin_time:
+            get_task_status(x)
+            temp_all_task.append(x)
+    all_task = temp_all_task
 
     # over_type: int 1:所有 2：未结束 3：已结束
+    temp_all_task2:list[Task] = []
     if over_type > 1:
         if over_type == 3:
-            all_task = [x for x in all_task if ((x.finished_problem_number == x.problem_total_number) \
-                                                or get_now_time().strftime('%F %T') >= x.end_time)]
+            for x in all_task:
+                if (x.finished_problem_number == x.problem_total_number) \
+                    or get_now_time().strftime('%F %T') >= x.end_time:
+                    get_task_status(x)
+                    temp_all_task2.append(x)
+            all_task = temp_all_task2
         else:
-            all_task = [x for x in all_task if ((x.finished_problem_number < x.problem_total_number) \
-                                                and get_now_time().strftime('%F %T') < x.end_time)]
+            for x in all_task:
+                if (x.finished_problem_number < x.problem_total_number) \
+                    and get_now_time().strftime('%F %T') < x.end_time:
+                    get_task_status(x)
+                    temp_all_task2.append(x)
+            all_task = temp_all_task2
     # username:用户名用来获取等级啥的
     # only_level:bool false:所有 true:只选入满足做题者等级的
     if only_level:
@@ -458,7 +472,7 @@ def sorted_and_selected_tasks(username, seach_content, only_level, \
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
             'src':get_base64_image(t.cover_url),
-            'taskStatus':get_task_status(t),
+            'taskStatus':t.task_status, 
         }
         t_info.setdefault('index', i)
         task_info_list.append(t_info)

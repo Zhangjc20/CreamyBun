@@ -926,3 +926,8 @@ def give_up_task(request):
         'status': 'ok',
     }
     return HttpResponse(json.dumps(res), content_type='application/json')
+
+# 未发布的任务点击后立即发布
+def post_task_immediately(request):
+    query_dict = request.GET
+    task_id = query_dict.get("taskId", "")
