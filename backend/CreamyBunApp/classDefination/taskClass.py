@@ -22,7 +22,7 @@ class Task(models.Model):
     # 用户领取任务时应该先通过这个量算出还剩多少题目可领取，然后决定当前用户要领多少题目
     problem_number_for_single_receiver = models.IntegerField(default=-1)
 
-    star_rank = models.IntegerField(default=-1)  # 任务星级
+    star_rank = models.IntegerField(default=-1)  # 任务星级，从1开始
     single_bonus = models.IntegerField(default=-1)  # 任务单题奖励
     release_mode = models.IntegerField(default=0)  # 任务发布模式
 

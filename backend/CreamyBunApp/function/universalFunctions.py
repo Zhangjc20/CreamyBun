@@ -395,16 +395,30 @@ def sorted_and_selected_tasks(username, seach_content, only_level, \
         all_task = all_task.filter(answer_type=(answer_type - 2))
 
     # 必须是已经发布的任务
-    all_task = [x for x in all_task if (x.begin_time != "begin_time" and get_now_time().strftime('%F %T') >= x.begin_time)]
+    temp_all_task:list[Task] = []
+    for x in all_task.all():
+        if x.begin_time != "begin_time" and get_now_time().strftime('%F %T') >= x.begin_time:
+            get_task_status(x)
+            temp_all_task.append(x)
+    all_task = temp_all_task
 
     # over_type: int 1:所有 2：未结束 3：已结束
+    temp_all_task2:list[Task] = []
     if over_type > 1:
         if over_type == 3:
-            all_task = [x for x in all_task if ((x.finished_problem_number == x.problem_total_number) \
-                                                or get_now_time().strftime('%F %T') >= x.end_time)]
+            for x in all_task:
+                if (x.finished_problem_number == x.problem_total_number) \
+                    or get_now_time().strftime('%F %T') >= x.end_time:
+                    get_task_status(x)
+                    temp_all_task2.append(x)
+            all_task = temp_all_task2
         else:
-            all_task = [x for x in all_task if ((x.finished_problem_number < x.problem_total_number) \
-                                                and get_now_time().strftime('%F %T') < x.end_time)]
+            for x in all_task:
+                if (x.finished_problem_number < x.problem_total_number) \
+                    and get_now_time().strftime('%F %T') < x.end_time:
+                    get_task_status(x)
+                    temp_all_task2.append(x)
+            all_task = temp_all_task2
     # username:用户名用来获取等级啥的
     # only_level:bool false:所有 true:只选入满足做题者等级的
     if only_level:
@@ -458,7 +472,7 @@ def sorted_and_selected_tasks(username, seach_content, only_level, \
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
             'src':get_base64_image(t.cover_url),
-            'taskStatus':get_task_status(t),
+            'taskStatus':t.task_status, 
         }
         t_info.setdefault('index', i)
         task_info_list.append(t_info)
@@ -787,14 +801,22 @@ def poster_interrupt_current_task(task_id):
 
     # 退还剩下的甜甜圈
     left_problem_number = t.problem_total_number - t.finished_problem_number
-    add_donut_number = left_problem_number*donut_from_a_problem_by_task_rank[t.star_rank - 1]
+    add_donut_number = left_problem_number*t.single_bonus
     add_donut_for_user(u,add_donut_number)
 
     return left_problem_number, add_donut_number
 
 # 领取者放弃当前任务
 def receiver_give_up_task(username,task_id):
-    u = get_a_user_data(username)
+    remove_task_from_user(username,task_id)
 
-    # 获得当前用户正在做的任务信息
-    td = get_user_now_taskdict(u,task_id)
+# 立即发布当前未发布的任务
+def force_release_task(task_id):
+    t = get_a_task_data(task_id)
+    u = get_a_user_data_by_id(t.poster)
+    now_time = get_now_time().strftime('%F %T')
+    set_task_begin_time(t,now_time)
+    get_task_status(t)
+    sub_donut_number = t.single_bonus*t.problem_total_number
+    flag = sub_donut_for_user(u,sub_donut_number)
+    return flag, sub_donut_number, u.donut_number
