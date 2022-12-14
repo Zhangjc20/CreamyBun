@@ -240,7 +240,7 @@ export default {
         clearInterval(timerI);
       }, 60000);
       axios
-        .get("/log_up", {
+        .get("http://101.42.118.80:8000/log_up", {
           params: {
             type: "getVerifyCode",
             email: this.codeEmail,
@@ -307,7 +307,7 @@ export default {
         return;
       }
       axios
-        .get("/log_up", {
+        .get("http://101.42.118.80:8000/log_up", {
           params: {
             type: "logUp",
             username: this.form.username,

@@ -80,7 +80,7 @@ export default {
     },
     clickLogin() {
       axios
-        .get("/log_in", {
+        .get("http://101.42.118.80:8000/log_in", {
           params: {
             username: this.form.username,
             password: this.form.password,

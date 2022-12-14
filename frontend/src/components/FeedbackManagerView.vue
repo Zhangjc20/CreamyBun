@@ -24,7 +24,7 @@ export default {
     formData.append("email", "sdfsdfsdf");
     axios({
       method: "Post",
-      url: "http://localhost:8000/get_feedback/",
+      url: "http://101.42.118.80:8000/get_feedback/",
       headers: { "Content-Type": "multipart/form-data" },
       data: formData,
     }).then((res) => {

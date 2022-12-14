@@ -167,7 +167,7 @@ export default {
       formData.append("image", this.imageUrl);
       axios({
               method:"Post",
-              url:'http://localhost:8000/submit_feedback/',
+              url:'http://101.42.118.80:8000/submit_feedback/',
               headers: {
             //请求头这个一定要写
                 'Content-Type': 'multipart/form-data',
@@ -196,7 +196,7 @@ export default {
       this.username = localStorage.getItem('username');
     }
     if(!localStorage.getItem('avatar')){
-      axios.get('/get_avatar',{
+      axios.get('http://101.42.118.80:8000/get_avatar',{
         params:{
           username:this.username
         }

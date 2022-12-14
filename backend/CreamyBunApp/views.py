@@ -926,3 +926,18 @@ def give_up_task(request):
         'status': 'ok',
     }
     return HttpResponse(json.dumps(res), content_type='application/json')
+
+# 未发布的任务点击后立即发布
+def post_task_immediately(request):
+    query_dict = request.GET
+    task_id = query_dict.get("taskId", "")
+    is_succeed,sub_donut_number, current_donut_number = force_release_task(task_id)
+    res = {
+        'status': 'ok',
+        'isSucceed': is_succeed, # 判断发布是否成功，主要是会因为甜甜圈不够而发布失败
+        'needDonutNum': sub_donut_number, # 发布此任务需要多少甜甜圈
+
+        # 如果发布成功，则这个是用户剩下的甜甜圈余额；如果发布失败，则为用户发布任务前的甜甜圈余额
+        'leftDonutNum': current_donut_number, 
+    }
+    return HttpResponse(json.dumps(res), content_type='application/json')

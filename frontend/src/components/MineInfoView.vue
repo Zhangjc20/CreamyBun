@@ -400,7 +400,7 @@ export default {
             );
             formData.append("username", this.username);
             axios
-              .post("/change_avatar", formData)
+              .post("http://101.42.118.80:8000/change_avatar/", formData)
               .then((res) => {
                 console.log(res);
               })
@@ -480,7 +480,7 @@ export default {
           formData.append("username", this.username);
           formData.append("newUsername", this.changeForm.username);
           axios
-            .post("/update_username", formData)
+            .post("http://101.42.118.80:8000/update_username/", formData)
             .then((res) => {
               if (res.data["status"] === "ok") {
                 ElMessage({
@@ -529,7 +529,7 @@ export default {
       )
         .then(() => {
           axios
-            .get("/update_email", {
+            .get("http://101.42.118.80:8000/update_email", {
               params: {
                 username: this.username,
                 newEmail: this.changeForm.email,
@@ -565,7 +565,7 @@ export default {
                     } else {
                       if (value == this.verifyCode) {
                         axios
-                          .get("/update_email", {
+                          .get("http://101.42.118.80:8000/update_email", {
                             params: {
                               username: this.username,
                               newEmail: this.codeEmail,
@@ -637,7 +637,7 @@ export default {
       )
         .then(() => {
           axios
-            .get("/update_phone", {
+            .get("http://101.42.118.80:8000/101.42.118.80", {
               params: {
                 username: this.username,
                 newPhone: this.changeForm.phone,
@@ -666,7 +666,7 @@ export default {
   beforeMount() {
     if (!localStorage.getItem("avatar")) {
       axios
-        .get("/get_avatar", {
+        .get("http://101.42.118.80:8000/get_avatar", {
           params: {
             username: localStorage.getItem("username"),
           },
@@ -684,7 +684,7 @@ export default {
     }
     //初次挂载获取后端信息
     axios
-      .get("/get_user_basic_info", {
+      .get("http://101.42.118.80:8000/get_user_basic_info", {
         params: {
           username: localStorage.getItem("username"),
         },

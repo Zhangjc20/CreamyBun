@@ -62,7 +62,7 @@ export default {
     materialInfo(newVal, oldVal) {
       console.log(newVal, oldVal)
       this.materialInfoLocal = newVal
-      axios.get("http://localhost:8000/perform_problem_material/", {
+      axios.get("http://101.42.118.80:8000/perform_problem_material/", {
         params: this.materialInfoLocal
       }).then((res) => {
         const imageFile = this.base64ImgtoFile(res.data["materialImage"]);
@@ -75,7 +75,7 @@ export default {
   mounted() {
     this.type = this.materialInfo['fileType']
     if(this.type == 2 || this.type == 3){
-      this.streamSrc = "http://localhost:8000/stream_video/" + this.materialInfo['filePath'].replace(/\//g,"<").replace(/\\/g,"<")
+      this.streamSrc = "http://101.42.118.80:8000/stream_video/" + this.materialInfo['filePath'].replace(/\//g,"<").replace(/\\/g,"<")
       // console.log("this.streamSrc",this.streamSrc)
     }
     if(this.type == 3){
@@ -87,7 +87,7 @@ export default {
       this.audioSuffix += tempType
     }
     // console.log("materialInfo", this.materialInfo)
-    axios.get("http://localhost:8000/perform_problem_material/", {
+    axios.get("http://101.42.118.80:8000/perform_problem_material/", {
       params: this.materialInfo
     }).then((res) => {
       // console.log("res", res)
@@ -122,7 +122,7 @@ export default {
   },
   methods: {
     getVideoStream() {
-      axios.get("http://localhost:8000/stream_video/", {
+      axios.get("http://101.42.118.80:8000/stream_video/", {
         params: this.materialInfo,
         responseType: 'blob'
       }).then((res) => {

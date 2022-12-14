@@ -410,7 +410,7 @@ export default {
       formData.append("username", this.username);
       formData.append("id", this.id);
       formData.append("description", this.textarea);
-      axios.post("/add_reported_task", formData).then(() => {
+      axios.post("http://101.42.118.80:8000/add_reported_task/", formData).then(() => {
         ElMessage({
           type: "success",
           message: "举报成功，处理后的结果会发到您的邮箱中",
@@ -426,7 +426,7 @@ export default {
       }
       //todo:进入进行任务页面具体传入什么参数自定义
       axios
-        .get("/receive_task", {
+        .get("http://101.42.118.80:8000/receive_task", {
           params: {
             username: this.username,
             taskId: this.id, //任务id
@@ -485,7 +485,7 @@ export default {
         return;
       }
       axios
-        .get("/receive_task", {
+        .get("http://101.42.118.80:8000/receive_task", {
           params: {
             username: this.username,
             taskId: this.id, //任务id
@@ -553,7 +553,7 @@ export default {
     }
     if (!localStorage.getItem("avatar")) {
       axios
-        .get("/get_avatar", {
+        .get("http://101.42.118.80:8000/get_avatar", {
           params: {
             username: this.username,
           },
@@ -578,7 +578,7 @@ export default {
       this.mode = this.$route.query.mode;
     }
     axios
-      .get("/get_task_basic_info", {
+      .get("http://101.42.118.80:8000/get_task_basic_info", {
         params: {
           id: this.id,
         },

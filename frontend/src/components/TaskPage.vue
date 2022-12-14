@@ -235,7 +235,7 @@ export default {
     },
     sendReportEmail(type) {
       axios
-        .get("/send_report_email", {
+        .get("http://101.42.118.80:8000/send_report_email", {
           params: {
             type: type,
             reportId: this.curId,
@@ -256,7 +256,7 @@ export default {
       for (var i = 0; i < this.items.length; i++) {
         if (this.items[i].reportId == this.curId) {
           axios
-            .get("/delete_reported_task", {
+            .get("http://101.42.118.80:8000/delete_reported_task", {
               params: {
                 reportId: this.curId,
               },
@@ -311,7 +311,7 @@ export default {
         });
       } else if (this.type == 3) {
         axios
-          .get("/get_reported_task", {
+          .get("http://101.42.118.80:8000/get_reported_task", {
             params: {
               reportId: this.curId,
             },
@@ -353,7 +353,7 @@ export default {
       //chosenDataType:int 1:所有 2：图片 3：文本 4：音频  5：视频
       //chosenProblemType:int 1:所有 2：单选 3：多选 4：填空 5：框图 6：混合
       axios
-        .get("/get_sorted_tasks", {
+        .get("http://101.42.118.80:8000/get_sorted_tasks", {
           params: {
             //onlyLevel:bool false:所有 true:只选入满足做题者等级的
             //donutType:int 1:默认 2:从多到少 3:从少到多
@@ -390,7 +390,7 @@ export default {
     clickPage(page) {
       if (this.type === 0) {
         axios
-          .get("/get_sorted_tasks", {
+          .get("http://101.42.118.80:8000/get_sorted_tasks", {
             params: {
               username: this.username,
               searchInput: this.searchInput,
@@ -416,7 +416,7 @@ export default {
           });
       } else if (this.type === 1) {
         axios
-          .get("/get_user_received_task_info", {
+          .get("http://101.42.118.80:8000/get_user_received_task_info", {
             params: {
               username: this.username, //String 用户名
               sortChoice: this.sortChoice, //int 1是所有 2是正在进行，3是已结束
@@ -435,7 +435,7 @@ export default {
           });
       } else if (this.type === 2) {
         axios
-          .get("/get_user_released_task_info", {
+          .get("http://101.42.118.80:8000/get_user_released_task_info", {
             params: {
               username: this.username, //String 用户名
               sortChoice: this.sortChoice, //int 1是所有，2是暂未发布 3是发布但未结束 4是已结束
@@ -454,7 +454,7 @@ export default {
           });
       } else if (this.type === 3) {
         axios
-          .get("/get_examining_tasks", {
+          .get("http://101.42.118.80:8000/get_examining_tasks", {
             params: {
               pageNumber: page,
               adminToken: localStorage.getItem("adminToken"),
@@ -474,7 +474,7 @@ export default {
     handleSortChange(value) {
       if (this.type === 1) {
         axios
-          .get("/get_user_received_task_info", {
+          .get("http://101.42.118.80:8000/get_user_received_task_info", {
             params: {
               username: this.username, //String 用户名
               sortChoice: value, //int 1是所有 2是正在进行，3是已结束
@@ -492,7 +492,7 @@ export default {
           });
       } else if (this.type === 2) {
         axios
-          .get("/get_user_released_task_info", {
+          .get("http://101.42.118.80:8000/get_user_released_task_info", {
             params: {
               username: this.username, //String 用户名
               sortChoice: value, //int 1是所有，2是暂未发布 3是发布但未结束 4是已结束
@@ -521,7 +521,7 @@ export default {
       this.currentPage = 1;
       if (this.type === 0) {
         axios
-          .get("/get_sorted_tasks", {
+          .get("http://101.42.118.80:8000/get_sorted_tasks", {
             params: {
               username: this.username,
               searchInput: this.searchInput,
@@ -546,7 +546,7 @@ export default {
           });
       } else if (this.type === 1) {
         axios
-          .get("/get_user_received_task_info", {
+          .get("http://101.42.118.80:8000/get_user_received_task_info", {
             params: {
               username: this.username, //String 用户名
               sortChoice: this.sortChoice, //int 1是所有 2是正在进行，3是已结束
@@ -565,7 +565,7 @@ export default {
           });
       } else if (this.type === 2) {
         axios
-          .get("/get_user_released_task_info", {
+          .get("http://101.42.118.80:8000/get_user_released_task_info", {
             params: {
               username: this.username, //String 用户名
               sortChoice: this.sortChoice, //int 1是所有，2是暂未发布 3是发布但未结束 4是已结束
@@ -584,7 +584,7 @@ export default {
           });
       } else if (this.type === 3) {
         axios
-          .get("/get_examining_tasks", {
+          .get("http://101.42.118.80:8000/get_examining_tasks", {
             params: {
               pageNumber: 1,
               adminToken: localStorage.getItem("adminToken"),

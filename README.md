@@ -31,3 +31,26 @@
 + // ->　用来显示表达式的结果
 + // > 用来显示console的输出结果
 + 多行注释：/**/
+
+# 部署注意事项
++ 重新部署第一步：上传github为最新代码
++ 服务器拉取最新代码: git pull origin dev
++ 服务器 http://101.42.118.80/ 密码 lu4l5xft.0
++ 连接方式:ssh -o ServerAliveInterval=60 ubuntu@101.42.118.80
++ 前端vue.config.js跨域配置仅作用于开发模式，以后axios中地址请直接写全
++ 重新部署步骤：
++ + 后端部分删除CreamyBunApp下migrations/除了__init__.py
++ + 前端部分先将bighw内代码更新（不要求改compose文件夹，可更改frontend和backend），在frontend目录下运行npm run build,该目录下会生成dist文件夹，将该文件夹放到compose/nginx/之内即可
++ ubuntu@VM-0-17-ubuntu: cd /home/ubuntu/bighw/frontend
++ ubuntu@VM-0-17-ubuntu:~/bighw/frontend$ npm run build
++ ubuntu@VM-0-17-ubuntu:~/bighw/frontend$ cp -r dist/ ../compose/nginx/
++ ubuntu@VM-0-17-ubuntu:~/bighw/frontend$ cd ..
++ ubuntu@VM-0-17-ubuntu:~/bighw$ sudo docker-compose down(如果后台正在运行要先停止现有，可通过docker ps查看)
++ ubuntu@VM-0-17-ubuntu:~/bighw$ sudo docker-compose build
++ ubuntu@VM-0-17-ubuntu:~/bighw$ sudo docker-compose up (-d) #此时需要等全部部署完才生效，一分钟以内可完成 -d代表在后台运行
++ 先运行sudo docker-compose build，成功后运行sudo docker-compose up
++ 如果需要查看数据库输入以下指令
++ docker-compose exec db /bin/bash
++ mysql -u dbuser -p;
++ 用户名dbuser 密码password
++ 其他操作和原先后端操作一样

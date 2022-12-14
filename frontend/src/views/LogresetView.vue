@@ -261,7 +261,7 @@ export default {
       }, 60000);
       if (this.form.isUsername) {
         axios
-          .get("/reset_password", {
+          .get("http://101.42.118.80:8000/reset_password", {
             params: {
               type: "getVerifyCode",
               resetWay: "username",
@@ -293,7 +293,7 @@ export default {
           });
       } else {
         axios
-          .get("/reset_password", {
+          .get("http://101.42.118.80:8000/reset_password", {
             params: {
               type: "getVerifyCode",
               resetWay: "email",
@@ -367,7 +367,7 @@ export default {
       }
       if (this.form.isUsername) {
         axios
-          .get("/reset_password", {
+          .get("http://101.42.118.80:8000/reset_password", {
             params: {
               type: "resetPassword",
               resetWay: "username",
@@ -398,7 +398,7 @@ export default {
       }
       else{
         axios
-          .get("/reset_password", {
+          .get("http://101.42.118.80:8000/reset_password", {
             params: {
               type: "resetPassword",
               resetWay: "email",

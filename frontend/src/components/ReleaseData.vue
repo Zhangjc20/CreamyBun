@@ -618,7 +618,7 @@ export default {
       return new File([blob], fileName, { type: mimeType });
     },
     async preCheck(){
-      await axios.get("http://localhost:8000/get_release_info/", {
+      await axios.get("http://101.42.118.80:8000/get_release_info/", {
         params: {
           username:this.username
         }
@@ -670,7 +670,7 @@ export default {
       formData.append("size", '-1')
       await axios({
               method:"Post",
-              url:'http://localhost:8000/release_task/',
+              url:'http://101.42.118.80:8000/release_task/',
               headers: {
               //请求头这个一定要写
                 'Content-Type': 'multipart/form-data',
@@ -698,7 +698,7 @@ export default {
           type: 'error'
         });
       });     
-      await axios.post("http://localhost:8000/release_task/",
+      await axios.post("http://101.42.118.80:8000/release_task/",
         {basicInfoForm:this.form,
           questionList:this.questionList,
           fullList:this.$refs.MyMaterialUpload.fullList,
@@ -740,7 +740,7 @@ export default {
     abcSubmit(){
       axios({
           method: 'POST',
-          url: 'http://localhost:8000/release_task/',
+          url: 'http://101.42.118.80:8000/release_task/',
           data: JSON.parse(this.abc),
           headers: {
               'Content-Type': 'application/json'

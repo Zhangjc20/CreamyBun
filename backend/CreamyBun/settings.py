@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-gi4geef%p7&4=y(1kr%m)&wcerdn5@lw5p&ij*jlc$ukk)k4z6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['101.42.118.80']
 
 
 # Application definition
@@ -87,10 +88,10 @@ WSGI_APPLICATION = 'CreamyBun.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'creamy_bun_data',
-        'USER': 'root',
-        'PASSWORD' : 'jcggwdcr',
-        'HOST': '127.0.0.1', #部署的时候估计得改
+        'NAME': 'backend',
+        'USER': 'dbuser',
+        'PASSWORD' : 'password',
+        'HOST': 'db', #部署的时候估计得改
         'PORT': 3306,
     }
 }
@@ -131,7 +132,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = "/media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
