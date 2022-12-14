@@ -8,7 +8,7 @@
     <span class="header-title">
       {{this.materialTypeName}}任务
     </span>
-    <el-input v-model="abc" style="width: 300px" placeholder="这是一个阴险的字符串输入接口"/>
+    <!-- <el-input v-model="abc" style="width: 300px" placeholder="这是一个阴险的字符串输入接口"/>
     <CustomButton 
       @click="abcSubmit" 
       isRound="true" 
@@ -16,7 +16,7 @@
       height="40px"
       width="150px"
       title="阴险的临时按钮"
-    />
+    /> -->
     <CustomButton 
       @click="preCheck" 
       isRound="true" 
