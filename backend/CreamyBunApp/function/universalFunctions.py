@@ -301,8 +301,8 @@ def walk_file(file, material_type):
     j = 1
     output_dirs = []
     for base, dirs, _ in os.walk(file):
+        dirs.sort()
         for d in dirs:
-
             dirPath = os.path.join(base, d)
             sub_list = []
             i = 1
@@ -311,6 +311,7 @@ def walk_file(file, material_type):
                 # dirs 表示该文件夹下的子目录名list
                 # files 表示该文件夹下的文件list
                 # 遍历文件
+                files.sort()
                 for f in files:
                     file_type = os.path.splitext(f)[-1][1:]
                     file_path = os.path.join(root, f)

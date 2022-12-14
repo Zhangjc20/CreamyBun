@@ -674,10 +674,6 @@ def final_submit(request):
     return HttpResponse(json.dumps(final_submit_feedback), content_type='application/json')
 
 
-def uck_me(request):
-    print("uck_me")
-    return HttpResponse(json.dumps(fake_ans), content_type='application/json')
-
 # 发布任务时可能会用到的一些信息
 def get_release_info(request):
     query_dict = request.GET

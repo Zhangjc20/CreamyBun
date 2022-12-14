@@ -140,7 +140,7 @@
     </template>
     <el-dialog v-model="isMovingMaterial" title="设置移动位置" width="20%">
       <el-row style="height: 50px;">
-        <span class="header-title" style="margin: auto,auto,auto,20px;">当前被移动卷号：{{ movingMaterialIndex }}</span>
+        <span class="header-title" style="margin: auto,auto,auto,20px;">当前被移动卷号：{{ movingMaterialIndex + 1}}</span>
       </el-row>
       <el-form class="change-form">
         <el-form-item label="目标位置" :required="true">
@@ -848,6 +848,8 @@ export default {
       this.fullList[this.currentShowingSubList].splice(index, 1);
       this.fullList[this.currentShowingSubList].splice(this.movingMaterialTarget, 0, moveData);
       this.initAllLists()
+      this.fileList = this.fullList[this.currentShowingSubList]
+      this.currentShowingName = this.listList[this.currentShowingSubList]['listName']
       this.updateShowingList()
       this.$message({
         message: '移位成功！',
@@ -871,6 +873,8 @@ export default {
       this.fullList[this.currentShowingSubList][index] = targetData
       this.fullList[this.currentShowingSubList][this.movingMaterialTarget] = moveData
       this.initAllLists()
+      this.fileList = this.fullList[this.currentShowingSubList]
+      this.currentShowingName = this.listList[this.currentShowingSubList]['listName']
       this.updateShowingList()
       this.$message({
         message: '移位成功！',
@@ -878,6 +882,12 @@ export default {
       });
       this.movingMaterialTarget = '';
       this.isMovingMaterial = false
+
+      // this.currentShowingSubList = row.index - 1
+      // this.fileList = this.fullList[this.currentShowingSubList]
+      // this.currentShowingName = this.listList[this.currentShowingSubList]['listName']
+      // this.updateShowingList()
+      // this.updateSelect()
     }
   }
 }

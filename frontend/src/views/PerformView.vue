@@ -322,11 +322,7 @@
   .el-menu--horizontal .el-menu-item:not(.is-disabled):hover{
     background-color: #f8f8f8;
   }
-  .flex-box {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+
 .jump-logo {
   z-index: 2;
   animation: jump-logo 1s infinite;

@@ -27,7 +27,6 @@
           <el-row class="main-style" v-for="material in materialList" :key="material">
             <!-- {{material['fileNotes']}} -->
             <PerformTaskMaterial ref="materialBlock" :materialInfo="material">
-
             </PerformTaskMaterial>
           </el-row>
         </el-main>
@@ -77,7 +76,27 @@
     
   </el-main> -->
     <el-dialog v-model="fillBlankDialogVisible" title="请进行框图">
-      <ImageFramer ref="MyImageFramer" style="width:100%" :minFrameNum="currentMin" :maxFrameNum="currentMax"
+      <el-container v-if="imageLoading">
+        <div style="position: relative;width: 250px;height: 200px;margin-left: auto;margin-right: auto;">
+          <div style="position: absolute; bottom: 50px;left: 60px;width: 250px;height: 250px;">
+            <div style="flex-direction: column;position:absolute;bottom: 0px;margin-left: auto;margin-right: auto;text-align:center ">
+              <el-image
+                style="width: 88px; height: 80px"
+                fit="cover"
+                :src="require('@/assets/images/logo_small.png')"
+                class="jump-logo"
+              ></el-image>
+              <div class="jump-shadow"></div>
+            </div>
+          </div>
+          <div style="position: absolute; bottom: -210px;left: -20px;width: 250px;height: 250px;">
+            <span style="color:#5EABBF;font-size:20px; font-family: YouSheBlack;">
+              正在加载图片，请稍等~
+            </span>
+          </div>
+        </div>
+      </el-container>
+      <ImageFramer v-else ref="MyImageFramer" style="width:100%" :minFrameNum="currentMin" :maxFrameNum="currentMax"
         :src="currentImageSrc" :initRects="initRects" />
       <span class="dialog-footer">
         <el-row style="height: 50px;">
@@ -366,7 +385,8 @@ export default {
       initAnsListStr: '',
       initingSelection: true,
       tableKey:0,
-      isFinished:false
+      isFinished:false,
+      imageLoading:false,
     }
   },
   mounted() {
@@ -416,6 +436,7 @@ export default {
           },
         });
       } else {
+        this.isFinished = false
         this.getProblemInfo('init')
       }
     },
@@ -439,9 +460,6 @@ export default {
     },
     getProblemInfo(type, jmpTarget = -1) {
       // dom元素更新后执行，因此这里能正确打印更改之后的值
-      // console.log("http://localhost:8000/uck_me/")
-      // axios.get("http://localhost:8000/uck_me/", {
-        
       console.log("http://101.42.118.80:8000/perform_basic_info/")
       axios.get("http://101.42.118.80:8000/perform_basic_info/", {
         params: {
@@ -468,7 +486,6 @@ export default {
         this.initAnsList = res.data['answerList']
         this.initingSelection = true;
         if (this.initAnsList.length == 0) {
-          console.log("asdafegsrwgezsrdt")
           for (var i = 0; i < this.questionList.length; i++) {
             this.initAnsList.push('')
           }
@@ -783,6 +800,8 @@ export default {
     },
     clickFillBlank(targetIndex, min, max, questionIndex) {
       console.log("this.materialList[targetIndex]", this.materialList[targetIndex],"this.ansList",this.ansList)
+      this.imageLoading = true;
+      this.fillBlankDialogVisible = true
       axios.get("http://101.42.118.80:8000/perform_problem_material/", {
         params: this.materialList[targetIndex]
       }).then((res) => {
@@ -791,8 +810,9 @@ export default {
         this.currentImageSrc =
           window.webkitURL.createObjectURL(imageFile) ||
           window.URL.createObjectURL(imageFile);
+        this.imageLoading = false;
         console.log("this.currentImageSrc", this.currentImageSrc)
-        this.fillBlankDialogVisible = true
+        
         this.currentMax = max
         this.currentMin = min
         console.log("clickFillBlank", JSON.parse(JSON.stringify(this.ansList)), JSON.parse(JSON.stringify(this.ansList[questionIndex])), questionIndex)
@@ -805,6 +825,26 @@ export default {
 
       }).catch();
 
+      
+      // console.log("this.materialList[targetIndex]", this.materialList[targetIndex],"this.ansList",this.ansList)
+      
+      
+      // // this.$nextTick(() => {
+      // //   this.currentImageSrc = this.$refs.materialBlock[targetIndex].image.src
+      // // })
+      // this.currentImageSrc = this.$refs.materialBlock[targetIndex].image.src
+      // console.log("this.currentImageSrc", this.currentImageSrc)
+      
+      // this.currentMax = max
+      // this.currentMin = min
+      // console.log("clickFillBlank", JSON.parse(JSON.stringify(this.ansList)), JSON.parse(JSON.stringify(this.ansList[questionIndex])), questionIndex)
+      // if (this.ansList[questionIndex] == '') {
+      //   this.initRects = []
+      // } else {
+      //   this.initRects = JSON.parse(this.ansList[questionIndex])
+      // }
+      // console.log("this.initRects", JSON.parse(JSON.stringify(this.initRects)))
+      // this.fillBlankDialogVisible = true
     },
     getFillBlankAns() {
       this.fillBlankDialogVisible = false;

@@ -279,6 +279,7 @@ export default {
           }
       };
       img.setAttribute("crossOrigin", "anonymous");
+      console.log("this.src",this.src,img.src)
       img.src = this.src;
     }
   },
