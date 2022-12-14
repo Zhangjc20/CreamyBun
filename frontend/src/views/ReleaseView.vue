@@ -33,6 +33,34 @@
             >
           </el-sub-menu>
         </el-menu>
+        <div style="position: fixed; bottom: 20px;left: 10px;width: 250px;height: 250px;">
+          <div style="position: absolute; bottom: 20px;left: 35px;width: 20px;height: 150px;">
+            <div style="position: absolute; bottom: 0px;border-top: 20px solid #5EABBF;border-left: 20px solid transparent;"></div>
+            <div style="background-color:#5EABBF;position: absolute; bottom: 20px;width: 20px;height: 110px;"></div>
+            <div style="position: absolute; bottom: 130px;border-bottom: 20px solid #5EABBF;border-left: 20px solid transparent;"></div>
+          </div>
+          <div style="position: absolute; bottom: 10px;left: 80px;width: 30px;height: 200px;">
+            <div style="position: absolute; bottom: 0px;border-top: 30px solid #FBE484;border-right: 30px solid transparent;"></div>
+            <div style="background-color:#FBE484;position: absolute; bottom: 30px;width: 30px;height: 140px;"></div>
+            <div style="position: absolute; bottom: 170px;border-bottom: 30px solid #FBE484;border-right: 30px solid transparent;"></div>
+          </div>
+          <div style="position: absolute; bottom: 35px;left: 130px;width: 10px;height: 80px;">
+            <div style="position: absolute; bottom: 0px;border-top: 10px solid #5EABBF;border-right: 10px solid transparent;"></div>
+            <div style="background-color:#5EABBF;position: absolute; bottom: 10px;width: 10px; height: 60px;"></div>
+            <div style="position: absolute; bottom: 70px;border-bottom: 10px solid #5EABBF;border-right: 10px solid transparent;"></div>
+          </div>
+          <div style="position: fixed; bottom: 50px;left: 190px;width: 250px;height: 250px;">
+            <div style="flex-direction: column;position:absolute;bottom: 0px;margin-left: auto;margin-right: auto;text-align:center ">
+              <el-image
+                style="width: 88px; height: 80px"
+                fit="cover"
+                :src="require('@/assets/images/logo_small.png')"
+                class="jump-logo"
+              ></el-image>
+              <div class="jump-shadow"></div>
+            </div>
+          </div>
+        </div>
       </el-aside>
       <el-main class="main-style">
         <!-- <component :is="show_content"></component> -->
@@ -204,5 +232,46 @@ export default {
 }
 .el-menu--horizontal .el-menu-item:not(.is-disabled):hover {
   background-color: #f8f8f8;
+}
+.jump-logo {
+  z-index: 2;
+  animation: jump-logo 1s infinite;
+  animation-timing-function: ease;
+}
+.jump-shadow {
+  z-index: 1;
+  width: 100px;
+  height: 5px;
+  background: #eaeaea;
+  border-radius: 100%;
+  animation: shadow 1s infinite;
+  animation-timing-function: ease;
+  text-align:center
+}
+@keyframes jump-logo {
+  0% {
+    margin-bottom: 0px;
+  }
+
+  50% {
+    margin-bottom: 30px;
+  }
+
+  100% {
+    margin-bottom: 0px;
+  }
+}
+@keyframes shadow {
+  0% {
+    width: 85px;
+  }
+
+  50% {
+    width: 65px;
+  }
+
+  100% {
+    width: 85px;
+  }
 }
 </style>
