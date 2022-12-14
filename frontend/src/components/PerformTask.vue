@@ -21,10 +21,6 @@
       <CustomButton @click="quitPerform" isRound="true"
         style="float: right; right: 50px; top: 100px; position: absolute" height="40px" width="150px" title="退出答题" />
     </el-header>
-    <!-- <el-row :gutter="20">
-      <el-col :span="16"><div class="grid-content ep-bg-purple" /></el-col>
-      <el-col :span="8"><div class="grid-content ep-bg-purple" /></el-col>
-    </el-row> -->
     <el-row :gutter="20" style="margin-top:20px">
       <el-col :span="15">
         <el-main class="main-style-two" style="height:calc(100vh - 220px)">
@@ -35,15 +31,7 @@
             </PerformTaskMaterial>
           </el-row>
         </el-main>
-
-
       </el-col>
-      <!-- <el-col :span="16" v-for="material in materialList" :key="material">
-      <PerformTaskMaterial
-      :materialInfo="material"
-      >
-      </PerformTaskMaterial>
-    </el-col> -->
       <el-col :span="9">
         <el-main class="main-style-two" style="height:calc(100vh - 220px)">
           <el-row class="question-row" v-for="question in questionList" :key="question">
@@ -268,7 +256,7 @@
       </el-main>
     </el-dialog>
 
-    <el-dialog v-model="taskOverDialogVisible" title="提示" width="22%" style="display: flex;flex-wrap: wrap;">
+    <el-dialog v-model="taskOverDialogVisible" title="提示" width="50%" style="display: flex;flex-wrap: wrap;">
       <el-main>
         <el-row style="margin-bottom: 20px;">
           <span style="font-weight: bold;font-size: 30px;">
@@ -284,6 +272,32 @@
           <el-row style="height: 50px;margin-top: 20px;">
             <CustomButton @click="taskOverDialogVisible = false; closeSubmitOutcomeDialog()" style="margin-left:20px;"
               isRound="true" title="退出任务" />
+          </el-row>
+        </span>
+      </el-main>
+    </el-dialog>
+
+    <el-dialog v-model="testStartDialogVisible" title="提示" width="40%" style="display: flex;flex-wrap: wrap;">
+      <el-main style="margin-left: -20px;">
+        <el-row style="margin-bottom: 10px">
+          <span style="font-weight: bold;font-size: 30px; color:#5EABBF ;">
+            感谢领取本次任务！
+          </span>
+        </el-row>
+        <el-row style="margin-bottom: 20px">
+          <span style="font-weight: bold;font-size: 25px;">
+            现在进行资质测试。
+          </span>
+        </el-row>
+        <el-row style="margin-bottom: 20px;">
+          <span style="font-size: 20px;">
+            测试共{{stateList.length}}道题目，完成测试后即可正式开始任务~
+          </span>
+        </el-row>
+        <span class="dialog-footer">
+          <el-row style="height: 50px;margin-top: 20px;">
+            <CustomButton @click="testStartDialogVisible = false" style="margin-left:20px;"
+              isRound="true" title="开始测试" />
           </el-row>
         </span>
       </el-main>
@@ -331,6 +345,7 @@ export default {
       currentQuestionIndex: -1,
       isTest: false,
       passTest: false,
+      testStartDialogVisible: false,
       testResultDialogVisible: false,
       finalSubmitDialogVisible: false,
       submitOutcomeDialogVisible: false,
@@ -442,6 +457,9 @@ export default {
         this.materialList = res.data['materialList'];
         this.stateList = res.data['problemStateList'];
         this.isTest = res.data['isTest'];
+        if(this.isTest && type == 'init'){
+          this.testStartDialogVisible = true
+        }
         this.currentIndex = res.data['currentIndex'] - 1;//计算机地址
         console.log("TOODOO")
         console.log("更新前的this.ansList", this.ansList)

@@ -18,11 +18,19 @@
               </template>
               <el-menu-item index="1-1" @click="menuAction(0)">当前任务</el-menu-item>
               <el-menu-item index="1-2" @click="menuAction(1)">任务列表</el-menu-item>
-              <el-menu-item index="1-3" @click="menuAction(2)">历史任务</el-menu-item>
               <el-menu-item index="1-4" @click="menuAction(3)">任务详情</el-menu-item>
               <el-menu-item index="1-5" @click="menuAction(4)">个人中心</el-menu-item>
             </el-sub-menu>
           </el-menu>
+          <div class="flex-box" style="flex-direction: column;bottom: 20px;">
+            <el-image
+              style="width: 112px; height: 100px"
+              fit="cover"
+              :src="require('@/assets/images/logo.png')"
+              class="jump-logo"
+            ></el-image>
+            <div class="jump-shadow"></div>
+          </div>
         </el-aside>
         <el-main class="main-style">
           <PerformTask
@@ -36,6 +44,18 @@
         </el-main>
       </el-container>
     </el-container>
+    <el-dialog v-model="dialogShow" center width="70%">
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        "
+      >
+        <TaskCheck :mode="1" :perform="true" ref="taskCheck"/>
+      </div>
+    </el-dialog>
 </template>
   
   <script>
@@ -45,11 +65,13 @@
   import NavBar from '@/components/NavBar.vue';
   import PerformTask from '@/components/PerformTask.vue';
   import axios from 'axios';
+  import TaskCheck from "@/components/TaskCheck.vue";
   export default{
     name: 'MineView',
     components:{
       NavBar,
       PerformTask,
+      TaskCheck,
     },
     data(){
       return {
@@ -62,6 +84,7 @@
           type:""
         },
         materialType:'',
+        dialogShow: false,
       }
     },
     methods:{
@@ -74,9 +97,14 @@
             });
             break;
           case 1:
-            this.$message({
-              type: "success",
-              message: "任务列表",
+            this.$router.push({
+              //跳转到个人中心领取列表
+              name: "mine",
+              query: {
+                username: this.username,
+                imageSrc: this.image.src,
+                defaultActive: "2",
+              },
             });
             break;
           case 2:
@@ -86,15 +114,25 @@
             });
             break;
           case 3:
-            this.$message({
-              type: "success",
-              message: "任务详情",
+            this.dialogShow = true;
+            this.$nextTick(() => {
+              this.$refs.taskCheck.showTaskDetail(
+                this.taskId,
+                this.username,
+                0,
+                0
+              );
             });
             break;
           case 4:
-            this.$message({
-              type: "success",
-              message: "个人中心",
+            this.$router.push({
+              //跳转到个人中心领取列表
+              name: "mine",
+              query: {
+                username: this.username,
+                imageSrc: this.image.src,
+                defaultActive: "1",
+              },
             });
             break;
           default:
@@ -252,4 +290,49 @@
   .el-menu--horizontal .el-menu-item:not(.is-disabled):hover{
     background-color: #f8f8f8;
   }
+  .flex-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.jump-logo {
+  z-index: 2;
+  animation: jump-logo 1s infinite;
+  animation-timing-function: ease;
+}
+.jump-shadow {
+  z-index: 1;
+  width: 120px;
+  height: 5px;
+  background: #eaeaea;
+  border-radius: 100%;
+  animation: shadow 1s infinite;
+  animation-timing-function: ease;
+}
+@keyframes jump-logo {
+  0% {
+    margin-bottom: 0px;
+  }
+
+  50% {
+    margin-bottom: 30px;
+  }
+
+  100% {
+    margin-bottom: 0px;
+  }
+}
+@keyframes shadow {
+  0% {
+    width: 100px;
+  }
+
+  50% {
+    width: 70px;
+  }
+
+  100% {
+    width: 100px;
+  }
+}
   </style>

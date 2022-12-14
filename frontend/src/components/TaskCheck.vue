@@ -266,7 +266,7 @@
       ></el-col>
       <el-col :span="6"></el-col>
     </el-row>
-    <el-row v-else-if="mode == 1 && receiveStatus == 1">
+    <el-row v-else-if="mode == 1 && receiveStatus == 1 && !perform">
       <el-col :span="10" style="display: flex; justify-content: center"
         ><CustomButton
           @click="routerPerform"
@@ -279,7 +279,7 @@
       ></el-col>
       <el-col :span="6"> </el-col>
     </el-row>
-    <el-row v-else-if="mode == 1 && receiveStatus == 2">
+    <el-row v-else-if="mode == 1 && receiveStatus == 2 && !perform">
       <el-col :span="18" style="display: flex; justify-content: center"
         ><CustomButton
           title="任务已结束"
@@ -308,6 +308,11 @@ export default {
       //1领取列表 2发布列表
       type: Number,
       default: 1,
+    },
+    perform: {
+      //是1的话说明是来自perform界面的调用
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -558,7 +563,7 @@ export default {
 .right-box {
   margin-top: 16px;
   height: 410px;
-  border-left: 4px solid rgba(0, 0, 0, 0.2);
+  border-left: 2px solid rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;

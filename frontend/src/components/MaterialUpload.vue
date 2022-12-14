@@ -664,6 +664,17 @@ export default {
             });
             return
           }
+          var tempChar = '-'
+          for(var j = 0;j<tempAns.length;j++){
+            if(tempChar == tempAns[j]){
+              this.$message({
+                message: '您第' + (i + 1) + '题选择题答案存在重复选项',
+                type: 'error'
+              });
+              return
+            }
+            tempChar = tempAns[j]
+          }
         }
       }
       let length = this.testList.length

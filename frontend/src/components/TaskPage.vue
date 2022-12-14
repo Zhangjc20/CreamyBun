@@ -378,6 +378,10 @@ export default {
             this.items = res.data["taskInfoList"];
             this.total = res.data["totalNumber"];
           }
+          this.$message({
+            type: "success",
+            message: "筛选成功",
+          });
         })
         .catch((err) => {
           console.log(err);
