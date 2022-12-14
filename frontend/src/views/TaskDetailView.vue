@@ -23,17 +23,18 @@
           >
             理由描述：
           </div>
-          <div style="margin: 15px 0 10px 0; width: 100%; height: 48%">
+          <div style="margin: 15px 0 10px 0; width: 100%; height: 80%">
             <el-input
               type="textarea"
               :rows="12"
               placeholder="请输入举报该任务的理由"
               v-model="textarea"
               :maxlength="200"
+              resize="none"
             >
             </el-input>
-          </div>
           <el-upload
+            style="margin-top:20px"
             v-model:file-list="fileList"
             action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
             list-type="picture-card"
@@ -44,6 +45,7 @@
             <el-icon><Plus /></el-icon>
             <div style="font-size: 14px">上传图片</div>
           </el-upload>
+          </div>
           <div
             style="
               margin-top: 20px;
