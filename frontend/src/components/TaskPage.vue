@@ -1,5 +1,25 @@
 <template>
-  <div class="task-page-container">
+  <el-container v-if="loading">
+    <div style="position: relative;width: 250px;height: 350px;margin-left: auto;margin-right: auto;">
+      <div style="position: absolute; bottom: 50px;left: 60px;width: 250px;height: 250px;">
+        <div style="flex-direction: column;position:absolute;bottom: 0px;margin-left: auto;margin-right: auto;text-align:center ">
+          <el-image
+            style="width: 88px; height: 80px"
+            fit="cover"
+            :src="require('@/assets/images/logo_small.png')"
+            class="jump-logo"
+          ></el-image>
+          <div class="jump-shadow"></div>
+        </div>
+      </div>
+      <div style="position: absolute; bottom: -210px;left: -50px;width: 300px;height: 250px;">
+        <span style="color:#5EABBF;font-size:25px; font-family: YouSheBlack;">
+          正在加载任务列表，请稍等~
+        </span>
+      </div>
+    </div>
+  </el-container>
+  <div class="task-page-container" v-else>
     <el-dialog v-model="dialogShow" center width="70%">
       <div
         style="
@@ -154,6 +174,7 @@ export default {
   },
   data() {
     return {
+      loading:false,
       dialogShow: false,
       curId: -1,
       curTaskId: -1,
@@ -310,6 +331,7 @@ export default {
           );
         });
       } else if (this.type == 3) {
+        this.loading = true;
         axios
           .get("http://101.42.118.80:8000/get_reported_task", {
             params: {
@@ -323,6 +345,7 @@ export default {
               this.srcList = [this.src];
               this.dialogVisible = true;
             }
+            this.loading = false;
           });
       }
       this.curTaskId = taskId;
@@ -352,6 +375,7 @@ export default {
       //hardType:int 1:所有 2：从难到易 3：从易到难
       //chosenDataType:int 1:所有 2：图片 3：文本 4：音频  5：视频
       //chosenProblemType:int 1:所有 2：单选 3：多选 4：填空 5：框图 6：混合
+      this.loading = true;
       axios
         .get("http://101.42.118.80:8000/get_sorted_tasks", {
           params: {
@@ -382,6 +406,7 @@ export default {
             type: "success",
             message: "筛选成功",
           });
+          this.loading = false;
         })
         .catch((err) => {
           console.log(err);
@@ -389,6 +414,7 @@ export default {
     },
     clickPage(page) {
       if (this.type === 0) {
+        this.loading = true;
         axios
           .get("http://101.42.118.80:8000/get_sorted_tasks", {
             params: {
@@ -410,11 +436,13 @@ export default {
               this.total = res.data["totalNumber"];
               console.log("ok");
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
           });
       } else if (this.type === 1) {
+        this.loading = true;
         axios
           .get("http://101.42.118.80:8000/get_user_received_task_info", {
             params: {
@@ -429,11 +457,13 @@ export default {
               this.total = res.data["totalNumber"];
               console.log("ok");
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
           });
       } else if (this.type === 2) {
+        this.loading = true;
         axios
           .get("http://101.42.118.80:8000/get_user_released_task_info", {
             params: {
@@ -448,11 +478,13 @@ export default {
               this.total = res.data["totalNumber"];
               console.log("ok");
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
           });
       } else if (this.type === 3) {
+        this.loading = true;
         axios
           .get("http://101.42.118.80:8000/get_examining_tasks", {
             params: {
@@ -465,6 +497,7 @@ export default {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
@@ -473,6 +506,7 @@ export default {
     },
     handleSortChange(value) {
       if (this.type === 1) {
+        this.loading = true;
         axios
           .get("http://101.42.118.80:8000/get_user_received_task_info", {
             params: {
@@ -486,11 +520,13 @@ export default {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
           });
       } else if (this.type === 2) {
+        this.loading = true;
         axios
           .get("http://101.42.118.80:8000/get_user_released_task_info", {
             params: {
@@ -505,6 +541,7 @@ export default {
               this.total = res.data["totalNumber"];
               console.log("ok");
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
@@ -520,6 +557,7 @@ export default {
       }
       this.currentPage = 1;
       if (this.type === 0) {
+        this.loading = true;
         axios
           .get("http://101.42.118.80:8000/get_sorted_tasks", {
             params: {
@@ -540,11 +578,13 @@ export default {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
           });
       } else if (this.type === 1) {
+        this.loading = true;
         axios
           .get("http://101.42.118.80:8000/get_user_received_task_info", {
             params: {
@@ -559,11 +599,13 @@ export default {
               this.total = res.data["totalNumber"];
               console.log("ok");
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
           });
       } else if (this.type === 2) {
+        this.loading = true;
         axios
           .get("http://101.42.118.80:8000/get_user_released_task_info", {
             params: {
@@ -578,11 +620,13 @@ export default {
               this.total = res.data["totalNumber"];
               console.log(this.items);
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
           });
       } else if (this.type === 3) {
+        this.loading = true;
         axios
           .get("http://101.42.118.80:8000/get_examining_tasks", {
             params: {
@@ -595,6 +639,7 @@ export default {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
@@ -665,5 +710,47 @@ export default {
   flex-wrap: wrap;
   justify-content: space-evenly;
   width: 100%;
+}
+.jump-logo {
+  z-index: 2;
+  animation: jump-logo 1s infinite;
+  animation-timing-function: ease;
+}
+.jump-shadow {
+  z-index: 1;
+  width: 100px;
+  height: 5px;
+  background: #eaeaea;
+  border-radius: 100%;
+  animation: shadow 1s infinite;
+  animation-timing-function: ease;
+  margin-left: auto;
+  margin-right: auto;
+}
+@keyframes jump-logo {
+  0% {
+    margin-bottom: 0px;
+  }
+
+  50% {
+    margin-bottom: 30px;
+  }
+
+  100% {
+    margin-bottom: 0px;
+  }
+}
+@keyframes shadow {
+  0% {
+    width: 85px;
+  }
+
+  50% {
+    width: 65px;
+  }
+
+  100% {
+    width: 85px;
+  }
 }
 </style>

@@ -243,6 +243,8 @@
           <span style="font-weight: bold;font-size: 15px;color: #5EABBF;">
             {{ getDonutNum }}
           </span>
+        </el-row>
+        <el-row>
           <span>
             您当前的甜甜圈余额为：
           </span>
