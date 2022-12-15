@@ -818,5 +818,5 @@ def force_release_task(task_id):
     set_task_begin_time(t,now_time)
     get_task_status(t)
     sub_donut_number = t.single_bonus*t.problem_total_number
-    flag = sub_donut_for_user(u,sub_donut_number)
+    flag = True
     return flag, sub_donut_number, u.donut_number

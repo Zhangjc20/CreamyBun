@@ -604,3 +604,56 @@ def set_task_end_time(t:Task,end_time):
 def set_task_begin_time(t:Task,begin_time):
     t.begin_time = begin_time
     t.save()
+
+# 删除违规任务
+def delete_violated_task(task_id):
+    t = get_a_task_data(task_id)
+
+    # 用户的任务信息先删
+    for u in User.objects.all():
+        td_list = u.task_info_list.filter(task_id=task_id).all()
+        td_id_list = [td.id for td in td_list]
+        for td in td_list:
+            rp_id_list = [rp.id for rp in td.received_problem_id_list.all()]
+            for rp in td.received_problem_id_list.all():
+                ua_id_list = [ua.id for ua in rp.user_answer.all()]
+                for ua in rp.user_answer.all():
+                    rp.user_answer.remove(ua)
+                rp.save()
+                Str.objects.filter(id_in=ua_id_list).delete()
+                td.received_problem_id_list.remove(rp)
+            td.save()
+            UserProblemInfo.objects.filter(id_in=rp_id_list).delete()
+            u.task_info_list.remove(td)
+        TaskDict.objects.filter(id_in=td_id_list).delete()
+        u.save()
+    
+    # 任务本身的信息删了
+    tr_id_list = [tr.id for tr in t.receiver_list.all()]
+    for tr in t.receiver_list.all():
+        t.receiver_list.remove(tr)
+    t.save()
+    Int.objects.filter(id_in=tr_id_list).delete()
+
+    pid_list = [p.id for p in t.problem_list.all()]
+    for p in t.problem_list.all():
+        md_id_list = [md.id for md in p.material_info.all()]
+        for md in p.material_info.all():
+            p.material_info.remove(md)
+        p.save()
+        MaterialDict.objects.filter(id_in=md_id_list).delete()
+        qid_list = [q.id for q in p.question_list.all()]
+        for q in p.question_list.all():
+            p.question_list.remove(q)
+            if q.question_type == CHOICE_QUESTION:
+                ChoiceQuestion.objects.filter(question_ptr_id=q.id).delete()
+            elif q.question_type == FILL_BLANK_QUESTION:
+                FillBlankQuestion.objects.filter(question_ptr_id=q.id).delete()
+            elif q.question_type == SELECT_FRAME_QUESTION:
+                FrameSelectionQuestion.objects.filter(question_ptr_id=q.id).delete()
+        p.save()
+        Question.objects.filter(id_in=qid_list).delete()
+        t.problem_list.remove(p)
+    t.save()
+    Problem.objects.filter(id_in=pid_list).delete()
+    Task.objects.filter(id=task_id).delete()
