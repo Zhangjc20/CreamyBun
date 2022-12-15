@@ -584,10 +584,17 @@ def user_receive_current_task(username,task_id):
     td = TaskDict.objects.create(task_id=task_id,task_status_for_user=HAS_RECEIVED,\
                                 task_status_for_itself=NOT_FINISHED,test_problem_number=before_test_number)
 
+    # 确定当前用户应该领多少题
+    problem_number_to_receive = t.problem_number_for_single_receiver
+    if t.left_problem_number > 0:
+        now_receive_problem_number = len([p for p in p_list if p.current_state != NOT_RECEIVED])
+        if now_receive_problem_number - len(t.receiver_list.all()) * problem_number_to_receive < t.left_problem_number:
+            problem_number_to_receive += 1
+
     # 要做的题目列表
     normal_test_list = []
     for p in p_list:
-        if len(normal_test_list) >= t.problem_number_for_single_receiver:
+        if len(normal_test_list) >= problem_number_to_receive:
             break
         if p.is_test == False and p.current_state == NOT_RECEIVED:
             normal_test_list.append(p)

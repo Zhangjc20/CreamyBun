@@ -32,8 +32,6 @@ def exist_user_by_name(username):
 def exist_user_by_mobile_number(mobile_number):
     try:
         User.objects.get(mobile_number=mobile_number)
-        print(User.objects.get(mobile_number=mobile_number).username)
-        print(mobile_number)
         return True
     except:
         return False
@@ -79,15 +77,13 @@ def get_reported_task_list(page_number):
         init_list.append(t_info)
     length = len(all_report_id_list)
     if length < 10:
-        for i in range( 10 - length):
+        for i in range(10 - length):
             init_list.append({'isSpace':True,'index': length + i})
     return total_number, init_list
 
 # 获得某任务的已领取题目数量
 def get_task_received_number(t:Task):
-    has_received_problem_number = len(t.receiver_list.all())*t.problem_number_for_single_receiver
-    if has_received_problem_number > t.problem_total_number:
-        has_received_problem_number = t.problem_total_number
+    has_received_problem_number = len([p for p in t.problem_list.all() if p.current_state != NOT_RECEIVED])
     return has_received_problem_number
 
 # 通过id获取某任务的领取进度，百分比数字
@@ -423,7 +419,9 @@ def create_task(request_body):
 
     # 计算每个用户每次可领取的题目数量
     receiver_number = basic_info_form["receiverNum"]
-    t.problem_number_for_single_receiver = math.ceil(1.00 * t.problem_total_number / receiver_number) # TODO:需要更新
+    t.problem_number_for_single_receiver = math.floor(1.00 * t.problem_total_number / receiver_number) 
+    t.max_receiver_number = receiver_number
+    t.left_problem_number = t.problem_total_number - t.max_receiver_number *t.problem_number_for_single_receiver
     t.save()
 
     # 返回刚刚创建的任务的id和发布状态等信息给用户

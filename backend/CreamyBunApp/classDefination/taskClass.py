@@ -18,9 +18,10 @@ class Task(models.Model):
 
     test_problem_number = models.IntegerField(default=0) # 任务中的测试题数量
 
-    # 每个用户每次可领取的题目数量
     # 用户领取任务时应该先通过这个量算出还剩多少题目可领取，然后决定当前用户要领多少题目
-    problem_number_for_single_receiver = models.IntegerField(default=-1)
+    problem_number_for_single_receiver = models.IntegerField(default=-1) # 每个用户每次至少可领取的题目数量
+    max_receiver_number = models.IntegerField(default=-1) # 该任务最多可被多少个用户领取
+    left_problem_number = models.IntegerField(default=-1) # 除法向下取整后的余数，用于处理10人领取6题这样的情况
 
     star_rank = models.IntegerField(default=-1)  # 任务星级，从1开始
     single_bonus = models.IntegerField(default=-1)  # 任务单题奖励
