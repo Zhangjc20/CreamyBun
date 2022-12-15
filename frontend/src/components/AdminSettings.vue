@@ -74,7 +74,7 @@ export default {
         return;
       }
       axios
-        .get("http://101.42.118.80:8000/set_admin_username_and_password", {
+        .get("http://101.42.118.80:8000/set_admin_username_and_password/", {
           params: {
             type: "username",
             newUsername: this.form.username,
@@ -103,7 +103,7 @@ export default {
         return;
       }
       axios
-        .get("http://101.42.118.80:8000/set_admin_username_and_password", {
+        .get("http://101.42.118.80:8000/set_admin_username_and_password/", {
           params: {
             type: "password",
             newPassword: this.form.password,
@@ -144,7 +144,7 @@ export default {
   },
   mounted() {
     axios
-      .get("http://101.42.118.80:8000/get_admin_username_and_password", {
+      .get("http://101.42.118.80:8000/get_admin_username_and_password/", {
         params: {
           adminToken: localStorage.getItem("adminToken"),
         },

@@ -349,7 +349,7 @@ export default {
   methods: {
     giveUpThisTask(){
       axios
-        .get("http://101.42.118.80:8000/give_up_task", {
+        .get("http://101.42.118.80:8000/give_up_task/", {
           params: {
             username: localStorage.getItem('username'),
             taskId: this.id,
@@ -392,7 +392,7 @@ export default {
     },
     clickPostTask() {
       axios
-        .get("http://101.42.118.80:8000/post_task_immediately", {
+        .get("http://101.42.118.80:8000/post_task_immediately/", {
           params: {
             taskId: this.id,
           },
@@ -478,7 +478,7 @@ export default {
       })
         .then(() => {
           axios
-            .get("http://101.42.118.80:8000/interrupt_task", {
+            .get("http://101.42.118.80:8000/interrupt_task/", {
               params: {
                 taskId: this.id,
               },
@@ -504,7 +504,7 @@ export default {
     },
     showTaskDetail(id, username, sortChoice, index) {
       axios
-        .get("http://101.42.118.80:8000/get_task_basic_info", {
+        .get("http://101.42.118.80:8000/get_task_basic_info/", {
           params: {
             username: this.mode == 1 ? localStorage.getItem("username") : "",
             sortChoice: this.mode == 1 ? sortChoice : "",

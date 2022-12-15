@@ -113,7 +113,7 @@ export default {
       if (value === "") {
         this.usernameRight = false;
         callback(new Error("用户名不能为空"));
-      } else if (value.search(/[a-z\d]{5,12}/g) == -1) {
+      } else if (value.search(/[a-zA-Z\d]{5,12}/g) == -1) {
         this.usernameRight = false;
         callback(new Error("请输入5-12位字母和数字的组合"));
       } else {
@@ -125,7 +125,7 @@ export default {
       if (value === "") {
         this.passwordRight = false;
         callback(new Error("密码不能为空"));
-      } else if (value.search(/[a-z\d]{6,18}/g) == -1) {
+      } else if (value.search(/[a-zA-Z\d]{6,18}/g) == -1) {
         this.passwordRight = false;
         callback(new Error("请输入6-18位字母和数字的组合"));
       } else {
@@ -261,7 +261,7 @@ export default {
       }, 60000);
       if (this.form.isUsername) {
         axios
-          .get("http://101.42.118.80:8000/reset_password", {
+          .get("http://101.42.118.80:8000/reset_password/", {
             params: {
               type: "getVerifyCode",
               resetWay: "username",
@@ -293,7 +293,7 @@ export default {
           });
       } else {
         axios
-          .get("http://101.42.118.80:8000/reset_password", {
+          .get("http://101.42.118.80:8000/reset_password/", {
             params: {
               type: "getVerifyCode",
               resetWay: "email",
@@ -367,7 +367,7 @@ export default {
       }
       if (this.form.isUsername) {
         axios
-          .get("http://101.42.118.80:8000/reset_password", {
+          .get("http://101.42.118.80:8000/reset_password/", {
             params: {
               type: "resetPassword",
               resetWay: "username",
@@ -398,7 +398,7 @@ export default {
       }
       else{
         axios
-          .get("http://101.42.118.80:8000/reset_password", {
+          .get("http://101.42.118.80:8000/reset_password/", {
             params: {
               type: "resetPassword",
               resetWay: "email",

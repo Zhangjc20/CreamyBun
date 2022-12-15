@@ -462,7 +462,6 @@ export default {
     },
     getProblemInfo(type, jmpTarget = -1) {
       // dom元素更新后执行，因此这里能正确打印更改之后的值
-      console.log("http://101.42.118.80:8000/perform_basic_info/")
       axios.get("http://101.42.118.80:8000/perform_basic_info/", {
         params: {
           username: this.username,
