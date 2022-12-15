@@ -567,6 +567,10 @@ def user_receive_current_task(username,task_id):
     if u.credit_rank < t.star_rank:
         return False, 'lowRank'
 
+    # 没题目可领了就不领，防止前端多调用本接口出错
+    if len(t.receiver_list.all()) == t.max_receiver_number:
+        return False, 'noProblemLeft'
+
     p_list = t.problem_list.all()
 
     # 确定测试题列表（包括资质检测和穿插题目）

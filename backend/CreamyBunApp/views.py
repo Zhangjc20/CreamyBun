@@ -884,7 +884,7 @@ def receive_task(request):
         return HttpResponse(json.dumps({'status': 'ok', 'type': 'success'}), content_type='application/json')
     else:
         print(fail_type)
-        # failType有'hasReceived'或者'lowRank'
+        # failType有'hasReceived'或者'lowRank'或者'noProblemLeft'
         return HttpResponse(json.dumps({'status': 'ok', 'type': 'fail', 'failType':fail_type}), content_type='application/json')
 
 @csrf_exempt
