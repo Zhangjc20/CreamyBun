@@ -529,7 +529,7 @@ export default {
       )
         .then(() => {
           axios
-            .get("http://101.42.118.80:8000/update_email", {
+            .get("http://101.42.118.80:8000/update_email/", {
               params: {
                 username: this.username,
                 newEmail: this.changeForm.email,
@@ -565,7 +565,7 @@ export default {
                     } else {
                       if (value == this.verifyCode) {
                         axios
-                          .get("http://101.42.118.80:8000/update_email", {
+                          .get("http://101.42.118.80:8000/update_email/", {
                             params: {
                               username: this.username,
                               newEmail: this.codeEmail,
@@ -637,7 +637,7 @@ export default {
       )
         .then(() => {
           axios
-            .get("http://101.42.118.80:8000/101.42.118.80", {
+            .get("http://101.42.118.80:8000/101.42.118.80/", {
               params: {
                 username: this.username,
                 newPhone: this.changeForm.phone,
@@ -666,7 +666,7 @@ export default {
   beforeMount() {
     if (!localStorage.getItem("avatar")) {
       axios
-        .get("http://101.42.118.80:8000/get_avatar", {
+        .get("http://101.42.118.80:8000/get_avatar/", {
           params: {
             username: localStorage.getItem("username"),
           },
@@ -684,7 +684,7 @@ export default {
     }
     //初次挂载获取后端信息
     axios
-      .get("http://101.42.118.80:8000/get_user_basic_info", {
+      .get("http://101.42.118.80:8000/get_user_basic_info/", {
         params: {
           username: localStorage.getItem("username"),
         },

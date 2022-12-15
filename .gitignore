@@ -12,3 +12,4 @@ resource
 .git1
 migrations1/
 api.yaml
+/frontend/vue.config.js

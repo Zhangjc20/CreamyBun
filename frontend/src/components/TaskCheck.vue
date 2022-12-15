@@ -266,7 +266,7 @@
       ></el-col>
       <el-col :span="6"></el-col>
     </el-row>
-    <el-row v-else-if="mode == 1 && receiveStatus == 1">
+    <el-row v-else-if="mode == 1 && receiveStatus == 1 && !perform">
       <el-col :span="10" style="display: flex; justify-content: center"
         ><CustomButton
           @click="routerPerform"
@@ -279,7 +279,7 @@
       ></el-col>
       <el-col :span="6"> </el-col>
     </el-row>
-    <el-row v-else-if="mode == 1 && receiveStatus == 2">
+    <el-row v-else-if="mode == 1 && receiveStatus == 2 && !perform">
       <el-col :span="18" style="display: flex; justify-content: center"
         ><CustomButton
           title="任务已结束"
@@ -308,6 +308,11 @@ export default {
       //1领取列表 2发布列表
       type: Number,
       default: 1,
+    },
+    perform: {
+      //是1的话说明是来自perform界面的调用
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -344,7 +349,7 @@ export default {
   methods: {
     giveUpThisTask(){
       axios
-        .get("http://101.42.118.80:8000/give_up_task", {
+        .get("http://101.42.118.80:8000/give_up_task/", {
           params: {
             username: localStorage.getItem('username'),
             taskId: this.id,
@@ -387,18 +392,26 @@ export default {
     },
     clickPostTask() {
       axios
-        .get("http://101.42.118.80:8000/post_task_immediately", {
+        .get("http://101.42.118.80:8000/post_task_immediately/", {
           params: {
             taskId: this.id,
           },
         })
         .then((res) => {
           if (res.data["status"] === "ok") {
-            this.$emit('postTaskImmediately');
-            ElMessage({
-              type: "success",
-              message: "成功发布该任务"
-            });
+            if(res.data['isSucceed']){
+              this.$emit('postTaskImmediately');
+              ElMessage({
+                type: "success",
+                message: "成功发布该任务，您当前的甜甜圈余额为"+String(res.data['leftDonutNum'])
+              });
+            }
+            else{
+              ElMessage({
+                type: "error",
+                message: "您的余额不足，发布任务需要"+String(res.data['needDonutNum'])+"，您的余额为"+String(res.data['leftDonutNum'])
+              }); 
+            }
           }
         })
         .catch((err) => {
@@ -465,7 +478,7 @@ export default {
       })
         .then(() => {
           axios
-            .get("http://101.42.118.80:8000/interrupt_task", {
+            .get("http://101.42.118.80:8000/interrupt_task/", {
               params: {
                 taskId: this.id,
               },
@@ -491,7 +504,7 @@ export default {
     },
     showTaskDetail(id, username, sortChoice, index) {
       axios
-        .get("http://101.42.118.80:8000/get_task_basic_info", {
+        .get("http://101.42.118.80:8000/get_task_basic_info/", {
           params: {
             username: this.mode == 1 ? localStorage.getItem("username") : "",
             sortChoice: this.mode == 1 ? sortChoice : "",
@@ -558,7 +571,7 @@ export default {
 .right-box {
   margin-top: 16px;
   height: 410px;
-  border-left: 4px solid rgba(0, 0, 0, 0.2);
+  border-left: 2px solid rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -200,7 +200,7 @@ def get_task_info_list(username, state, page_number, sort_choice):
 def change_user_avatar(image, username):
     avatar_url = USER_AVATAR_SAVE_PATH + username + "." + image.name
     update_avatar_url_by_username(username, avatar_url)
-    with open(avatar_url, 'wb') as f:
+    with open(avatar_url, 'wb+') as f:
         for line in image:
             f.write(line)
 
@@ -227,7 +227,10 @@ def set_admin_password(new_password):
 
 # 获取用户头像base64格式
 def get_user_avatr(username):
-    avatar_url = get_a_user_data(username).avatar_url
+    u = get_a_user_data(username)
+    if not u:
+        return ""
+    avatar_url = u.avatar_url
     if not os.path.exists(avatar_url):
         return ""
     else:
@@ -298,8 +301,8 @@ def walk_file(file, material_type):
     j = 1
     output_dirs = []
     for base, dirs, _ in os.walk(file):
+        dirs.sort()
         for d in dirs:
-
             dirPath = os.path.join(base, d)
             sub_list = []
             i = 1
@@ -308,6 +311,7 @@ def walk_file(file, material_type):
                 # dirs 表示该文件夹下的子目录名list
                 # files 表示该文件夹下的文件list
                 # 遍历文件
+                files.sort()
                 for f in files:
                     file_type = os.path.splitext(f)[-1][1:]
                     file_path = os.path.join(root, f)

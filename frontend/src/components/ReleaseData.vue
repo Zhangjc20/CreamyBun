@@ -8,7 +8,7 @@
     <span class="header-title">
       {{this.materialTypeName}}任务
     </span>
-    <el-input v-model="abc" style="width: 300px" placeholder="这是一个阴险的字符串输入接口"/>
+    <!-- <el-input v-model="abc" style="width: 300px" placeholder="这是一个阴险的字符串输入接口"/>
     <CustomButton 
       @click="abcSubmit" 
       isRound="true" 
@@ -16,7 +16,7 @@
       height="40px"
       width="150px"
       title="阴险的临时按钮"
-    />
+    /> -->
     <CustomButton 
       @click="preCheck" 
       isRound="true" 
@@ -196,7 +196,7 @@
         <el-form-item label="发布方式" :required="true">
           <el-radio-group v-model="form.releaseMode">
             <el-radio label="立即发布" />
-            <el-radio label="暂不发布" />
+            <!-- <el-radio label="暂不发布" /> -->
             <el-radio label="定时发布" />
           </el-radio-group>
         </el-form-item>
@@ -547,6 +547,26 @@ export default {
           type: 'error'
         })
       }else{
+        for(var i = 0; i< this.questionList.length;i++){
+          console.log('aaaa',i)
+          if(this.questionList[i]['questionType'] == 3){
+            var tempTarget = this.questionList[i]['targetIndex'] - 1
+            console.log('aaaaaaaaaaaaaaaaaaaaa',i,
+            this.$refs.MyMaterialUpload.listList,
+            this.$refs.MyMaterialUpload.fullList,
+            this.$refs.MyMaterialUpload.fullList[tempTarget],
+            this.$refs.MyMaterialUpload.fullList[tempTarget][0],
+            tempTarget,this.questionList)
+            if(tempTarget > this.$refs.MyMaterialUpload.fullList.length || this.$refs.MyMaterialUpload.fullList[tempTarget][0]['fileType'] != 0){
+              this.$message({
+                message: '您的题表中第' + (i +1).toString() + '题框图题未指向有效的图片列表！',
+                type: 'error'
+              });
+              return false
+            }
+
+          }
+        }
         console.log("离开单个题目奖励测试！",this.donutList,[this.form.starRank - 1],this.form.singleBonus)
         let tempLen = this.$refs.MyMaterialUpload.fullList[0].length
         console.log("releaseData:this.$refs.MyMaterialUpload.fullList",this.$refs.MyMaterialUpload.fullListt)
@@ -716,7 +736,15 @@ export default {
             location.reload();
           }
           if ('cancel' === confirmRes) {//用户点击了取消
-            location.reload();
+            this.$router.push({
+              //跳转到个人中心领取列表
+              name: "mine",
+              query: {
+                username: this.username,
+                imageSrc: this.image.src,
+                defaultActive: "3",
+              },
+            });
             //此处可以跳转到已发布任务列表
           }
           // this.$message({

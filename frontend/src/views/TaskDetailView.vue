@@ -23,17 +23,18 @@
           >
             理由描述：
           </div>
-          <div style="margin: 15px 0 10px 0; width: 100%; height: 48%">
+          <div style="margin: 15px 0 10px 0; width: 100%; height: 80%">
             <el-input
               type="textarea"
               :rows="12"
               placeholder="请输入举报该任务的理由"
               v-model="textarea"
               :maxlength="200"
+              resize="none"
             >
             </el-input>
-          </div>
           <el-upload
+            style="margin-top:20px"
             v-model:file-list="fileList"
             action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
             list-type="picture-card"
@@ -44,6 +45,7 @@
             <el-icon><Plus /></el-icon>
             <div style="font-size: 14px">上传图片</div>
           </el-upload>
+          </div>
           <div
             style="
               margin-top: 20px;
@@ -146,7 +148,7 @@
                 </div>
                 <div class="progress-title" style="padding-top: 10px">
                   <span style="text-align: center; font-size: 20px"
-                    >任务进度：</span
+                    >领取进度：</span
                   >
                 </div>
                 <div class="progress-bar">
@@ -253,11 +255,11 @@
               </div>
             </el-col>
           </el-row>
-          <el-row v-if="(mode == 0 && hasOver)">
+          <el-row v-if="(mode == 0 && (hasOver || noTask))">
             <el-col :span="1"></el-col>
             <el-col :span="5"
               ><CustomButton
-                title="任务已结束"
+                :title="noTask?'暂无可领项':'任务已结束'"
                 :isRound="true"
                 :disabled="true"
               ></CustomButton
@@ -278,7 +280,7 @@
             ></el-col>
             <el-col :span="8"></el-col>
           </el-row>
-          <el-row v-if="(mode == 0 && !hasOver)">
+          <el-row v-if="(mode == 0 && !hasOver && !noTask)">
             <el-col :span="4"
               ><CustomButton
                 title="领取并开始"
@@ -385,6 +387,7 @@ export default {
       ratio: 0,
       cantReceive:false,
       hasOver:false,
+      noTask:false,
     };
   },
   methods: {
@@ -426,7 +429,7 @@ export default {
       }
       //todo:进入进行任务页面具体传入什么参数自定义
       axios
-        .get("http://101.42.118.80:8000/receive_task", {
+        .get("http://101.42.118.80:8000/receive_task/", {
           params: {
             username: this.username,
             taskId: this.id, //任务id
@@ -485,7 +488,7 @@ export default {
         return;
       }
       axios
-        .get("http://101.42.118.80:8000/receive_task", {
+        .get("http://101.42.118.80:8000/receive_task/", {
           params: {
             username: this.username,
             taskId: this.id, //任务id
@@ -553,7 +556,7 @@ export default {
     }
     if (!localStorage.getItem("avatar")) {
       axios
-        .get("http://101.42.118.80:8000/get_avatar", {
+        .get("http://101.42.118.80:8000/get_avatar/", {
           params: {
             username: this.username,
           },
@@ -578,7 +581,7 @@ export default {
       this.mode = this.$route.query.mode;
     }
     axios
-      .get("http://101.42.118.80:8000/get_task_basic_info", {
+      .get("http://101.42.118.80:8000/get_task_basic_info/", {
         params: {
           id: this.id,
         },
@@ -596,6 +599,9 @@ export default {
           this.problemTotalNum = res.data["problemTotalNum"];
           this.finishedProblemNum = res.data["finishedProblemNum"];
           this.ratio = res.data["receiveProcess"];
+          if(parseInt(this.ratio) == 100){
+            this.noTask = true;
+          }
           this.singleBonus = res.data["singleBonus"];
           this.starRank = res.data["starRank"];
           this.materialType = res.data["materialType"];
