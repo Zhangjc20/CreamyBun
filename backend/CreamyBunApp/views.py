@@ -244,6 +244,7 @@ def clock_in(request):
     username = query_dict.get("username", "")
     success_clock_in, continue_clock_in_days = update_clock_in_info(username)
     clock_in_info = {
+        'status':'ok',
         'continueSignInDays': continue_clock_in_days,
         'isTodaySignIn': success_clock_in,
     }
