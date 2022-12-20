@@ -657,8 +657,8 @@ def delete_violated_task(task_id):
             elif q.question_type == SELECT_FRAME_QUESTION:
                 FrameSelectionQuestion.objects.get(question_ptr_id=q.id).delete()
         p.save()
-        for qid in qid_list:
-            Question.objects.get(id=qid).delete()
+        # for qid in qid_list:
+        #     Question.objects.get(id=qid).delete()
         t.problem_list.remove(p)
     t.save()
     for pid in pid_list:
