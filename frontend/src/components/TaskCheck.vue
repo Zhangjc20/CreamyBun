@@ -524,6 +524,7 @@ export default {
             }
             if (this.mode == 1) {
               this.receiveStatus = res.data["taskStatus"];
+              console.log(this.receiveStatus)
             } else if (this.mode == 2) {
               this.postStatus = res.data["taskStatus"];
             }
