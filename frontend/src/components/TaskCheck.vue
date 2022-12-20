@@ -266,7 +266,7 @@
       ></el-col>
       <el-col :span="6"></el-col>
     </el-row>
-    <el-row v-else-if="mode == 1 && receiveStatus == 1 && !perform">
+    <el-row v-else-if="mode == 1 && receiveStatus == 4 && !perform">
       <el-col :span="10" style="display: flex; justify-content: center"
         ><CustomButton
           @click="routerPerform"
@@ -279,7 +279,7 @@
       ></el-col>
       <el-col :span="6"> </el-col>
     </el-row>
-    <el-row v-else-if="mode == 1 && receiveStatus == 2 && !perform">
+    <el-row v-else-if="mode == 1 && receiveStatus == 5 && !perform">
       <el-col :span="18" style="display: flex; justify-content: center"
         ><CustomButton
           title="任务已结束"
