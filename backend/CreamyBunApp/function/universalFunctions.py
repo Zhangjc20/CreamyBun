@@ -11,7 +11,6 @@ import base64
 import math
 import docx
 from ..variables.globalConstants import *
-from concurrent import futures
 
 from .databaseOperations import *
 from ..variables.globalVariables import *
@@ -465,23 +464,22 @@ def sorted_and_selected_tasks(username, seach_content, only_level, \
 
     task_info_list = []
     # i从0开始
-    with futures.ProcessPoolExecutor() as pool:
-        for i, t in enumerate(all_task):
-            t_info = {
-                'isSpace': False,
-                'id': t.id,
-                'taskName': t.task_name,
-                'starNum': t.star_rank,
-                'donut': t.single_bonus,
-                'dataType': TASK_TYPE_DICT[t.task_type],
-                'problemType': ANSWER_TYPE_DICT[t.answer_type],
-                'startTime': t.begin_time.split(" ")[0],
-                'endTime': t.end_time.split(" ")[0],
-                'src':get_base64_image(t.cover_url),
-                'taskStatus':t.task_status, 
-            }
-            t_info.setdefault('index', i)
-            task_info_list.append(t_info)
+    for i, t in enumerate(all_task):
+        t_info = {
+            'isSpace': False,
+            'id': t.id,
+            'taskName': t.task_name,
+            'starNum': t.star_rank,
+            'donut': t.single_bonus,
+            'dataType': TASK_TYPE_DICT[t.task_type],
+            'problemType': ANSWER_TYPE_DICT[t.answer_type],
+            'startTime': t.begin_time.split(" ")[0],
+            'endTime': t.end_time.split(" ")[0],
+            'src':get_base64_image(t.cover_url),
+            'taskStatus':t.task_status, 
+        }
+        t_info.setdefault('index', i)
+        task_info_list.append(t_info)
 
     # 填充空白
     info_list_length = len(task_info_list)
