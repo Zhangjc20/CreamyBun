@@ -609,6 +609,9 @@ def set_task_begin_time(t:Task,begin_time):
 def delete_violated_task(task_id):
     t = get_a_task_data(task_id)
 
+    # 举报的信息删了
+    ReportInfo.objects.filter(task_id=task_id).delete()
+
     # 用户的任务信息先删
     for u in User.objects.all():
         td_list = u.task_info_list.filter(task_id=task_id).all()
