@@ -392,23 +392,38 @@ export default {
   },
   methods: {
     clickDeleteTask() {
-      axios
-        .get("http://101.42.118.80:8000/delete_task/", {
-          params: {
-            taskId: this.id, //任务id
-          },
-        })
-        .then((res) => {
-          if(res.data['status']=='ok'){
-            ElMessage({
-              type:'success',
-              message:"删除任务成功"
+      ElMessageBox.confirm(
+        "下架该任务以后对该任务的举报信息也会被全部删除，是否确认删除？",
+        "确认下架",
+        {
+          confirmButtonText: "确认",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          axios
+            .get("http://101.42.118.80:8000/delete_task/", {
+              params: {
+                taskId: this.id, //任务id
+              },
             })
-          }
+            .then((res) => {
+              if(res.data['status']=='ok'){
+                ElMessage({
+                  type:'success',
+                  message:"删除任务成功"
+                })
+              }
+              this.$router.push({
+                name:'admin'
+              })
+            })
+            .catch((err)=>{
+              console.log(err)
+            })  
         })
-        .catch((err)=>{
-          console.log(err)
-        })   
+        .catch(() => {}); 
     },
     clickToAdmin() {
       this.$router.push({

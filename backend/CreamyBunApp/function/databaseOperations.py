@@ -11,6 +11,8 @@ import math
 import datetime
 import random
 
+def delete_reported_task_invalid(task_id):
+    ReportInfo.objects.filter(task_id=task_id).delete()
 
 # 添加一个用户到用户列表中
 def add_a_user(username, password, email):
