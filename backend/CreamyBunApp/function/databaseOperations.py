@@ -106,7 +106,7 @@ def get_user_received_problem_info(username,sort_choice,task_index):
 
     # sort_choice: int,0是所有 1是正在进行，2是已结束
     if sort_choice != 0:
-        td_received_list = td_received_list.filter(task_status_for_itself=sort_choice)
+        td_received_list = td_received_list.filter(task_status_for_itself=sort_choice + 3)
     
     td_received_list = list(reversed(list(td_received_list.all())))
     td = td_received_list[task_index]
