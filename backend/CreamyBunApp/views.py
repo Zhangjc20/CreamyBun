@@ -854,7 +854,6 @@ def get_feedback(request):
 def handle_feedback_email(request):
     content = request.POST.get("content", "")
     email = request.POST.get("email", "")
-    print(email)
     send_status = send_feedback_email(email, content)
     if send_status == 1:
         return HttpResponse(json.dumps({'status': 'ok', 'type': 'sameEmail'}), content_type='application/json')

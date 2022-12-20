@@ -32,6 +32,9 @@
 + // > 用来显示console的输出结果
 + 多行注释：/**/
 
+# 查看部署日志
++ docker-compose logs (-f实时查看)
+
 # 部署注意事项
 + 重新部署第一步：上传github为最新代码
 + 服务器拉取最新代码: git pull origin dev

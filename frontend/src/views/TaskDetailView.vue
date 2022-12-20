@@ -391,7 +391,25 @@ export default {
     };
   },
   methods: {
-    clickDeleteTask() {},
+    clickDeleteTask() {
+      axios
+        .get("http://101.42.118.80:8000/delete_task/", {
+          params: {
+            taskId: this.id, //任务id
+          },
+        })
+        .then((res) => {
+          if(res.data['status']=='ok'){
+            ElMessage({
+              type:'success',
+              message:"删除任务成功"
+            })
+          }
+        })
+        .catch((err)=>{
+          console.log(err)
+        })   
+    },
     clickToAdmin() {
       this.$router.push({
         name: "admin",

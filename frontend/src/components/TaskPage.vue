@@ -1,8 +1,33 @@
 <template>
   <el-container v-if="loading">
-    <div style="position: relative;width: 250px;height: 350px;margin-left: auto;margin-right: auto;">
-      <div style="position: absolute; bottom: 50px;left: 60px;width: 250px;height: 250px;">
-        <div style="flex-direction: column;position:absolute;bottom: 0px;margin-left: auto;margin-right: auto;text-align:center ">
+    <div
+      style="
+        position: relative;
+        width: 250px;
+        height: 350px;
+        margin-left: auto;
+        margin-right: auto;
+      "
+    >
+      <div
+        style="
+          position: absolute;
+          bottom: 50px;
+          left: 60px;
+          width: 250px;
+          height: 250px;
+        "
+      >
+        <div
+          style="
+            flex-direction: column;
+            position: absolute;
+            bottom: 0px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+          "
+        >
           <el-image
             style="width: 88px; height: 80px"
             fit="cover"
@@ -12,8 +37,16 @@
           <div class="jump-shadow"></div>
         </div>
       </div>
-      <div style="position: absolute; bottom: -210px;left: -50px;width: 300px;height: 250px;">
-        <span style="color:#5EABBF;font-size:25px; font-family: YouSheBlack;">
+      <div
+        style="
+          position: absolute;
+          bottom: -210px;
+          left: -50px;
+          width: 300px;
+          height: 250px;
+        "
+      >
+        <span style="color: #5eabbf; font-size: 25px; font-family: YouSheBlack">
           正在加载任务列表，请稍等~
         </span>
       </div>
@@ -29,7 +62,13 @@
           justify-content: center;
         "
       >
-        <TaskCheck :mode="type" ref="taskCheck" @postTaskImmediately="postTaskImmediately" @stopTask="stopTask" @giveUpTask="giveUpTask"/>
+        <TaskCheck
+          :mode="type"
+          ref="taskCheck"
+          @postTaskImmediately="postTaskImmediately"
+          @stopTask="stopTask"
+          @giveUpTask="giveUpTask"
+        />
       </div>
     </el-dialog>
     <el-dialog title="任务反馈" v-model="dialogVisible" center width="60%">
@@ -116,26 +155,33 @@
         </template>
       </el-popover>
     </div>
-    <el-row class="task-box">
-      <el-col :span="4.8" v-for="item in items.slice(0, 5)" :key="item.index">
-        <SingleTask
-          :props="item"
-          @click="
-            handleClickTask(item.id, item.isSpace, item.reportId, item.index)
-          "
-        ></SingleTask>
-      </el-col>
-    </el-row>
-    <el-row class="task-box">
-      <el-col :span="4.8" v-for="item in items.slice(5, 10)" :key="item.index">
-        <SingleTask
-          :props="item"
-          @click="
-            handleClickTask(item.id, item.isSpace, item.reportId, item.index)
-          "
-        ></SingleTask>
-      </el-col>
-    </el-row>
+    <div v-if="!itemsEmpty()">
+      <el-row class="task-box">
+        <el-col :span="4.8" v-for="item in items.slice(0, 5)" :key="item.index">
+          <SingleTask
+            :props="item"
+            @click="
+              handleClickTask(item.id, item.isSpace, item.reportId, item.index)
+            "
+          ></SingleTask>
+        </el-col>
+      </el-row>
+      <el-row class="task-box">
+        <el-col
+          :span="4.8"
+          v-for="item in items.slice(5, 10)"
+          :key="item.index"
+        >
+          <SingleTask
+            :props="item"
+            @click="
+              handleClickTask(item.id, item.isSpace, item.reportId, item.index)
+            "
+          ></SingleTask>
+        </el-col>
+      </el-row>
+    </div>
+    <el-row class="task-box noinfo-box" v-else> 暂无任务信息 </el-row>
     <div class="pagnation-box">
       <el-pagination
         background
@@ -174,7 +220,7 @@ export default {
   },
   data() {
     return {
-      loading:false,
+      loading: false,
       dialogShow: false,
       curId: -1,
       curTaskId: -1,
@@ -242,11 +288,19 @@ export default {
     };
   },
   methods: {
-    postTaskImmediately(){
+    itemsEmpty() {
+      for (let item of this.items) {
+        if (item.isSpace == false) {
+          return false;
+        }
+      }
+      return true;
+    },
+    postTaskImmediately() {
       this.dialogShow = false;
       this.init(1);
     },
-    giveUpTask(){
+    giveUpTask() {
       this.dialogShow = false;
       this.init(1);
     },
@@ -432,7 +486,6 @@ export default {
             if (res.data["status"] === "ok") {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
-              console.log("ok");
             }
             this.loading = false;
           })
@@ -453,7 +506,6 @@ export default {
             if (res.data["status"] === "ok") {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
-              console.log("ok");
             }
             this.loading = false;
           })
@@ -474,7 +526,6 @@ export default {
             if (res.data["status"] === "ok") {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
-              console.log("ok");
             }
             this.loading = false;
           })
@@ -537,7 +588,6 @@ export default {
             if (res.data["status"] === "ok") {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
-              console.log("ok");
             }
             this.loading = false;
           })
@@ -595,7 +645,6 @@ export default {
             if (res.data["status"] === "ok") {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
-              console.log("ok");
             }
             this.loading = false;
           })
@@ -616,7 +665,6 @@ export default {
             if (res.data["status"] === "ok") {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
-              console.log(this.items);
             }
             this.loading = false;
           })
@@ -650,6 +698,7 @@ export default {
       return this.type;
     },
   },
+  updated() {},
   watch: {
     myType: function (newData, oldData) {
       if (newData != oldData) {
@@ -708,6 +757,13 @@ export default {
   flex-wrap: wrap;
   justify-content: space-evenly;
   width: 100%;
+}
+.noinfo-box {
+  align-items: center;
+  height: 560px;
+  font-size: 32px;
+  color: rgb(139, 139, 139);
+  font-family: YouSheRound;
 }
 .jump-logo {
   z-index: 2;
