@@ -285,8 +285,10 @@ def match_username_with_password(username, password):
 def update_clock_in_info(username):
     u = get_a_user_data(username)
     if not u.is_today_sign_in:
+        add_donut_for_user(u, donut_for_clock_in[u.continue_sign_in_days])
         u.is_today_sign_in = True
         u.continue_sign_in_days += 1
+        u.save()
     return u.is_today_sign_in, u.continue_sign_in_days
 
 # 修改指定用户的手机号
