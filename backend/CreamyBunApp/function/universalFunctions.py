@@ -140,7 +140,7 @@ def get_task_info_list(username, state, page_number, sort_choice):
     if sort_choice != 0:
         if state == HAS_RECEIVED:
             needed_task_to_state_list = [x for x in needed_task_to_state_list if
-                                        x.task_status_for_itself == sort_choice]
+                                        x.task_status_for_itself == sort_choice + 3]
         else:
             needed_task_to_state_list = [x for i,x in enumerate(needed_task_to_state_list) if
                                         t_status_list[i] == sort_choice]
