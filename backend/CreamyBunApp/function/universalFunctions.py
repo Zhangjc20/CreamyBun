@@ -33,7 +33,8 @@ def get_now_time():
 # 删除举报任务信息及对应图片
 def delete_a_reported_task_all(report_id):
     r = get_a_reported_task(report_id)
-    os.remove(r.image_url)
+    if r.image_url != 'image' and r.image_url != "":
+        os.remove(r.image_url)
     delete_a_reported_task(report_id)
 
 # 发送邮件并返回验证码
@@ -140,7 +141,7 @@ def get_task_info_list(username, state, page_number, sort_choice):
     if sort_choice != 0:
         if state == HAS_RECEIVED:
             needed_task_to_state_list = [x for x in needed_task_to_state_list if
-                                        x.task_status_for_itself == sort_choice + 3]
+                                        x.task_status_for_itself == sort_choice]
         else:
             needed_task_to_state_list = [x for i,x in enumerate(needed_task_to_state_list) if
                                         t_status_list[i] == sort_choice]
