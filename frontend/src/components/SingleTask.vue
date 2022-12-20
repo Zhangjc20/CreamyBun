@@ -68,7 +68,7 @@ export default {
     this.src = this.props.src
       ? this.props.src
       : require("@/assets/images/recognize.jpeg");
-    this.hasOver = this.props.taskStatus == 3 ? true : false;
+    this.hasOver = this.props.taskStatus == 3 || this.props.taskStatus == 5? true : false;
   },
 };
 </script>

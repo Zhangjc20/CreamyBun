@@ -78,8 +78,8 @@ export default {
           "甜甜圈",
         "确认兑换",
         {
-          confirmButtonText: "OK",
-          cancelButtonText: "Cancel",
+          confirmButtonText: "确认",
+          cancelButtonText: "取消",
           type: "warning",
           draggable: true,
         }
@@ -130,8 +130,8 @@ export default {
           "元",
         "确认兑换",
         {
-          confirmButtonText: "OK",
-          cancelButtonText: "Cancel",
+          confirmButtonText: "确认",
+          cancelButtonText: "取消",
           type: "warning",
           draggable: true,
         }

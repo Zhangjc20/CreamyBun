@@ -941,6 +941,7 @@ def post_task_immediately(request):
 def delete_task(request):
     query_dict = request.GET
     task_id = query_dict.get("taskId", "")
+    delete_reported_task_invalid(task_id)
     delete_violated_task(task_id)
     res = {
         'status':'ok',
