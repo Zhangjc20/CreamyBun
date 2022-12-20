@@ -487,6 +487,7 @@ export default {
                   type: "success",
                   message: "修改成功",
                 });
+                localStorage.setItem('username',this.changeForm.username)
                 this.$emit("changeUsername", res.data["newUsername"]);
                 this.$router.push({
                   name: "mine",
@@ -637,7 +638,7 @@ export default {
       )
         .then(() => {
           axios
-            .get("http://101.42.118.80:8000/101.42.118.80/", {
+            .get("http://101.42.118.80:8000/update_phone/", {
               params: {
                 username: this.username,
                 newPhone: this.changeForm.phone,

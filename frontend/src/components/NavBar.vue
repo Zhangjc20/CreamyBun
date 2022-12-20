@@ -81,17 +81,11 @@ export default {
     clickLogin() {
       this.$router.push({
         name: "login",
-        query: {
-          username: this.username,
-        },
       });
     },
     clickLogup() {
       this.$router.push({
         name: "logup",
-        query: {
-          username: this.username,
-        },
       });
     },
     clickMine() {

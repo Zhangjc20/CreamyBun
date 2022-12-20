@@ -13,7 +13,7 @@
                       <svg class="icon" aria-hidden="true">
                         <use xlink:href="#icon-tiantianquan"></use>
                       </svg>
-                      <div class="num-area black-font">×200</div>
+                      <div class="num-area black-font">×{{ donutListForClockIn[0] }}</div>
                       <div class="white-font green-bg">第一天</div>
                     </div>
                     <div class="little-inner mask-box" v-show="clockinDays>=1">
@@ -29,7 +29,7 @@
                       <svg class="icon" aria-hidden="true">
                         <use xlink:href="#icon-tiantianquan"></use>
                       </svg>
-                      <div class="num-area white-font">×200</div>
+                      <div class="num-area white-font">×{{ donutListForClockIn[1] }}</div>
                       <div class="black-font yellow-bg">第二天</div>
                     </div>
                     <div class="little-inner mask-box" v-show="clockinDays>=2">
@@ -45,7 +45,7 @@
                       <svg class="icon" aria-hidden="true">
                         <use xlink:href="#icon-tiantianquan"></use>
                       </svg>
-                      <div class="num-area black-font">×200</div>
+                      <div class="num-area black-font">×{{ donutListForClockIn[2] }}</div>
                       <div class="white-font green-bg">第三天</div>
                     </div>
                     <div class="little-inner mask-box" v-show="clockinDays>=3">
@@ -63,7 +63,7 @@
                       <svg class="icon" aria-hidden="true">
                         <use xlink:href="#icon-tiantianquan"></use>
                       </svg>
-                      <div class="num-area white-font">×200</div>
+                      <div class="num-area white-font">×{{ donutListForClockIn[3] }}</div>
                       <div class="black-font yellow-bg">第四天</div>
                     </div>
                     <div class="little-inner mask-box" v-show="clockinDays>=4">
@@ -79,7 +79,7 @@
                       <svg class="icon" aria-hidden="true">
                         <use xlink:href="#icon-tiantianquan"></use>
                       </svg>
-                      <div class="num-area black-font">×200</div>
+                      <div class="num-area black-font">×{{ donutListForClockIn[4] }}</div>
                       <div class="white-font green-bg">第五天</div>
                     </div>
                     <div class="little-inner mask-box" v-show="clockinDays>=5">
@@ -95,7 +95,7 @@
                       <svg class="icon" aria-hidden="true">
                         <use xlink:href="#icon-tiantianquan"></use>
                       </svg>
-                      <div class="num-area white-font">×200</div>
+                      <div class="num-area white-font">×{{donutListForClockIn[5]}}</div>
                       <div class="black-font yellow-bg">第六天</div>
                     </div>
                     <div class="little-inner mask-box" v-show="clockinDays>=6">
@@ -113,7 +113,7 @@
                   <svg class="icon large-icon" aria-hidden="true">
                     <use xlink:href="#icon-tiantianquan"></use>
                   </svg>
-                  <div class="num-area large-num">×200</div>
+                  <div class="num-area large-num">×{{donutListForClockIn[6]}}</div>
                   <div class="day-large-font green-bg">第七天</div>
                 </div>
                 <div class="large-inner mask-box large-mask-params" v-show="clockinDays>=7">
@@ -152,6 +152,7 @@ export default {
     return {
       clocked: false,
       clockinDays: 0,
+      donutListForClockIn:[]
     };
   },
   methods:{
@@ -178,6 +179,7 @@ export default {
         if(res.data['status']==='ok'){
           this.clockinDays = res.data['continueSignInDays'];
           this.clocked = res.data['isTodaySignIn'];
+          this.donutListForClockIn = res.data['donutListForClockIn'];
         }
     }).catch();
   },
