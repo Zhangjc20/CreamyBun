@@ -12,7 +12,7 @@
       <span style="float: left;font-size: 25px;font-weight: bold;">
         {{ taskName }}
       </span>
-      <CustomButton @click="finalSubmit" isRound="true" v-if="isFinished" normalColor="#FBE484"
+      <CustomButton @click="finalSubmit" isRound="true" v-if="false" normalColor="#FBE484"
         style="float: right; right: 590px; top: 100px; position: absolute" height="40px" width="150px" title="提交任务" />
       <CustomButton @click="jumpDialogVisible = true" isRound="true"
         style="float: right; right: 410px; top: 100px; position: absolute" height="40px" width="150px" title="题目跳转" />
@@ -367,6 +367,7 @@ export default {
       isTest: false,
       passTest: false,
       testStartDialogVisible: false,
+      testStartDialogVisibleFirst:true,
       testResultDialogVisible: false,
       finalSubmitDialogVisible: false,
       submitOutcomeDialogVisible: false,
@@ -477,8 +478,10 @@ export default {
         this.materialList = res.data['materialList'];
         this.stateList = res.data['problemStateList'];
         this.isTest = res.data['isTest'];
-        if(this.isTest && type == 'init'){
-          this.testStartDialogVisible = true
+        if(this.isTest && type == 'init' && this.testStartDialogVisibleFirst){
+          console.log("type == 'init'",type,this.testStartDialogVisibleFirst)
+          this.testStartDialogVisible = false
+          this.testStartDialogVisibleFirst = false
         }
         this.currentIndex = res.data['currentIndex'] - 1;//计算机地址
         console.log("TOODOO")

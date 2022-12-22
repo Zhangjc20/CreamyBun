@@ -6,8 +6,11 @@
 
 <script>
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
+// import VueLayout from '@/components/VueLayout.vue';
 export default {
-  components: {},
+  // components: {
+  //   VueLayout,
+  // },
   provide () {
    return{
      reload: this.reload,
