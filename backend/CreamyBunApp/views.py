@@ -244,6 +244,7 @@ def clock_in(request):
     username = query_dict.get("username", "")
     success_clock_in, continue_clock_in_days = update_clock_in_info(username)
     clock_in_info = {
+        'status':'ok',
         'continueSignInDays': continue_clock_in_days,
         'isTodaySignIn': success_clock_in,
     }
@@ -854,7 +855,6 @@ def get_feedback(request):
 def handle_feedback_email(request):
     content = request.POST.get("content", "")
     email = request.POST.get("email", "")
-    print(email)
     send_status = send_feedback_email(email, content)
     if send_status == 1:
         return HttpResponse(json.dumps({'status': 'ok', 'type': 'sameEmail'}), content_type='application/json')
@@ -884,7 +884,7 @@ def receive_task(request):
         return HttpResponse(json.dumps({'status': 'ok', 'type': 'success'}), content_type='application/json')
     else:
         print(fail_type)
-        # failType有'hasReceived'或者'lowRank'
+        # failType有'hasReceived'或者'lowRank'或者'noProblemLeft'
         return HttpResponse(json.dumps({'status': 'ok', 'type': 'fail', 'failType':fail_type}), content_type='application/json')
 
 @csrf_exempt
@@ -930,10 +930,21 @@ def post_task_immediately(request):
     is_succeed,sub_donut_number, current_donut_number = force_release_task(task_id)
     res = {
         'status': 'ok',
-        'isSucceed': is_succeed, # 判断发布是否成功，主要是会因为甜甜圈不够而发布失败
+        'isSucceed': is_succeed, # 判断发布是否成功，这里不扣钱了，发布任务那里扣过了
         'needDonutNum': sub_donut_number, # 发布此任务需要多少甜甜圈
 
         # 如果发布成功，则这个是用户剩下的甜甜圈余额；如果发布失败，则为用户发布任务前的甜甜圈余额
         'leftDonutNum': current_donut_number, 
+    }
+    return HttpResponse(json.dumps(res), content_type='application/json')
+
+# 管理员审核后删除任务
+def delete_task(request):
+    query_dict = request.GET
+    task_id = query_dict.get("taskId", "")
+    delete_reported_task_invalid(task_id)
+    delete_violated_task(task_id)
+    res = {
+        'status':'ok',
     }
     return HttpResponse(json.dumps(res), content_type='application/json')

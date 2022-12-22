@@ -148,7 +148,7 @@
                 </div>
                 <div class="progress-title" style="padding-top: 10px">
                   <span style="text-align: center; font-size: 20px"
-                    >任务进度：</span
+                    >领取进度：</span
                   >
                 </div>
                 <div class="progress-bar">
@@ -255,11 +255,11 @@
               </div>
             </el-col>
           </el-row>
-          <el-row v-if="(mode == 0 && hasOver)">
+          <el-row v-if="(mode == 0 && (hasOver || noTask))">
             <el-col :span="1"></el-col>
             <el-col :span="5"
               ><CustomButton
-                title="任务已结束"
+                :title="noTask?'暂无可领项':'任务已结束'"
                 :isRound="true"
                 :disabled="true"
               ></CustomButton
@@ -280,7 +280,7 @@
             ></el-col>
             <el-col :span="8"></el-col>
           </el-row>
-          <el-row v-if="(mode == 0 && !hasOver)">
+          <el-row v-if="(mode == 0 && !hasOver && !noTask)">
             <el-col :span="4"
               ><CustomButton
                 title="领取并开始"
@@ -387,10 +387,44 @@ export default {
       ratio: 0,
       cantReceive:false,
       hasOver:false,
+      noTask:false,
     };
   },
   methods: {
-    clickDeleteTask() {},
+    clickDeleteTask() {
+      ElMessageBox.confirm(
+        "下架该任务以后对该任务的举报信息也会被全部删除，是否确认删除？",
+        "确认下架",
+        {
+          confirmButtonText: "确认",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          axios
+            .get("http://101.42.118.80:8000/delete_task/", {
+              params: {
+                taskId: this.id, //任务id
+              },
+            })
+            .then((res) => {
+              if(res.data['status']=='ok'){
+                ElMessage({
+                  type:'success',
+                  message:"删除任务成功"
+                })
+              }
+              this.$router.push({
+                name:'admin'
+              })
+            })
+            .catch((err)=>{
+              console.log(err)
+            })  
+        })
+        .catch(() => {}); 
+    },
     clickToAdmin() {
       this.$router.push({
         name: "admin",
@@ -428,7 +462,7 @@ export default {
       }
       //todo:进入进行任务页面具体传入什么参数自定义
       axios
-        .get("http://101.42.118.80:8000/receive_task", {
+        .get("http://101.42.118.80:8000/receive_task/", {
           params: {
             username: this.username,
             taskId: this.id, //任务id
@@ -487,7 +521,7 @@ export default {
         return;
       }
       axios
-        .get("http://101.42.118.80:8000/receive_task", {
+        .get("http://101.42.118.80:8000/receive_task/", {
           params: {
             username: this.username,
             taskId: this.id, //任务id
@@ -555,7 +589,7 @@ export default {
     }
     if (!localStorage.getItem("avatar")) {
       axios
-        .get("http://101.42.118.80:8000/get_avatar", {
+        .get("http://101.42.118.80:8000/get_avatar/", {
           params: {
             username: this.username,
           },
@@ -580,7 +614,7 @@ export default {
       this.mode = this.$route.query.mode;
     }
     axios
-      .get("http://101.42.118.80:8000/get_task_basic_info", {
+      .get("http://101.42.118.80:8000/get_task_basic_info/", {
         params: {
           id: this.id,
         },
@@ -598,6 +632,9 @@ export default {
           this.problemTotalNum = res.data["problemTotalNum"];
           this.finishedProblemNum = res.data["finishedProblemNum"];
           this.ratio = res.data["receiveProcess"];
+          if(parseInt(this.ratio) == 100){
+            this.noTask = true;
+          }
           this.singleBonus = res.data["singleBonus"];
           this.starRank = res.data["starRank"];
           this.materialType = res.data["materialType"];

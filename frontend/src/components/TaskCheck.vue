@@ -266,7 +266,7 @@
       ></el-col>
       <el-col :span="6"></el-col>
     </el-row>
-    <el-row v-else-if="mode == 1 && receiveStatus == 1 && !perform">
+    <el-row v-else-if="mode == 1 && receiveStatus == 4 && !perform">
       <el-col :span="10" style="display: flex; justify-content: center"
         ><CustomButton
           @click="routerPerform"
@@ -279,7 +279,7 @@
       ></el-col>
       <el-col :span="6"> </el-col>
     </el-row>
-    <el-row v-else-if="mode == 1 && receiveStatus == 2 && !perform">
+    <el-row v-else-if="mode == 1 && receiveStatus == 5 && !perform">
       <el-col :span="18" style="display: flex; justify-content: center"
         ><CustomButton
           title="任务已结束"
@@ -349,7 +349,7 @@ export default {
   methods: {
     giveUpThisTask(){
       axios
-        .get("http://101.42.118.80:8000/give_up_task", {
+        .get("http://101.42.118.80:8000/give_up_task/", {
           params: {
             username: localStorage.getItem('username'),
             taskId: this.id,
@@ -392,7 +392,7 @@ export default {
     },
     clickPostTask() {
       axios
-        .get("http://101.42.118.80:8000/post_task_immediately", {
+        .get("http://101.42.118.80:8000/post_task_immediately/", {
           params: {
             taskId: this.id,
           },
@@ -478,7 +478,7 @@ export default {
       })
         .then(() => {
           axios
-            .get("http://101.42.118.80:8000/interrupt_task", {
+            .get("http://101.42.118.80:8000/interrupt_task/", {
               params: {
                 taskId: this.id,
               },
@@ -504,7 +504,7 @@ export default {
     },
     showTaskDetail(id, username, sortChoice, index) {
       axios
-        .get("http://101.42.118.80:8000/get_task_basic_info", {
+        .get("http://101.42.118.80:8000/get_task_basic_info/", {
           params: {
             username: this.mode == 1 ? localStorage.getItem("username") : "",
             sortChoice: this.mode == 1 ? sortChoice : "",
@@ -524,6 +524,7 @@ export default {
             }
             if (this.mode == 1) {
               this.receiveStatus = res.data["taskStatus"];
+              console.log(this.receiveStatus)
             } else if (this.mode == 2) {
               this.postStatus = res.data["taskStatus"];
             }

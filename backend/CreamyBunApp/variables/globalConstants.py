@@ -17,14 +17,14 @@ NOW_RELEASE = 0
 NOT_YET_RELEASE = 1
 TIMED_RELEASE = 2
 
-# 用户字典里的任务自身状态常量（完成）
-NOT_FINISHED = 1
-HAS_FINISHED = 2
-
 # 任务状态和用户字典里的任务自身状态常量（发布）
 NOT_RELEASE_YET = 1 # 任务尚未发布
 RELEASE_BUT_NOT_OVER = 2 # 任务发布了还没结束
 OVER = 3 # 任务已结束（超过结束时间或者已经做完）
+
+# 用户字典里的任务自身状态常量（完成）
+NOT_FINISHED = 4
+HAS_FINISHED = 5
 
 # 用户任务状态常量
 HAS_RECEIVED = 1

@@ -103,10 +103,6 @@ const routes = [
     component: TaskCenterView,
   },
   {
-    meta:{
-      // 必须登录才可以查看
-      requireAuth: true
-    },
     path: "/taskdetail",
     name: "taskdetail",
     component: TaskDetailView

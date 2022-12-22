@@ -11,6 +11,8 @@ import math
 import datetime
 import random
 
+def delete_reported_task_invalid(task_id):
+    ReportInfo.objects.filter(task_id=task_id).delete()
 
 # 添加一个用户到用户列表中
 def add_a_user(username, password, email):
@@ -32,8 +34,6 @@ def exist_user_by_name(username):
 def exist_user_by_mobile_number(mobile_number):
     try:
         User.objects.get(mobile_number=mobile_number)
-        print(User.objects.get(mobile_number=mobile_number).username)
-        print(mobile_number)
         return True
     except:
         return False
@@ -79,15 +79,13 @@ def get_reported_task_list(page_number):
         init_list.append(t_info)
     length = len(all_report_id_list)
     if length < 10:
-        for i in range( 10 - length):
+        for i in range(10 - length):
             init_list.append({'isSpace':True,'index': length + i})
     return total_number, init_list
 
 # 获得某任务的已领取题目数量
 def get_task_received_number(t:Task):
-    has_received_problem_number = len(t.receiver_list.all())*t.problem_number_for_single_receiver
-    if has_received_problem_number > t.problem_total_number:
-        has_received_problem_number = t.problem_total_number
+    has_received_problem_number = len([p for p in t.problem_list.all() if p.current_state != NOT_RECEIVED])
     return has_received_problem_number
 
 # 通过id获取某任务的领取进度，百分比数字
@@ -108,7 +106,7 @@ def get_user_received_problem_info(username,sort_choice,task_index):
 
     # sort_choice: int,0是所有 1是正在进行，2是已结束
     if sort_choice != 0:
-        td_received_list = td_received_list.filter(task_status_for_itself=sort_choice)
+        td_received_list = td_received_list.filter(task_status_for_itself=sort_choice + 3)
     
     td_received_list = list(reversed(list(td_received_list.all())))
     td = td_received_list[task_index]
@@ -289,8 +287,10 @@ def match_username_with_password(username, password):
 def update_clock_in_info(username):
     u = get_a_user_data(username)
     if not u.is_today_sign_in:
+        add_donut_for_user(u, donut_for_clock_in[u.continue_sign_in_days])
         u.is_today_sign_in = True
         u.continue_sign_in_days += 1
+        u.save()
     return u.is_today_sign_in, u.continue_sign_in_days
 
 # 修改指定用户的手机号
@@ -423,7 +423,9 @@ def create_task(request_body):
 
     # 计算每个用户每次可领取的题目数量
     receiver_number = basic_info_form["receiverNum"]
-    t.problem_number_for_single_receiver = math.ceil(1.00 * t.problem_total_number / receiver_number) # TODO:需要更新
+    t.problem_number_for_single_receiver = math.floor(1.00 * t.problem_total_number / receiver_number) 
+    t.max_receiver_number = receiver_number
+    t.left_problem_number = t.problem_total_number - t.max_receiver_number *t.problem_number_for_single_receiver
     t.save()
 
     # 返回刚刚创建的任务的id和发布状态等信息给用户
@@ -604,3 +606,66 @@ def set_task_end_time(t:Task,end_time):
 def set_task_begin_time(t:Task,begin_time):
     t.begin_time = begin_time
     t.save()
+
+# 删除违规任务
+def delete_violated_task(task_id):
+    t = get_a_task_data(task_id)
+
+    # 举报的信息删了
+    ReportInfo.objects.filter(task_id=task_id).delete()
+
+    # 用户的任务信息先删
+    for u in User.objects.all():
+        td_list = u.task_info_list.filter(task_id=task_id).all()
+        td_id_list = [td.id for td in td_list]
+        for td in td_list:
+            rp_id_list = [rp.id for rp in td.received_problem_id_list.all()]
+            for rp in td.received_problem_id_list.all():
+                ua_id_list = [ua.id for ua in rp.user_answer.all()]
+                for ua in rp.user_answer.all():
+                    rp.user_answer.remove(ua)
+                rp.save()
+                for ua_id in ua_id_list:
+                    Str.objects.get(id=ua_id).delete()
+                td.received_problem_id_list.remove(rp)
+            td.save()
+            for rp_id in rp_id_list:
+                UserProblemInfo.objects.get(id=rp_id).delete()
+            u.task_info_list.remove(td)
+        for td_id in td_id_list:
+            TaskDict.objects.get(id=td_id).delete()
+        u.save()
+    
+    # 任务本身的信息删了
+    tr_id_list = [tr.id for tr in t.receiver_list.all()]
+    for tr in t.receiver_list.all():
+        t.receiver_list.remove(tr)
+    t.save()
+    for tr_id in tr_id_list:
+        Int.objects.get(id=tr_id).delete()
+
+    pid_list = [p.id for p in t.problem_list.all()]
+    for p in t.problem_list.all():
+        md_id_list = [md.id for md in p.material_info.all()]
+        for md in p.material_info.all():
+            p.material_info.remove(md)
+        p.save()
+        for md_id in md_id_list:
+            MaterialDict.objects.get(id=md_id).delete()
+        qid_list = [q.id for q in p.question_list.all()]
+        for q in p.question_list.all():
+            p.question_list.remove(q)
+            if q.question_type == CHOICE_QUESTION:
+                ChoiceQuestion.objects.get(question_ptr_id=q.id).delete()
+            elif q.question_type == FILL_BLANK_QUESTION:
+                FillBlankQuestion.objects.get(question_ptr_id=q.id).delete()
+            elif q.question_type == SELECT_FRAME_QUESTION:
+                FrameSelectionQuestion.objects.get(question_ptr_id=q.id).delete()
+        p.save()
+        # for qid in qid_list:
+        #     Question.objects.get(id=qid).delete()
+        t.problem_list.remove(p)
+    t.save()
+    for pid in pid_list:
+        Problem.objects.get(id=pid).delete()
+    Task.objects.get(id=task_id).delete()

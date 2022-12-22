@@ -70,4 +70,5 @@ urlpatterns = [
     path('interrupt_task/',views.interrupt_task),
     path('give_up_task/',views.give_up_task),
     path('post_task_immediately/',views.post_task_immediately),
+    path('delete_task/',views.delete_task),
 ]

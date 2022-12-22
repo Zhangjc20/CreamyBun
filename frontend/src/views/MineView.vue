@@ -170,7 +170,7 @@ export default {
       this.username = localStorage.getItem('username');
     }
     if(!localStorage.getItem('avatar')){
-      axios.get('http://101.42.118.80:8000/get_avatar',{
+      axios.get('http://101.42.118.80:8000/get_avatar/',{
         params:{
           username:this.username
         }
