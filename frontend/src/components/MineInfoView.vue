@@ -688,6 +688,7 @@ export default {
       .get("http://101.42.118.80:8000/get_user_basic_info/", {
         params: {
           username: localStorage.getItem("username"),
+          jwt:localStorage.getItem('login_jwt')
         },
       })
       .then((res) => {

@@ -500,6 +500,7 @@ export default {
               username: this.username, //String 用户名
               sortChoice: this.sortChoice, //int 1是所有 2是正在进行，3是已结束
               pageNumber: page, //int页码
+              jwt:localStorage.getItem('login_jwt')
             },
           })
           .then((res) => {
@@ -519,7 +520,8 @@ export default {
             params: {
               username: this.username, //String 用户名
               sortChoice: this.sortChoice, //int 1是所有，2是暂未发布 3是发布但未结束 4是已结束
-              pageNumber: page, //int页码
+              pageNumber: page, //int页码,
+              jwt:localStorage.getItem('login_jwt')
             },
           })
           .then((res) => {
@@ -561,7 +563,8 @@ export default {
             params: {
               username: this.username, //String 用户名
               sortChoice: value, //int 1是所有 2是正在进行，3是已结束
-              pageNumber: 1, //int页码
+              pageNumber: 1, //int页码,
+              jwt:localStorage.getItem('login_jwt')
             },
           })
           .then((res) => {
@@ -581,7 +584,8 @@ export default {
             params: {
               username: this.username, //String 用户名
               sortChoice: value, //int 1是所有，2是暂未发布 3是发布但未结束 4是已结束
-              pageNumber: 1, //int页码
+              pageNumber: 1, //int页码,
+              jwt:localStorage.getItem('login_jwt')
             },
           })
           .then((res) => {
@@ -638,7 +642,8 @@ export default {
             params: {
               username: this.username, //String 用户名
               sortChoice: this.sortChoice, //int 1是所有 2是正在进行，3是已结束
-              pageNumber: 1, //int页码
+              pageNumber: 1, //int页码,
+              jwt:localStorage.getItem('login_jwt')
             },
           })
           .then((res) => {
@@ -658,7 +663,8 @@ export default {
             params: {
               username: this.username, //String 用户名
               sortChoice: this.sortChoice, //int 1是所有，2是暂未发布 3是发布但未结束 4是已结束
-              pageNumber: 1, //int页码
+              pageNumber: 1, //int页码,
+              jwt:localStorage.getItem('login_jwt')
             },
           })
           .then((res) => {

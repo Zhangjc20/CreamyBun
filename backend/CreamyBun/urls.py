@@ -20,6 +20,7 @@ from CreamyBunApp import views
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
+    path('no_log/',views.no_log),
     path('log_up/', views.log_up),
     path('log_in/', views.log_in),
     path('send_email/', views.send_email),

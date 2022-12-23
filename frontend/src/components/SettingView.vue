@@ -38,6 +38,7 @@
 <script>
 import CustomButton from "@/components/CustomButton.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import axios from 'axios';
 export default {
   name: "SettingView",
   components: {
@@ -60,15 +61,32 @@ export default {
         type: "info",
       })
         .then(() => {
-          localStorage.setItem("logined", "false");
-          localStorage.removeItem("avatar");
-          localStorage.removeItem("username");
-          localStorage.removeItem("defaultMine");
-          ElMessage({
-            type: "success",
-            message: "退出登录成功",
-          });
-          this.$router.push({ name: "home" });
+          axios
+        .get("http://101.42.118.80:8000/log_in/", {
+          params: {
+            username: localStorage.getItem("username"),
+          },
+        })
+        .then((res)=>{
+          if(res.data['status']=='ok'){
+            localStorage.setItem("logined", "false");
+            localStorage.removeItem("avatar");
+            localStorage.removeItem("username");
+            localStorage.removeItem("defaultMine");
+            localStorage.removeItem("login_jwt");
+            ElMessage({
+              type: "success",
+              message: "退出登录成功",
+            });
+            this.$router.push({ name: "home" });
+          }
+          else{
+            ElMessage({
+              type: "error",
+              message: "退出登录失败",
+            });
+          }
+        })
         })
         .catch(() => {
           ElMessage({
