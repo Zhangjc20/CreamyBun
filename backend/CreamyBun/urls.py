@@ -20,6 +20,7 @@ from CreamyBunApp import views
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
+    path('no_log/',views.no_log),
     path('log_up/', views.log_up),
     path('log_in/', views.log_in),
     path('send_email/', views.send_email),
@@ -47,7 +48,6 @@ urlpatterns = [
     path('get_admin_username_and_password/', views.get_admin_username_and_password),
     path('set_admin_username_and_password/', views.set_admin_username_and_password),
     path('perform_problem_material/', views.perform_problem_material),
-    path('uck_me/', views.uck_me),
     path('submit_feedback/', views.submit_feedback),
     path('final_submit/', views.final_submit),
     path('get_feedback/', views.get_feedback),
@@ -71,4 +71,5 @@ urlpatterns = [
     path('interrupt_task/',views.interrupt_task),
     path('give_up_task/',views.give_up_task),
     path('post_task_immediately/',views.post_task_immediately),
+    path('delete_task/',views.delete_task),
 ]

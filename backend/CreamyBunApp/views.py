@@ -7,15 +7,22 @@ from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
 from django.shortcuts import render, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
 
 from .function.databaseOperations import *
 from .variables.globalConstants import *
 from .variables.globalVariables import *
 from .function.universalFunctions import *
 import json
+import jwt
+
 
 
 # Create your views here.
+
+def no_log(request):
+    return HttpResponse("请您先注册")
 
 # 注册
 def log_up(request):
@@ -79,7 +86,14 @@ def log_in(request):
     if not is_password_right:
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'wrongPassword'}), content_type='application/json')
 
-    return HttpResponse(json.dumps({'status': 'ok', 'type': 'normalUser'}), content_type='application/json')
+    orjwt = jwt.encode({'username':username,'time':time.strftime("%Y%m%d-%H%M%S")}, "secret", algorithm="HS256")
+    orjwt = orjwt.decode(encoding="utf-8")
+    if len(orjwt) > 20:
+        return_jwt = orjwt[0:20]
+    else:
+        return_jwt = orjwt
+    add_user_jwt(username,return_jwt)
+    return HttpResponse(json.dumps({'status': 'ok', 'type': 'normalUser','jwt':return_jwt}), content_type='application/json')
 
 
 # 获取用户名对应用户头像
@@ -150,6 +164,8 @@ def reset_password(request):
 def get_user_basic_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
+    if not check_jwt(username,query_dict.get("jwt", "")):
+        return HttpResponse(json.dumps({'status':'wrong'}), content_type='application/json')
     u = get_a_user_data(username)
     user_info = {
 
@@ -244,6 +260,7 @@ def clock_in(request):
     username = query_dict.get("username", "")
     success_clock_in, continue_clock_in_days = update_clock_in_info(username)
     clock_in_info = {
+        'status':'ok',
         'continueSignInDays': continue_clock_in_days,
         'isTodaySignIn': success_clock_in,
     }
@@ -674,10 +691,6 @@ def final_submit(request):
     return HttpResponse(json.dumps(final_submit_feedback), content_type='application/json')
 
 
-def uck_me(request):
-    print("uck_me")
-    return HttpResponse(json.dumps(fake_ans), content_type='application/json')
-
 # 发布任务时可能会用到的一些信息
 def get_release_info(request):
     query_dict = request.GET
@@ -858,7 +871,6 @@ def get_feedback(request):
 def handle_feedback_email(request):
     content = request.POST.get("content", "")
     email = request.POST.get("email", "")
-    print(email)
     send_status = send_feedback_email(email, content)
     if send_status == 1:
         return HttpResponse(json.dumps({'status': 'ok', 'type': 'sameEmail'}), content_type='application/json')
@@ -888,7 +900,7 @@ def receive_task(request):
         return HttpResponse(json.dumps({'status': 'ok', 'type': 'success'}), content_type='application/json')
     else:
         print(fail_type)
-        # failType有'hasReceived'或者'lowRank'
+        # failType有'hasReceived'或者'lowRank'或者'noProblemLeft'
         return HttpResponse(json.dumps({'status': 'ok', 'type': 'fail', 'failType':fail_type}), content_type='application/json')
 
 @csrf_exempt
@@ -934,10 +946,21 @@ def post_task_immediately(request):
     is_succeed,sub_donut_number, current_donut_number = force_release_task(task_id)
     res = {
         'status': 'ok',
-        'isSucceed': is_succeed, # 判断发布是否成功，主要是会因为甜甜圈不够而发布失败
+        'isSucceed': is_succeed, # 判断发布是否成功，这里不扣钱了，发布任务那里扣过了
         'needDonutNum': sub_donut_number, # 发布此任务需要多少甜甜圈
 
         # 如果发布成功，则这个是用户剩下的甜甜圈余额；如果发布失败，则为用户发布任务前的甜甜圈余额
         'leftDonutNum': current_donut_number, 
+    }
+    return HttpResponse(json.dumps(res), content_type='application/json')
+
+# 管理员审核后删除任务
+def delete_task(request):
+    query_dict = request.GET
+    task_id = query_dict.get("taskId", "")
+    delete_reported_task_invalid(task_id)
+    delete_violated_task(task_id)
+    res = {
+        'status':'ok',
     }
     return HttpResponse(json.dumps(res), content_type='application/json')

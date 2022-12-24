@@ -28,6 +28,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['101.42.118.80']
 
+# auth module
+AUTH_USER_MODEL = 'CreamyBunApp.User'
+
+LOGIN_URL = '/no_log/'
+
 
 # Application definition
 

@@ -17,14 +17,14 @@ NOW_RELEASE = 0
 NOT_YET_RELEASE = 1
 TIMED_RELEASE = 2
 
-# 用户字典里的任务自身状态常量（完成）
-NOT_FINISHED = 1
-HAS_FINISHED = 2
-
 # 任务状态和用户字典里的任务自身状态常量（发布）
 NOT_RELEASE_YET = 1 # 任务尚未发布
 RELEASE_BUT_NOT_OVER = 2 # 任务发布了还没结束
 OVER = 3 # 任务已结束（超过结束时间或者已经做完）
+
+# 用户字典里的任务自身状态常量（完成）
+NOT_FINISHED = 4
+HAS_FINISHED = 5
 
 # 用户任务状态常量
 HAS_RECEIVED = 1
@@ -104,154 +104,3 @@ AUDIO_TYPE_SET = {'mp3', 'wav', 'm4a'}
 ALL_TYPE_SET = IMAGE_TYPE_SET | TEXT_TYPE_SET | VIDEO_TYPE_SET | AUDIO_TYPE_SET
 TYPE_SET = [IMAGE_TYPE_SET, TEXT_TYPE_SET, VIDEO_TYPE_SET, AUDIO_TYPE_SET, ALL_TYPE_SET]
 
-fake_ans = {
-    "materialList": [
-
-        {
-            "fileType": 0,
-            "filePath": "./resource/task_materials\\ZDandsomSP_20221120152607\\list1\\图片 (2).jpg",
-            "fileNotes": "这是一张图"
-        },
-        {
-            "fileType": 1,
-            "filePath": "./resource/task_materials\\ZDandsomSP_20221120152607\\list2\\文本 (3).txt",
-            "fileNotes": "这是一文本"
-        },
-        {
-            "fileType": 2,
-            "filePath": "./resource/task_materials\\ZDandsomSP_20221120152607\\list3\\视频 (5).mp4",
-            "fileNotes": "这是一视频"
-        },
-        {
-            "fileType": 3,
-            "filePath": "./resource/task_materials\\ZDandsomSP_20221120152607\\list4\\音频 (5).mp3",
-            "fileNotes": "这是一音频"
-        },
-    ],
-    "stateList": [
-
-        {
-            "index": 1,
-            "state": "success",
-        },
-        {
-            "index": 2,
-            "state": "inf",
-        },
-        {
-            "index": 3,
-            "state": "success",
-        },
-        {
-            "index": 4,
-            "state": "success",
-        },
-        {
-            "index": 5,
-            "state": "in",
-        },
-        {
-            "index": 6,
-            "state": "ino",
-        },
-        {
-            "index": 7,
-            "state": "success",
-        },
-        {
-            "index": 8,
-            "state": "inf",
-        },
-        {
-            "index": 9,
-            "state": "success",
-        },
-        {
-            "index": 10,
-            "state": "ino",
-        },
-
-    ],
-    "questionList": [
-        {
-            "questionTypeName": "单选",
-            "questionType": 0,
-            "questionDescription": "我是单选题",
-            "optionList": [
-                {
-                    "index": 0,
-                    "name": "A",
-                    "content": "我是单选A"
-                },
-                {
-                    "index": 1,
-                    "name": "B",
-                    "content": "我是单选B"
-                }
-            ],
-            "minOptionNum": 1,
-            "maxOptionNum": 1,
-            "targetIndex": "",
-            "mustDo": True,
-            "questionAns": "",
-            "index": 1
-        },
-        {
-            "questionTypeName": "多选",
-            "questionType": 1,
-            "questionDescription": "我是多选题",
-            "optionList": [
-                {
-                    "index": 0,
-                    "name": "A",
-                    "content": "我是多选A"
-                },
-                {
-                    "index": 1,
-                    "name": "B",
-                    "content": "我是多选B"
-                },
-                {
-                    "index": 2,
-                    "name": "C",
-                    "content": "我是多选C"
-                },
-                {
-                    "index": 3,
-                    "name": "D",
-                    "content": "我是多选D"
-                }
-            ],
-            "minOptionNum": 2,
-            "maxOptionNum": 3,
-            "targetIndex": "",
-            "mustDo": False,
-            "questionAns": "",
-            "index": 2
-        },
-        {
-            "questionTypeName": "填空",
-            "questionType": 2,
-            "questionDescription": "我是填空题",
-            "optionList": [],
-            "minOptionNum": 20,
-            "maxOptionNum": 2000,
-            "targetIndex": "",
-            "mustDo": True,
-            "questionAns": "",
-            "index": 3
-        },
-        {
-            "questionTypeName": "单选",
-            "questionType": 3,
-            "questionDescription": "我是框图题",
-            "optionList": [],
-            "minOptionNum": 2,
-            "maxOptionNum": 10,
-            "targetIndex": 1,
-            "mustDo": False,
-            "questionAns": "",
-            "index": 4
-        }
-    ],
-}

@@ -33,6 +33,47 @@
             >
           </el-sub-menu>
         </el-menu>
+        <div style="position: fixed; bottom: 0px;left: 20px;width: 250px;height: 250px;">
+          <div style="position: absolute; bottom: 20px;left: 0px;width: 20px;height: 150px;">
+            <div style="position: absolute; bottom: 0px;border-top: 20px solid #5EABBF;border-left: 20px solid transparent;"></div>
+            <div style="background-color:#5EABBF;position: absolute; bottom: 20px;width: 20px;height: 110px;"></div>
+            <div style="position: absolute; bottom: 130px;border-bottom: 20px solid #5EABBF;border-left: 20px solid transparent;"></div>
+          </div>
+          <div style="position: absolute; bottom: 10px;left: 40px;width: 25px;height: 200px;">
+            <div style="position: absolute; bottom: 0px;border-top: 25px solid #FBE484;border-right: 25px solid transparent;"></div>
+            <div style="background-color:#FBE484;position: absolute; bottom: 25px;width: 25px;height: 150px;"></div>
+            <div style="position: absolute; bottom: 175px;border-bottom: 25px solid #FBE484;border-right: 25px solid transparent;"></div>
+          </div>
+          <div style="position: absolute; bottom: 65px;left: 200px;width: 10px;height: 80px;">
+            <div style="position: absolute; bottom: 0px;border-top: 10px solid #5EABBF;border-right: 10px solid transparent;"></div>
+            <div style="background-color:#5EABBF;position: absolute; bottom: 10px;width: 10px; height: 60px;"></div>
+            <div style="position: absolute; bottom: 70px;border-bottom: 10px solid #5EABBF;border-right: 10px solid transparent;"></div>
+          </div>
+          <div style="position: absolute; bottom: 20px;left: 230px;width: 20px;height: 150px;">
+            <div style="position: absolute; bottom: 0px;border-top: 20px solid #FBE484;border-left: 20px solid transparent;"></div>
+            <div style="background-color:#FBE484;position: absolute; bottom: 20px;width: 20px;height: 110px;"></div>
+            <div style="position: absolute; bottom: 130px;border-bottom: 20px solid #FBE484;border-left: 20px solid transparent;"></div>
+          </div>
+          <div style="position: absolute; bottom: 140px;left: 170px;width: 15px;height: 30px;">
+            <div style="position: absolute; bottom: 0px;border-top: 15px solid #FBE484;border-left: 15px solid transparent;"></div>
+            <div style="position: absolute; bottom: 15px;border-bottom: 15px solid #FBE484;border-left: 15px solid transparent;"></div>
+          </div>
+          <div style="position: absolute; bottom: 150px;left: 90px;width: 15px;height: 30px;">
+            <div style="position: absolute; bottom: 0px;border-top: 15px solid #5EABBF;border-right: 15px solid transparent;"></div>
+            <div style="position: absolute; bottom: 15px;border-bottom: 15px solid #5EABBF;border-right: 15px solid transparent;"></div>
+          </div>
+          <div style="position: absolute; bottom: 20px;left: 90px;width: 250px;height: 250px;">
+            <div style="flex-direction: column;position:absolute;bottom: 0px;margin-left: auto;margin-right: auto;text-align:center ">
+              <el-image
+                style="width: 88px; height: 80px"
+                fit="cover"
+                :src="require('@/assets/images/logo_small.png')"
+                class="jump-logo"
+              ></el-image>
+              <div class="jump-shadow"></div>
+            </div>
+          </div>
+        </div>
       </el-aside>
       <el-main class="main-style">
         <!-- <component :is="show_content"></component> -->
@@ -94,7 +135,7 @@ export default {
       this.username = localStorage.getItem('username');
     }
     if(!localStorage.getItem('avatar')){
-      axios.get('http://101.42.118.80:8000/get_avatar',{
+      axios.get('http://101.42.118.80:8000/get_avatar/',{
         params:{
           username:this.username
         }
@@ -204,5 +245,47 @@ export default {
 }
 .el-menu--horizontal .el-menu-item:not(.is-disabled):hover {
   background-color: #f8f8f8;
+}
+.jump-logo {
+  z-index: 2;
+  animation: jump-logo 1s infinite;
+  animation-timing-function: ease;
+}
+.jump-shadow {
+  z-index: 1;
+  width: 100px;
+  height: 5px;
+  background: #eaeaea;
+  border-radius: 100%;
+  animation: shadow 1s infinite;
+  animation-timing-function: ease;
+  margin-left: auto;
+  margin-right: auto;
+}
+@keyframes jump-logo {
+  0% {
+    margin-bottom: 0px;
+  }
+
+  50% {
+    margin-bottom: 30px;
+  }
+
+  100% {
+    margin-bottom: 0px;
+  }
+}
+@keyframes shadow {
+  0% {
+    width: 85px;
+  }
+
+  50% {
+    width: 65px;
+  }
+
+  100% {
+    width: 85px;
+  }
 }
 </style>

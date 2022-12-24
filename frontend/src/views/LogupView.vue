@@ -107,7 +107,7 @@ export default {
       if (value === "") {
         this.usernameRight = false;
         callback(new Error("用户名不能为空"));
-      } else if (value.match(/[a-z\d]{5,12}/g)) {
+      } else if (value.match(/[a-zA-z\d]{5,12}/g)) {
         this.usernameRight = true;
         callback();
       } else {
@@ -119,7 +119,7 @@ export default {
       if (value === "") {
         this.passwordRight = false;
         callback(new Error("密码不能为空"));
-      } else if (value.search(/[a-z\d]{6,18}/g) == -1) {
+      } else if (value.search(/[a-zA-Z\d]{6,18}/g) == -1) {
         this.passwordRight = false;
         callback(new Error("请输入6-18位字母和数字的组合"));
       } else {
@@ -240,7 +240,7 @@ export default {
         clearInterval(timerI);
       }, 60000);
       axios
-        .get("http://101.42.118.80:8000/log_up", {
+        .get("http://101.42.118.80:8000/log_up/", {
           params: {
             type: "getVerifyCode",
             email: this.codeEmail,
@@ -307,7 +307,7 @@ export default {
         return;
       }
       axios
-        .get("http://101.42.118.80:8000/log_up", {
+        .get("http://101.42.118.80:8000/log_up/", {
           params: {
             type: "logUp",
             username: this.form.username,

@@ -1,5 +1,25 @@
 <template>
-  <el-container>
+  <el-container v-if="loading">
+    <div style="position: relative;width: 250px;height: 200px;margin-left: auto;margin-right: auto;">
+      <div style="position: absolute; bottom: 50px;left: 60px;width: 250px;height: 250px;">
+        <div style="flex-direction: column;position:absolute;bottom: 0px;margin-left: auto;margin-right: auto;text-align:center ">
+          <el-image
+            style="width: 88px; height: 80px"
+            fit="cover"
+            :src="require('@/assets/images/logo_small.png')"
+            class="jump-logo"
+          ></el-image>
+          <div class="jump-shadow"></div>
+        </div>
+      </div>
+      <div style="position: absolute; bottom: -210px;left: -20px;width: 250px;height: 250px;">
+        <span style="color:#5EABBF;font-size:20px; font-family: YouSheBlack;">
+          正在加载图片，请稍等~
+        </span>
+      </div>
+    </div>
+  </el-container>
+  <el-container v-else>
     <el-header style="height: 40px;">
       <span class="header-title" style="margin: auto,auto,auto,20px;">{{ materialInfo['fileNotes'] }}</span>
     </el-header>
@@ -60,6 +80,7 @@ export default {
   },
   watch: {
     materialInfo(newVal, oldVal) {
+      this.loading = true;
       console.log(newVal, oldVal)
       this.materialInfoLocal = newVal
       axios.get("http://101.42.118.80:8000/perform_problem_material/", {
@@ -69,6 +90,7 @@ export default {
         this.image.src =
           window.webkitURL.createObjectURL(imageFile) ||
           window.URL.createObjectURL(imageFile);
+        this.loading = false;
       }).catch();
     },
   },
@@ -86,6 +108,9 @@ export default {
       }
       this.audioSuffix += tempType
     }
+    if(this.type == 0){
+      this.loading = true
+    }
     // console.log("materialInfo", this.materialInfo)
     axios.get("http://101.42.118.80:8000/perform_problem_material/", {
       params: this.materialInfo
@@ -97,6 +122,7 @@ export default {
           window.webkitURL.createObjectURL(imageFile) ||
           window.URL.createObjectURL(imageFile);
         // console.log("this.image.src", this.image.src)
+        this.loading = false
       } else if (this.type == 1) {
         this.docContent = res.data["materialContent"]
       }
@@ -105,6 +131,7 @@ export default {
   },
   data() {
     return {
+      loading:false,
       materialInfoLocal: {},
       image: {
         src: null,
@@ -207,5 +234,47 @@ export default {
 /*定义滑块悬停变化颜色、内阴影及圆角*/
 ::-webkit-scrollbar-thumb:hover {
   background-color: #dddddd;
+}
+.jump-logo {
+  z-index: 2;
+  animation: jump-logo 1s infinite;
+  animation-timing-function: ease;
+}
+.jump-shadow {
+  z-index: 1;
+  width: 100px;
+  height: 5px;
+  background: #eaeaea;
+  border-radius: 100%;
+  animation: shadow 1s infinite;
+  animation-timing-function: ease;
+  margin-left: auto;
+  margin-right: auto;
+}
+@keyframes jump-logo {
+  0% {
+    margin-bottom: 0px;
+  }
+
+  50% {
+    margin-bottom: 30px;
+  }
+
+  100% {
+    margin-bottom: 0px;
+  }
+}
+@keyframes shadow {
+  0% {
+    width: 85px;
+  }
+
+  50% {
+    width: 65px;
+  }
+
+  100% {
+    width: 85px;
+  }
 }
 </style>

@@ -103,7 +103,7 @@
       </el-form-item>
     </el-row>
     <el-row style="height: 60px;" v-if="questionType == 3">
-      <el-form-item label="题干" :required="true">
+      <el-form-item label="指向" :required="true">
         <el-input
           v-model="targetIndex"
           :rows="1"

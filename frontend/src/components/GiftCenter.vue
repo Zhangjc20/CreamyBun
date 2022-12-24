@@ -78,15 +78,15 @@ export default {
           "甜甜圈",
         "确认兑换",
         {
-          confirmButtonText: "OK",
-          cancelButtonText: "Cancel",
+          confirmButtonText: "确认",
+          cancelButtonText: "取消",
           type: "warning",
           draggable: true,
         }
       )
         .then(() => {
           axios
-            .get("http://101.42.118.80:8000/top_up", {
+            .get("http://101.42.118.80:8000/top_up/", {
               params: {
                 username: localStorage.getItem('username'),
                 money: this.donutInput,
@@ -130,15 +130,15 @@ export default {
           "元",
         "确认兑换",
         {
-          confirmButtonText: "OK",
-          cancelButtonText: "Cancel",
+          confirmButtonText: "确认",
+          cancelButtonText: "取消",
           type: "warning",
           draggable: true,
         }
       )
         .then(() => {
           axios
-            .get("http://101.42.118.80:8000/withdraw_money", {
+            .get("http://101.42.118.80:8000/withdraw_money/", {
               params: {
                 username: localStorage.getItem('username'),
                 money: this.valueInput,
@@ -167,7 +167,7 @@ export default {
   },
   beforeMount() {
     axios
-      .get("http://101.42.118.80:8000/get_user_bonus_info", {
+      .get("http://101.42.118.80:8000/get_user_bonus_info/", {
         params: {
           username: localStorage.getItem('username'),
         },

@@ -1,5 +1,58 @@
 <template>
-  <div class="task-page-container">
+  <el-container v-if="loading">
+    <div
+      style="
+        position: relative;
+        width: 250px;
+        height: 350px;
+        margin-left: auto;
+        margin-right: auto;
+      "
+    >
+      <div
+        style="
+          position: absolute;
+          bottom: 50px;
+          left: 60px;
+          width: 250px;
+          height: 250px;
+        "
+      >
+        <div
+          style="
+            flex-direction: column;
+            position: absolute;
+            bottom: 0px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+          "
+        >
+          <el-image
+            style="width: 88px; height: 80px"
+            fit="cover"
+            :src="require('@/assets/images/logo_small.png')"
+            class="jump-logo"
+          ></el-image>
+          <div class="jump-shadow"></div>
+        </div>
+      </div>
+      <div
+        style="
+          position: absolute;
+          bottom: -210px;
+          left: -50px;
+          width: 300px;
+          height: 250px;
+        "
+      >
+        <span style="color: #5eabbf; font-size: 25px; font-family: YouSheBlack">
+          正在加载任务列表，请稍等~
+        </span>
+      </div>
+    </div>
+  </el-container>
+  <div class="task-page-container" v-else>
     <el-dialog v-model="dialogShow" center width="70%">
       <div
         style="
@@ -9,7 +62,13 @@
           justify-content: center;
         "
       >
-        <TaskCheck :mode="type" ref="taskCheck" @postTaskImmediately="postTaskImmediately" @stopTask="stopTask" @giveUpTask="giveUpTask"/>
+        <TaskCheck
+          :mode="type"
+          ref="taskCheck"
+          @postTaskImmediately="postTaskImmediately"
+          @stopTask="stopTask"
+          @giveUpTask="giveUpTask"
+        />
       </div>
     </el-dialog>
     <el-dialog title="任务反馈" v-model="dialogVisible" center width="60%">
@@ -96,26 +155,33 @@
         </template>
       </el-popover>
     </div>
-    <el-row class="task-box">
-      <el-col :span="4.8" v-for="item in items.slice(0, 5)" :key="item.index">
-        <SingleTask
-          :props="item"
-          @click="
-            handleClickTask(item.id, item.isSpace, item.reportId, item.index)
-          "
-        ></SingleTask>
-      </el-col>
-    </el-row>
-    <el-row class="task-box">
-      <el-col :span="4.8" v-for="item in items.slice(5, 10)" :key="item.index">
-        <SingleTask
-          :props="item"
-          @click="
-            handleClickTask(item.id, item.isSpace, item.reportId, item.index)
-          "
-        ></SingleTask>
-      </el-col>
-    </el-row>
+    <div v-if="!itemsEmpty()">
+      <el-row class="task-box">
+        <el-col :span="4.8" v-for="item in items.slice(0, 5)" :key="item.index">
+          <SingleTask
+            :props="item"
+            @click="
+              handleClickTask(item.id, item.isSpace, item.reportId, item.index)
+            "
+          ></SingleTask>
+        </el-col>
+      </el-row>
+      <el-row class="task-box">
+        <el-col
+          :span="4.8"
+          v-for="item in items.slice(5, 10)"
+          :key="item.index"
+        >
+          <SingleTask
+            :props="item"
+            @click="
+              handleClickTask(item.id, item.isSpace, item.reportId, item.index)
+            "
+          ></SingleTask>
+        </el-col>
+      </el-row>
+    </div>
+    <el-row class="task-box noinfo-box" v-else> 暂无任务信息 </el-row>
     <div class="pagnation-box">
       <el-pagination
         background
@@ -154,6 +220,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       dialogShow: false,
       curId: -1,
       curTaskId: -1,
@@ -221,11 +288,19 @@ export default {
     };
   },
   methods: {
-    postTaskImmediately(){
+    itemsEmpty() {
+      for (let item of this.items) {
+        if (item.isSpace == false) {
+          return false;
+        }
+      }
+      return true;
+    },
+    postTaskImmediately() {
       this.dialogShow = false;
       this.init(1);
     },
-    giveUpTask(){
+    giveUpTask() {
       this.dialogShow = false;
       this.init(1);
     },
@@ -235,7 +310,7 @@ export default {
     },
     sendReportEmail(type) {
       axios
-        .get("http://101.42.118.80:8000/send_report_email", {
+        .get("http://101.42.118.80:8000/send_report_email/", {
           params: {
             type: type,
             reportId: this.curId,
@@ -256,7 +331,7 @@ export default {
       for (var i = 0; i < this.items.length; i++) {
         if (this.items[i].reportId == this.curId) {
           axios
-            .get("http://101.42.118.80:8000/delete_reported_task", {
+            .get("http://101.42.118.80:8000/delete_reported_task/", {
               params: {
                 reportId: this.curId,
               },
@@ -282,6 +357,8 @@ export default {
       if (isSpace === true) {
         return;
       }
+      this.curTaskId = taskId;
+      this.curId = id;
       if (this.type === 0) {
         this.$router.push({
           name: "taskdetail",
@@ -311,7 +388,7 @@ export default {
         });
       } else if (this.type == 3) {
         axios
-          .get("http://101.42.118.80:8000/get_reported_task", {
+          .get("http://101.42.118.80:8000/get_reported_task/", {
             params: {
               reportId: this.curId,
             },
@@ -325,8 +402,6 @@ export default {
             }
           });
       }
-      this.curTaskId = taskId;
-      this.curId = id;
     },
     sort(
       searchInput,
@@ -352,8 +427,9 @@ export default {
       //hardType:int 1:所有 2：从难到易 3：从易到难
       //chosenDataType:int 1:所有 2：图片 3：文本 4：音频  5：视频
       //chosenProblemType:int 1:所有 2：单选 3：多选 4：填空 5：框图 6：混合
+      this.loading = true;
       axios
-        .get("http://101.42.118.80:8000/get_sorted_tasks", {
+        .get("http://101.42.118.80:8000/get_sorted_tasks/", {
           params: {
             //onlyLevel:bool false:所有 true:只选入满足做题者等级的
             //donutType:int 1:默认 2:从多到少 3:从少到多
@@ -378,6 +454,11 @@ export default {
             this.items = res.data["taskInfoList"];
             this.total = res.data["totalNumber"];
           }
+          this.$message({
+            type: "success",
+            message: "筛选成功",
+          });
+          this.loading = false;
         })
         .catch((err) => {
           console.log(err);
@@ -385,8 +466,9 @@ export default {
     },
     clickPage(page) {
       if (this.type === 0) {
+        this.loading = true;
         axios
-          .get("http://101.42.118.80:8000/get_sorted_tasks", {
+          .get("http://101.42.118.80:8000/get_sorted_tasks/", {
             params: {
               username: this.username,
               searchInput: this.searchInput,
@@ -404,53 +486,58 @@ export default {
             if (res.data["status"] === "ok") {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
-              console.log("ok");
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
           });
       } else if (this.type === 1) {
+        this.loading = true;
         axios
-          .get("http://101.42.118.80:8000/get_user_received_task_info", {
+          .get("http://101.42.118.80:8000/get_user_received_task_info/", {
             params: {
               username: this.username, //String 用户名
               sortChoice: this.sortChoice, //int 1是所有 2是正在进行，3是已结束
               pageNumber: page, //int页码
+              jwt:localStorage.getItem('login_jwt')
             },
           })
           .then((res) => {
             if (res.data["status"] === "ok") {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
-              console.log("ok");
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
           });
       } else if (this.type === 2) {
+        this.loading = true;
         axios
-          .get("http://101.42.118.80:8000/get_user_released_task_info", {
+          .get("http://101.42.118.80:8000/get_user_released_task_info/", {
             params: {
               username: this.username, //String 用户名
               sortChoice: this.sortChoice, //int 1是所有，2是暂未发布 3是发布但未结束 4是已结束
-              pageNumber: page, //int页码
+              pageNumber: page, //int页码,
+              jwt:localStorage.getItem('login_jwt')
             },
           })
           .then((res) => {
             if (res.data["status"] === "ok") {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
-              console.log("ok");
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
           });
       } else if (this.type === 3) {
+        this.loading = true;
         axios
-          .get("http://101.42.118.80:8000/get_examining_tasks", {
+          .get("http://101.42.118.80:8000/get_examining_tasks/", {
             params: {
               pageNumber: page,
               adminToken: localStorage.getItem("adminToken"),
@@ -461,6 +548,7 @@ export default {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
@@ -469,12 +557,14 @@ export default {
     },
     handleSortChange(value) {
       if (this.type === 1) {
+        this.loading = true;
         axios
-          .get("http://101.42.118.80:8000/get_user_received_task_info", {
+          .get("http://101.42.118.80:8000/get_user_received_task_info/", {
             params: {
               username: this.username, //String 用户名
               sortChoice: value, //int 1是所有 2是正在进行，3是已结束
-              pageNumber: 1, //int页码
+              pageNumber: 1, //int页码,
+              jwt:localStorage.getItem('login_jwt')
             },
           })
           .then((res) => {
@@ -482,25 +572,28 @@ export default {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
           });
       } else if (this.type === 2) {
+        this.loading = true;
         axios
-          .get("http://101.42.118.80:8000/get_user_released_task_info", {
+          .get("http://101.42.118.80:8000/get_user_released_task_info/", {
             params: {
               username: this.username, //String 用户名
               sortChoice: value, //int 1是所有，2是暂未发布 3是发布但未结束 4是已结束
-              pageNumber: 1, //int页码
+              pageNumber: 1, //int页码,
+              jwt:localStorage.getItem('login_jwt')
             },
           })
           .then((res) => {
             if (res.data["status"] === "ok") {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
-              console.log("ok");
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
@@ -516,8 +609,9 @@ export default {
       }
       this.currentPage = 1;
       if (this.type === 0) {
+        this.loading = true;
         axios
-          .get("http://101.42.118.80:8000/get_sorted_tasks", {
+          .get("http://101.42.118.80:8000/get_sorted_tasks/", {
             params: {
               username: this.username,
               searchInput: this.searchInput,
@@ -536,51 +630,57 @@ export default {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
           });
       } else if (this.type === 1) {
+        this.loading = true;
         axios
-          .get("http://101.42.118.80:8000/get_user_received_task_info", {
+          .get("http://101.42.118.80:8000/get_user_received_task_info/", {
             params: {
               username: this.username, //String 用户名
               sortChoice: this.sortChoice, //int 1是所有 2是正在进行，3是已结束
-              pageNumber: 1, //int页码
+              pageNumber: 1, //int页码,
+              jwt:localStorage.getItem('login_jwt')
             },
           })
           .then((res) => {
             if (res.data["status"] === "ok") {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
-              console.log("ok");
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
           });
       } else if (this.type === 2) {
+        this.loading = true;
         axios
-          .get("http://101.42.118.80:8000/get_user_released_task_info", {
+          .get("http://101.42.118.80:8000/get_user_released_task_info/", {
             params: {
               username: this.username, //String 用户名
               sortChoice: this.sortChoice, //int 1是所有，2是暂未发布 3是发布但未结束 4是已结束
-              pageNumber: 1, //int页码
+              pageNumber: 1, //int页码,
+              jwt:localStorage.getItem('login_jwt')
             },
           })
           .then((res) => {
             if (res.data["status"] === "ok") {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
-              console.log(this.items);
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
           });
       } else if (this.type === 3) {
+        this.loading = true;
         axios
-          .get("http://101.42.118.80:8000/get_examining_tasks", {
+          .get("http://101.42.118.80:8000/get_examining_tasks/", {
             params: {
               pageNumber: 1,
               adminToken: localStorage.getItem("adminToken"),
@@ -591,6 +691,7 @@ export default {
               this.items = res.data["taskInfoList"];
               this.total = res.data["totalNumber"];
             }
+            this.loading = false;
           })
           .catch((err) => {
             console.log(err);
@@ -603,6 +704,7 @@ export default {
       return this.type;
     },
   },
+  updated() {},
   watch: {
     myType: function (newData, oldData) {
       if (newData != oldData) {
@@ -661,5 +763,54 @@ export default {
   flex-wrap: wrap;
   justify-content: space-evenly;
   width: 100%;
+}
+.noinfo-box {
+  align-items: center;
+  height: 560px;
+  font-size: 32px;
+  color: rgb(139, 139, 139);
+  font-family: YouSheRound;
+}
+.jump-logo {
+  z-index: 2;
+  animation: jump-logo 1s infinite;
+  animation-timing-function: ease;
+}
+.jump-shadow {
+  z-index: 1;
+  width: 100px;
+  height: 5px;
+  background: #eaeaea;
+  border-radius: 100%;
+  animation: shadow 1s infinite;
+  animation-timing-function: ease;
+  margin-left: auto;
+  margin-right: auto;
+}
+@keyframes jump-logo {
+  0% {
+    margin-bottom: 0px;
+  }
+
+  50% {
+    margin-bottom: 30px;
+  }
+
+  100% {
+    margin-bottom: 0px;
+  }
+}
+@keyframes shadow {
+  0% {
+    width: 85px;
+  }
+
+  50% {
+    width: 65px;
+  }
+
+  100% {
+    width: 85px;
+  }
 }
 </style>

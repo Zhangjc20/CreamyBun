@@ -15,6 +15,7 @@ import { vfmPlugin } from 'vue-final-modal';
 
 
 
+
 const app = createApp(App)
 app.config.warnHandler = () => null
 app.component('image-cropper', Cropper)
