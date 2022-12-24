@@ -58,6 +58,12 @@ def log_up(request):
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}),
                             content_type='application/json')
 
+# 退出登录
+def log_out(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    # remove_user_jwt(username)
+    return HttpResponse(json.dumps({'status': 'ok'}),content_type='application/json')
 
 # 登录
 def log_in(request):
@@ -92,7 +98,7 @@ def log_in(request):
         return_jwt = orjwt[0:20]
     else:
         return_jwt = orjwt
-    add_user_jwt(username,return_jwt)
+    # add_user_jwt(username,return_jwt)
     return HttpResponse(json.dumps({'status': 'ok', 'type': 'normalUser','jwt':return_jwt}), content_type='application/json')
 
 
@@ -164,8 +170,8 @@ def reset_password(request):
 def get_user_basic_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
-    if not check_jwt(username,query_dict.get("jwt", "")):
-        return HttpResponse(json.dumps({'status':'wrong'}), content_type='application/json')
+    # if not check_jwt(username,query_dict.get("jwt", "")):
+    #     return HttpResponse(json.dumps({'status':'wrong'}), content_type='application/json')
     u = get_a_user_data(username)
     user_info = {
 

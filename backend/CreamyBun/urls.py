@@ -23,6 +23,7 @@ urlpatterns = [
     path('no_log/',views.no_log),
     path('log_up/', views.log_up),
     path('log_in/', views.log_in),
+    path('log_out/', views.log_out),
     path('send_email/', views.send_email),
     path('change_avatar/', views.change_avatar),
     path('update_username/', views.update_username),
