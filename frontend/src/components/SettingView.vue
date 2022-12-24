@@ -62,7 +62,7 @@ export default {
       })
         .then(() => {
           axios
-        .get("http://101.42.118.80:8000/log_in/", {
+        .get("http://101.42.118.80:8000/log_out/", {
           params: {
             username: localStorage.getItem("username"),
           },
