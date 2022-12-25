@@ -297,7 +297,7 @@ def finish_daily_task(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     index = query_dict.get('index',"") # 0或1
-    finish_task_one, finish_task_two = update_daily_task_info(username,index)
+    finish_task_one, finish_task_two = update_daily_task_info(username,eval(index))
     res = {
         'status':'ok',
         'taskOneState': finish_task_one, # 该用户是否领取第一个每日任务奖励
