@@ -15,11 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
+from django.views.static import serve
 from CreamyBunApp import views
+from . import settings
+
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
+    path(r'^resource/(?P<path>.*)', serve, {"document_root": settings.MEDIA_ROOT}),
     path('log_up/', views.log_up),
     path('log_in/', views.log_in),
     path('send_email/', views.send_email),
@@ -72,3 +75,6 @@ urlpatterns = [
     path('post_task_immediately/',views.post_task_immediately),
     path('delete_task/',views.delete_task),
 ]
+
+
+
