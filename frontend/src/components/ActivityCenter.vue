@@ -166,7 +166,7 @@
           任务奖励：
           <svg class="icon" style="width:1.5em;height:1.5em;vertical-align: -20%;" aria-hidden="true">
             <use xlink:href="#icon-tiantianquan"></use>
-          </svg>30
+          </svg>{{finishedTaskDonut[0]}}
           &emsp;&emsp;
           完成进度：1/1
         </div>
@@ -180,7 +180,7 @@
           任务奖励：
           <svg class="icon" style="width:1.5em;height:1.5em;vertical-align: -20%;" aria-hidden="true">
             <use xlink:href="#icon-tiantianquan"></use>
-          </svg>30
+          </svg>{{finishedTaskDonut[1]}}
           &emsp;&emsp;
           完成进度：1/3
         </div>
@@ -219,7 +219,8 @@ export default {
       disabledProps:{
         disabled:"true",
         disabledColor:"#FCE5B1" ,
-      }
+      },
+      finishedTaskDonut:[0,0]
     };
   },
   methods: {
@@ -227,21 +228,43 @@ export default {
       if(!this.finished1 || this.accepted1){
         return ;
       }
-      ElMessage({
-        type:'success',
-        message:'恭喜你完成任务，获得奖励甜甜圈30',
+      axios
+        .get("http://101.42.118.80:8000/finish_daily_task/", {
+          params: {
+            username: localStorage.getItem('username'),
+            index:0
+          },
+        })
+        .then((res) => {
+          if(res.data['status']=='ok'){
+            ElMessage({
+              type:'success',
+              message:'恭喜你完成任务，获得奖励甜甜圈'+String(this.finishedTaskDonut[0]),
+            })
+            this.accepted1 = true;
+          }
       })
-      this.accepted1 = true;
     },
     acceptDonut2(){
       if(!this.finished2 || this.accepted2){
         return ;
       }
-      ElMessage({
-        type:'success',
-        message:'恭喜你完成任务，获得奖励甜甜圈30',
+      axios
+        .get("http://101.42.118.80:8000/finish_daily_task/", {
+          params: {
+            username: localStorage.getItem('username'),
+            index:1
+          },
+        })
+        .then((res) => {
+          if(res.data['status']=='ok'){
+            ElMessage({
+              type:'success',
+              message:'恭喜你完成任务，获得奖励甜甜圈'+String(this.finishedTaskDonut[1]),
+            })
+            this.accepted2 = true;
+          }
       })
-      this.accepted1 = true;
     },
     handleClockIn() {
       if (this.clocked) {
@@ -279,6 +302,25 @@ export default {
           this.clockinDays = res.data["continueSignInDays"];
           this.clocked = res.data["isTodaySignIn"];
           this.donutListForClockIn = res.data["donutListForClockIn"];
+          this.finishedTaskDonut = res.data['finishedTaskDonut'];
+          switch(res.data['finishedTaskName']){
+            case 0:
+              this.finished1 = false;
+              this.finished2 = false;
+              break;
+            case 1:
+              this.finished1 = true;
+              this.finished2 = true;
+              break;
+            case 2:
+              this.finished1 = true;
+              this.finished2 = true;
+              break;
+            default:
+              break;
+          }
+          this.accepted1 = res.data['taskOneState']?true:false;
+          this.accepted2 = res.data['taskTwoState']?true:false;
         }
       })
       .catch();
