@@ -200,6 +200,7 @@ def reward_user(u:User,t:Task,common_problem_number):
     get_donut_num = t.single_bonus*common_problem_number
     add_donut_for_user(u,get_donut_num)
     u.finished_task_number += 1
+    u.save()
     return is_upgrade, now_credit_rank, exp_by_task_rank[t.star_rank - 1], get_donut_num
     
 # 向某个小题写入答案
