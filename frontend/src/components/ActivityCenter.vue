@@ -166,7 +166,7 @@
           任务奖励：
           <svg class="icon" style="width:1.5em;height:1.5em;vertical-align: -20%;" aria-hidden="true">
             <use xlink:href="#icon-tiantianquan"></use>
-          </svg>{{finishedTaskDonut[0]}}
+          </svg>{{finishTaskDonut[0]}}
           &emsp;&emsp;
           完成进度：1/1
         </div>
@@ -180,7 +180,7 @@
           任务奖励：
           <svg class="icon" style="width:1.5em;height:1.5em;vertical-align: -20%;" aria-hidden="true">
             <use xlink:href="#icon-tiantianquan"></use>
-          </svg>{{finishedTaskDonut[1]}}
+          </svg>{{finishTaskDonut[1]}}
           &emsp;&emsp;
           完成进度：1/3
         </div>
@@ -220,7 +220,7 @@ export default {
         disabled:"true",
         disabledColor:"#FCE5B1" ,
       },
-      finishedTaskDonut:[0,0]
+      finishTaskDonut:[0,0]
     };
   },
   methods: {
@@ -239,7 +239,7 @@ export default {
           if(res.data['status']=='ok'){
             ElMessage({
               type:'success',
-              message:'恭喜你完成任务，获得奖励甜甜圈'+String(this.finishedTaskDonut[0]),
+              message:'恭喜你完成任务，获得奖励甜甜圈'+String(this.finishTaskDonut[0]),
             })
             this.accepted1 = true;
           }
@@ -260,7 +260,7 @@ export default {
           if(res.data['status']=='ok'){
             ElMessage({
               type:'success',
-              message:'恭喜你完成任务，获得奖励甜甜圈'+String(this.finishedTaskDonut[1]),
+              message:'恭喜你完成任务，获得奖励甜甜圈'+String(this.finishTaskDonut[1]),
             })
             this.accepted2 = true;
           }
@@ -302,8 +302,8 @@ export default {
           this.clockinDays = res.data["continueSignInDays"];
           this.clocked = res.data["isTodaySignIn"];
           this.donutListForClockIn = res.data["donutListForClockIn"];
-          this.finishedTaskDonut = res.data['finishedTaskDonut'];
-          switch(res.data['finishedTaskName']){
+          this.finishTaskDonut = res.data['finishTaskDonut'];
+          switch(res.data['finishTaskNum']){
             case 0:
               this.finished1 = false;
               this.finished2 = false;
