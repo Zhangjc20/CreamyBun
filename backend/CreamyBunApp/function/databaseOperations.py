@@ -7,6 +7,7 @@ from ..classDefination.feedbackInfoClass import *
 from ..classDefination.reportInfoClass import *
 from ..variables.globalVariables import *
 from ..variables.globalConstants import *
+from ..models import *
 import math
 import datetime
 import random
@@ -21,6 +22,12 @@ def add_a_user(username, password, email):
         return True
     except:
         return False
+
+def add_user_jwt(username,jwt):
+    User.objects.filter(username=username).update(jwt=jwt)
+
+def remove_user_jwt(username):
+    User.objects.filter(username=username).update(jwt="")
 
 # 通过用户名检查用户是否存在
 def exist_user_by_name(username):

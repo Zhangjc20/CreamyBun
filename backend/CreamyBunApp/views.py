@@ -7,15 +7,37 @@ from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
 from django.shortcuts import render, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
 
 from .function.databaseOperations import *
 from .variables.globalConstants import *
 from .variables.globalVariables import *
 from .function.universalFunctions import *
 import json
+import jwt
+
 
 
 # Create your views here.
+
+def no_log(request):
+    return HttpResponse("请您先注册")
+
+# 伪装注册用户->用于测试
+def fake_log_up(request):
+    query_dict = request.GET
+    email = query_dict.get("email", "")
+    username = query_dict.get("username", "")
+    check_user_by_name = exist_user_by_name(username)
+    check_user_exist_by_email = exist_user_by_email(email)
+    if check_user_by_name or check_user_exist_by_email:
+        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameName'}), content_type='application/json')
+    password = query_dict.get("password", "")
+    create_user = add_a_user(
+        username=username, password=password, email=email)
+    if create_user:
+        return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')    
 
 # 注册
 def log_up(request):
@@ -51,6 +73,12 @@ def log_up(request):
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'unknownOperation'}),
                             content_type='application/json')
 
+# 退出登录
+def log_out(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    # remove_user_jwt(username)
+    return HttpResponse(json.dumps({'status': 'ok'}),content_type='application/json')
 
 # 登录
 def log_in(request):
@@ -79,7 +107,14 @@ def log_in(request):
     if not is_password_right:
         return HttpResponse(json.dumps({'status': 'wrong', 'type': 'wrongPassword'}), content_type='application/json')
 
-    return HttpResponse(json.dumps({'status': 'ok', 'type': 'normalUser'}), content_type='application/json')
+    orjwt = jwt.encode({'username':username,'time':time.strftime("%Y%m%d-%H%M%S")}, "secret", algorithm="HS256")
+    orjwt = orjwt.decode(encoding="utf-8")
+    if len(orjwt) > 20:
+        return_jwt = orjwt[0:20]
+    else:
+        return_jwt = orjwt
+    # add_user_jwt(username,return_jwt)
+    return HttpResponse(json.dumps({'status': 'ok', 'type': 'normalUser','jwt':return_jwt}), content_type='application/json')
 
 
 # 获取用户名对应用户头像
@@ -150,6 +185,8 @@ def reset_password(request):
 def get_user_basic_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
+    # if not check_jwt(username,query_dict.get("jwt", "")):
+    #     return HttpResponse(json.dumps({'status':'wrong'}), content_type='application/json')
     u = get_a_user_data(username)
     user_info = {
 

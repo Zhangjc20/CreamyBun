@@ -37,6 +37,13 @@ def delete_a_reported_task_all(report_id):
         os.remove(r.image_url)
     delete_a_reported_task(report_id)
 
+# 检验jwt
+def check_jwt(username,jwt):
+    u = get_a_user_data(username)
+    if u.jwt == "" or u.jwt != jwt:
+        return False
+    return True
+
 # 发送邮件并返回验证码
 def send_email(email):
     code_base = '0123456789'

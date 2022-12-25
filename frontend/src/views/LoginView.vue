@@ -119,6 +119,8 @@ export default {
             }
             localStorage.setItem("logined", "true");
             localStorage.setItem("username", this.form.username);
+            localStorage.setItem('login_jwt',res.data['jwt']);
+            console.log("jwt:",res.data['jwt'])
             this.$router.push({
               name: "mine",
               query: {
