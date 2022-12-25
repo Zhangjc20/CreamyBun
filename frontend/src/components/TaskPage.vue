@@ -428,6 +428,24 @@ export default {
       //chosenDataType:int 1:所有 2：图片 3：文本 4：音频  5：视频
       //chosenProblemType:int 1:所有 2：单选 3：多选 4：填空 5：框图 6：混合
       this.loading = true;
+      console.log('fwehgrauosohwuieswaogihp;',{
+            //onlyLevel:bool false:所有 true:只选入满足做题者等级的
+            //donutType:int 1:默认 2:从多到少 3:从少到多
+            //newType:int 1:默认 2：最新发布 3：最早结束
+            //hardType:int 1:默认 2：从难到易 3：从易到难
+            //chosenDataType:int 1:所有 2：图片 3：文本 4：音频  5：视频 6：混合
+            //chosenProblemType:int 1:所有 2：单选 3：多选 4：填空 5：框图 6：混合
+            username: this.username,
+            searchInput: searchInput,
+            onlyLevel: onlyLevel,
+            donutType: donutType,
+            overType: overType,
+            newType: newType,
+            hardType: hardType,
+            chosenDataType: chosenDataType,
+            chosenProblemType: chosenProblemType,
+            pageNumber: 1,
+          })
       axios
         .get("http://101.42.118.80:8000/get_sorted_tasks/", {
           params: {

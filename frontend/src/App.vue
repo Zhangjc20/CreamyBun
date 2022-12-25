@@ -1,5 +1,10 @@
 <template>
   <el-config-provider :locale="locale">
+    <!-- <el-scrollbar :native="false" wrapStyle="" wrapClass="" viewClass="" viewStyle="" noresize="false" tag="section">
+      <VueLayout :options="{width:1600,height:900}" class="jbjbj" >
+        
+      </VueLayout>
+    </el-scrollbar> -->
     <router-view v-if="isRouterAlive"/>
   </el-config-provider>
 </template>

@@ -111,7 +111,7 @@ export default {
     if(this.type == 0){
       this.loading = true
     }
-    // console.log("materialInfo", this.materialInfo)
+    console.log("发射发射发射", this.materialInfo)
     axios.get("http://101.42.118.80:8000/perform_problem_material/", {
       params: this.materialInfo
     }).then((res) => {

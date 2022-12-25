@@ -24,6 +24,21 @@ import jwt
 def no_log(request):
     return HttpResponse("请您先注册")
 
+# 伪装注册用户->用于测试
+def fake_log_up(request):
+    query_dict = request.GET
+    email = query_dict.get("email", "")
+    username = query_dict.get("username", "")
+    check_user_by_name = exist_user_by_name(username)
+    check_user_exist_by_email = exist_user_by_email(email)
+    if check_user_by_name or check_user_exist_by_email:
+        return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameName'}), content_type='application/json')
+    password = query_dict.get("password", "")
+    create_user = add_a_user(
+        username=username, password=password, email=email)
+    if create_user:
+        return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')    
+
 # 注册
 def log_up(request):
     query_dict = request.GET
