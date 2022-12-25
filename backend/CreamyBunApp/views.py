@@ -256,6 +256,10 @@ def get_user_activity_info(request):
         'continueSignInDays': u.continue_sign_in_days,
         'isTodaySignIn': u.is_today_sign_in,
         'donutListForClockIn': donut_for_clock_in,
+        'finishTaskDonut': finish_task_donut, # 列表，共两个元素
+        'finishTaskNum': u.finished_task_number, # 用户今日已完任务数
+        'taskOneState': u.finish_task_one, # 该用户是否领取第一个每日任务奖励
+        'taskTwoState': u.finish_task_two, # 该用户是否领取第二个每日任务奖励
     }
     return HttpResponse(json.dumps(activity_info), content_type='application/json')
 
@@ -272,6 +276,18 @@ def clock_in(request):
     }
     return HttpResponse(json.dumps(clock_in_info), content_type='application/json')
 
+# 完成每日任务接口
+def finish_daily_task(request):
+    query_dict = request.GET
+    username = query_dict.get("username", "")
+    index = query_dict.get('index',"") # 0或1
+    finish_task_one, finish_task_two = update_daily_task_info(username,index)
+    res = {
+        'status':'ok',
+        'taskOneState': finish_task_one, # 该用户是否领取第一个每日任务奖励
+        'taskTwoState': finish_task_two, # 该用户是否领取第二个每日任务奖励
+    }
+    return HttpResponse(json.dumps(res), content_type='application/json')
 
 # 获得设置信息
 def get_user_settings_info(request):

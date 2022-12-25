@@ -17,6 +17,9 @@ class User(models.Model):
     current_exp = models.IntegerField(default=0)
     dark_mode = models.BooleanField(default=False)
     today_violation = models.IntegerField(default=0)  # 该用户当天已违规次数
+    finished_task_number =models.IntegerField(default=0) # 该用户当天已完成任务个数
+    finish_task_one = models.BooleanField(default=False) # 该用户是否领取第一个每日任务奖励
+    finish_task_two = models.BooleanField(default=False) # 该用户是否领取第二个每日任务奖励
     is_today_sign_in = models.BooleanField(default=False)  # 用户当天是否已经签到
     continue_sign_in_days = models.IntegerField(default=0)  # 用户当前连续签到天数
 
@@ -36,6 +39,13 @@ class User(models.Model):
     # 定时重置当天违规次数接口
     def reset_violation(self):
         self.today_violation = 0
+        self.save()
+    
+    # 定时重置每日完成任务数量
+    def reset_finished_task_number(self):
+        self.finished_task_number = 0
+        self.finish_task_two = False
+        self.finish_task_one = False
         self.save()
 
     # 检验密码是否匹配

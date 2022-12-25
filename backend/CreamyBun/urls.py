@@ -73,4 +73,5 @@ urlpatterns = [
     path('give_up_task/',views.give_up_task),
     path('post_task_immediately/',views.post_task_immediately),
     path('delete_task/',views.delete_task),
+    path('finish_daily_task/',views.finish_daily_task),
 ]
