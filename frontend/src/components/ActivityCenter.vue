@@ -306,10 +306,10 @@ export default {
           this.finishTaskDonut = res.data['finishTaskDonut'];
           this.finishTaskNum = res.data['finishTaskNum']
           if (this.finishTaskNum >= 1) {
-            this.finished1 = True;
+            this.finished1 = true;
           }
           if (this.finishTaskNum >= 3) {
-            this.finished2 = True;
+            this.finished2 = true;
           }
           this.accepted1 = res.data['taskOneState']?true:false;
           this.accepted2 = res.data['taskTwoState']?true:false;
