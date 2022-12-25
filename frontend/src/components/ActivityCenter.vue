@@ -168,7 +168,7 @@
             <use xlink:href="#icon-tiantianquan"></use>
           </svg>{{finishTaskDonut[0]}}
           &emsp;&emsp;
-          完成进度：1/1
+          完成进度：{{finishTaskNum}}/1
         </div>
         <div class="daily-btn-area">
           <CustomButton :title="accepted1?'已领取':(finished1?'领取奖励':'尚未完成')" :props="!finished1||accepted1?disabledProps:undefined" @click="acceptDonut1"/>
@@ -182,7 +182,7 @@
             <use xlink:href="#icon-tiantianquan"></use>
           </svg>{{finishTaskDonut[1]}}
           &emsp;&emsp;
-          完成进度：1/3
+          完成进度：{{finishTaskNum}}/3
         </div>
         <div class="daily-btn-area">
           <CustomButton @click="acceptDonut2" :title="accepted2?'已领取':(finished2?'领取奖励':'尚未完成')" :props="!finished2||accepted2?disabledProps:undefined"/>
@@ -212,7 +212,7 @@ export default {
       clocked: false,
       clockinDays: 0,
       donutListForClockIn: [],
-      finished1:true,
+      finished1:false,
       finished2:false,
       accepted1:false,
       accepted2:false,
@@ -220,7 +220,8 @@ export default {
         disabled:"true",
         disabledColor:"#FCE5B1" ,
       },
-      finishTaskDonut:[0,0]
+      finishTaskDonut:[0,0],
+      finishTaskNum:0,
     };
   },
   methods: {
