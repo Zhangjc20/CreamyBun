@@ -266,6 +266,7 @@ def get_user_activity_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     u = get_a_user_data(username)
+    print(u.finished_task_number)
     activity_info = {
         'status': 'ok',
         'continueSignInDays': u.continue_sign_in_days,
