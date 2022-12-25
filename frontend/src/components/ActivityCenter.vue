@@ -304,21 +304,12 @@ export default {
           this.clocked = res.data["isTodaySignIn"];
           this.donutListForClockIn = res.data["donutListForClockIn"];
           this.finishTaskDonut = res.data['finishTaskDonut'];
-          switch(res.data['finishTaskNum']){
-            case 0:
-              this.finished1 = false;
-              this.finished2 = false;
-              break;
-            case 1:
-              this.finished1 = true;
-              this.finished2 = true;
-              break;
-            case 2:
-              this.finished1 = true;
-              this.finished2 = true;
-              break;
-            default:
-              break;
+          this.finishTaskNum = res.data['finishTaskNum']
+          if (this.finishTaskNum >= 1) {
+            this.finished1 = True;
+          }
+          if (this.finishTaskNum >= 3) {
+            this.finished2 = True;
           }
           this.accepted1 = res.data['taskOneState']?true:false;
           this.accepted2 = res.data['taskTwoState']?true:false;
