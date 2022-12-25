@@ -8,7 +8,7 @@ yarn.lock
 .idea
 temp
 cache
-resource
+media
 .git1
 migrations1/
 api.yaml
@@ -16,3 +16,4 @@ api.yaml
 test.html
 任务实例 3.json
 任务实例 2.json
+resource

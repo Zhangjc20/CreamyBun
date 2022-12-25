@@ -765,7 +765,7 @@ def stream_video(request, path):
     print("path", path)
     # file_type = eval(query_dict.get("fileType"))
     # path = query_dict.get("filePath", "")
-    # path = "./resource/task_materials\\ZDandsomSP_20221120152607\\list3\\视频 (5).mp4"
+    # path = "./media/task_materials\\ZDandsomSP_20221120152607\\list3\\视频 (5).mp4"
     range_header = request.META.get('HTTP_RANGE', '').strip()
     range_re = re.compile(r'bytes\s*=\s*(\d+)\s*-\s*(\d*)', re.I)
     range_match = range_re.match(range_header)
@@ -801,7 +801,7 @@ def submit_feedback(request):
     description = request.POST.get('textarea', '')
     feedback_type = request.POST.get('questionType', '')
     create_feedback = add_a_feedback(feedback_type, description, image_url, inform_email)
-    path = "./resource/feedback_image"
+    path = "./media/feedback_image"
     file_format = image_url.name
     path_name = os.path.join(path, file_format)
     handle_uploaded_file(image_url, path_name)
@@ -821,7 +821,7 @@ def add_reported_task(request):
     if image == None:
         create_a_reported_task(description, id, "", username)
     else:
-        path = os.path.join("./resource/report_image", time.strftime("%Y%m%d-%H%M%S") + image.name)
+        path = os.path.join("./media/report_image", time.strftime("%Y%m%d-%H%M%S") + image.name)
         create_a_reported_image(image, path)
         create_a_reported_task(description, id, path, username)
     return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
@@ -864,7 +864,7 @@ def get_feedback(request):
     for i in range(len(feedback_list)):
         feedback_list_dict[i]['advice'] = feedback_list[i].advice
         feedback_list_dict[i]['inform_email'] = feedback_list[i].inform_email
-        path = "./resource/feedback_image"
+        path = "./media/feedback_image"
         path_name = os.path.join(path, feedback_list[i].image_url)
         with open(path_name, 'rb') as f:
             data = f.read()
