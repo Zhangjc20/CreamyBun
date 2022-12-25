@@ -77,6 +77,7 @@ urlpatterns = [
     path('post_task_immediately/',views.post_task_immediately),
     path('delete_task/',views.delete_task),
     path('fake_log_up/',views.fake_log_up),
+    path('finish_daily_task/',views.finish_daily_task),
 ]
 
 

@@ -11,3 +11,6 @@ def daily_update():
 
         # 刷新违规信息
         u.reset_violation()
+
+        # 刷新每日已完成任务数
+        u.reset_finished_task_number()

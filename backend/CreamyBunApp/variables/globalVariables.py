@@ -21,6 +21,9 @@ donut_from_a_problem_by_task_rank = [5,7,10,12,15]
 # 一周每天签到可获得的甜甜圈数量
 donut_for_clock_in = [5,10,20,40,60,80,100]
 
+# 每日任务可获得甜甜圈数量
+finish_task_donut = [50,100]
+
 # 一元人民币可兑换的甜甜圈数量
 money_to_donut = 100
 

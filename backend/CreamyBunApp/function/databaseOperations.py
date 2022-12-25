@@ -199,6 +199,8 @@ def reward_user(u:User,t:Task,common_problem_number):
     # 加甜甜圈代币
     get_donut_num = t.single_bonus*common_problem_number
     add_donut_for_user(u,get_donut_num)
+    u.finished_task_number += 1
+    u.save()
     return is_upgrade, now_credit_rank, exp_by_task_rank[t.star_rank - 1], get_donut_num
     
 # 向某个小题写入答案
@@ -299,6 +301,17 @@ def update_clock_in_info(username):
         u.continue_sign_in_days += 1
         u.save()
     return u.is_today_sign_in, u.continue_sign_in_days
+
+# 用户领取每日任务奖励
+def update_daily_task_info(username,index):
+    u = get_a_user_data(username)
+    u.donut_number += finish_task_donut[index]
+    if index == 0:
+        u.finish_task_one = True
+    else:
+        u.finish_task_two = True
+    u.save()
+    return u.finish_task_one, u.finish_task_two
 
 # 修改指定用户的手机号
 def update_mobile_number_of_a_user(username, mobile_number):
