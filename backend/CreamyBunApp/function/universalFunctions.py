@@ -488,6 +488,7 @@ def sorted_and_selected_tasks(username, seach_content, only_level, \
         }
         t_info.setdefault('index', i)
         task_info_list.append(t_info)
+        print(t.cover_url)
 
     # 填充空白
     info_list_length = len(task_info_list)

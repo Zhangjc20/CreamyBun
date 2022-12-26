@@ -476,6 +476,7 @@ export default {
             type: "success",
             message: "筛选成功",
           });
+          console.log(this.items);
           this.loading = false;
         })
         .catch((err) => {
