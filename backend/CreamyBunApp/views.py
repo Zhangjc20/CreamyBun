@@ -236,7 +236,7 @@ def get_task_basic_info(request):
         'startTime': t.begin_time.split(" ")[0],
         'endTime': t.end_time.split(" ")[0],
         'receiveProcess':get_task_receive_process_by_id(id),
-        'coverImage': get_base64_image(t.cover_url),
+        'coverImage': 'http://101.42.118.80:8000' + t.cover_url[1:],
 
         # 芝士任务状态，在领取任务界面查看时该状态对应用户领取部分的状态，其它情况下为任务整体的状态
         'taskStatus': task_status,

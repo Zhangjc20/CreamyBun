@@ -13,7 +13,16 @@
           height: 180px;
           box-shadow: 3px 3px 12px 0 rgba(0, 0, 0, 0.315);
         "
-      ></el-image>
+      >
+        <template #placeholder>
+          <div class="image-slot">加载中...</div>
+        </template>
+        <template #error>
+          <div class="image-slot">
+            <el-icon><icon-picture /></el-icon>
+          </div>
+        </template>
+      </el-image>
       <div class="color-bg-box">
         <div class="title-font">{{ props.taskName }}</div>
         <el-row class="donut-font">
@@ -76,6 +85,16 @@ export default {
 <style scoped>
 .type-container {
   text-align: center;
+}
+.image-slot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: var(--el-fill-color-light);
+  color: var(--el-text-color-secondary);
+  font-size: 30px;
 }
 .task-container {
   display: flex;
