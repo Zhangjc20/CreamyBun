@@ -183,7 +183,7 @@ def get_task_info_list(username, state, page_number, sort_choice):
             'problemType': ANSWER_TYPE_DICT[t.answer_type],
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
-            'src': get_base64_image(t.cover_url),
+            'src': 'http://101.42.118.80:8000' + t.cover_url[1:],
             'taskStatus':task_status if state == HAS_POSTED else td.task_status_for_itself,
         }
         t_info.setdefault('index', i)
