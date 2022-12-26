@@ -806,28 +806,44 @@ export default {
       console.log("this.materialList[targetIndex]", this.materialList[targetIndex],"this.ansList",this.ansList)
       this.imageLoading = true;
       this.fillBlankDialogVisible = true
-      axios.get("http://101.42.118.80:8000/perform_problem_material/", {
-        params: this.materialList[targetIndex]
-      }).then((res) => {
+      console.log("----------",this.materialList[targetIndex])
+      this.currentImageSrc ='http://101.42.118.80:8000' + this.materialList[targetIndex]['filePath'].substr(1)
+      this.imageLoading = false;
+      console.log("this.currentImageSrc", this.currentImageSrc)
+      
+      this.currentMax = max
+      this.currentMin = min
+      console.log("clickFillBlank", JSON.parse(JSON.stringify(this.ansList)), JSON.parse(JSON.stringify(this.ansList[questionIndex])), questionIndex)
+      if (this.ansList[questionIndex] == '') {
+        this.initRects = []
+      } else {
+        this.initRects = JSON.parse(this.ansList[questionIndex])
+      }
+      console.log("this.initRects", JSON.parse(JSON.stringify(this.initRects)))
+      return 
 
-        const imageFile = this.base64ImgtoFile(res.data["materialImage"]);
-        this.currentImageSrc =
-          window.webkitURL.createObjectURL(imageFile) ||
-          window.URL.createObjectURL(imageFile);
-        this.imageLoading = false;
-        console.log("this.currentImageSrc", this.currentImageSrc)
+      // axios.get("http://101.42.118.80:8000/perform_problem_material/", {
+      //   params: this.materialList[targetIndex]
+      // }).then((res) => {
+
+      //   const imageFile = this.base64ImgtoFile(res.data["materialImage"]);
+      //   this.currentImageSrc =
+      //     window.webkitURL.createObjectURL(imageFile) ||
+      //     window.URL.createObjectURL(imageFile);
+      //   this.imageLoading = false;
+      //   console.log("this.currentImageSrc", this.currentImageSrc)
         
-        this.currentMax = max
-        this.currentMin = min
-        console.log("clickFillBlank", JSON.parse(JSON.stringify(this.ansList)), JSON.parse(JSON.stringify(this.ansList[questionIndex])), questionIndex)
-        if (this.ansList[questionIndex] == '') {
-          this.initRects = []
-        } else {
-          this.initRects = JSON.parse(this.ansList[questionIndex])
-        }
-        console.log("this.initRects", JSON.parse(JSON.stringify(this.initRects)))
+      //   this.currentMax = max
+      //   this.currentMin = min
+      //   console.log("clickFillBlank", JSON.parse(JSON.stringify(this.ansList)), JSON.parse(JSON.stringify(this.ansList[questionIndex])), questionIndex)
+      //   if (this.ansList[questionIndex] == '') {
+      //     this.initRects = []
+      //   } else {
+      //     this.initRects = JSON.parse(this.ansList[questionIndex])
+      //   }
+      //   console.log("this.initRects", JSON.parse(JSON.stringify(this.initRects)))
 
-      }).catch();
+      // }).catch();
 
       
       // console.log("this.materialList[targetIndex]", this.materialList[targetIndex],"this.ansList",this.ansList)
@@ -999,7 +1015,48 @@ export default {
 ::-webkit-scrollbar-thumb:hover {
   background-color: #dddddd;
 }
+.jump-logo {
+  z-index: 2;
+  animation: jump-logo 1s infinite;
+  animation-timing-function: ease;
+}
+.jump-shadow {
+  z-index: 1;
+  width: 100px;
+  height: 5px;
+  background: #eaeaea;
+  border-radius: 100%;
+  animation: shadow 1s infinite;
+  animation-timing-function: ease;
+  margin-left: auto;
+  margin-right: auto;
+}
+@keyframes jump-logo {
+  0% {
+    margin-bottom: 0px;
+  }
 
+  50% {
+    margin-bottom: 30px;
+  }
+
+  100% {
+    margin-bottom: 0px;
+  }
+}
+@keyframes shadow {
+  0% {
+    width: 85px;
+  }
+
+  50% {
+    width: 65px;
+  }
+
+  100% {
+    width: 85px;
+  }
+}
 /*.header-style{
     border-radius: 5px;
     box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);

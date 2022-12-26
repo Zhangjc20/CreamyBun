@@ -80,18 +80,19 @@ export default {
   },
   watch: {
     materialInfo(newVal, oldVal) {
-      this.loading = true;
+      
       console.log(newVal, oldVal)
-      this.materialInfoLocal = newVal
-      axios.get("http://101.42.118.80:8000/perform_problem_material/", {
-        params: this.materialInfoLocal
-      }).then((res) => {
-        const imageFile = this.base64ImgtoFile(res.data["materialImage"]);
-        this.image.src =
-          window.webkitURL.createObjectURL(imageFile) ||
-          window.URL.createObjectURL(imageFile);
-        this.loading = false;
-      }).catch();
+      // this.loading = true;
+      // this.materialInfoLocal = newVal
+      // axios.get("http://101.42.118.80:8000/perform_problem_material/", {
+      //   params: this.materialInfoLocal
+      // }).then((res) => {
+      //   const imageFile = this.base64ImgtoFile(res.data["materialImage"]);
+      //   this.image.src =
+      //     window.webkitURL.createObjectURL(imageFile) ||
+      //     window.URL.createObjectURL(imageFile);
+      //   this.loading = false;
+      // }).catch();
     },
   },
   mounted() {
@@ -110,20 +111,35 @@ export default {
     }
     if(this.type == 0){
       this.loading = true
+      this.image = new Image();
+      this.image.src ='http://101.42.118.80:8000' + this.materialInfo['filePath'].substr(1)
+      
+      this.image.onerror = () => {
+        console.log("img onerror");
+      };
+      this.image.onload = () => {
+        // 等背景图片加载成功后 去除loading
+        console.log("加载完成");
+        this.loading = false
+        return false
+      };
+      
+      return 
     }
     console.log("发射发射发射", this.materialInfo)
     axios.get("http://101.42.118.80:8000/perform_problem_material/", {
       params: this.materialInfo
     }).then((res) => {
       // console.log("res", res)
-      if (this.type == 0) {
-        const imageFile = this.base64ImgtoFile("" + res.data["materialImage"]);
-        this.image.src =
-          window.webkitURL.createObjectURL(imageFile) ||
-          window.URL.createObjectURL(imageFile);
-        // console.log("this.image.src", this.image.src)
-        this.loading = false
-      } else if (this.type == 1) {
+      // if (this.type == 0) {
+      //   const imageFile = this.base64ImgtoFile("" + res.data["materialImage"]);
+      //   this.image.src =
+      //     window.webkitURL.createObjectURL(imageFile) ||
+      //     window.URL.createObjectURL(imageFile);
+      //   // console.log("this.image.src", this.image.src)
+      //   this.loading = false
+      // } else 
+      if (this.type == 1) {
         this.docContent = res.data["materialContent"]
       }
 

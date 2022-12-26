@@ -1,4 +1,24 @@
 <template>
+  <el-container v-if="loading">
+    <div style="position: relative;width: 250px;height: 200px;margin-left: auto;margin-right: auto;">
+      <div style="position: absolute; bottom: 50px;left: 60px;width: 250px;height: 250px;">
+        <div style="flex-direction: column;position:absolute;bottom: 0px;margin-left: auto;margin-right: auto;text-align:center ">
+          <el-image
+            style="width: 88px; height: 80px"
+            fit="cover"
+            :src="require('@/assets/images/logo_small.png')"
+            class="jump-logo"
+          ></el-image>
+          <div class="jump-shadow"></div>
+        </div>
+      </div>
+      <div style="position: absolute; bottom: -210px;left: -20px;width: 250px;height: 250px;">
+        <span style="color:#5EABBF;font-size:20px; font-family: YouSheBlack;">
+          正在加载图片，请稍等~
+        </span>
+      </div>
+    </div>
+  </el-container>
   <div class="framer-container">
     <div
       ref="framerContainer"
@@ -73,6 +93,7 @@ export default {
   },
   data() {
     return {
+      loading:false,
       srcUpdated:false,
       initRectsUpdated:false,
       ratioST: 1,
@@ -107,6 +128,7 @@ export default {
   },
   watch: {
     src() {
+      
       this.srcUpdated = true;
       if(this.srcUpdated && this.initRectsUpdated){
         this.init();
@@ -245,6 +267,7 @@ export default {
       ctx.imageSmoothingEnabled = false;
       var img = new Image();
       img.onload = () => {
+        this.loading = false;
         this.ratioHW = img.height / img.width;
         let clientWidth = this.$refs.framerContainer.clientWidth;
         this.ratioST = img.width/clientWidth;
@@ -277,6 +300,7 @@ export default {
                 img.src = URL.createObjectURL(blob);
               });
           }
+          
       };
       img.setAttribute("crossOrigin", "anonymous");
       console.log("this.src",this.src,img.src)
@@ -284,8 +308,16 @@ export default {
     }
   },
   mounted(){
+    // this.image = new Image()
+    // this.image.onload = () => {
+    //     // 等背景图片加载成功后 去除loading
+    //     console.log("我滴任务完成啦");
+    //     this.loading = false
+    //     return false
+    //   };
     window.addEventListener('resize', this.onResize, true)
     this.$nextTick(()=>{
+      this.loading = true;
       this.init(false)
     });
   },
@@ -315,5 +347,46 @@ export default {
 }
 canvas {
   box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.2);
+}.jump-logo {
+  z-index: 2;
+  animation: jump-logo 1s infinite;
+  animation-timing-function: ease;
+}
+.jump-shadow {
+  z-index: 1;
+  width: 100px;
+  height: 5px;
+  background: #eaeaea;
+  border-radius: 100%;
+  animation: shadow 1s infinite;
+  animation-timing-function: ease;
+  margin-left: auto;
+  margin-right: auto;
+}
+@keyframes jump-logo {
+  0% {
+    margin-bottom: 0px;
+  }
+
+  50% {
+    margin-bottom: 30px;
+  }
+
+  100% {
+    margin-bottom: 0px;
+  }
+}
+@keyframes shadow {
+  0% {
+    width: 85px;
+  }
+
+  50% {
+    width: 65px;
+  }
+
+  100% {
+    width: 85px;
+  }
 }
 </style>
