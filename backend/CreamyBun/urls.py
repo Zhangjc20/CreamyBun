@@ -19,10 +19,11 @@ from django.views.static import serve
 from CreamyBunApp import views
 from . import settings
 
-re_path(r'media/(?P<path>.*)$',serve,{'document_root':settings.MEDIA_ROOT}),
+
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
+    re_path(r'media/(?P<path>.*)$',serve,{'document_root':settings.MEDIA_ROOT}),
     path(r'^media/(?P<path>.*)', serve, {"document_root": settings.MEDIA_ROOT}),
     path('no_log/',views.no_log),
     path('log_up/', views.log_up),
