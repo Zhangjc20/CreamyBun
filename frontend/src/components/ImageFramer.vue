@@ -1,5 +1,5 @@
 <template>
-  <el-container v-if="loading">
+  <el-container v-show="loading">
     <div style="position: relative;width: 250px;height: 200px;margin-left: auto;margin-right: auto;">
       <div style="position: absolute; bottom: 50px;left: 60px;width: 250px;height: 250px;">
         <div style="flex-direction: column;position:absolute;bottom: 0px;margin-left: auto;margin-right: auto;text-align:center ">
@@ -19,7 +19,7 @@
       </div>
     </div>
   </el-container>
-  <div class="framer-container">
+  <div class="framer-container" v-show="!loading">
     <div
       ref="framerContainer"
       style="width: 90%;"
