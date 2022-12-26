@@ -19,7 +19,7 @@
         </template>
         <template #error>
           <div class="image-slot">
-            <el-icon><icon-picture /></el-icon>
+            <el-icon><Picture /></el-icon>加载失败
           </div>
         </template>
       </el-image>
@@ -92,9 +92,8 @@ export default {
   align-items: center;
   width: 100%;
   height: 100%;
-  background: var(--el-fill-color-light);
   color: var(--el-text-color-secondary);
-  font-size: 30px;
+  font-size: 18px;
 }
 .task-container {
   display: flex;
