@@ -206,7 +206,7 @@ def get_task_basic_info(request):
     query_dict = request.GET
     id = query_dict.get("id", "")
     t = get_a_task_data(id)
-    poster_username = get_a_user_data_by_id(t.poster).username
+    poster = get_a_user_data_by_id(t.poster)
 
     # 获取用户领了多少题目，当前做到第几题
     user_current_problem_finish_number = -1
@@ -231,8 +231,8 @@ def get_task_basic_info(request):
         'singleBonus': t.single_bonus,
         'starRank': t.star_rank,
         'materialType': TASK_TYPE_DICT[t.task_type],
-        'posterName': poster_username,
-        'posterAvatar': get_user_avatr(poster_username),
+        'posterName': poster.username,
+        'posterAvatar': 'http://101.42.118.80:8000'+poster.avatar_url[1:],
         'startTime': t.begin_time.split(" ")[0],
         'endTime': t.end_time.split(" ")[0],
         'receiveProcess':get_task_receive_process_by_id(id),
