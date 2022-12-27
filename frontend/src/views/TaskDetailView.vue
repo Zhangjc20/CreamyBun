@@ -342,20 +342,6 @@ import axios from "axios";
 import NavBar from "@/components/NavBar.vue";
 import CustomButton from "@/components/CustomButton.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-const base64ImgtoFile = (dataurl, filename = "file") => {
-  const arr = dataurl.split(",");
-  const mime = arr[0].match(/:(.*?);/)[1];
-  const suffix = mime.split("/")[1];
-  const bstr = atob(arr[1]);
-  let n = bstr.length;
-  const u8arr = new Uint8Array(n);
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n);
-  }
-  return new File([u8arr], `${filename}.${suffix}`, {
-    type: mime,
-  });
-};
 export default {
   name: "TaskDetailView",
   components: {
@@ -641,12 +627,8 @@ export default {
           this.posterName = res.data["posterName"];
           this.startTime = res.data["startTime"];
           this.endTime = res.data["endTime"];
-          const imageFile = base64ImgtoFile(
-            "data:image/png;base64," + res.data["posterAvatar"]
-          );
-          this.posterAvatar =
-            window.webkitURL.createObjectURL(imageFile) ||
-            window.URL.createObjectURL(imageFile);
+          this.posterAvatar = res.data["posterAvatar"];
+          console.log(this.posterAvatar)
         }
       })
       .catch((err) => {

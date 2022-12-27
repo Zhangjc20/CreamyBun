@@ -15,11 +15,25 @@
         "
       >
         <template #placeholder>
-          <div class="image-slot">加载中...</div>
+          <div class="image-slot">             
+            <el-image
+              style="width: 84px; height: 75px"
+              fit="cover"
+              :src="require('@/assets/images/logo_small.png')"
+              class="jump-logo"
+            ></el-image>
+            <div class="jump-shadow">封面加载中~</div>
+          </div>
         </template>
         <template #error>
-          <div class="image-slot">
-            <el-icon><Picture /></el-icon>加载失败
+          <div class="image-slot">             
+            <el-image
+              style="width: 84px; height: 75px"
+              fit="cover"
+              :src="require('@/assets/images/logo_small.png')"
+              class="jump-logo-err"
+            ></el-image>
+            <div class="jump-shadow">封面加载失败</div>
           </div>
         </template>
       </el-image>
@@ -88,6 +102,7 @@ export default {
 }
 .image-slot {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -160,6 +175,7 @@ export default {
   top: 0;
 }
 .over-box {
+  margin-bottom: 80px;
   border: 3px solid #fbe484;
   width: 110px;
   height: 32px;
@@ -168,5 +184,33 @@ export default {
   font-size: 28px;
   color: #ffeda7;
   font-family: YouSheRound;
+}
+.jump-logo {
+  z-index: 2;
+  animation: jump-logo 1s infinite;
+  animation-timing-function: ease;
+  position: absolute;
+}
+.jump-logo-err {
+  z-index: 2;
+  position: absolute;
+  bottom: 60px;
+}
+.jump-shadow {
+  position: absolute;
+  bottom: 30px;
+}
+@keyframes jump-logo {
+  0% {
+    bottom: 60px;
+  }
+
+  50% {
+    bottom: 80px;
+  }
+
+  100% {
+    bottom: 60px;
+  }
 }
 </style>
