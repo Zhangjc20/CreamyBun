@@ -42,7 +42,7 @@
             <span>设置</span>
           </el-menu-item>
         </el-menu>
-        <div style="position: fixed; bottom: 0px;left: 20px;width: 250px;height: 250px;">
+        <div class="jump-active">
           <div style="position: absolute; bottom: 20px;left: 0px;width: 20px;height: 150px;">
             <div style="position: absolute; bottom: 0px;border-top: 20px solid #5EABBF;border-left: 20px solid transparent;"></div>
             <div style="background-color:#5EABBF;position: absolute; bottom: 20px;width: 20px;height: 110px;"></div>
@@ -85,6 +85,7 @@
         </div>
       </el-aside>
       <el-main class="main-style">
+        <div class="right-part">
           <component
             :is="showContent"
             :key="showContent"
@@ -95,6 +96,7 @@
             @changeUsername="changeUsername"
             @changeAvatar="changeAvatar"
           ></component>
+        </div>
       </el-main>
     </el-container>
   </el-container>
@@ -196,6 +198,32 @@ export default {
 </script>
 
 <style scoped>
+@media (min-width: 0px) and (max-width:768px) {
+  .el-aside{
+    width:40%;
+  }
+  .jump-active{
+    display:none;
+  }
+  .main-style {
+    background-color: transparent;
+  }
+  .right-part{
+    width:1000px;
+  }
+}
+@media (min-width: 768px) {
+  .jump-active{
+    position: fixed; 
+    bottom: 0px;
+    left: 20px;
+    width: 250px;
+    height: 250px;
+  }
+  .main-style {
+    background-color: transparent;
+  }
+}
 .container {
   margin: 0;
   height: 100%;
@@ -263,9 +291,7 @@ export default {
   margin-top: 10px;
   display: flex;
 }
-.main-style {
-  background-color: transparent;
-}
+
 .el-nav-menu {
   width: 480px;
   padding-left: 46px;

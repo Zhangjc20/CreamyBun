@@ -1,6 +1,6 @@
 <template>
   <div class="nav-title">
-    <el-image :src="require('@/assets/images/logo.png')" class="logo">
+    <el-image :src="require('@/assets/images/logo_small.png')" class="logo">
     </el-image>
     <span class="nav-title-font">奶黄包</span>
   </div>
@@ -24,6 +24,7 @@
     <el-avatar
       :src="imageUrl ? imageUrl : require('@/assets/images/avatar.jpeg')"
       class="avatar"
+      @click="clickMine"
     ></el-avatar>
     <span class="user-area">
       <span class="user-center" @click="clickMine">个人中心</span>
@@ -103,21 +104,121 @@ export default {
 </script>
 
 <style scoped>
-.user-area {
-  float: right;
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 60px;
-  margin-right: 90px;
+@media (min-width: 0px) and (max-width:768px) {
+  .logo {
+    width: 36px;
+    height: 30px;
+  }
+  .nav-title-font {
+    margin-left: 10px;
+    line-height: 20px;
+  }
+  .nav-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+    font-family: YouSheRound;
+    line-height: 60px;
+    font-size: 1rem;
+    color: #5eabbf;
+  }
+  .menu-out {
+    margin-left: 6%;
+    background-color: #ffffff;
+    width: 50%;
+    overflow: hidden;
+    border-radius: 40px;
+    margin-top: 10px;
+    display: flex;
+  }
+  .el-nav-menu {
+    width: 100%;
+    padding-left: 10px;
+  }
+  .el-menu-item {
+    height: 50px;
+    font-size: 0.8em;
+    padding-top: 4px;
+  }
+  .user-area {
+    float: right;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 0px;
+    width:0;
+    margin-right: 0px;
+  }
+  .avatar {
+    float: right;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-right: 4%;
+    margin-top: 10px;
+  }
+  .avatar:hover {
+    opacity: 0.4;
+  }
 }
-.avatar {
-  float: right;
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin-right: 180px;
-  margin-top: 10px;
+@media (min-width: 768px) {
+  .logo {
+    width: 45px;
+    height: 40px;
+    margin-top: 10px;
+  }
+  .nav-title-font {
+    margin-left: 10px;
+    line-height: 60px;
+  }
+  .nav-title {
+    float: left;
+    height: 60px;
+    font-family: YouSheRound;
+    line-height: 50px;
+    font-size: 28px;
+    color: #5eabbf;
+    margin-left: 80px;
+    display: flex;
+  }
+  .menu-out {
+    margin-left: 80px;
+    background-color: #ffffff;
+    width: 470px;
+    overflow: hidden;
+    border-radius: 40px;
+    margin-top: 10px;
+    display: flex;
+  }
+  .el-nav-menu {
+    width: 480px;
+    padding-left: 46px;
+  }
+  .el-menu-item {
+    height: 50px;
+    font-size: 16px;
+    padding-top: 4px;
+  }
+  .user-area {
+    float: right;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 60px;
+    margin-right: 90px;
+  }
+  .avatar {
+    float: right;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-right: 180px;
+    margin-top: 10px;
+  }
+  .avatar:hover {
+    opacity: 0.4;
+  }
 }
 .user-center {
   line-height: 60px;
@@ -130,29 +231,7 @@ export default {
 .user-center:hover {
   opacity: 0.6;
 }
-.nav-title {
-  float: left;
-  height: 60px;
-  font-family: YouSheRound;
-  line-height: 50px;
-  font-size: 28px;
-  color: #5eabbf;
-  margin-left: 80px;
-  display: flex;
-}
-.nav-title-font {
-  margin-left: 10px;
-  line-height: 60px;
-}
-.menu-out {
-  margin-left: 80px;
-  background-color: #ffffff;
-  width: 470px;
-  overflow: hidden;
-  border-radius: 40px;
-  margin-top: 10px;
-  display: flex;
-}
+
 .el-button--primary {
   background: #fbe484 !important;
   border-color: #fbe484 !important;
@@ -162,11 +241,7 @@ export default {
   width: 80px;
 }
 
-.logo {
-  width: 45px;
-  height: 40px;
-  margin-top: 10px;
-}
+
 .login-button {
   margin-right: 30px;
 }
@@ -179,18 +254,10 @@ export default {
   line-height: 60px;
   margin-right: 100px;
 }
-.el-nav-menu {
-  width: 480px;
-  padding-left: 46px;
-}
 .el-menu {
   border-radius: 0;
 }
-.el-menu-item {
-  height: 50px;
-  font-size: 16px;
-  padding-top: 4px;
-}
+
 .el-menu--horizontal .el-menu-item:not(.is-disabled):focus {
   background-color: transparent;
 }
