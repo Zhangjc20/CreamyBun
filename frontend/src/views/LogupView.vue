@@ -119,7 +119,7 @@ export default {
       if (value === "") {
         this.passwordRight = false;
         callback(new Error("密码不能为空"));
-      } else if (value.search(/[a-zA-Z\d]{6,18}/g) == -1) {
+      } else if (value.search(/^[a-zA-Z\d]{6,18}$/g) == -1) {
         this.passwordRight = false;
         callback(new Error("请输入6-18位字母和数字的组合"));
       } else {
