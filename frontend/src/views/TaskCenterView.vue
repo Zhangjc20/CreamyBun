@@ -9,7 +9,13 @@
       ></NavBar>
     </el-header>
     <el-container class="main-area">
-      <el-aside class="left-menu-area">
+      <el-aside class="left-menu-area" id="left-menu">
+        <div v-if="showLeft" @click="changeShow"  class="opacity-box" style="margin-bottom: 1rem;cursor: pointer;">
+          <el-icon><Hide /></el-icon
+          ><span style="font-size: 0.8rem; margin-left: 0.2rem"
+            >隐藏侧边栏</span
+          >
+        </div>
         <div class="sort-title">
           <span class="iconfont icon-menu icon-choose"></span>
           <span class="sort-font">筛选排序</span>
@@ -148,16 +154,18 @@
               @click="handleClickBtn(5, 4)"
             ></CustomButton>
           </div>
-          
+
           <div class="button-area second-line">
             <CustomButton
               title="音频"
               :props="chosenDataType === 5 ? activeProps : normalProps"
               @click="handleClickBtn(5, 5)"
             ></CustomButton>
-            <CustomButton title="混合" 
-              :props="chosenDataType === 6 ? activeProps : normalProps" 
-              @click="handleClickBtn(5, 6)">
+            <CustomButton
+              title="混合"
+              :props="chosenDataType === 6 ? activeProps : normalProps"
+              @click="handleClickBtn(5, 6)"
+            >
             </CustomButton>
           </div>
         </div>
@@ -203,28 +211,52 @@
           </div>
         </div>
         <div class="confirm-button-area">
-          <CustomButton :props="confirmProps" title="确认筛选" @click.stop="handleSort"></CustomButton>
+          <CustomButton
+            :props="confirmProps"
+            title="确认筛选"
+            @click.stop="handleSort"
+          ></CustomButton>
         </div>
       </el-aside>
       <el-main>
-        <el-header style="display: flex;justify-content: center;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);border-radius: 5px;">
+        <div v-if="!showLeft" @click="changeShow" class="opacity-box" style="position:absolute;z-index:99;cursor: pointer;">
+          <el-icon><View /></el-icon
+          ><span style="font-size: 0.8rem; margin-left: 0.2rem"
+            >显示侧边栏</span
+          >
+        </div>
+        <div class="main-box">
+          <el-header
+            style="
+              display: flex;
+              justify-content: center;
+              box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+              border-radius: 5px;
+            "
+          >
             <div class="search-area">
-            搜索任务
-            <el-input
-              v-model="searchInput"
-              placeholder="请输入搜索的任务"
-              class="search-input"
-            >
-              <template #append>
-                <el-button @click="handleSort"
-                  ><el-icon><Search /></el-icon
-                ></el-button>
-              </template>
-            </el-input>
+              搜索任务
+              <el-input
+                v-model="searchInput"
+                placeholder="请输入搜索的任务"
+                class="search-input"
+              >
+                <template #append>
+                  <el-button @click="handleSort"
+                    ><el-icon><Search /></el-icon
+                  ></el-button>
+                </template>
+              </el-input>
+            </div>
+          </el-header>
+          <div style="margin-top: 24px">
+            <TaskPage
+              :type="0"
+              ref="taskPage"
+              :username="username"
+              :imageSrc="image.src"
+            ></TaskPage>
           </div>
-        </el-header>
-        <div style="margin-top:24px;">
-          <TaskPage :type="0" ref="taskPage" :username="username" :imageSrc="image.src"></TaskPage>
         </div>
       </el-main>
     </el-container>
@@ -235,7 +267,7 @@
 import NavBar from "@/components/NavBar.vue";
 import CustomButton from "@/components/CustomButton.vue";
 import TaskPage from "@/components/TaskPage.vue";
-import axios from 'axios';
+import axios from "axios";
 export default {
   name: "TaskCenterView",
   components: {
@@ -249,6 +281,7 @@ export default {
         src: "",
         type: "",
       },
+      showLeft: true,
       confirmProps: {
         width: "120px",
         fontSize: "16px",
@@ -342,8 +375,30 @@ export default {
     };
   },
   methods: {
-    handleSort(){
-      this.$refs.taskPage.sort(this.searchInput,this.onlyLevel,this.donutType,this.overType,this.newType,this.hardType,this.chosenDataType,this.chosenProblemType);
+    changeShow() {
+      if (this.showLeft) {
+        let item = document.getElementById("left-menu");
+        item.style.left = "-" + String(item.offsetWidth) + "px";
+        item.style.opacity = "0";
+        item.style.position = "absolute";
+      } else {
+        let item = document.getElementById("left-menu");
+        item.style.opacity = "1";
+        item.style.position = "static";
+      }
+      this.showLeft = !this.showLeft;
+    },
+    handleSort() {
+      this.$refs.taskPage.sort(
+        this.searchInput,
+        this.onlyLevel,
+        this.donutType,
+        this.overType,
+        this.newType,
+        this.hardType,
+        this.chosenDataType,
+        this.chosenProblemType
+      );
     },
     handleClickBtn(btn, val) {
       switch (btn) {
@@ -370,32 +425,42 @@ export default {
     },
   },
   mounted() {
-    if (localStorage.getItem('username')) {
-      this.username = localStorage.getItem('username');
+    if (localStorage.getItem("username")) {
+      this.username = localStorage.getItem("username");
     }
-    if(!localStorage.getItem('avatar')){
-      axios.get('http://101.42.118.80:8000/get_avatar/',{
-        params:{
-          username:this.username
-        }
-      })
-      .then((res)=>{
-        if(res.data['status']==='ok'){
-          if(res.data['avatar']){
+    if (!localStorage.getItem("avatar")) {
+      axios
+        .get("http://101.42.118.80:8000/get_avatar/", {
+          params: {
+            username: this.username,
+          },
+        })
+        .then((res) => {
+          if (res.data["status"] === "ok") {
+            if (res.data["avatar"]) {
               this.image.src = "data:image/png;base64," + res.data["avatar"];
               localStorage.setItem("avatar", this.image.src);
             }
-        }
-      })
-    }
-    else{
-      this.image.src = localStorage.getItem('avatar');
+          }
+        });
+    } else {
+      this.image.src = localStorage.getItem("avatar");
     }
   },
 };
 </script>
 
 <style scoped>
+@media (min-width: 0px) and (max-width: 768px) {
+  .main-box {
+    width:1000px;
+  }
+}
+@media (min-width: 768px) {
+}
+.opacity-box:hover {
+  opacity: 0.5;
+}
 .icon {
   width: 1em;
   height: 1em;
@@ -415,7 +480,7 @@ export default {
   margin-top: 15px;
   margin-left: 40px;
   color: #555555;
-  float:left;
+  float: left;
 }
 .main-area {
   height: 100%;
@@ -479,6 +544,7 @@ export default {
   padding-bottom: 60px;
   border-right: 1px solid #e9e9e9;
   overflow-x: hidden;
+  transition: all 0.8s ease 0ms;
 }
 .el-aside {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 5px 0 rgba(0, 0, 0, 0.19);
@@ -490,10 +556,10 @@ export default {
   box-shadow: 0 0px 8px 0;
   display: flex;
 }
-.main-style{
-    padding: 20px 20px 20px 40px;
-    margin-left: 20px;
-    border-radius: 5px;
-    box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
-  }
+.main-style {
+  padding: 20px 20px 20px 40px;
+  margin-left: 20px;
+  border-radius: 5px;
+  box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
+}
 </style>

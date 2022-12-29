@@ -4,7 +4,13 @@
       <NavBar :login="true" activeItem="3" :username="username" :imageUrl="image.src"></NavBar>
     </el-header>
     <el-container>
-      <el-aside class="left-menu-area">
+      <el-aside class="left-menu-area" id="left-menu">
+        <div v-if="showLeft" @click="changeShow" class="opacity-box" style="margin-bottom: 1rem;cursor: pointer;">
+          <el-icon><Hide /></el-icon
+          ><span style="font-size: 0.8rem; margin-left: 0.2rem"
+            >隐藏侧边栏</span
+          >
+        </div>
         <el-menu
           default-active="1-1"
           active-text-color="#5EABBF"
@@ -76,6 +82,13 @@
         </div>
       </el-aside>
       <el-main class="main-style">
+        <div class="main-box">
+        <div v-if="!showLeft" @click="changeShow" class="opacity-box" style="position:absolute;z-index:99;cursor: pointer;">
+          <el-icon><View /></el-icon
+          ><span style="font-size: 0.8rem; margin-left: 0.2rem"
+            >显示侧边栏</span
+          >
+        </div>
         <!-- <component :is="show_content"></component> -->
         <ReleaseData
           :login="true"
@@ -83,6 +96,7 @@
           :materialType="materialType"
         ></ReleaseData>
         <!-- <ImageUploadCopy /> -->
+        </div>
       </el-main>
     </el-container>
   </el-container>
@@ -107,9 +121,23 @@ export default {
       show_content: "MineInfoView",
       materialType: 0,
       username: "",
+      showLeft:true,
     };
   },
   methods: {
+    changeShow(){
+      if (this.showLeft) {
+        let item = document.getElementById("left-menu");
+        item.style.left = "-" + String(item.offsetWidth) + "px";
+        item.style.opacity = "0";
+        item.style.position = "absolute";
+      } else {
+        let item = document.getElementById("left-menu");
+        item.style.opacity = "1";
+        item.style.position = "static";
+      }
+      this.showLeft = !this.showLeft;
+    },
     clickUser() {
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
         confirmButtonText: "确定",
@@ -157,6 +185,17 @@ export default {
 </script>
 
 <style scoped>
+@media (min-width: 0px) and (max-width:768px) {
+  .el-aside{
+    width:43%;
+  }
+  .main-box {
+    width:1100px;
+  }
+}
+.opacity-box:hover {
+  opacity: 0.5;
+}
 .container {
   margin: 0;
   height: 100%;
@@ -165,6 +204,7 @@ export default {
   padding-top: 50px;
   padding-left: 10px;
   padding-right: 10px;
+  transition: all 0.8s ease 0ms;
 }
 .el-aside .el-menu {
   border-right: 0;

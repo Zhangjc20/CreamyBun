@@ -1,5 +1,7 @@
 <template>
   <el-header class="header-style">
+    <el-row>
+      <el-col :span="8">
     <el-breadcrumb separator="/" class="header-breadcrumb">
       <el-breadcrumb-item :to="{ path: '/' }">奶黄包</el-breadcrumb-item>
       <el-breadcrumb-item>任务选择</el-breadcrumb-item>
@@ -8,6 +10,7 @@
     <span class="header-title">
       {{ this.materialTypeName }}任务
     </span>
+    </el-col>
     <!-- <el-input v-model="abc" style="width: 300px" placeholder="这是一个阴险的字符串输入接口"/>
     <CustomButton 
       @click="abcSubmit" 
@@ -17,8 +20,13 @@
       width="150px"
       title="阴险的临时按钮"
     /> -->
-    <CustomButton @click="preCheck" isRound="true" style="float: right; right: 50px; top: 100px; position: absolute"
-      height="40px" width="150px" title="提交任务" />
+    <el-col :span="16">
+    <div style="width:100%;display: flex;justify-content: end;">
+      <CustomButton @click="preCheck" isRound="true"
+        height="40px" width="150px" title="提交任务" marginRight="60px"/>
+    </div>
+    </el-col>
+    </el-row>
 
   </el-header>
   <el-main style="height:calc(100vh - 220px);margin-top: 20px;">
@@ -745,7 +753,7 @@ export default {
   border-radius: 5px;
   box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
   height: 100px;
-  padding: 20px 20px 20px 40px;
+  padding: 30px 20px 20px 40px;
 }
 
 .header-breadcrumb {

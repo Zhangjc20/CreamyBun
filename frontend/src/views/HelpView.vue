@@ -44,7 +44,7 @@
           <el-row>
             <input type='file' id="inputImgFile" style="display:none" accept="image/*"  @change="inputImgFile_onchange"/>
             <!-- 预览图片S -->
-            <el-image id="show_img" :src="require('@/assets/images/logo.png')" style="width:160px;height:160px;"/>
+            <el-image id="show_img" :src="require('@/assets/images/logo.png')" style="width:180px;height:160px;"/>
             <!-- 预览图片E -->
           </el-row>
           <el-row class="row2">
@@ -218,6 +218,32 @@ export default {
 </script>
 
 <style scoped>
+@media (min-width: 0px) and (max-width: 768px) {
+  .feedback-box {
+    border-radius: 20px;
+    height: 1080px;
+    width: 96%;
+    margin-left: 2%;
+  }
+  .contact-info {
+    font-family: XiaWuManHei;;
+    font-size: 1rem;
+    color: #5eabbf;
+  }
+}
+@media (min-width: 768px) {
+  .feedback-box {
+    border-radius: 20px;
+    height: 1080px;
+    width: 40%;
+    margin-left: 30%;
+  }
+  .contact-info {
+    font-family: XiaWuManHei;;
+    font-size: 23px;
+    color: #5eabbf;
+  }
+}
 .container {
   margin: 0;
   height: 100%;
@@ -257,23 +283,13 @@ export default {
   font-size: 36px;
   color: #5eabbf;
 }
-.contact-info {
-  font-family: XiaWuManHei;;
-  font-size: 23px;
-  color: #5eabbf;
-}
 .in-feedback-title {
   font-family: YouSheRound;
   font-size: 26px;
   color: #060707;
   float: left;
 }
-.feedback-box {
-  border-radius: 20px;
-  height: 1080px;
-  width: 40%;
-  margin-left: 30%;
-}
+
 .main-style {
   background-color: transparent;
 }

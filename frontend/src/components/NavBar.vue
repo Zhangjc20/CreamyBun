@@ -21,6 +21,7 @@
     </el-menu>
   </div>
   <span v-if="login">
+    <div class="nav-right">
     <el-avatar
       :src="imageUrl ? imageUrl : require('@/assets/images/avatar.jpeg')"
       class="avatar"
@@ -29,6 +30,7 @@
     <span class="user-area">
       <span class="user-center" @click="clickMine">个人中心</span>
     </span>
+    </div>
   </span>
   <span class="log-buttons" v-else>
     <el-button
@@ -155,11 +157,32 @@ export default {
     position: absolute;
     top: 0;
     right: 0;
-    margin-right: 4%;
+    margin-right: 20%;
     margin-top: 10px;
   }
   .avatar:hover {
     opacity: 0.4;
+  }
+  .log-buttons {
+    line-height: 60px;
+    margin-left: 4%;
+    display: flex;
+    flex-direction: column;
+    height:100%;
+  }
+  .el-button--primary {
+    height:23px;
+    font-size: 0.6rem;
+    background: #5eabbf !important;
+    border-color: #5eabbf !important;
+    color: #ffffff;
+  }
+  .login-button {
+    margin-top: 12%;
+    margin-bottom: 6%;
+  }
+  .el-button+.el-button{
+    margin-left: 0;
   }
 }
 @media (min-width: 768px) {
@@ -201,24 +224,36 @@ export default {
     padding-top: 4px;
   }
   .user-area {
-    float: right;
-    position: absolute;
-    top: 0;
-    right: 0;
     height: 60px;
-    margin-right: 90px;
+    margin-right: 6%;
   }
   .avatar {
-    float: right;
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin-right: 180px;
+    margin-right: 8%;
     margin-top: 10px;
   }
   .avatar:hover {
     opacity: 0.4;
+    cursor: pointer;
   }
+  .log-buttons {
+    line-height: 60px;
+    margin-right: 4%;
+  }
+  .el-button--primary {
+    background: #fbe484 !important;
+    border-color: #fbe484 !important;
+    color: #6c6c6c;
+  }
+  .login-button {
+    margin-right: 2rem;
+  }
+}
+.nav-right{
+  position: absolute;
+  top:0;
+  right:0;
+  display: flex;
+  width:18%;
 }
 .user-center {
   line-height: 60px;
@@ -232,28 +267,14 @@ export default {
   opacity: 0.6;
 }
 
-.el-button--primary {
-  background: #fbe484 !important;
-  border-color: #fbe484 !important;
-  color: #6c6c6c;
-}
 .el-button--medium {
   width: 80px;
 }
 
 
-.login-button {
-  margin-right: 30px;
-}
 
-.log-buttons {
-  float: right;
-  position: absolute;
-  top: 0;
-  right: 0;
-  line-height: 60px;
-  margin-right: 100px;
-}
+
+
 .el-menu {
   border-radius: 0;
 }

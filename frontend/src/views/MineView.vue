@@ -9,7 +9,7 @@
       ></NavBar>
     </el-header>
     <el-container>
-      <el-aside class="left-menu-area">
+      <el-aside class="left-menu-area" id="left-menu">
         <el-menu
           active-text-color="#FBE484"
           background-color="#FFFFFF"
@@ -85,6 +85,10 @@
         </div>
       </el-aside>
       <el-main class="main-style">
+        <div style="position:absolute;" @click="changeShow" class="show-icon">
+          <span v-if="showLeft"><el-icon ><Hide /></el-icon><span style="font-size:0.8rem;margin-left: 0.2rem;">隐藏侧边栏</span></span>
+          <span v-else><el-icon ><View /></el-icon><span style="font-size:0.8rem;margin-left: 0.2rem;">显示侧边栏</span></span>
+        </div>
         <div class="right-part">
           <component
             :is="showContent"
@@ -127,6 +131,7 @@ export default {
         src: "",
         type: "",
       },
+      showLeft:true,
       showContent: localStorage.getItem('defaultMine')?choices[Number(localStorage.getItem('defaultMine'))-1]:choices[0],
       total: 4,
       showTaskType:localStorage.getItem('defaultMine')=='2'?1:2,
@@ -135,6 +140,20 @@ export default {
     };
   },
   methods: {
+    changeShow(){
+      if(this.showLeft){
+        let item = document.getElementById("left-menu");
+        item.style.left = "-" + String(item.offsetWidth) + 'px'; 
+        item.style.opacity = "0";
+        item.style.position = 'absolute';
+      }
+      else{
+        let item = document.getElementById("left-menu");
+        item.style.opacity = "1";
+        item.style.position = 'static';
+      }
+      this.showLeft = !this.showLeft;
+    },
     changeAvatar(src) {
       this.image.src = src;
     },
@@ -223,6 +242,12 @@ export default {
   .main-style {
     background-color: transparent;
   }
+  .show-icon{
+    display: none;
+  }
+}
+.show-icon:hover {
+  opacity: 0.5;
 }
 .container {
   margin: 0;
@@ -232,6 +257,7 @@ export default {
   padding-top: 100px;
   padding-left: 10px;
   padding-right: 10px;
+  transition: all 0.8s ease 0ms;
 }
 .el-aside .el-menu {
   border-right: 0;

@@ -109,14 +109,14 @@
             </el-carousel-item>
             <el-carousel-item key="2">
               <el-row>
-                <el-col :span="14">
+                <el-col :span="12">
                   <el-image
                     class="image"
                     :src="require('@/assets/images/pet3.jpeg')"
                     fit="contain"
                   />
                 </el-col>
-                <el-col :span="10">
+                <el-col :span="12">
                   <div class="carousel-item-title">邮件识别</div>
                   <div class="tag-area">
                     <el-tag style="margin-right: 10px">文本</el-tag>
@@ -248,7 +248,7 @@ export default {
 @media (min-width: 0px) and (max-width: 768px) {
   .custom-box {
     border-radius: 20px;
-    height: 260px;
+    height: 230px;
     width: 80%;
     margin-left: 10%;
     box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.2);
@@ -280,7 +280,7 @@ export default {
   }
   .custom-row {
     width: 90%;
-    padding-top: 40px;
+    padding-top: 30px;
   }
   .round-back-font {
     padding-top: 10px;
@@ -314,7 +314,7 @@ export default {
     justify-content: flex-start;
   }
   .basic-types-content {
-    width: 90%;
+    width: 100%;
   }
   :deep .el-tag__content {
     font-size:5px;
