@@ -448,9 +448,41 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.el-form-item {
-  margin-bottom: 26px;
+@media (min-width: 0px) and (max-width:768px) {
+  .logreset-box {
+    width: 90%;
+    height: 30rem;
+    margin-left: 5%;
+    margin-top: 16%;
+    border-radius: 20px;
+    background-color: #ffffff;
+  }
+  .get-verify {
+    background-color: #5eabbf;
+    color: #ffffff;
+    margin-left: 10px;
+    width:90%;
+  }
 }
+@media (min-width: 768px) {
+  .logreset-box {
+    width: 36%;
+    height: 64%;
+    margin-left: 32%;
+    margin-top: 8%;
+    border-radius: 20px;
+    background-color: #ffffff;
+  }
+  .el-form-item {
+    margin-bottom: 8%;
+  }
+  .get-verify {
+    background-color: #5eabbf;
+    color: #ffffff;
+    margin-left: 10px;
+  }
+}
+
 .logreset-button {
   color: #ffffff;
   width: 100%;
@@ -483,11 +515,7 @@ export default {
   width: 1.2em;
   height: 1.2em;
 }
-.get-verify {
-  background-color: #5eabbf;
-  color: #ffffff;
-  margin-left: 10px;
-}
+
 .get-verify:hover,
 .verify-button .el-button:focus {
   background-color: #7ec3d4;
@@ -518,14 +546,7 @@ export default {
   height: 30px;
   margin-bottom: 30px;
 }
-.logreset-box {
-  width: 36%;
-  height: 64%;
-  margin-left: 32%;
-  margin-top: 8%;
-  border-radius: 20px;
-  background-color: #ffffff;
-}
+
 .logreset {
   width: 100%;
   height: 100%;

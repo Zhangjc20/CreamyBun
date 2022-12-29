@@ -351,7 +351,7 @@ export default {
 @media (min-width: 0px) and (max-width:768px) {
   .logup-box {
     width: 90%;
-    height: 70%;
+    height: 30rem;
     margin-left: 5%;
     margin-top: 20%;
     border-radius: 20px;
