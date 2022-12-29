@@ -236,6 +236,9 @@ export default {
     cursor: pointer;
   }
   .log-buttons {
+    position:absolute;
+    right:0;
+    float: right;
     line-height: 60px;
     margin-right: 4%;
   }

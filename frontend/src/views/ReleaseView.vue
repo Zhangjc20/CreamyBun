@@ -39,7 +39,7 @@
             >
           </el-sub-menu>
         </el-menu>
-        <div style="position: fixed; bottom: 0px;left: 20px;width: 250px;height: 250px;">
+        <div style="position: fixed; bottom: 0px;left: 20px;width: 250px;height: 250px;" class="jump-box">
           <div style="position: absolute; bottom: 20px;left: 0px;width: 20px;height: 150px;">
             <div style="position: absolute; bottom: 0px;border-top: 20px solid #5EABBF;border-left: 20px solid transparent;"></div>
             <div style="background-color:#5EABBF;position: absolute; bottom: 20px;width: 20px;height: 110px;"></div>
@@ -187,10 +187,13 @@ export default {
 <style scoped>
 @media (min-width: 0px) and (max-width:768px) {
   .el-aside{
-    width:43%;
+    width:50%;
   }
   .main-box {
     width:1100px;
+  }
+  .jump-box {
+    display: none;
   }
 }
 .opacity-box:hover {

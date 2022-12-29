@@ -219,7 +219,7 @@ export default {
 <style scoped>
 @media (min-width: 0px) and (max-width:768px) {
   .el-aside{
-    width:40%;
+    width:50%;
   }
   .jump-active{
     display:none;
