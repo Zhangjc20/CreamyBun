@@ -144,6 +144,7 @@ export default {
     padding-top: 4px;
   }
   .user-area {
+    display: none;
     float: right;
     position: absolute;
     top: 0;

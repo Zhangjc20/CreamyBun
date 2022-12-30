@@ -60,7 +60,7 @@
         </div>
         <div class="basic-types-content">
           <el-carousel
-            height="300px"
+            class="carousel-box"
             ref="carousel"
             @change="carouselChange"
             :initial-index="0"
@@ -324,9 +324,16 @@ export default {
     font-size: 0.5em;
     margin: 4px 0 0 10px;
   }
+  .carousel-box {
+    height:160px;
+    overflow: hidden;
+  }
 }
 /* 大屏幕（大桌面显示器，大于等于 1200px） */
 @media (min-width: 768px) {
+  .carousel-box {
+    height:300px;
+  }
   .custom-box {
     border-radius: 20px;
     height: 380px;
