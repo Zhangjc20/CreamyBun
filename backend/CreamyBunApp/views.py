@@ -389,6 +389,10 @@ def get_user_received_task_info(request):
     total_number, task_info_list = get_task_info_list(
         username, HAS_RECEIVED, page_number, sort_choice)
 
+    for t_info in task_info_list:
+        if t_info.has_key('taskStatus'):
+            print(t_info['taskStatus'])
+
     ret = {
         'status': 'ok',
         'totalNumber': total_number,  # 注意是totalNumber筛选出来的总任务数
