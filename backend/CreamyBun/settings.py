@@ -38,7 +38,7 @@ ALLOWED_HOSTS = ['101.42.118.80']
 
 INSTALLED_APPS = [
     'corsheaders',
-    'django_crontab',
+    # 'django_crontab',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -175,7 +175,7 @@ EMAIL_USE_TLS = True       # 一般都为False
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 EMAIL_FROM = "奶黄包数据标注平台运营方"      # 邮箱来自
 
-# 定时器设置
-CRONJOBS = [
-    ('0 4 * * *', 'CreamyBunApp.timelyUpdate.daily_update')
-]
+# # 定时器设置
+# CRONJOBS = [
+#     ('0 4 * * *', 'CreamyBunApp.timelyUpdate.daily_update')
+# ]

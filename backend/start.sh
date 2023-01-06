@@ -15,8 +15,8 @@ done
 python manage.py collectstatic --noinput&&
 python manage.py makemigrations&&
 python manage.py migrate&&
-python manage.py crontab remove&&
-python manage.py crontab add&&
+# python manage.py crontab remove&&
+# python manage.py crontab add&&
 python manage.py runserver
 uwsgi --ini /var/www/html/backend/uwsgi.ini&&
 tail -f /dev/null

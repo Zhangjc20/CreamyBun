@@ -8,6 +8,7 @@ from ..classDefination.reportInfoClass import *
 from ..variables.globalVariables import *
 from ..variables.globalConstants import *
 from ..models import *
+from .timelyUpdate import *
 import math
 import datetime
 import random
@@ -291,6 +292,22 @@ def update_avatar_url_by_username(username, avatar_url):
 def match_username_with_password(username, password):
     cur_user = get_a_user_data(username)
     return cur_user.validate_password(password)
+
+def update_user_info(u:User):
+    now_time = datetime.datetime.now().strftime('%Y-%m-%d')
+    last_enter_time = u.last_enter_activity_center_time
+    now_date = datetime.datetime.strptime(now_time, "%Y-%m-%d")
+    last_enter_date = datetime.datetime.strptime(last_enter_time, "%Y-%m-%d")
+    gap_days = (now_date - last_enter_date).days
+    print(now_time)
+    print(last_enter_time)
+    print(gap_days)
+    if gap_days == 1:
+        daily_update(u, now_time, True)
+    elif gap_days > 1:
+        daily_update(u, now_time, False)
+    else:
+        pass
 
 # 让用户签到
 def update_clock_in_info(username):
