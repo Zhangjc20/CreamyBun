@@ -154,7 +154,7 @@ def get_task_info_list(username, state, page_number, sort_choice):
                                         t_status_list[i] == sort_choice]
 
     # 反转，最新的在最前面
-    needed_task_to_state_list = list(reversed(needed_task_to_state_list))
+    # needed_task_to_state_list = list(reversed(needed_task_to_state_list))
 
     # 总页数
     total_number = len(needed_task_to_state_list)
