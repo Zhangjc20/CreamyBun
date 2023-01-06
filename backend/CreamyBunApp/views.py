@@ -390,7 +390,7 @@ def get_user_received_task_info(request):
         username, HAS_RECEIVED, page_number, sort_choice)
 
     for t_info in task_info_list:
-        if t_info.has_key('taskStatus'):
+        if 'name' in t_info.keys():
             print(t_info['taskStatus'])
 
     ret = {
