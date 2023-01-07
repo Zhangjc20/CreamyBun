@@ -155,7 +155,7 @@
         </template>
       </el-popover>
     </div>
-    <div v-if="!itemsEmpty()">
+    <div v-if="!itemsEmpty()" style="width:90%;display: flex;align-items: center;flex-direction: column;min-width:1100px;">
       <el-row class="task-box">
         <el-col :span="4.8" v-for="item in items.slice(0, 5)" :key="item.index">
           <SingleTask
@@ -782,6 +782,8 @@ export default {
   flex-wrap: wrap;
   justify-content: space-evenly;
   width: 100%;
+  min-width: 1100px;
+  overflow: scroll;
 }
 .noinfo-box {
   align-items: center;

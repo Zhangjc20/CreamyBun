@@ -15,7 +15,7 @@
         </div>
         <el-row class="custom-row">
           <el-col :span="6" class="type-box">
-            <div class="round-background">
+            <div class="round-background hover-box">
               <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-text"></use>
               </svg>
@@ -23,7 +23,7 @@
             <span class="round-back-font">文本</span>
           </el-col>
           <el-col :span="6" class="type-box">
-            <div class="round-background">
+            <div class="round-background hover-box">
               <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-tupian"></use>
               </svg>
@@ -31,7 +31,7 @@
             <span class="round-back-font">图片</span>
           </el-col>
           <el-col :span="6" class="type-box">
-            <div class="round-background">
+            <div class="round-background hover-box">
               <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-a-5Jyinboyinpin"></use>
               </svg>
@@ -39,7 +39,7 @@
             <span class="round-back-font">音频</span>
           </el-col>
           <el-col :span="6" class="type-box">
-            <div class="round-background">
+            <div class="round-background hover-box">
               <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-shipin"></use>
               </svg>
@@ -416,5 +416,10 @@ export default {
   height: 60px;
   box-shadow: 0 0px 8px 0;
   display: flex;
+}
+.hover-box:hover {
+  position: relative;
+  top: -4px;
+  right: 2px;
 }
 </style>

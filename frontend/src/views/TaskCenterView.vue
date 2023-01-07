@@ -218,7 +218,7 @@
           ></CustomButton>
         </div>
       </el-aside>
-      <el-main>
+      <el-main style="overflow:scroll">
         <div v-if="!showLeft" @click="changeShow" class="opacity-box" style="position:absolute;z-index:99;cursor: pointer;">
           <el-icon><View /></el-icon
           ><span style="font-size: 0.8rem; margin-left: 0.2rem"
@@ -249,7 +249,7 @@
               </el-input>
             </div>
           </el-header>
-          <div style="margin-top: 24px">
+          <div style="margin-top: 24px;width:100%;">
             <TaskPage
               :type="0"
               ref="taskPage"
