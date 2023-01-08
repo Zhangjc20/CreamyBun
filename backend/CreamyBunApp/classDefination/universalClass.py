@@ -21,7 +21,7 @@ class TaskDict(models.Model):
     task_status_for_user = models.IntegerField(default=0) # 已领取或已发布
     task_status_for_itself = models.IntegerField(default=-1) # 二级检索，发布模式或者完成状态
 
-    # 领取任务中所有problem的id及其是否做对（如果为测试题）的列表
+    # 领取任务中所有problem的id、其是否做对（如果为测试题）和用户作答的答案的列表
     received_problem_id_list = models.ManyToManyField(UserProblemInfo) 
 
     # 当前做到第几题了，received_problem_id_list元素的index，注意0开始

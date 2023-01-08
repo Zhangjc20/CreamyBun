@@ -22,7 +22,6 @@ from . import settings
 
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
     re_path(r'media/(?P<path>.*)$',serve,{'document_root':settings.MEDIA_ROOT}),
     path(r'^media/(?P<path>.*)', serve, {"document_root": settings.MEDIA_ROOT}),
     path('log_up/', views.log_up),
