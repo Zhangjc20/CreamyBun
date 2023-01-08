@@ -1,30 +1,81 @@
 <template>
   <div>
     <el-header class="header-style">
-      <el-breadcrumb separator="/" class="header-breadcrumb">
-        <el-breadcrumb-item :to="{ path: '/' }">奶黄包</el-breadcrumb-item>
-        <el-breadcrumb-item>任务选择</el-breadcrumb-item>
-        <el-breadcrumb-item>{{ materialType }}</el-breadcrumb-item>
-        <el-breadcrumb-item v-if="isTest"><span
-            style="color:#5EABBF;font-size=30px;font-weight: bold;">资质测试</span></el-breadcrumb-item>
-        <el-breadcrumb-item>题目：{{ currentIndex + 1 }}</el-breadcrumb-item>
-      </el-breadcrumb>
-      <span style="float: left;font-size: 25px;font-weight: bold;">
-        {{ taskName }}
-      </span>
-      <CustomButton @click="finalSubmit" isRound="true" v-if="false" normalColor="#FBE484"
-        style="float: right; right: 590px; top: 100px; position: absolute" height="40px" width="150px" title="提交任务" />
-      <CustomButton @click="jumpDialogVisible = true" isRound="true"
-        style="float: right; right: 410px; top: 100px; position: absolute" height="40px" width="150px" title="题目跳转" />
-      <CustomButton @click="submitAnswers" isRound="true"
-        style="float: right; right: 230px; top: 100px; position: absolute" height="40px" width="150px" title="提交本题" />
-      <CustomButton @click="quitPerform" isRound="true"
-        style="float: right; right: 50px; top: 100px; position: absolute" height="40px" width="150px" title="退出答题" />
+      <el-row>
+        <el-col :span="8">
+          <el-breadcrumb separator="/" class="header-breadcrumb">
+            <el-breadcrumb-item :to="{ path: '/' }">奶黄包</el-breadcrumb-item>
+            <el-breadcrumb-item>任务选择</el-breadcrumb-item>
+            <el-breadcrumb-item>{{ materialType }}</el-breadcrumb-item>
+            <el-breadcrumb-item v-if="isTest"
+              ><span style="color:#5EABBF;font-size=30px;font-weight: bold;"
+                >资质测试</span
+              ></el-breadcrumb-item
+            >
+            <el-breadcrumb-item
+              >题目：{{ currentIndex + 1 }}</el-breadcrumb-item
+            >
+          </el-breadcrumb>
+          <span style="float: left; font-size: 25px; font-weight: bold">
+            {{ taskName }}
+          </span>
+        </el-col>
+        <el-col :span="16">
+          <el-row style="height:100%;display:flex;align-items: center;">
+            <el-col :span="5" style="background-color:aquamarine">
+              <CustomButton
+                @click="finalSubmit"
+                isRound="true"
+                v-if="false"
+                normalColor="#FBE484"
+                height="40px"
+                width="150px"
+                title="提交任务"
+                style="display:flex;justify-content:center;align-items:center;"
+              />
+            </el-col>
+            <el-col :span="6">
+              <CustomButton
+                @click="jumpDialogVisible = true"
+                isRound="true"
+                height="40px"
+                width="150px"
+                title="题目跳转"
+                style="display:flex;justify-content:center;align-items:center;"
+              />
+            </el-col>
+            <el-col :span="6">
+              <CustomButton
+                @click="submitAnswers"
+                isRound="true"
+                height="40px"
+                width="150px"
+                title="提交本题"
+                style="display:flex;justify-content:center;align-items:center;"
+              />
+            </el-col>
+            <el-col :span="6">
+              <CustomButton
+                @click="quitPerform"
+                isRound="true"
+                height="40px"
+                width="150px"
+                title="退出答题"
+                style="display:flex;justify-content:center;align-items:center;"
+              />
+            </el-col>
+          </el-row>
+        </el-col>
+      </el-row>
     </el-header>
-    <el-row :gutter="20" style="margin-top:20px">
+    <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="15">
-        <el-main class="main-style-two" style="height:calc(100vh - 220px)">
-          <el-row class="main-style" v-for="material in materialList" :key="material">
+        <el-main class="main-style-two" style="height: calc(100vh - 220px)">
+          <el-row
+            class="main-style"
+            v-for="material in materialList"
+            :key="material"
+          >
             <!-- {{material['fileNotes']}} -->
             <PerformTaskMaterial ref="materialBlock" :materialInfo="material">
             </PerformTaskMaterial>
@@ -32,54 +83,116 @@
         </el-main>
       </el-col>
       <el-col :span="9">
-        <el-main class="main-style-two" style="height:calc(100vh - 220px)">
-          <el-row class="question-row" v-for="question in questionList" :key="question">
-            <span class="header-title" style="margin: auto,auto,auto,20px;">
-              {{ question["index"] + '.[' + question["questionTypeName"] + ']: ' + question["questionDescription"] }}
+        <el-main class="main-style-two" style="height: calc(100vh - 220px)">
+          <el-row
+            class="question-row"
+            v-for="question in questionList"
+            :key="question"
+          >
+            <span class="header-title" style="margin: auto, auto, auto, 20px">
+              {{
+                question["index"] +
+                ".[" +
+                question["questionTypeName"] +
+                "]: " +
+                question["questionDescription"]
+              }}
             </span>
             <CustomButton
-              @click="currentQuestionIndex = question['index'] - 1; clickFillBlank(question['targetIndex'] - 1, question['minOptionNum'], question['maxOptionNum'], question['index'] - 1)"
-              v-if="question['questionType'] == 3" isRound="true"
-              style="float: right; right: 0px; top: 5px; position: absolute" height="30px" width="100px" title="点击框图" />
-            <el-table v-if="question['questionType'] == 0 || question['questionType'] == 1"
-              :data="question['optionList']" :style="table" ref="regTable" :key="tableKey"
-              @selection-change="handleSelectionChange($event, question['minOptionNum'], question['maxOptionNum'], question['index'] - 1)"
-              class="selection-table">
-              <el-table-column type="selection" width="50">
-              </el-table-column>
+              @click="
+                currentQuestionIndex = question['index'] - 1;
+                clickFillBlank(
+                  question['targetIndex'] - 1,
+                  question['minOptionNum'],
+                  question['maxOptionNum'],
+                  question['index'] - 1
+                );
+              "
+              v-if="question['questionType'] == 3"
+              isRound="true"
+              style="float: right; right: 0px; top: 5px; position: absolute"
+              height="30px"
+              width="100px"
+              title="点击框图"
+            />
+            <el-table
+              v-if="
+                question['questionType'] == 0 || question['questionType'] == 1
+              "
+              :data="question['optionList']"
+              :style="table"
+              ref="regTable"
+              :key="tableKey"
+              @selection-change="
+                handleSelectionChange(
+                  $event,
+                  question['minOptionNum'],
+                  question['maxOptionNum'],
+                  question['index'] - 1
+                )
+              "
+              class="selection-table"
+            >
+              <el-table-column type="selection" width="50"> </el-table-column>
               <el-table-column prop="name" label="选项" width="100">
               </el-table-column>
               <el-table-column prop="content" label="选项内容" width="200">
                 <template v-slot="scope">
-                  <div>{{ (scope.row.content) }}</div>
+                  <div>{{ scope.row.content }}</div>
                 </template>
               </el-table-column>
 
-              <el-table-column prop="" label="" width="">
-              </el-table-column>
+              <el-table-column prop="" label="" width=""> </el-table-column>
 
               <el-table-column prop="" label="删除" width="">
                 <span class="iconfont icon-menu"></span>
               </el-table-column>
             </el-table>
-            <el-input v-if="question['questionType'] == 2" v-model="this.ansList[question['index'] - 1]" :rows="3"
-              type="textarea" placeholder="请输入填空题答案" resize="none" :maxlength="question['maxOptionNum']" show-word-limit
-              style="margin: 20px;" />
-
+            <el-input
+              v-if="question['questionType'] == 2"
+              v-model="this.ansList[question['index'] - 1]"
+              :rows="3"
+              type="textarea"
+              placeholder="请输入填空题答案"
+              resize="none"
+              :maxlength="question['maxOptionNum']"
+              show-word-limit
+              style="margin: 20px"
+            />
           </el-row>
         </el-main>
-
       </el-col>
     </el-row>
-    <!-- <el-col :span="8" style="border-left: 1px solid #999999;"></el-col> -->
-    <!-- <el-main class="main-style">
-    
-  </el-main> -->
     <el-dialog v-model="fillBlankDialogVisible" title="请进行框图">
       <el-container v-if="imageLoading">
-        <div style="position: relative;width: 250px;height: 200px;margin-left: auto;margin-right: auto;">
-          <div style="position: absolute; bottom: 50px;left: 60px;width: 250px;height: 250px;">
-            <div style="flex-direction: column;position:absolute;bottom: 0px;margin-left: auto;margin-right: auto;text-align:center ">
+        <div
+          style="
+            position: relative;
+            width: 250px;
+            height: 200px;
+            margin-left: auto;
+            margin-right: auto;
+          "
+        >
+          <div
+            style="
+              position: absolute;
+              bottom: 50px;
+              left: 60px;
+              width: 250px;
+              height: 250px;
+            "
+          >
+            <div
+              style="
+                flex-direction: column;
+                position: absolute;
+                bottom: 0px;
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+              "
+            >
               <el-image
                 style="width: 88px; height: 80px"
                 fit="cover"
@@ -89,236 +202,322 @@
               <div class="jump-shadow"></div>
             </div>
           </div>
-          <div style="position: absolute; bottom: -210px;left: -20px;width: 250px;height: 250px;">
-            <span style="color:#5EABBF;font-size:20px; font-family: YouSheBlack;">
+          <div
+            style="
+              position: absolute;
+              bottom: -210px;
+              left: -20px;
+              width: 250px;
+              height: 250px;
+            "
+          >
+            <span
+              style="color: #5eabbf; font-size: 20px; font-family: YouSheBlack"
+            >
               正在加载图片，请稍等~
             </span>
           </div>
         </div>
       </el-container>
-      <ImageFramer v-else ref="MyImageFramer" style="width:100%" :minFrameNum="currentMin" :maxFrameNum="currentMax"
-        :src="currentImageSrc" :initRects="initRects" />
+      <ImageFramer
+        v-else
+        ref="MyImageFramer"
+        style="width: 100%"
+        :minFrameNum="currentMin"
+        :maxFrameNum="currentMax"
+        :src="currentImageSrc"
+        :initRects="initRects"
+      />
       <span class="dialog-footer">
-        <el-row style="height: 50px;">
-          <el-col :span="20">
-          </el-col>
+        <el-row style="height: 50px">
+          <el-col :span="20"> </el-col>
           <el-col :span="4">
-            <CustomButton @click="getFillBlankAns" style="margin-left:20px" isRound="true" title="确定" />
+            <CustomButton
+              @click="getFillBlankAns"
+              style="margin-left: 20px"
+              isRound="true"
+              title="确定"
+            />
           </el-col>
         </el-row>
       </span>
     </el-dialog>
 
-    <el-dialog v-model="jumpDialogVisible" title="设置跳转位置" width="22%" style="display: flex;flex-wrap: wrap;">
-      <el-button style="width: 40px;height: 40px;margin: 5px;" :type="getListButtonType(state['state'], state['index'])"
-        plain v-for="state in stateList" :key="state" @click="jumpQuestion(state['index'])">{{ state['index']
-        }}</el-button>
+    <el-dialog
+      v-model="jumpDialogVisible"
+      title="设置跳转位置"
+      width="22%"
+      style="display: flex; flex-wrap: wrap"
+    >
+      <el-button
+        style="width: 40px; height: 40px; margin: 5px"
+        :type="getListButtonType(state['state'], state['index'])"
+        plain
+        v-for="state in stateList"
+        :key="state"
+        @click="jumpQuestion(state['index'])"
+        >{{ state["index"] }}</el-button
+      >
       <span class="dialog-footer">
-        <el-row style="height: 50px;margin-top: 20px;">
-          <CustomButton @click="jumpDialogVisible = false" style="margin-left:20px;" isRound="true" title="取消跳转" />
+        <el-row style="height: 50px; margin-top: 20px">
+          <CustomButton
+            @click="jumpDialogVisible = false"
+            style="margin-left: 20px"
+            isRound="true"
+            title="取消跳转"
+          />
         </el-row>
       </span>
     </el-dialog>
 
-    <el-dialog v-model="testResultDialogVisible" @close="closeTestResultDialog" width="40%"
-      style="display: flex;flex-wrap: wrap;">
+    <el-dialog
+      v-model="testResultDialogVisible"
+      @close="closeTestResultDialog"
+      width="40%"
+      style="display: flex; flex-wrap: wrap"
+    >
       <el-main v-if="!passTest">
-        <el-row style="margin-bottom: 20px;">
-          <span style="font-weight: bold;font-size: 20px;">
+        <el-row style="margin-bottom: 20px">
+          <span style="font-weight: bold; font-size: 20px">
             很抱歉，您未能通过资质测试
           </span>
         </el-row>
         <el-row>
-          <span>
-            您的正答率：
-          </span>
-          <span style="font-weight: bold;font-size: 15px;color: #5EABBF;">
+          <span> 您的正答率： </span>
+          <span style="font-weight: bold; font-size: 15px; color: #5eabbf">
             {{ percentage }}
           </span>
         </el-row>
         <span class="dialog-footer">
-          <el-row style="height: 50px;margin-top: 20px;">
-            <CustomButton @click="testResultDialogVisible = false; closeTestResultDialog()" style="margin-left:20px;"
-              isRound="true" title="退出答题" />
+          <el-row style="height: 50px; margin-top: 20px">
+            <CustomButton
+              @click="
+                testResultDialogVisible = false;
+                closeTestResultDialog();
+              "
+              style="margin-left: 20px"
+              isRound="true"
+              title="退出答题"
+            />
           </el-row>
         </span>
       </el-main>
       <el-main v-else>
-        <el-row style="margin-bottom: 20px;">
-          <span style="font-weight: bold;font-size: 20px;">
+        <el-row style="margin-bottom: 20px">
+          <span style="font-weight: bold; font-size: 20px">
             恭喜您通过资质测试！请继续答题
           </span>
         </el-row>
         <el-row>
-          <span>
-            您的正答率：
-          </span>
-          <span style="font-weight: bold;font-size: 15px;color: #5EABBF;">
+          <span> 您的正答率： </span>
+          <span style="font-weight: bold; font-size: 15px; color: #5eabbf">
             {{ percentage }}
           </span>
         </el-row>
         <span class="dialog-footer">
-          <el-row style="height: 50px;margin-top: 20px;">
-            <CustomButton @click="testResultDialogVisible = false; closeTestResultDialog()" style="margin-left:20px;"
-              isRound="true" title="正式答题" />
+          <el-row style="height: 50px; margin-top: 20px">
+            <CustomButton
+              @click="
+                testResultDialogVisible = false;
+                closeTestResultDialog();
+              "
+              style="margin-left: 20px"
+              isRound="true"
+              title="正式答题"
+            />
           </el-row>
         </span>
       </el-main>
     </el-dialog>
 
-    <el-dialog v-model="finalSubmitDialogVisible" width="40%" style="display: flex;flex-wrap: wrap;">
+    <el-dialog
+      v-model="finalSubmitDialogVisible"
+      width="40%"
+      style="display: flex; flex-wrap: wrap"
+    >
       <el-main>
-        <el-row style="margin-bottom: 20px;">
-          <span style="font-weight: bold;font-size: 20px;">
+        <el-row style="margin-bottom: 20px">
+          <span style="font-weight: bold; font-size: 20px">
             您已完成所有题目，请问您现在是否要提交该任务？
           </span>
         </el-row>
         <span class="dialog-footer">
-          <el-row style="height: 50px;margin-top: 20px;">
-            <CustomButton @click="finalSubmitDialogVisible = false; finalSubmit()" style="margin:auto;" isRound="true"
-              title="提交任务" />
-            <CustomButton @click="finalSubmitDialogVisible = false" style="margin:auto;" isRound="true" title="暂不提交" />
+          <el-row style="height: 50px; margin-top: 20px">
+            <CustomButton
+              @click="
+                finalSubmitDialogVisible = false;
+                finalSubmit();
+              "
+              style="margin: auto"
+              isRound="true"
+              title="提交任务"
+            />
+            <CustomButton
+              @click="finalSubmitDialogVisible = false"
+              style="margin: auto"
+              isRound="true"
+              title="暂不提交"
+            />
           </el-row>
         </span>
       </el-main>
     </el-dialog>
 
-    <el-dialog v-model="submitOutcomeDialogVisible" @close="closeSubmitOutcomeDialog" width="40%"
-      style="display: flex;flex-wrap: wrap;">
+    <el-dialog
+      v-model="submitOutcomeDialogVisible"
+      @close="closeSubmitOutcomeDialog"
+      width="40%"
+      style="display: flex; flex-wrap: wrap"
+    >
       <el-main v-if="!passInsertionTest">
-        <el-row style="margin-bottom: 20px;">
-          <span style="font-weight: bold;font-size: 40px;">
-            任务结算
-          </span>
+        <el-row style="margin-bottom: 20px">
+          <span style="font-weight: bold; font-size: 40px"> 任务结算 </span>
         </el-row>
-        <el-row style="margin-bottom: 20px;">
-          <span style="font-weight: bold;font-size: 20px;">
+        <el-row style="margin-bottom: 20px">
+          <span style="font-weight: bold; font-size: 20px">
             很抱歉，由于您本次答题状态不佳，
           </span>
         </el-row>
         <el-row>
-          <span>
-            今天已经违规：
-          </span>
-          <span style="font-weight: bold;font-size: 15px;color: red;">
+          <span> 今天已经违规： </span>
+          <span style="font-weight: bold; font-size: 15px; color: red">
             {{ todayViolationNum }}
           </span>
-          <span>
-            次，最多可以违规：
-          </span>
-          <span style="font-weight: bold;font-size: 15px;color: red;">
+          <span> 次，最多可以违规： </span>
+          <span style="font-weight: bold; font-size: 15px; color: red">
             {{ perDayViolationNum }}
           </span>
-          <span>
-            次。
-          </span>
+          <span> 次。 </span>
         </el-row>
         <el-row v-if="isPunish">
-          <span style="font-weight: bold;font-size: 15px;color: red;">
+          <span style="font-weight: bold; font-size: 15px; color: red">
             您由于今日违规次数过多，将损失部分经验！
           </span>
         </el-row>
         <span class="dialog-footer">
-          <el-row style="height: 50px;margin-top: 20px;">
-            <CustomButton @click="submitOutcomeDialogVisible = false; closeSubmitOutcomeDialog()"
-              style="margin-left:20px;" isRound="true" title="退出任务" />
+          <el-row style="height: 50px; margin-top: 20px">
+            <CustomButton
+              @click="
+                submitOutcomeDialogVisible = false;
+                closeSubmitOutcomeDialog();
+              "
+              style="margin-left: 20px"
+              isRound="true"
+              title="退出任务"
+            />
           </el-row>
         </span>
       </el-main>
       <el-main v-else>
-        <el-row style="margin-bottom: 20px;">
-          <span style="font-weight: bold;font-size: 40px;">
-            任务结算
-          </span>
+        <el-row style="margin-bottom: 20px">
+          <span style="font-weight: bold; font-size: 40px"> 任务结算 </span>
         </el-row>
-        <el-row style="margin-bottom: 20px;">
-          <span style="font-weight: bold;color: #5EABBF;font-size: 20px;">
+        <el-row style="margin-bottom: 20px">
+          <span style="font-weight: bold; color: #5eabbf; font-size: 20px">
             恭喜您顺利完成本次任务！
           </span>
         </el-row>
         <el-row>
-          <span>
-            您在本次任务中获得甜甜圈：
-          </span>
-          <span style="font-weight: bold;font-size: 15px;color: #5EABBF;">
+          <span> 您在本次任务中获得甜甜圈： </span>
+          <span style="font-weight: bold; font-size: 15px; color: #5eabbf">
             {{ getDonutNum }}
           </span>
         </el-row>
         <el-row>
-          <span>
-            您当前的甜甜圈余额为：
-          </span>
-          <span style="font-weight: bold;font-size: 15px;color: #5EABBF;">
+          <span> 您当前的甜甜圈余额为： </span>
+          <span style="font-weight: bold; font-size: 15px; color: #5eabbf">
             {{ nowDonutNumber }}
           </span>
         </el-row>
         <el-row>
-          <span>
-            您在本次任务中获得经验：
-          </span>
-          <span style="font-weight: bold;font-size: 15px;color: #5EABBF;">
+          <span> 您在本次任务中获得经验： </span>
+          <span style="font-weight: bold; font-size: 15px; color: #5eabbf">
             {{ getExpNum }}
           </span>
         </el-row>
         <el-row v-if="isUpgrade">
-          <span>
-            同时恭喜您的等级提升！您当前的等级为
-          </span>
-          <span style="font-weight: bold;font-size: 15px;color: #5EABBF;">
+          <span> 同时恭喜您的等级提升！您当前的等级为 </span>
+          <span style="font-weight: bold; font-size: 15px; color: #5eabbf">
             {{ nowCreditRank }}
           </span>
         </el-row>
         <span class="dialog-footer">
-          <el-row style="height: 50px;margin-top: 20px;">
-            <CustomButton @click="submitOutcomeDialogVisible = false; closeSubmitOutcomeDialog()"
-              style="margin-left:20px;" isRound="true" title="退出任务" />
+          <el-row style="height: 50px; margin-top: 20px">
+            <CustomButton
+              @click="
+                submitOutcomeDialogVisible = false;
+                closeSubmitOutcomeDialog();
+              "
+              style="margin-left: 20px"
+              isRound="true"
+              title="退出任务"
+            />
           </el-row>
         </span>
       </el-main>
     </el-dialog>
 
-    <el-dialog v-model="taskOverDialogVisible" title="提示" width="50%" style="display: flex;flex-wrap: wrap;">
+    <el-dialog
+      v-model="taskOverDialogVisible"
+      title="提示"
+      width="50%"
+      style="display: flex; flex-wrap: wrap"
+    >
       <el-main>
-        <el-row style="margin-bottom: 20px;">
-          <span style="font-weight: bold;font-size: 30px;">
+        <el-row style="margin-bottom: 20px">
+          <span style="font-weight: bold; font-size: 30px">
             很抱歉，该任务已经被发布者临时终止！
           </span>
         </el-row>
-        <el-row style="margin-bottom: 20px;">
-          <span style="font-size: 20px;">
-            请您退出本次答题~
-          </span>
+        <el-row style="margin-bottom: 20px">
+          <span style="font-size: 20px"> 请您退出本次答题~ </span>
         </el-row>
         <span class="dialog-footer">
-          <el-row style="height: 50px;margin-top: 20px;">
-            <CustomButton @click="taskOverDialogVisible = false; closeSubmitOutcomeDialog()" style="margin-left:20px;"
-              isRound="true" title="退出任务" />
+          <el-row style="height: 50px; margin-top: 20px">
+            <CustomButton
+              @click="
+                taskOverDialogVisible = false;
+                closeSubmitOutcomeDialog();
+              "
+              style="margin-left: 20px"
+              isRound="true"
+              title="退出任务"
+            />
           </el-row>
         </span>
       </el-main>
     </el-dialog>
 
-    <el-dialog v-model="testStartDialogVisible" title="提示" width="40%" style="display: flex;flex-wrap: wrap;">
-      <el-main style="margin-left: -20px;">
+    <el-dialog
+      v-model="testStartDialogVisible"
+      title="提示"
+      width="40%"
+      style="display: flex; flex-wrap: wrap"
+    >
+      <el-main style="margin-left: -20px">
         <el-row style="margin-bottom: 10px">
-          <span style="font-weight: bold;font-size: 30px; color:#5EABBF ;">
+          <span style="font-weight: bold; font-size: 30px; color: #5eabbf">
             感谢领取本次任务！
           </span>
         </el-row>
         <el-row style="margin-bottom: 20px">
-          <span style="font-weight: bold;font-size: 25px;">
+          <span style="font-weight: bold; font-size: 25px">
             现在进行资质测试。
           </span>
         </el-row>
-        <el-row style="margin-bottom: 20px;">
-          <span style="font-size: 20px;">
-            测试共{{stateList.length}}道题目，完成测试后即可正式开始任务~
+        <el-row style="margin-bottom: 20px">
+          <span style="font-size: 20px">
+            测试共{{ stateList.length }}道题目，完成测试后即可正式开始任务~
           </span>
         </el-row>
         <span class="dialog-footer">
-          <el-row style="height: 50px;margin-top: 20px;">
-            <CustomButton @click="testStartDialogVisible = false" style="margin-left:20px;"
-              isRound="true" title="开始测试" />
+          <el-row style="height: 50px; margin-top: 20px">
+            <CustomButton
+              @click="testStartDialogVisible = false"
+              style="margin-left: 20px"
+              isRound="true"
+              title="开始测试"
+            />
           </el-row>
         </span>
       </el-main>
@@ -328,18 +527,17 @@
 
 <script>
 import axios from "axios";
-import CustomButton from './CustomButton.vue';
+import CustomButton from "./CustomButton.vue";
 import PerformTaskMaterial from "@/components/PerformTaskMaterial.vue";
 import ImageFramer from "@/components/ImageFramer.vue";
-// import { ElMessageBox } from "element-plus";
 
 export default {
-  name: 'PerformTask',
-  inject: ['reload'],
+  name: "PerformTask",
+  inject: ["reload"],
   components: {
     CustomButton,
     PerformTaskMaterial,
-    ImageFramer
+    ImageFramer,
   },
   props: {
     username: String,
@@ -367,12 +565,12 @@ export default {
       isTest: false,
       passTest: false,
       testStartDialogVisible: false,
-      testStartDialogVisibleFirst:true,
+      testStartDialogVisibleFirst: true,
       testResultDialogVisible: false,
       finalSubmitDialogVisible: false,
       submitOutcomeDialogVisible: false,
       taskOverDialogVisible: false,
-      percentage: '114.514%',
+      percentage: "114.514%",
       //提交之后的临时量
       passInsertionTest: false,
       isPunish: false,
@@ -385,50 +583,53 @@ export default {
       nowDonutNumber: -1,
       initRects: [],
       initAnsList: [],
-      initAnsListStr: '',
+      initAnsListStr: "",
       initingSelection: true,
-      tableKey:0,
-      isFinished:false,
-      imageLoading:false,
-    }
+      tableKey: 0,
+      isFinished: false,
+      imageLoading: false,
+    };
   },
   mounted() {
     //nextTick:加载完参数后再运行下面的
     this.$nextTick(() => {
-      this.getProblemInfo('init')
-    })
+      this.getProblemInfo("init");
+    });
   },
   methods: {
     finalSubmit() {
-      axios.post("http://101.42.118.80:8000/final_submit/", {
-        username: this.username,
-        taskId: this.taskId,
-      }).then(res => {
-        this.$message({
-          type: 'success',
-          message: '提交成功!'
+      axios
+        .post("http://101.42.118.80:8000/final_submit/", {
+          username: this.username,
+          taskId: this.taskId,
+        })
+        .then((res) => {
+          this.$message({
+            type: "success",
+            message: "提交成功!",
+          });
+          this.passInsertionTest = res.data["passInsertionTest"];
+          this.isPunish = res.data["isPunish"];
+          this.todayViolationNum = res.data["todayViolationNum"];
+          this.perDayViolationNum = res.data["perDayViolationNum"];
+          this.getExpNum = res.data["getExpNum"];
+          this.getDonutNum = res.data["getDonutNum"];
+          this.isUpgrade = res.data["isUpgrade"];
+          this.nowCreditRank = res.data["nowCreditRank"];
+          this.nowDonutNumber = res.data["nowDonutNumber"];
+          this.submitOutcomeDialogVisible = true;
+        })
+        .catch((error) => {
+          this.$message({
+            type: "error",
+            message: "提交失败!",
+          });
+          console.log(error);
         });
-        console.log(res)
-        this.passInsertionTest = res.data['passInsertionTest']
-        this.isPunish = res.data['isPunish']
-        this.todayViolationNum = res.data['todayViolationNum']
-        this.perDayViolationNum = res.data['perDayViolationNum']
-        this.getExpNum = res.data['getExpNum']
-        this.getDonutNum = res.data['getDonutNum']
-        this.isUpgrade = res.data['isUpgrade']
-        this.nowCreditRank = res.data['nowCreditRank']
-        this.nowDonutNumber = res.data['nowDonutNumber']
-        this.submitOutcomeDialogVisible = true;
-      }).catch(error => {
-        this.$message({
-          type: 'error',
-          message: '提交失败!'
-        });
-        console.log(error)
-      })
     },
     closeTestResultDialog() {
-      if (!this.passTest) {//如果没有通过资质测试
+      if (!this.passTest) {
+        //如果没有通过资质测试
         this.$router.push({
           //跳转到个人中心领取列表
           name: "mine",
@@ -439,8 +640,8 @@ export default {
           },
         });
       } else {
-        this.isFinished = false
-        this.getProblemInfo('init')
+        this.isFinished = false;
+        this.getProblemInfo("init");
       }
     },
     closeSubmitOutcomeDialog() {
@@ -455,336 +656,300 @@ export default {
       });
     },
     getListButtonType(input, index) {
-      var output = input ? 'success' : 'amy'
+      var output = input ? "success" : "amy";
       if (index - 1 == this.currentIndex) {
-        output = 'primary'
+        output = "primary";
       }
-      return output
+      return output;
     },
     getProblemInfo(type, jmpTarget = -1) {
       // dom元素更新后执行，因此这里能正确打印更改之后的值
-      axios.get("http://101.42.118.80:8000/perform_basic_info/", {
-        params: {
-          username: this.username,
-          taskId: this.taskId,
-          type: type,
-          jmpTarget: jmpTarget
-        }
-      }).then((res) => {
-        this.ansChanged = false;
-        console.log("成功加载一个material", res)
-        this.questionList = res.data['questionList'];
-        this.materialList = res.data['materialList'];
-        this.stateList = res.data['problemStateList'];
-        this.isTest = res.data['isTest'];
-        if(this.isTest && type == 'init' && this.testStartDialogVisibleFirst){
-          console.log("type == 'init'",type,this.testStartDialogVisibleFirst)
-          this.testStartDialogVisible = false
-          this.testStartDialogVisibleFirst = false
-        }
-        this.currentIndex = res.data['currentIndex'] - 1;//计算机地址
-        console.log("TOODOO")
-        console.log("更新前的this.ansList", this.ansList)
-        this.ansList = [];
-        var tempAnswerList = res.data['answerList']
-        this.initAnsList = res.data['answerList']
-        this.initingSelection = true;
-        if (this.initAnsList.length == 0) {
-          for (var i = 0; i < this.questionList.length; i++) {
-            this.initAnsList.push('')
+      axios
+        .get("http://101.42.118.80:8000/perform_basic_info/", {
+          params: {
+            username: this.username,
+            taskId: this.taskId,
+            type: type,
+            jmpTarget: jmpTarget,
+          },
+        })
+        .then((res) => {
+          this.ansChanged = false;
+          this.questionList = res.data["questionList"];
+          this.materialList = res.data["materialList"];
+          this.stateList = res.data["problemStateList"];
+          this.isTest = res.data["isTest"];
+          if (
+            this.isTest &&
+            type == "init" &&
+            this.testStartDialogVisibleFirst
+          ) {
+            this.testStartDialogVisible = false;
+            this.testStartDialogVisibleFirst = false;
           }
-        }
-        for (var i = 0; i < this.questionList.length; i++) {
-          this.lastSelectedList.push(undefined)
-          var tempQuestion = this.questionList[i]
-          // 如果题目是选择题
-          if (tempQuestion['questionType'] == 0 || tempQuestion['questionType'] == 1) {
-            this.ansList.push([])
-            // 初始化对应串
-            var k = 0
-            for (var j = 0; j < tempQuestion['optionList'].length; j++) {
-              // console.log(j,tempQuestion['optionList'][j])
-              var tempName = tempQuestion['optionList'][j]['name']
-              console.log("this.initAnsList[i]", this.initAnsList)
-              if (k < this.initAnsList[i].length && tempName == this.initAnsList[i][k]
-                // && tempName != 'A'
-              ) {
-
-                console.log("加入111111项：", {
-                  index: tempQuestion['optionList'][j]['index'],
-                  name: tempQuestion['optionList'][j]['name'],
-                  selected: 1
-                })
-                this.ansList[i].push({
-                  index: tempQuestion['optionList'][j]['index'],
-                  name: tempQuestion['optionList'][j]['name'],
-                  selected: 1
-                })
-                k++
-                console.log("此时的ansList", this.ansList[i])
-              } else {
-                console.log("加入000000项：", {
-                  index: tempQuestion['optionList'][j]['index'],
-                  name: tempQuestion['optionList'][j]['name'],
-                  selected: 0
-                })
-                this.ansList[i].push({
-                  index: tempQuestion['optionList'][j]['index'],
-                  name: tempQuestion['optionList'][j]['name'],
-                  selected: 0
-                })
-              }
-
+          this.currentIndex = res.data["currentIndex"] - 1; //计算机地址
+          this.ansList = [];
+          var tempAnswerList = res.data["answerList"];
+          this.initAnsList = res.data["answerList"];
+          this.initingSelection = true;
+          if (this.initAnsList.length == 0) {
+            for (var i = 0; i < this.questionList.length; i++) {
+              this.initAnsList.push("");
             }
-            // 否则
-          } else {
-            this.ansList.push(tempAnswerList[i])
           }
-          console.log("更新后的this.ansList", JSON.parse(JSON.stringify(this.ansList)))
-        }
-        this.initAnsListStr = JSON.stringify(this.ansList)
-        console.log("this.initAnsListStr", this.initAnsListStr)
-        this.updateSelect();
-      }).catch();
+          for (var i = 0; i < this.questionList.length; i++) {
+            this.lastSelectedList.push(undefined);
+            var tempQuestion = this.questionList[i];
+            // 如果题目是选择题
+            if (
+              tempQuestion["questionType"] == 0 ||
+              tempQuestion["questionType"] == 1
+            ) {
+              this.ansList.push([]);
+              // 初始化对应串
+              var k = 0;
+              for (var j = 0; j < tempQuestion["optionList"].length; j++) {
+                var tempName = tempQuestion["optionList"][j]["name"];
+                if (
+                  k < this.initAnsList[i].length &&
+                  tempName == this.initAnsList[i][k]
+                ) {
+                  this.ansList[i].push({
+                    index: tempQuestion["optionList"][j]["index"],
+                    name: tempQuestion["optionList"][j]["name"],
+                    selected: 1,
+                  });
+                  k++;
+                } else {
+                  this.ansList[i].push({
+                    index: tempQuestion["optionList"][j]["index"],
+                    name: tempQuestion["optionList"][j]["name"],
+                    selected: 0,
+                  });
+                }
+              }
+              // 否则
+            } else {
+              this.ansList.push(tempAnswerList[i]);
+            }
+          }
+          this.initAnsListStr = JSON.stringify(this.ansList);
+          this.updateSelect();
+        })
+        .catch();
     },
-    updateSelect() {//更新列表
+    updateSelect() {
+      //更新列表
       this.$nextTick(() => {
         for (var i = 0; i < this.questionList.length; i++) {
-          if (this.questionList[i]['questionType'] == 0
-            || this.questionList[i]['questionType'] == 1) {//如果本题是选择题
-            let table = this.questionList[i]['optionList'];
+          if (
+            this.questionList[i]["questionType"] == 0 ||
+            this.questionList[i]["questionType"] == 1
+          ) {
+            //如果本题是选择题
+            let table = this.questionList[i]["optionList"];
 
-            console.log("table", JSON.parse(JSON.stringify(table)))
-            table.forEach(row => {
-              // console.log("正在遍历：", row,row['index'] - 1, this.handleMaterialList[this.currentShowingSubList][row['index'] - 1]['selected'])
-              console.log(i, "正在遍历：", row['index'], JSON.parse(JSON.stringify(this.ansList[i])), this.$refs.regTable)
-              if (this.ansList[i][row['index']]['selected'] == 1) {
-                console.log("发现选中！进：", JSON.parse(JSON.stringify(row)), JSON.parse(JSON.stringify(this.ansList[i])))
+            table.forEach((row) => {
+              if (this.ansList[i][row["index"]]["selected"] == 1) {
                 this.$refs.regTable[i].toggleRowSelection(row, true);
-                console.log("发现选中！出：", JSON.parse(JSON.stringify(row)), JSON.parse(JSON.stringify(this.ansList[i])))
               }
             });
           }
         }
 
-        this.initingSelection = false
-      })
+        this.initingSelection = false;
+      });
     },
     async previousQuestion() {
-
-      if(this.initAnsListStr != JSON.stringify(this.ansList)){
-        await this.$confirm('请问是否需要提交当前答案？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          if (!this.submitAnswers()) {
-            return
-          }
-
-        }).catch(() => {
-        });
+      if (this.initAnsListStr != JSON.stringify(this.ansList)) {
+        await this.$confirm("请问是否需要提交当前答案？", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            if (!this.submitAnswers()) {
+              return;
+            }
+          })
+          .catch(() => {});
       }
-      this.reload()
-      this.getProblemInfo('last')
-      this.reload()
+      this.reload();
+      this.getProblemInfo("last");
+      this.reload();
     },
     async jumpQuestion(index) {
-      console.log("async jumpQuestion(index)", index)
-      console.log("async jumpQuestion(index)", JSON.stringify(this.ansList))
-      console.log("async jumpQuestion(index)", this.initAnsListStr)
-      if(this.initAnsListStr != JSON.stringify(this.ansList)){
-        await this.$confirm('请问是否需要提交当前答案？', '提示', {
-          confirmButtonText: '是',
-          cancelButtonText: '否',
-          type: 'warning'
-        }).then(() => {
-          if (!this.submitAnswers()) {
-            return
-          }
-        }).catch(() => {
-        });
+      if (this.initAnsListStr != JSON.stringify(this.ansList)) {
+        await this.$confirm("请问是否需要提交当前答案？", "提示", {
+          confirmButtonText: "是",
+          cancelButtonText: "否",
+          type: "warning",
+        })
+          .then(() => {
+            if (!this.submitAnswers()) {
+              return;
+            }
+          })
+          .catch(() => {});
       }
 
-
-
-      this.jumpDialogVisible = false
+      this.jumpDialogVisible = false;
       this.$nextTick(() => {
-        this.reload()
-        this.getProblemInfo('jump', index)
-        this.reload()
-      })
+        this.reload();
+        this.getProblemInfo("jump", index);
+        this.reload();
+      });
     },
     async submitAnswers() {
-      console.log("this.ansList", this.ansList, 'this.initingSelection', this.initingSelection)
       var submitAnsList = JSON.parse(JSON.stringify(this.ansList));
       for (var i = 0; i < this.questionList.length; i++) {
-        if (submitAnsList[i] == '' || submitAnsList[i] == []) {
+        if (submitAnsList[i] == "" || submitAnsList[i] == []) {
           this.$message({
-            message: '您尚未填写第' + (i + 1).toString() + '题！',
-            type: 'error'
-          })
-          return false
+            message: "您尚未填写第" + (i + 1).toString() + "题！",
+            type: "error",
+          });
+          return false;
         }
-        if (this.questionList[i]['questionType'] == 0
-          || this.questionList[i]['questionType'] == 1) {//如果题目是选择题先转换形式
-          var tempAns = ''
-          console.log("submitAnsList[i]", i, submitAnsList[i])
+        if (
+          this.questionList[i]["questionType"] == 0 ||
+          this.questionList[i]["questionType"] == 1
+        ) {
+          //如果题目是选择题先转换形式
+          var tempAns = "";
           for (var j = 0; j < submitAnsList[i].length; j++) {
-            if (submitAnsList[i][j]['selected']) {
-              tempAns += submitAnsList[i][j]['name']
+            if (submitAnsList[i][j]["selected"]) {
+              tempAns += submitAnsList[i][j]["name"];
             }
           }
-          submitAnsList[i] = tempAns
+          submitAnsList[i] = tempAns;
         }
-        if (!this.questionList[i]['mustDo'] && submitAnsList[i] == '') {//如果该题目不是必做且用户没做
-          continue
+        if (!this.questionList[i]["mustDo"] && submitAnsList[i] == "") {
+          //如果该题目不是必做且用户没做
+          continue;
         }
-        if (this.questionList[i]['questionType'] == 0
-          || this.questionList[i]['questionType'] == 1) {//如果题目是选择题
-          if (submitAnsList[i].length > this.questionList[i]['maxOptionNum']) {
+        if (
+          this.questionList[i]["questionType"] == 0 ||
+          this.questionList[i]["questionType"] == 1
+        ) {
+          //如果题目是选择题
+          if (submitAnsList[i].length > this.questionList[i]["maxOptionNum"]) {
             this.$message({
-              message: '您的第' + (i + 1).toString() + '题选项过多！',
-              type: 'error'
-            })
-            return false
-          }
-          else if (submitAnsList[i].length < this.questionList[i]['minOptionNum']) {
+              message: "您的第" + (i + 1).toString() + "题选项过多！",
+              type: "error",
+            });
+            return false;
+          } else if (
+            submitAnsList[i].length < this.questionList[i]["minOptionNum"]
+          ) {
             this.$message({
-              message: '您的第' + (i + 1).toString() + '题选项过少！',
-              type: 'error'
-            })
-            return false
+              message: "您的第" + (i + 1).toString() + "题选项过少！",
+              type: "error",
+            });
+            return false;
           }
-        } else if (this.questionList[i]['questionType'] == 2) {//如果题目是填空题
-          if (submitAnsList[i].length > this.questionList[i]['maxOptionNum']) {
+        } else if (this.questionList[i]["questionType"] == 2) {
+          //如果题目是填空题
+          if (submitAnsList[i].length > this.questionList[i]["maxOptionNum"]) {
             this.$message({
-              message: '您的第' + (i + 1).toString() + '题字数过多！',
-              type: 'error'
-            })
-            return false
-          }
-          else if (submitAnsList[i].length < this.questionList[i]['minOptionNum']) {
+              message: "您的第" + (i + 1).toString() + "题字数过多！",
+              type: "error",
+            });
+            return false;
+          } else if (
+            submitAnsList[i].length < this.questionList[i]["minOptionNum"]
+          ) {
             this.$message({
-              message: '您的第' + (i + 1).toString() + '题字数过少！',
-              type: 'error'
-            })
-            return false
+              message: "您的第" + (i + 1).toString() + "题字数过少！",
+              type: "error",
+            });
+            return false;
           }
-        } else if (this.questionList[i]['questionType'] == 3) {//如果题目是框图题
-          var blankNumber = JSON.parse(submitAnsList[i]).length
-          // console.log("submitAnsList", i, submitAnsList)
-          // var tempString = submitAnsList[i]
-          // console.log("tempString", tempString)
-          // console.log("tempString.length", tempString.length)
-          // for (var j = 0; j < tempString.length; j++) {
-          //   if (tempString[j] == '(') {
-          //     blankNumber++
-          //   }
-          // }
-          // console.log("this.questionList[i]['maxOptionNum']", this.questionList)
-          var tempDict = this.questionList[i]
-          // console.log("tempDict",i,tempDict)
-          // console.log("tempDict['maxOptionNum']",tempDict['maxOptionNum'])
+        } else if (this.questionList[i]["questionType"] == 3) {
+          //如果题目是框图题
+          var blankNumber = JSON.parse(submitAnsList[i]).length;
+          var tempDict = this.questionList[i];
 
-          if (blankNumber > tempDict['maxOptionNum']) {
+          if (blankNumber > tempDict["maxOptionNum"]) {
             this.$message({
-              message: '您的第' + (i + 1).toString() + '题图框过多！',
-              type: 'error'
-            })
-            return false
-          }
-          else if (blankNumber < tempDict['minOptionNum']) {
+              message: "您的第" + (i + 1).toString() + "题图框过多！",
+              type: "error",
+            });
+            return false;
+          } else if (blankNumber < tempDict["minOptionNum"]) {
             this.$message({
-              message: '您的第' + (i + 1).toString() + '题图框过少！',
-              type: 'error'
-            })
-            return false
+              message: "您的第" + (i + 1).toString() + "题图框过少！",
+              type: "error",
+            });
+            return false;
           }
         }
       }
-      console.log("submitAnsList", submitAnsList)
-      this.stateList[this.currentIndex]['state'] = true
+      this.stateList[this.currentIndex]["state"] = true;
       this.isFinished = true;
       // 判断是否所有题目都做完了
       for (var stateItem of this.stateList) {
-        if (!stateItem['state']) {
-          this.isFinished = false
-          break
+        if (!stateItem["state"]) {
+          this.isFinished = false;
+          break;
         }
       }
-      console.log("提交前检查：", submitAnsList)
-      axios.post("http://101.42.118.80:8000/submit_answer/", {
-        username: this.username,
-        taskId: this.taskId,
-        ansList: submitAnsList,
-        isFinished: this.isFinished,
-      }).then(res => {
-        this.$message({
-          type: 'success',
-          message: '提交成功!'
-        });
-        console.log("提交成功!", res,this.isFinished)
-        if (this.isFinished) {
-          if (res.data['taskOver']) {
-            this.taskOverDialogVisible = true
-            return
-          }
-          console.log("提交成功!111", this.isTest)
-          if (this.isTest) {
-
-            this.passTest = res.data['passTest']
-            if (this.passTest) {
-              this.getProblemInfo('next')
+      axios
+        .post("http://101.42.118.80:8000/submit_answer/", {
+          username: this.username,
+          taskId: this.taskId,
+          ansList: submitAnsList,
+          isFinished: this.isFinished,
+        })
+        .then((res) => {
+          this.$message({
+            type: "success",
+            message: "提交成功!",
+          });
+          if (this.isFinished) {
+            if (res.data["taskOver"]) {
+              this.taskOverDialogVisible = true;
+              return;
             }
-            this.percentage = (Math.round(res.data['testCorrectRate'] * 10000)) / 100 + '%'
-            this.testResultDialogVisible = true
-            
+            if (this.isTest) {
+              this.passTest = res.data["passTest"];
+              if (this.passTest) {
+                this.getProblemInfo("next");
+              }
+              this.percentage =
+                Math.round(res.data["testCorrectRate"] * 10000) / 100 + "%";
+              this.testResultDialogVisible = true;
+            } else {
+              this.finalSubmitDialogVisible = true;
+            }
           } else {
-            this.finalSubmitDialogVisible = true
+            this.reload();
+            this.getProblemInfo("next");
+            this.reload();
           }
-
-        } else {
-          this.reload()
-          this.getProblemInfo('next')
-          this.reload()
-        }
-      }).catch(error => {
-        console.log(error)
-      })
-    },
-    // async comfirmSubmit() {
-    //   if(this.initAnsListStr != JSON.stringify(this.ansList)){
-    //     await this.$confirm('请问是否需要提交当前答案？', '提示', {
-    //       confirmButtonText: '是',
-    //       cancelButtonText: '否',
-    //       type: 'warning'
-    //     }).then(() => {
-    //       if (!this.submitAnswers()) {
-    //         return
-    //       }
-    //     }).catch(() => {
-    //     });
-    //   }
-    // },
-    async quitPerform() {
-      if(this.initAnsListStr != JSON.stringify(this.ansList)){
-        await this.$confirm('请问是否需要提交当前答案？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          if (!this.submitAnswers()) {
-            return
-          }
-        }).catch(() => {
+        })
+        .catch((error) => {
+          console.log(error);
         });
+    },
+    async quitPerform() {
+      if (this.initAnsListStr != JSON.stringify(this.ansList)) {
+        await this.$confirm("请问是否需要提交当前答案？", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            if (!this.submitAnswers()) {
+              return;
+            }
+          })
+          .catch(() => {});
       }
-      
+
       this.$router.push({
         name: "mine",
         query: {
-          defaultActive: '1'
+          defaultActive: "1",
         },
       });
     },
@@ -803,156 +968,109 @@ export default {
       });
     },
     clickFillBlank(targetIndex, min, max, questionIndex) {
-      console.log("this.materialList[targetIndex]", this.materialList[targetIndex],"this.ansList",this.ansList)
       this.imageLoading = true;
-      this.fillBlankDialogVisible = true
-      console.log("----------",this.materialList[targetIndex])
-      this.currentImageSrc ='http://101.42.118.80:8000' + this.materialList[targetIndex]['filePath'].substr(1)
+      this.fillBlankDialogVisible = true;
+      this.currentImageSrc =
+        "http://101.42.118.80:8000" +
+        this.materialList[targetIndex]["filePath"].substr(1);
       this.imageLoading = false;
-      console.log("this.currentImageSrc", this.currentImageSrc)
-      
-      this.currentMax = max
-      this.currentMin = min
-      console.log("clickFillBlank", JSON.parse(JSON.stringify(this.ansList)), JSON.parse(JSON.stringify(this.ansList[questionIndex])), questionIndex)
-      if (this.ansList[questionIndex] == '') {
-        this.initRects = []
+
+      this.currentMax = max;
+      this.currentMin = min;
+
+      if (this.ansList[questionIndex] == "") {
+        this.initRects = [];
       } else {
-        this.initRects = JSON.parse(this.ansList[questionIndex])
+        this.initRects = JSON.parse(this.ansList[questionIndex]);
       }
-      console.log("this.initRects", JSON.parse(JSON.stringify(this.initRects)))
-      return 
-
-      // axios.get("http://101.42.118.80:8000/perform_problem_material/", {
-      //   params: this.materialList[targetIndex]
-      // }).then((res) => {
-
-      //   const imageFile = this.base64ImgtoFile(res.data["materialImage"]);
-      //   this.currentImageSrc =
-      //     window.webkitURL.createObjectURL(imageFile) ||
-      //     window.URL.createObjectURL(imageFile);
-      //   this.imageLoading = false;
-      //   console.log("this.currentImageSrc", this.currentImageSrc)
-        
-      //   this.currentMax = max
-      //   this.currentMin = min
-      //   console.log("clickFillBlank", JSON.parse(JSON.stringify(this.ansList)), JSON.parse(JSON.stringify(this.ansList[questionIndex])), questionIndex)
-      //   if (this.ansList[questionIndex] == '') {
-      //     this.initRects = []
-      //   } else {
-      //     this.initRects = JSON.parse(this.ansList[questionIndex])
-      //   }
-      //   console.log("this.initRects", JSON.parse(JSON.stringify(this.initRects)))
-
-      // }).catch();
-
-      
-      // console.log("this.materialList[targetIndex]", this.materialList[targetIndex],"this.ansList",this.ansList)
-      
-      
-      // // this.$nextTick(() => {
-      // //   this.currentImageSrc = this.$refs.materialBlock[targetIndex].image.src
-      // // })
-      // this.currentImageSrc = this.$refs.materialBlock[targetIndex].image.src
-      // console.log("this.currentImageSrc", this.currentImageSrc)
-      
-      // this.currentMax = max
-      // this.currentMin = min
-      // console.log("clickFillBlank", JSON.parse(JSON.stringify(this.ansList)), JSON.parse(JSON.stringify(this.ansList[questionIndex])), questionIndex)
-      // if (this.ansList[questionIndex] == '') {
-      //   this.initRects = []
-      // } else {
-      //   this.initRects = JSON.parse(this.ansList[questionIndex])
-      // }
-      // console.log("this.initRects", JSON.parse(JSON.stringify(this.initRects)))
-      // this.fillBlankDialogVisible = true
+      return;
     },
     getFillBlankAns() {
       this.fillBlankDialogVisible = false;
-      var tempAnsList = this.$refs.MyImageFramer.frameRects
+      var tempAnsList = this.$refs.MyImageFramer.frameRects;
 
       for (var rect of tempAnsList) {
-        rect.startX = Math.round(rect.startX)
-        rect.startY = Math.round(rect.startY)
-        rect.width = Math.round(rect.width)
-        rect.height = Math.round(rect.height)
+        rect.startX = Math.round(rect.startX);
+        rect.startY = Math.round(rect.startY);
+        rect.width = Math.round(rect.width);
+        rect.height = Math.round(rect.height);
       }
-      console.log("tempAnsList", tempAnsList)
-      this.ansList[this.currentQuestionIndex] = JSON.stringify(tempAnsList)
+      this.ansList[this.currentQuestionIndex] = JSON.stringify(tempAnsList);
     },
-    getDeletedRow(selection, questionIndex) {//删除项目，由于需要前后对比才能知道删除了哪一项所以需要涉及到judgeList
-      var judgeList = JSON.parse(JSON.stringify(this.ansList[questionIndex]))
-      // console.log("judgeListjudgeListjudgeList",judgeList)
+    getDeletedRow(selection, questionIndex) {
+      //删除项目，由于需要前后对比才能知道删除了哪一项所以需要涉及到judgeList
+      var judgeList = JSON.parse(JSON.stringify(this.ansList[questionIndex]));
       for (var tempRow of selection) {
-        var tempTarget = tempRow['index']
-        judgeList[tempTarget]['selected'] = 0
+        var tempTarget = tempRow["index"];
+        judgeList[tempTarget]["selected"] = 0;
       }
-      // console.log("judgeListjudgeListjudgeList",judgeList)
       var targetIndex = -1;
       for (var tempRow of judgeList) {
-        if (tempRow['selected']) {
-          targetIndex = tempRow['index']
+        if (tempRow["selected"]) {
+          targetIndex = tempRow["index"];
         }
       }
-      console.log("targetIndextargetIndextargetIndex", targetIndex)
-      console.log("lastSelectedListlastSelectedListlastSelectedList", this.lastSelectedList, questionIndex, this.lastSelectedList[questionIndex])
+
       for (var tempRow of this.lastSelectedList[questionIndex]) {
-        if (tempRow['index'] == targetIndex) {
-          return tempRow
+        if (tempRow["index"] == targetIndex) {
+          return tempRow;
         }
       }
-      return
+      return;
     },
-    handleSelectionChange(selection, minOptionNum, maxOptionNum, index) { // section 被选中状态修改后触发事件，根据被选择的数量控制是否还可被选中
-      console.log("jbjbjjbjbjj", selection, minOptionNum, maxOptionNum, index)
+    handleSelectionChange(selection, minOptionNum, maxOptionNum, index) {
+      // section 被选中状态修改后触发事件，根据被选择的数量控制是否还可被选中
       if (this.initingSelection) {
-        return
+        return;
       }
-      console.log("handleSelectionChange", selection, minOptionNum, maxOptionNum, index)
+
       if (selection.length > maxOptionNum) {
         // 如果这个题是单选
         if (minOptionNum == 1 && maxOptionNum == 1) {
           for (var tempRow of this.ansList[index]) {
-            tempRow['selected'] = 0
+            tempRow["selected"] = 0;
           }
-          console.log("// 如果这个题是单选", index, this.ansList[index], selection[1]['index'], this.ansList[index][selection[1]['index']])
-          this.ansList[index][selection[1]['index']]['selected'] = 1
-          this.$refs.regTable[index].toggleRowSelection(selection[0], false)
-          return
+
+          this.ansList[index][selection[1]["index"]]["selected"] = 1;
+          this.$refs.regTable[index].toggleRowSelection(selection[0], false);
+          return;
         }
         this.$message.warning(`最多只能选${maxOptionNum}条！`);
-        this.$refs.regTable[index].toggleRowSelection(selection[selection.length - 1], false)
-        return
+        this.$refs.regTable[index].toggleRowSelection(
+          selection[selection.length - 1],
+          false
+        );
+        return;
       }
-      var lastLen = 0
+      var lastLen = 0;
       for (var tempRow of this.ansList[index]) {
-        if (tempRow['selected']) {
-          lastLen++
+        if (tempRow["selected"]) {
+          lastLen++;
         }
       }
-      if (selection.length < minOptionNum && selection.length < lastLen && minOptionNum < maxOptionNum) {
+      if (
+        selection.length < minOptionNum &&
+        selection.length < lastLen &&
+        minOptionNum < maxOptionNum
+      ) {
         this.$message.warning(`最少需要选${minOptionNum}条！`);
-        // var targetRow = this.getDeletedRow(selection, index)
-        // console.log("targetRowtargetRowtargetRow",targetRow)
-        // this.$refs.regTable[index].toggleRowSelection(targetRow)
-        // return
       }
-      for (var tempRow of this.ansList[index]) {////啊啊啊啊啊啊啊啊啊啊阿啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊阿
-        tempRow['selected'] = 0
+      for (var tempRow of this.ansList[index]) {
+        tempRow["selected"] = 0;
       }
       for (var tempRow of selection) {
-        this.ansList[index][tempRow['index']]['selected'] = 1
+        this.ansList[index][tempRow["index"]]["selected"] = 1;
       }
-      this.lastSelectedList[index] = selection
-
-    }
-  }
-}
+      this.lastSelectedList[index] = selection;
+    },
+  },
+};
 </script>
 
 <style scoped>
 /* 隐藏多选框 */
 .selection-table /deep/ .el-table__header-wrapper .el-checkbox {
-  display: none
+  display: none;
 }
 
 .header-style {
@@ -1057,31 +1175,4 @@ export default {
     width: 85px;
   }
 }
-/*.header-style{
-    border-radius: 5px;
-    box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
-    height: 100px;
-    padding: 20px 20px 20px 40px;
-  }
-  .perform-task-header-style{
-    border-radius: 5px;
-    box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
-    height: 100px;
-    padding: 20px 20px 20px 40px;
-  }
-  .header-breadcrumb{
-    margin:0 0 10px 0;
-  }
-  .header-title{
-    float:left;
-    font-size:20px;
-    font-weight:bold;
-  }
-  .main-style{
-    padding: 20px 20px 20px 40px;
-    margin-top: 20px;
-    border-radius: 5px;
-    box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.315);
-    height:95%
-  }*/
 </style>

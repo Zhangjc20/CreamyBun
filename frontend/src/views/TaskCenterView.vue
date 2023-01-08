@@ -10,7 +10,12 @@
     </el-header>
     <el-container class="main-area">
       <el-aside class="left-menu-area" id="left-menu">
-        <div v-if="showLeft" @click="changeShow"  class="opacity-box" style="margin-bottom: 1rem;cursor: pointer;">
+        <div
+          v-if="showLeft"
+          @click="changeShow"
+          class="opacity-box"
+          style="margin-bottom: 1rem; cursor: pointer"
+        >
           <el-icon><Hide /></el-icon
           ><span style="font-size: 0.8rem; margin-left: 0.2rem"
             >隐藏侧边栏</span
@@ -218,8 +223,13 @@
           ></CustomButton>
         </div>
       </el-aside>
-      <el-main style="overflow:scroll">
-        <div v-if="!showLeft" @click="changeShow" class="opacity-box" style="position:absolute;z-index:99;cursor: pointer;">
+      <el-main style="overflow: scroll">
+        <div
+          v-if="!showLeft"
+          @click="changeShow"
+          class="opacity-box"
+          style="position: absolute; z-index: 99; cursor: pointer"
+        >
           <el-icon><View /></el-icon
           ><span style="font-size: 0.8rem; margin-left: 0.2rem"
             >显示侧边栏</span
@@ -249,7 +259,7 @@
               </el-input>
             </div>
           </el-header>
-          <div style="margin-top: 24px;width:100%;">
+          <div style="margin-top: 24px; width: 100%">
             <TaskPage
               :type="0"
               ref="taskPage"
@@ -453,7 +463,7 @@ export default {
 <style scoped>
 @media (min-width: 0px) and (max-width: 768px) {
   .main-box {
-    width:1000px;
+    width: 1200px;
   }
 }
 @media (min-width: 768px) {

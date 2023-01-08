@@ -111,7 +111,7 @@ export default {
             });
             if (res.data["type"] === "admin") {
               localStorage.setItem("adminAuth", true);
-              localStorage.setItem("adminToken",res.data['adminToken'])
+              localStorage.setItem("adminToken", res.data["adminToken"]);
               this.$router.push({
                 name: "admin",
               });
@@ -119,8 +119,7 @@ export default {
             }
             localStorage.setItem("logined", "true");
             localStorage.setItem("username", this.form.username);
-            localStorage.setItem('login_jwt',res.data['jwt']);
-            console.log("jwt:",res.data['jwt'])
+            localStorage.setItem("login_jwt", res.data["jwt"]);
             this.$router.push({
               name: "mine",
               query: {
@@ -144,7 +143,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-@media (min-width: 0px) and (max-width:768px) {
+@media (min-width: 0px) and (max-width: 768px) {
   .main-box {
     width: 90%;
     height: 400px;
@@ -170,7 +169,7 @@ export default {
     bottom: 0;
     margin: auto;
     border-radius: 15px;
-  } 
+  }
 }
 .el-container {
   height: 100%;

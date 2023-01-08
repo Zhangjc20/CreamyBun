@@ -15,7 +15,7 @@
         "
       >
         <template #placeholder>
-          <div class="image-slot">             
+          <div class="image-slot">
             <el-image
               style="width: 84px; height: 75px"
               fit="cover"
@@ -26,7 +26,7 @@
           </div>
         </template>
         <template #error>
-          <div class="image-slot">             
+          <div class="image-slot">
             <el-image
               style="width: 84px; height: 75px"
               fit="cover"
@@ -81,7 +81,8 @@ export default {
       src: this.props.src
         ? this.props.src
         : require("@/assets/images/recognize.jpeg"),
-      hasOver: this.props.taskStatus == 3 || this.props.taskStatus == 5? true : false,
+      hasOver:
+        this.props.taskStatus == 3 || this.props.taskStatus == 5 ? true : false,
     };
   },
   methods: {},
@@ -91,7 +92,8 @@ export default {
     this.src = this.props.src
       ? this.props.src
       : require("@/assets/images/recognize.jpeg");
-    this.hasOver = this.props.taskStatus == 3 || this.props.taskStatus == 5? true : false;
+    this.hasOver =
+      this.props.taskStatus == 3 || this.props.taskStatus == 5 ? true : false;
   },
 };
 </script>

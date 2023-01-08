@@ -155,7 +155,16 @@
         </template>
       </el-popover>
     </div>
-    <div v-if="!itemsEmpty()" style="width:90%;display: flex;align-items: center;flex-direction: column;min-width:1100px;">
+    <div
+      v-if="!itemsEmpty()"
+      style="
+        width: 90%;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        min-width: 1100px;
+      "
+    >
       <el-row class="task-box">
         <el-col :span="4.8" v-for="item in items.slice(0, 5)" :key="item.index">
           <SingleTask
@@ -428,33 +437,9 @@ export default {
       //chosenDataType:int 1:所有 2：图片 3：文本 4：音频  5：视频
       //chosenProblemType:int 1:所有 2：单选 3：多选 4：填空 5：框图 6：混合
       this.loading = true;
-      console.log('fwehgrauosohwuieswaogihp;',{
-            //onlyLevel:bool false:所有 true:只选入满足做题者等级的
-            //donutType:int 1:默认 2:从多到少 3:从少到多
-            //newType:int 1:默认 2：最新发布 3：最早结束
-            //hardType:int 1:默认 2：从难到易 3：从易到难
-            //chosenDataType:int 1:所有 2：图片 3：文本 4：音频  5：视频 6：混合
-            //chosenProblemType:int 1:所有 2：单选 3：多选 4：填空 5：框图 6：混合
-            username: this.username,
-            searchInput: searchInput,
-            onlyLevel: onlyLevel,
-            donutType: donutType,
-            overType: overType,
-            newType: newType,
-            hardType: hardType,
-            chosenDataType: chosenDataType,
-            chosenProblemType: chosenProblemType,
-            pageNumber: 1,
-          })
       axios
         .get("http://101.42.118.80:8000/get_sorted_tasks/", {
           params: {
-            //onlyLevel:bool false:所有 true:只选入满足做题者等级的
-            //donutType:int 1:默认 2:从多到少 3:从少到多
-            //newType:int 1:默认 2：最新发布 3：最早结束
-            //hardType:int 1:默认 2：从难到易 3：从易到难
-            //chosenDataType:int 1:所有 2：图片 3：文本 4：音频  5：视频 6：混合
-            //chosenProblemType:int 1:所有 2：单选 3：多选 4：填空 5：框图 6：混合
             username: this.username,
             searchInput: searchInput,
             onlyLevel: onlyLevel,
@@ -476,7 +461,6 @@ export default {
             type: "success",
             message: "筛选成功",
           });
-          console.log(this.items);
           this.loading = false;
         })
         .catch((err) => {
@@ -519,7 +503,7 @@ export default {
               username: this.username, //String 用户名
               sortChoice: this.sortChoice, //int 1是所有 2是正在进行，3是已结束
               pageNumber: page, //int页码
-              jwt:localStorage.getItem('login_jwt')
+              jwt: localStorage.getItem("login_jwt"),
             },
           })
           .then((res) => {
@@ -540,7 +524,7 @@ export default {
               username: this.username, //String 用户名
               sortChoice: this.sortChoice, //int 1是所有，2是暂未发布 3是发布但未结束 4是已结束
               pageNumber: page, //int页码,
-              jwt:localStorage.getItem('login_jwt')
+              jwt: localStorage.getItem("login_jwt"),
             },
           })
           .then((res) => {
@@ -583,7 +567,7 @@ export default {
               username: this.username, //String 用户名
               sortChoice: value, //int 1是所有 2是正在进行，3是已结束
               pageNumber: 1, //int页码,
-              jwt:localStorage.getItem('login_jwt')
+              jwt: localStorage.getItem("login_jwt"),
             },
           })
           .then((res) => {
@@ -604,7 +588,7 @@ export default {
               username: this.username, //String 用户名
               sortChoice: value, //int 1是所有，2是暂未发布 3是发布但未结束 4是已结束
               pageNumber: 1, //int页码,
-              jwt:localStorage.getItem('login_jwt')
+              jwt: localStorage.getItem("login_jwt"),
             },
           })
           .then((res) => {
@@ -662,7 +646,7 @@ export default {
               username: this.username, //String 用户名
               sortChoice: this.sortChoice, //int 1是所有 2是正在进行，3是已结束
               pageNumber: 1, //int页码,
-              jwt:localStorage.getItem('login_jwt')
+              jwt: localStorage.getItem("login_jwt"),
             },
           })
           .then((res) => {
@@ -683,7 +667,7 @@ export default {
               username: this.username, //String 用户名
               sortChoice: this.sortChoice, //int 1是所有，2是暂未发布 3是发布但未结束 4是已结束
               pageNumber: 1, //int页码,
-              jwt:localStorage.getItem('login_jwt')
+              jwt: localStorage.getItem("login_jwt"),
             },
           })
           .then((res) => {

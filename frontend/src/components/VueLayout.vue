@@ -29,7 +29,6 @@ export default {
         const self = this;
         window.addEventListener("resize", () =>{   //绑定的全局事件要在组件销毁时解除绑定
             self.init();
-            // self.updateScale()
         });
         this.show = true
     },
@@ -55,7 +54,6 @@ export default {
             this.originalWidth = window.screen.width;
             this.originalHeight = window.screen.height;
             
-            // console.log(this.width, this.height, this.originalWidth, this.originalHeight);
             this.updateScale()
         },
         updateSize() {  //给外层容器设置宽高
@@ -68,11 +66,6 @@ export default {
             }
         },
         updateScale(){   //控制外层容器缩放
-            // const currentWidth = document.body.clientWidth;
-            // const currentHeight = document.body.clientHeight;
-
-            // const realWidth = this.width || this.originalWidth;
-            // const realHeight = this.height || this.originalHeight;
 
             const widthScale = 1;
             const heightScale = 1;

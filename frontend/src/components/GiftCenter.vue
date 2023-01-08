@@ -88,7 +88,7 @@ export default {
           axios
             .get("http://101.42.118.80:8000/top_up/", {
               params: {
-                username: localStorage.getItem('username'),
+                username: localStorage.getItem("username"),
                 money: this.donutInput,
               },
             })
@@ -115,7 +115,10 @@ export default {
         });
         return;
       }
-      if(this.getEqualDonuts(this.valueInput, this.donutToMoney)>this.donutNumber){
+      if (
+        this.getEqualDonuts(this.valueInput, this.donutToMoney) >
+        this.donutNumber
+      ) {
         ElMessage({
           type: "error",
           message: "您的甜甜圈余额不足",
@@ -140,20 +143,19 @@ export default {
           axios
             .get("http://101.42.118.80:8000/withdraw_money/", {
               params: {
-                username: localStorage.getItem('username'),
+                username: localStorage.getItem("username"),
                 money: this.valueInput,
               },
             })
             .then((res) => {
               if (res.data["status"] === "ok") {
-                if(res.data['withdrawStatus']== true){
+                if (res.data["withdrawStatus"] == true) {
                   ElMessage({
                     type: "success",
                     message: "兑换成功",
                   });
                   this.donutNumber = res.data["donutNum"];
-                }
-                else{
+                } else {
                   ElMessage({
                     type: "error",
                     message: "您的甜甜圈余额不足",
@@ -169,7 +171,7 @@ export default {
     axios
       .get("http://101.42.118.80:8000/get_user_bonus_info/", {
         params: {
-          username: localStorage.getItem('username'),
+          username: localStorage.getItem("username"),
         },
       })
       .then((res) => {

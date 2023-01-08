@@ -22,14 +22,14 @@
   </div>
   <span v-if="login">
     <div class="nav-right">
-    <el-avatar
-      :src="imageUrl ? imageUrl : require('@/assets/images/avatar.jpeg')"
-      class="avatar"
-      @click="clickMine"
-    ></el-avatar>
-    <span class="user-area">
-      <span class="user-center" @click="clickMine">个人中心</span>
-    </span>
+      <el-avatar
+        :src="imageUrl ? imageUrl : require('@/assets/images/avatar.jpeg')"
+        class="avatar"
+        @click="clickMine"
+      ></el-avatar>
+      <span class="user-area">
+        <span class="user-center" @click="clickMine">个人中心</span>
+      </span>
     </div>
   </span>
   <span class="log-buttons" v-else>
@@ -106,7 +106,7 @@ export default {
 </script>
 
 <style scoped>
-@media (min-width: 0px) and (max-width:768px) {
+@media (min-width: 0px) and (max-width: 768px) {
   .logo {
     width: 36px;
     height: 30px;
@@ -150,7 +150,7 @@ export default {
     top: 0;
     right: 0;
     height: 0px;
-    width:0;
+    width: 0;
     margin-right: 0px;
   }
   .avatar {
@@ -169,10 +169,10 @@ export default {
     margin-left: 4%;
     display: flex;
     flex-direction: column;
-    height:100%;
+    height: 100%;
   }
   .el-button--primary {
-    height:23px;
+    height: 23px;
     font-size: 0.6rem;
     background: #5eabbf !important;
     border-color: #5eabbf !important;
@@ -182,7 +182,7 @@ export default {
     margin-top: 12%;
     margin-bottom: 6%;
   }
-  .el-button+.el-button{
+  .el-button + .el-button {
     margin-left: 0;
   }
 }
@@ -237,8 +237,8 @@ export default {
     cursor: pointer;
   }
   .log-buttons {
-    position:absolute;
-    right:0;
+    position: absolute;
+    right: 0;
     float: right;
     line-height: 60px;
     margin-right: 4%;
@@ -252,12 +252,12 @@ export default {
     margin-right: 2rem;
   }
 }
-.nav-right{
+.nav-right {
   position: absolute;
-  top:0;
-  right:0;
+  top: 0;
+  right: 0;
   display: flex;
-  width:18%;
+  width: 18%;
 }
 .user-center {
   line-height: 60px;
@@ -274,10 +274,6 @@ export default {
 .el-button--medium {
   width: 80px;
 }
-
-
-
-
 
 .el-menu {
   border-radius: 0;

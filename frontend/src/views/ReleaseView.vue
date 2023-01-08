@@ -1,11 +1,21 @@
 <template>
   <el-container class="container">
     <el-header class="header-style">
-      <NavBar :login="true" activeItem="3" :username="username" :imageUrl="image.src"></NavBar>
+      <NavBar
+        :login="true"
+        activeItem="3"
+        :username="username"
+        :imageUrl="image.src"
+      ></NavBar>
     </el-header>
     <el-container>
       <el-aside class="left-menu-area" id="left-menu">
-        <div v-if="showLeft" @click="changeShow" class="opacity-box" style="margin-bottom: 1rem;cursor: pointer;">
+        <div
+          v-if="showLeft"
+          @click="changeShow"
+          class="opacity-box"
+          style="margin-bottom: 1rem; cursor: pointer"
+        >
           <el-icon><Hide /></el-icon
           ><span style="font-size: 0.8rem; margin-left: 0.2rem"
             >隐藏侧边栏</span
@@ -39,37 +49,227 @@
             >
           </el-sub-menu>
         </el-menu>
-        <div style="position: fixed; bottom: 0px;left: 20px;width: 250px;height: 250px;" class="jump-box">
-          <div style="position: absolute; bottom: 20px;left: 0px;width: 20px;height: 150px;">
-            <div style="position: absolute; bottom: 0px;border-top: 20px solid #5EABBF;border-left: 20px solid transparent;"></div>
-            <div style="background-color:#5EABBF;position: absolute; bottom: 20px;width: 20px;height: 110px;"></div>
-            <div style="position: absolute; bottom: 130px;border-bottom: 20px solid #5EABBF;border-left: 20px solid transparent;"></div>
+        <div
+          style="
+            position: fixed;
+            bottom: 0px;
+            left: 20px;
+            width: 250px;
+            height: 250px;
+          "
+          class="jump-box"
+        >
+          <div
+            style="
+              position: absolute;
+              bottom: 20px;
+              left: 0px;
+              width: 20px;
+              height: 150px;
+            "
+          >
+            <div
+              style="
+                position: absolute;
+                bottom: 0px;
+                border-top: 20px solid #5eabbf;
+                border-left: 20px solid transparent;
+              "
+            ></div>
+            <div
+              style="
+                background-color: #5eabbf;
+                position: absolute;
+                bottom: 20px;
+                width: 20px;
+                height: 110px;
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                bottom: 130px;
+                border-bottom: 20px solid #5eabbf;
+                border-left: 20px solid transparent;
+              "
+            ></div>
           </div>
-          <div style="position: absolute; bottom: 10px;left: 40px;width: 25px;height: 200px;">
-            <div style="position: absolute; bottom: 0px;border-top: 25px solid #FBE484;border-right: 25px solid transparent;"></div>
-            <div style="background-color:#FBE484;position: absolute; bottom: 25px;width: 25px;height: 150px;"></div>
-            <div style="position: absolute; bottom: 175px;border-bottom: 25px solid #FBE484;border-right: 25px solid transparent;"></div>
+          <div
+            style="
+              position: absolute;
+              bottom: 10px;
+              left: 40px;
+              width: 25px;
+              height: 200px;
+            "
+          >
+            <div
+              style="
+                position: absolute;
+                bottom: 0px;
+                border-top: 25px solid #fbe484;
+                border-right: 25px solid transparent;
+              "
+            ></div>
+            <div
+              style="
+                background-color: #fbe484;
+                position: absolute;
+                bottom: 25px;
+                width: 25px;
+                height: 150px;
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                bottom: 175px;
+                border-bottom: 25px solid #fbe484;
+                border-right: 25px solid transparent;
+              "
+            ></div>
           </div>
-          <div style="position: absolute; bottom: 65px;left: 200px;width: 10px;height: 80px;">
-            <div style="position: absolute; bottom: 0px;border-top: 10px solid #5EABBF;border-right: 10px solid transparent;"></div>
-            <div style="background-color:#5EABBF;position: absolute; bottom: 10px;width: 10px; height: 60px;"></div>
-            <div style="position: absolute; bottom: 70px;border-bottom: 10px solid #5EABBF;border-right: 10px solid transparent;"></div>
+          <div
+            style="
+              position: absolute;
+              bottom: 65px;
+              left: 200px;
+              width: 10px;
+              height: 80px;
+            "
+          >
+            <div
+              style="
+                position: absolute;
+                bottom: 0px;
+                border-top: 10px solid #5eabbf;
+                border-right: 10px solid transparent;
+              "
+            ></div>
+            <div
+              style="
+                background-color: #5eabbf;
+                position: absolute;
+                bottom: 10px;
+                width: 10px;
+                height: 60px;
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                bottom: 70px;
+                border-bottom: 10px solid #5eabbf;
+                border-right: 10px solid transparent;
+              "
+            ></div>
           </div>
-          <div style="position: absolute; bottom: 20px;left: 230px;width: 20px;height: 150px;">
-            <div style="position: absolute; bottom: 0px;border-top: 20px solid #FBE484;border-left: 20px solid transparent;"></div>
-            <div style="background-color:#FBE484;position: absolute; bottom: 20px;width: 20px;height: 110px;"></div>
-            <div style="position: absolute; bottom: 130px;border-bottom: 20px solid #FBE484;border-left: 20px solid transparent;"></div>
+          <div
+            style="
+              position: absolute;
+              bottom: 20px;
+              left: 230px;
+              width: 20px;
+              height: 150px;
+            "
+          >
+            <div
+              style="
+                position: absolute;
+                bottom: 0px;
+                border-top: 20px solid #fbe484;
+                border-left: 20px solid transparent;
+              "
+            ></div>
+            <div
+              style="
+                background-color: #fbe484;
+                position: absolute;
+                bottom: 20px;
+                width: 20px;
+                height: 110px;
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                bottom: 130px;
+                border-bottom: 20px solid #fbe484;
+                border-left: 20px solid transparent;
+              "
+            ></div>
           </div>
-          <div style="position: absolute; bottom: 140px;left: 170px;width: 15px;height: 30px;">
-            <div style="position: absolute; bottom: 0px;border-top: 15px solid #FBE484;border-left: 15px solid transparent;"></div>
-            <div style="position: absolute; bottom: 15px;border-bottom: 15px solid #FBE484;border-left: 15px solid transparent;"></div>
+          <div
+            style="
+              position: absolute;
+              bottom: 140px;
+              left: 170px;
+              width: 15px;
+              height: 30px;
+            "
+          >
+            <div
+              style="
+                position: absolute;
+                bottom: 0px;
+                border-top: 15px solid #fbe484;
+                border-left: 15px solid transparent;
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                bottom: 15px;
+                border-bottom: 15px solid #fbe484;
+                border-left: 15px solid transparent;
+              "
+            ></div>
           </div>
-          <div style="position: absolute; bottom: 150px;left: 90px;width: 15px;height: 30px;">
-            <div style="position: absolute; bottom: 0px;border-top: 15px solid #5EABBF;border-right: 15px solid transparent;"></div>
-            <div style="position: absolute; bottom: 15px;border-bottom: 15px solid #5EABBF;border-right: 15px solid transparent;"></div>
+          <div
+            style="
+              position: absolute;
+              bottom: 150px;
+              left: 90px;
+              width: 15px;
+              height: 30px;
+            "
+          >
+            <div
+              style="
+                position: absolute;
+                bottom: 0px;
+                border-top: 15px solid #5eabbf;
+                border-right: 15px solid transparent;
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                bottom: 15px;
+                border-bottom: 15px solid #5eabbf;
+                border-right: 15px solid transparent;
+              "
+            ></div>
           </div>
-          <div style="position: absolute; bottom: 20px;left: 90px;width: 250px;height: 250px;">
-            <div style="flex-direction: column;position:absolute;bottom: 0px;margin-left: auto;margin-right: auto;text-align:center ">
+          <div
+            style="
+              position: absolute;
+              bottom: 20px;
+              left: 90px;
+              width: 250px;
+              height: 250px;
+            "
+          >
+            <div
+              style="
+                flex-direction: column;
+                position: absolute;
+                bottom: 0px;
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+              "
+            >
               <el-image
                 style="width: 88px; height: 80px"
                 fit="cover"
@@ -83,19 +283,24 @@
       </el-aside>
       <el-main class="main-style">
         <div class="main-box">
-        <div v-if="!showLeft" @click="changeShow" class="opacity-box" style="position:absolute;z-index:99;cursor: pointer;">
-          <el-icon><View /></el-icon
-          ><span style="font-size: 0.8rem; margin-left: 0.2rem"
-            >显示侧边栏</span
+          <div
+            v-if="!showLeft"
+            @click="changeShow"
+            class="opacity-box"
+            style="position: absolute; z-index: 99; cursor: pointer"
           >
-        </div>
-        <!-- <component :is="show_content"></component> -->
-        <ReleaseData
-          :login="true"
-          :username="username"
-          :materialType="materialType"
-        ></ReleaseData>
-        <!-- <ImageUploadCopy /> -->
+            <el-icon><View /></el-icon
+            ><span style="font-size: 0.8rem; margin-left: 0.2rem"
+              >显示侧边栏</span
+            >
+          </div>
+          <!-- <component :is="show_content"></component> -->
+          <ReleaseData
+            :login="true"
+            :username="username"
+            :materialType="materialType"
+          ></ReleaseData>
+          <!-- <ImageUploadCopy /> -->
         </div>
       </el-main>
     </el-container>
@@ -114,18 +319,18 @@ export default {
   },
   data() {
     return {
-      image:{
-        src:"",
-        type:""
+      image: {
+        src: "",
+        type: "",
       },
       show_content: "MineInfoView",
       materialType: 0,
       username: "",
-      showLeft:true,
+      showLeft: true,
     };
   },
   methods: {
-    changeShow(){
+    changeShow() {
       if (this.showLeft) {
         let item = document.getElementById("left-menu");
         item.style.left = "-" + String(item.offsetWidth) + "px";
@@ -159,38 +364,38 @@ export default {
     },
   },
   mounted() {
-    if (localStorage.getItem('username')) {
-      this.username = localStorage.getItem('username');
+    if (localStorage.getItem("username")) {
+      this.username = localStorage.getItem("username");
     }
-    if(!localStorage.getItem('avatar')){
-      axios.get('http://101.42.118.80:8000/get_avatar/',{
-        params:{
-          username:this.username
-        }
-      })
-      .then((res)=>{
-        if(res.data['status']==='ok'){
-          if(res.data['avatar']){
+    if (!localStorage.getItem("avatar")) {
+      axios
+        .get("http://101.42.118.80:8000/get_avatar/", {
+          params: {
+            username: this.username,
+          },
+        })
+        .then((res) => {
+          if (res.data["status"] === "ok") {
+            if (res.data["avatar"]) {
               this.image.src = "data:image/png;base64," + res.data["avatar"];
               localStorage.setItem("avatar", this.image.src);
             }
-        }
-      })
-    }
-    else{
-      this.image.src = localStorage.getItem('avatar');
+          }
+        });
+    } else {
+      this.image.src = localStorage.getItem("avatar");
     }
   },
 };
 </script>
 
 <style scoped>
-@media (min-width: 0px) and (max-width:768px) {
-  .el-aside{
-    width:50%;
+@media (min-width: 0px) and (max-width: 768px) {
+  .el-aside {
+    width: 50%;
   }
   .main-box {
-    width:1100px;
+    width: 1100px;
   }
   .jump-box {
     display: none;

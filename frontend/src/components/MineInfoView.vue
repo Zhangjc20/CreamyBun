@@ -252,11 +252,9 @@ export default {
         )
       ) {
         this.emailRight = true;
-        console.log("asd");
         callback();
       } else {
         this.emailRight = false;
-        console.log("asasdfasd");
         callback(new Error("邮箱格式不合法"));
       }
     };
@@ -487,7 +485,7 @@ export default {
                   type: "success",
                   message: "修改成功",
                 });
-                localStorage.setItem('username',this.changeForm.username)
+                localStorage.setItem("username", this.changeForm.username);
                 this.$emit("changeUsername", res.data["newUsername"]);
                 this.$router.push({
                   name: "mine",
@@ -538,7 +536,6 @@ export default {
               },
             })
             .then((res) => {
-              console.log(res);
               //考虑是否和当前邮箱一样
               if (res.data["status"] === "ok") {
                 ElMessage({
@@ -580,8 +577,6 @@ export default {
                                 message: "邮箱修改成功",
                               });
                               this.email = this.codeEmail;
-                              console.log(this.codeEmail);
-                              console.log(this.email);
                             } else {
                               ElMessage({
                                 type: "error",
@@ -688,7 +683,7 @@ export default {
       .get("http://101.42.118.80:8000/get_user_basic_info/", {
         params: {
           username: localStorage.getItem("username"),
-          jwt:localStorage.getItem('login_jwt')
+          jwt: localStorage.getItem("login_jwt"),
         },
       })
       .then((res) => {

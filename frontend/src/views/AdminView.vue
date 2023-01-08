@@ -72,20 +72,20 @@ export default {
     AdminSettings,
     ChangeParams,
     FeedbackManagerView,
-},
+  },
   data() {
     return {
       showContent: "TaskPage",
     };
   },
   methods: {
-    checkDetail(curTaskId){
+    checkDetail(curTaskId) {
       this.$router.push({
-        name:'taskdetail',
-        query:{
-          id:curTaskId,
-          mode:1,
-        }
+        name: "taskdetail",
+        query: {
+          id: curTaskId,
+          mode: 1,
+        },
       });
     },
     clickLeftMenu(val) {
@@ -109,7 +109,6 @@ export default {
   mounted() {
     if (this.$route.query.username) {
       this.username = this.$route.query.username;
-      console.log(this.username);
     }
     if (this.$route.query.imageSrc) {
       this.image.src = this.$route.query.imageSrc;

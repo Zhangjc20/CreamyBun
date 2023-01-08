@@ -38,7 +38,7 @@
 <script>
 import CustomButton from "@/components/CustomButton.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import axios from 'axios';
+import axios from "axios";
 export default {
   name: "SettingView",
   components: {
@@ -50,8 +50,8 @@ export default {
     };
   },
   methods: {
-    handleRadio(val){
-      localStorage.setItem('defaultMine',val);
+    handleRadio(val) {
+      localStorage.setItem("defaultMine", val);
     },
     handleClickLogout() {
       //退出登录按钮触发函数
@@ -62,31 +62,30 @@ export default {
       })
         .then(() => {
           axios
-        .get("http://101.42.118.80:8000/log_out/", {
-          params: {
-            username: localStorage.getItem("username"),
-          },
-        })
-        .then((res)=>{
-          if(res.data['status']=='ok'){
-            localStorage.setItem("logined", "false");
-            localStorage.removeItem("avatar");
-            localStorage.removeItem("username");
-            localStorage.removeItem("defaultMine");
-            localStorage.removeItem("login_jwt");
-            ElMessage({
-              type: "success",
-              message: "退出登录成功",
+            .get("http://101.42.118.80:8000/log_out/", {
+              params: {
+                username: localStorage.getItem("username"),
+              },
+            })
+            .then((res) => {
+              if (res.data["status"] == "ok") {
+                localStorage.setItem("logined", "false");
+                localStorage.removeItem("avatar");
+                localStorage.removeItem("username");
+                localStorage.removeItem("defaultMine");
+                localStorage.removeItem("login_jwt");
+                ElMessage({
+                  type: "success",
+                  message: "退出登录成功",
+                });
+                this.$router.push({ name: "home" });
+              } else {
+                ElMessage({
+                  type: "error",
+                  message: "退出登录失败",
+                });
+              }
             });
-            this.$router.push({ name: "home" });
-          }
-          else{
-            ElMessage({
-              type: "error",
-              message: "退出登录失败",
-            });
-          }
-        })
         })
         .catch(() => {
           ElMessage({
@@ -96,11 +95,11 @@ export default {
         });
     },
   },
-  beforeMount(){
-    if(localStorage.getItem('defaultMine')){
-      this.defaultMine = Number(localStorage.getItem('defaultMine'));
+  beforeMount() {
+    if (localStorage.getItem("defaultMine")) {
+      this.defaultMine = Number(localStorage.getItem("defaultMine"));
     }
-  }
+  },
 };
 </script>
 

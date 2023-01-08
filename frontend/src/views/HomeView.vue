@@ -298,7 +298,7 @@ export default {
   :deep .el-radio-button__inner {
     font-size: 0.6rem;
   }
-  .image{
+  .image {
     width: 100%;
   }
   .carousel-item-title {
@@ -317,7 +317,7 @@ export default {
     width: 100%;
   }
   :deep .el-tag__content {
-    font-size:5px;
+    font-size: 5px;
   }
   .carousel-item-content {
     text-align: left;
@@ -325,14 +325,14 @@ export default {
     margin: 4px 0 0 10px;
   }
   .carousel-box {
-    height:160px;
+    height: 160px;
     overflow: hidden;
   }
 }
 /* 大屏幕（大桌面显示器，大于等于 1200px） */
 @media (min-width: 768px) {
   .carousel-box {
-    height:300px;
+    height: 300px;
   }
   .custom-box {
     border-radius: 20px;
@@ -382,7 +382,7 @@ export default {
     color: #5eabbf;
     font-size: 32px;
   }
-  .image{
+  .image {
     width: 360px;
     height: 280px;
   }

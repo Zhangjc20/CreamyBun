@@ -1,7 +1,12 @@
 <template>
   <el-container class="container">
     <el-header class="header-style">
-      <NavBar :login="true" activeItem="5" :username="username" :imageUrl="image.src"></NavBar>
+      <NavBar
+        :login="true"
+        activeItem="5"
+        :username="username"
+        :imageUrl="image.src"
+      ></NavBar>
     </el-header>
     <el-main class="main-style">
       <div class="feedback-box">
@@ -38,13 +43,25 @@
           </el-row>
           <el-row>
             <div>
-              <button id="select_img_button" @click="select_img_button_onclick">选择图片</button>
+              <button id="select_img_button" @click="select_img_button_onclick">
+                选择图片
+              </button>
             </div>
           </el-row>
           <el-row>
-            <input type='file' id="inputImgFile" style="display:none" accept="image/*"  @change="inputImgFile_onchange"/>
+            <input
+              type="file"
+              id="inputImgFile"
+              style="display: none"
+              accept="image/*"
+              @change="inputImgFile_onchange"
+            />
             <!-- 预览图片S -->
-            <el-image id="show_img" :src="require('@/assets/images/logo.png')" style="width:180px;height:160px;"/>
+            <el-image
+              id="show_img"
+              :src="require('@/assets/images/logo.png')"
+              style="width: 180px; height: 160px"
+            />
             <!-- 预览图片E -->
           </el-row>
           <el-row class="row2">
@@ -60,7 +77,11 @@
           </el-row>
         </div>
         <div class="feedback-title-outer">
-          <CustomButton title="提交反馈" fontSize="18px" @click="submitFeedback"></CustomButton>
+          <CustomButton
+            title="提交反馈"
+            fontSize="18px"
+            @click="submitFeedback"
+          ></CustomButton>
         </div>
         <div class="feedback-title-outer">
           <span class="feedback-title">联系信息</span>
@@ -79,19 +100,19 @@
 // @ is an alias to /src
 import NavBar from "@/components/NavBar.vue";
 import CustomButton from "@/components/CustomButton.vue";
-import { ElMessage } from 'element-plus';
+import { ElMessage } from "element-plus";
 import axios from "axios";
 export default {
   name: "HelpView",
   components: {
     NavBar,
-    CustomButton
+    CustomButton,
   },
   data() {
     return {
-      image:{
-        src:"",
-        type:""
+      image: {
+        src: "",
+        type: "",
       },
       imageUrl: "",
       textarea: "",
@@ -118,9 +139,10 @@ export default {
     };
   },
   methods: {
-    select_img_button_onclick(){
-    var ie = navigator.appName == "Microsoft Internet Explorer" ? true : false;
-    var inputImgFile = document.getElementById("inputImgFile");
+    select_img_button_onclick() {
+      var ie =
+        navigator.appName == "Microsoft Internet Explorer" ? true : false;
+      var inputImgFile = document.getElementById("inputImgFile");
 
       if (ie) {
         inputImgFile.click();
@@ -130,41 +152,48 @@ export default {
         inputImgFile.dispatchEvent(a);
       }
     },
-    inputImgFile_onchange()
-    {
-    var inputImgFile = document.getElementById("inputImgFile");
-    var show_img = document.getElementById("show_img");
-    var my_data = inputImgFile.files[0];
-    this.imageUrl = inputImgFile.files[0];
-    // 获取上传图片信息
-    var reader = new FileReader();
-    // 监听reader对象的的onload事件，当图片加载完成时，把base64编码賦值给预览图片
-    reader.addEventListener("load", function () {
-        show_img.src = reader.result;
-        }, false);
+    inputImgFile_onchange() {
+      var inputImgFile = document.getElementById("inputImgFile");
+      var show_img = document.getElementById("show_img");
+      var my_data = inputImgFile.files[0];
+      this.imageUrl = inputImgFile.files[0];
+      // 获取上传图片信息
+      var reader = new FileReader();
+      // 监听reader对象的的onload事件，当图片加载完成时，把base64编码賦值给预览图片
+      reader.addEventListener(
+        "load",
+        function () {
+          show_img.src = reader.result;
+        },
+        false
+      );
       // 调用reader.readAsDataURL()方法，把图片转成base64
       reader.readAsDataURL(my_data);
     },
-    submitFeedback(){
-      if(!this.textarea){
+    submitFeedback() {
+      if (!this.textarea) {
         ElMessage({
-          type:"warning",
-          message:"描述不可为空"
-        })
+          type: "warning",
+          message: "描述不可为空",
+        });
         return;
       }
-      if(!this.imageUrl){
+      if (!this.imageUrl) {
         ElMessage({
-          type:"warning",
-          message:"请上传反馈图片"
-        })
+          type: "warning",
+          message: "请上传反馈图片",
+        });
         return;
       }
-      if(!this.email.match(/[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+/g)){
+      if (
+        !this.email.match(
+          /[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+/g
+        )
+      ) {
         ElMessage({
-          type:"warning",
-          message:"邮箱格式不正确"
-        })
+          type: "warning",
+          message: "邮箱格式不正确",
+        });
         return;
       }
       let formData = new FormData();
@@ -173,52 +202,50 @@ export default {
       formData.append("textarea", this.textarea);
       formData.append("image", this.imageUrl);
       axios({
-              method:"Post",
-              url:'http://101.42.118.80:8000/submit_feedback/',
-              headers: {
-            //请求头这个一定要写
-                'Content-Type': 'multipart/form-data',
-            },
-              data:formData
-      })
-      .then((res)=>{
-        if(res.data['status']==='ok'){
+        method: "Post",
+        url: "http://101.42.118.80:8000/submit_feedback/",
+        headers: {
+          //请求头这个一定要写
+          "Content-Type": "multipart/form-data",
+        },
+        data: formData,
+      }).then((res) => {
+        if (res.data["status"] === "ok") {
           ElMessage({
-            type:'success',
-            message:"反馈已经收到，感谢您的支持~"
+            type: "success",
+            message: "反馈已经收到，感谢您的支持~",
           });
           console.log(res);
-        }
-        else{
+        } else {
           ElMessage({
-            type:'error',
-            message:"反馈失败"
+            type: "error",
+            message: "反馈失败",
           });
         }
-      })
+      });
     },
   },
   mounted() {
-    if (localStorage.getItem('username')) {
-      this.username = localStorage.getItem('username');
+    if (localStorage.getItem("username")) {
+      this.username = localStorage.getItem("username");
     }
-    if(!localStorage.getItem('avatar')){
-      axios.get('http://101.42.118.80:8000/get_avatar/',{
-        params:{
-          username:this.username
-        }
-      })
-      .then((res)=>{
-        if(res.data['status']==='ok'){
-          if(res.data['avatar']){
+    if (!localStorage.getItem("avatar")) {
+      axios
+        .get("http://101.42.118.80:8000/get_avatar/", {
+          params: {
+            username: this.username,
+          },
+        })
+        .then((res) => {
+          if (res.data["status"] === "ok") {
+            if (res.data["avatar"]) {
               this.image.src = "data:image/png;base64," + res.data["avatar"];
               localStorage.setItem("avatar", this.image.src);
             }
-        }
-      })
-    }
-    else{
-      this.image.src = localStorage.getItem('avatar');
+          }
+        });
+    } else {
+      this.image.src = localStorage.getItem("avatar");
     }
   },
 };
@@ -233,7 +260,7 @@ export default {
     margin-left: 2%;
   }
   .contact-info {
-    font-family: XiaWuManHei;;
+    font-family: XiaWuManHei;
     font-size: 1rem;
     color: #5eabbf;
   }
@@ -246,7 +273,7 @@ export default {
     margin-left: 30%;
   }
   .contact-info {
-    font-family: XiaWuManHei;;
+    font-family: XiaWuManHei;
     font-size: 23px;
     color: #5eabbf;
   }
@@ -286,7 +313,7 @@ export default {
   margin-bottom: 50px;
 }
 .feedback-title {
-  font-family: YouSheRound;;
+  font-family: YouSheRound;
   font-size: 36px;
   color: #5eabbf;
 }

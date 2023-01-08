@@ -455,7 +455,6 @@ export default {
       if (this.cantReceive) {
         return;
       }
-      //todo:进入进行任务页面具体传入什么参数自定义
       axios
         .get("http://101.42.118.80:8000/receive_task/", {
           params: {
@@ -637,7 +636,6 @@ export default {
           this.startTime = res.data["startTime"];
           this.endTime = res.data["endTime"];
           this.posterAvatar = res.data["posterAvatar"];
-          console.log(this.posterAvatar);
         }
       })
       .catch((err) => {
@@ -797,8 +795,8 @@ export default {
 }
 /* 小屏幕手机端 */
 @media (min-width: 0px) and (max-width: 768px) {
-  .phone-box{
-    width:1100px;
+  .phone-box {
+    width: 1100px;
   }
   .main-box {
     width: 98%;

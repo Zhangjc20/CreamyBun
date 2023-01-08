@@ -159,33 +159,67 @@
       ></CustomButton>
     </div>
     <div class="daily-box">
-      <div style="font-size: 30px; font-family: YouSheRound;margin: 20px 0 20px 0;">每日任务</div>
+      <div
+        style="font-size: 30px; font-family: YouSheRound; margin: 20px 0 20px 0"
+      >
+        每日任务
+      </div>
       <div class="daily-task">
-        <div style="text-align:left;font-size:20px;margin:10px 0 10px 20px;font-family: YouSheBlack;">任务描述：今日完成一个任务</div>
-        <div style="font-family:YiPinChuangXiang;">
+        <div
+          style="
+            text-align: left;
+            font-size: 20px;
+            margin: 10px 0 10px 20px;
+            font-family: YouSheBlack;
+          "
+        >
+          任务描述：今日完成一个任务
+        </div>
+        <div style="font-family: YiPinChuangXiang">
           任务奖励：
-          <svg class="icon" style="width:1.5em;height:1.5em;vertical-align: -20%;" aria-hidden="true">
-            <use xlink:href="#icon-tiantianquan"></use>
-          </svg>{{finishTaskDonut[0]}}
-          &emsp;&emsp;
-          完成进度：{{finishTaskNum}}/1
+          <svg
+            class="icon"
+            style="width: 1.5em; height: 1.5em; vertical-align: -20%"
+            aria-hidden="true"
+          >
+            <use xlink:href="#icon-tiantianquan"></use></svg
+          >{{ finishTaskDonut[0] }} &emsp;&emsp; 完成进度：{{ finishTaskNum }}/1
         </div>
         <div class="daily-btn-area">
-          <CustomButton :title="accepted1?'已领取':(finished1?'领取奖励':'尚未完成')" :props="!finished1||accepted1?disabledProps:undefined" @click="acceptDonut1"/>
+          <CustomButton
+            :title="accepted1 ? '已领取' : finished1 ? '领取奖励' : '尚未完成'"
+            :props="!finished1 || accepted1 ? disabledProps : undefined"
+            @click="acceptDonut1"
+          />
         </div>
       </div>
-      <div class="daily-task" style="margin-top:20px">
-        <div style="text-align:left;font-size:20px;margin:10px 0 10px 20px;font-family: YouSheBlack;">任务描述：今日完成三个任务</div>
-        <div style="font-family:YiPinChuangXiang;">
+      <div class="daily-task" style="margin-top: 20px">
+        <div
+          style="
+            text-align: left;
+            font-size: 20px;
+            margin: 10px 0 10px 20px;
+            font-family: YouSheBlack;
+          "
+        >
+          任务描述：今日完成三个任务
+        </div>
+        <div style="font-family: YiPinChuangXiang">
           任务奖励：
-          <svg class="icon" style="width:1.5em;height:1.5em;vertical-align: -20%;" aria-hidden="true">
-            <use xlink:href="#icon-tiantianquan"></use>
-          </svg>{{finishTaskDonut[1]}}
-          &emsp;&emsp;
-          完成进度：{{finishTaskNum}}/3
+          <svg
+            class="icon"
+            style="width: 1.5em; height: 1.5em; vertical-align: -20%"
+            aria-hidden="true"
+          >
+            <use xlink:href="#icon-tiantianquan"></use></svg
+          >{{ finishTaskDonut[1] }} &emsp;&emsp; 完成进度：{{ finishTaskNum }}/3
         </div>
         <div class="daily-btn-area">
-          <CustomButton @click="acceptDonut2" :title="accepted2?'已领取':(finished2?'领取奖励':'尚未完成')" :props="!finished2||accepted2?disabledProps:undefined"/>
+          <CustomButton
+            @click="acceptDonut2"
+            :title="accepted2 ? '已领取' : finished2 ? '领取奖励' : '尚未完成'"
+            :props="!finished2 || accepted2 ? disabledProps : undefined"
+          />
         </div>
       </div>
     </div>
@@ -212,60 +246,64 @@ export default {
       clocked: false,
       clockinDays: 0,
       donutListForClockIn: [],
-      finished1:false,
-      finished2:false,
-      accepted1:false,
-      accepted2:false,
-      disabledProps:{
-        disabled:"true",
-        disabledColor:"#FCE5B1" ,
+      finished1: false,
+      finished2: false,
+      accepted1: false,
+      accepted2: false,
+      disabledProps: {
+        disabled: "true",
+        disabledColor: "#FCE5B1",
       },
-      finishTaskDonut:[0,0],
-      finishTaskNum:0,
+      finishTaskDonut: [0, 0],
+      finishTaskNum: 0,
     };
   },
   methods: {
-    acceptDonut1(){
-      if(!this.finished1 || this.accepted1){
-        return ;
+    acceptDonut1() {
+      if (!this.finished1 || this.accepted1) {
+        return;
       }
       axios
         .get("http://101.42.118.80:8000/finish_daily_task/", {
           params: {
-            username: localStorage.getItem('username'),
-            index:0
+            username: localStorage.getItem("username"),
+            index: 0,
           },
         })
         .then((res) => {
-          if(res.data['status']=='ok'){
+          if (res.data["status"] == "ok") {
             ElMessage({
-              type:'success',
-              message:'恭喜你完成任务，获得奖励甜甜圈'+String(this.finishTaskDonut[0]),
-            })
+              type: "success",
+              message:
+                "恭喜你完成任务，获得奖励甜甜圈" +
+                String(this.finishTaskDonut[0]),
+            });
             this.accepted1 = true;
           }
-      })
+        });
     },
-    acceptDonut2(){
-      if(!this.finished2 || this.accepted2){
-        return ;
+    acceptDonut2() {
+      if (!this.finished2 || this.accepted2) {
+        return;
       }
       axios
         .get("http://101.42.118.80:8000/finish_daily_task/", {
           params: {
-            username: localStorage.getItem('username'),
-            index:1
+            username: localStorage.getItem("username"),
+            index: 1,
           },
         })
         .then((res) => {
-          if(res.data['status']=='ok'){
+          if (res.data["status"] == "ok") {
             ElMessage({
-              type:'success',
-              message:'恭喜你完成任务，获得奖励甜甜圈'+String(this.finishTaskDonut[1]),
-            })
+              type: "success",
+              message:
+                "恭喜你完成任务，获得奖励甜甜圈" +
+                String(this.finishTaskDonut[1]),
+            });
             this.accepted2 = true;
           }
-      })
+        });
     },
     handleClockIn() {
       if (this.clocked) {
@@ -274,19 +312,21 @@ export default {
       axios
         .get("http://101.42.118.80:8000/clock_in/", {
           params: {
-            username: localStorage.getItem('username')
+            username: localStorage.getItem("username"),
           },
         })
         .then((res) => {
-          if(res.data['status']=='ok'){
+          if (res.data["status"] == "ok") {
             this.clocked = true;
             this.clockinDays += 1;
             ElMessage({
               type: "success",
-              message: "签到成功,获得甜甜圈"+String(this.donutListForClockIn[this.clockinDays-1]),
+              message:
+                "签到成功,获得甜甜圈" +
+                String(this.donutListForClockIn[this.clockinDays - 1]),
             });
           }
-      })
+        });
     },
   },
   created() {
@@ -303,16 +343,16 @@ export default {
           this.clockinDays = res.data["continueSignInDays"];
           this.clocked = res.data["isTodaySignIn"];
           this.donutListForClockIn = res.data["donutListForClockIn"];
-          this.finishTaskDonut = res.data['finishTaskDonut'];
-          this.finishTaskNum = res.data['finishTaskNum']
+          this.finishTaskDonut = res.data["finishTaskDonut"];
+          this.finishTaskNum = res.data["finishTaskNum"];
           if (this.finishTaskNum >= 1) {
             this.finished1 = true;
           }
           if (this.finishTaskNum >= 3) {
             this.finished2 = true;
           }
-          this.accepted1 = res.data['taskOneState']?true:false;
-          this.accepted2 = res.data['taskTwoState']?true:false;
+          this.accepted1 = res.data["taskOneState"] ? true : false;
+          this.accepted2 = res.data["taskTwoState"] ? true : false;
         }
       })
       .catch();
@@ -334,8 +374,8 @@ export default {
 }
 .daily-task:hover {
   position: relative;
-  top:-3px;
-  left:-3px;
+  top: -3px;
+  left: -3px;
 }
 .yellow-bg {
   background-color: #fbe484;

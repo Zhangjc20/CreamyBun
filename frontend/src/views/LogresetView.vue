@@ -229,7 +229,7 @@ export default {
       });
     },
     clickGetCode() {
-      if ( !this.form.isUsername && !this.emailRight) {
+      if (!this.form.isUsername && !this.emailRight) {
         ElMessage({
           type: "error",
           message: "邮箱格式错误，请进行修改",
@@ -245,8 +245,7 @@ export default {
       }
       if (!this.form.isUsername) {
         this.codeEmail = this.form.email;
-      }
-      else {
+      } else {
         this.codeUsername = this.form.username;
       }
       this.emailing = true;
@@ -325,18 +324,21 @@ export default {
       }
     },
     clickLogreset() {
-      if ((
-          this.form.isUsername &&!(
-          this.usernameRight &&
-          this.passwordRight &&
-          this.passwordAgainRight &&
-          this.verifyCodeRight
+      if (
+        (this.form.isUsername &&
+          !(
+            this.usernameRight &&
+            this.passwordRight &&
+            this.passwordAgainRight &&
+            this.verifyCodeRight
           )) ||
-          (!this.form.isUsername && !(
-          this.passwordRight &&
-          this.passwordAgainRight &&
-          this.verifyCodeRight &&
-          this.emailRight))
+        (!this.form.isUsername &&
+          !(
+            this.passwordRight &&
+            this.passwordAgainRight &&
+            this.verifyCodeRight &&
+            this.emailRight
+          ))
       ) {
         ElMessage({
           type: "error",
@@ -344,14 +346,14 @@ export default {
         });
         return;
       }
-      if (!this.form.isUsername &&(this.form.email != this.codeEmail)) {
+      if (!this.form.isUsername && this.form.email != this.codeEmail) {
         ElMessage({
           type: "warning",
           message: "填写邮箱与发送验证码时对应邮箱不匹配",
         });
         return;
       }
-      if (this.form.isUsername && (this.form.username != this.codeUsername)) {
+      if (this.form.isUsername && this.form.username != this.codeUsername) {
         ElMessage({
           type: "warning",
           message: "填写用户名与发送验证码时对应用户名不匹配",
@@ -372,7 +374,7 @@ export default {
               type: "resetPassword",
               resetWay: "username",
               username: this.codeUsername,
-              password: this.form.password
+              password: this.form.password,
             },
           })
           .then((res) => {
@@ -386,24 +388,23 @@ export default {
               });
               return;
             } else {
-                ElMessage({
-                  type: "error",
-                  message: "重置失败",
-                });
+              ElMessage({
+                type: "error",
+                message: "重置失败",
+              });
             }
           })
           .catch(function (err) {
             console.log(err);
           });
-      }
-      else{
+      } else {
         axios
           .get("http://101.42.118.80:8000/reset_password/", {
             params: {
               type: "resetPassword",
               resetWay: "email",
               email: this.codeEmail,
-              password: this.form.password
+              password: this.form.password,
             },
           })
           .then((res) => {
@@ -440,7 +441,13 @@ export default {
       } else if (front.length <= 4) {
         return front.slice(0, 2) + "*".repeat(front.length - 2) + "@" + end;
       } else {
-        return front.slice(0, 2) + "*".repeat(front.length - 4) + front.slice(-2) + "@" + end;
+        return (
+          front.slice(0, 2) +
+          "*".repeat(front.length - 4) +
+          front.slice(-2) +
+          "@" +
+          end
+        );
       }
     },
   },
@@ -448,7 +455,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@media (min-width: 0px) and (max-width:768px) {
+@media (min-width: 0px) and (max-width: 768px) {
   .logreset-box {
     width: 90%;
     height: 30rem;
@@ -461,7 +468,7 @@ export default {
     background-color: #5eabbf;
     color: #ffffff;
     margin-left: 10px;
-    width:90%;
+    width: 90%;
   }
 }
 @media (min-width: 768px) {
