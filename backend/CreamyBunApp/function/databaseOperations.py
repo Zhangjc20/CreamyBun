@@ -11,7 +11,6 @@ from ..models import *
 from .timelyUpdate import *
 import math
 import datetime
-import random
 
 def delete_reported_task_invalid(task_id):
     ReportInfo.objects.filter(task_id=task_id).delete()
@@ -299,9 +298,6 @@ def update_user_info(u:User):
     now_date = datetime.datetime.strptime(now_time, "%Y-%m-%d")
     last_enter_date = datetime.datetime.strptime(last_enter_time, "%Y-%m-%d")
     gap_days = (now_date - last_enter_date).days
-    print(now_time)
-    print(last_enter_time)
-    print(gap_days)
     if gap_days == 1:
         daily_update(u, now_time, True)
     elif gap_days > 1:
@@ -476,15 +472,6 @@ def add_task_to_user(username, task_id, state_for_user, state_for_task):
                                  task_status_for_itself=state_for_task)
     u.task_info_list.add(td)
 
-# 添加一个问题反馈到问题反馈列表中
-def add_a_feedback(feedback_type, description, image_url, inform_email):
-    try:
-        FeedbackInfo.objects.create(feedback_type=feedback_type, description=description, image_url=image_url,
-                                    inform_email=inform_email)
-        return True
-    except:
-        return False
-
 # 获得指定用户当前正在做的指定任务的大题信息
 def get_current_problem(username, task_id, type, jmp_target):
     u = get_a_user_data(username)
@@ -623,9 +610,10 @@ def get_current_problem(username, task_id, type, jmp_target):
             current_total_problem_number, problem_state_list, ans_li
 
 # 添加一个问题反馈到问题反馈列表中
-def add_a_feedback(feedback_type,description,image_url,inform_email):
+def add_a_feedback(feedback_type, description, image_url, inform_email):
     try:
-        FeedbackInfo.objects.create(feedback_type=feedback_type,description=description,image_url=image_url,inform_email=inform_email)
+        FeedbackInfo.objects.create(feedback_type=feedback_type, description=description, image_url=image_url,
+                                    inform_email=inform_email)
         return True
     except:
         return False
@@ -689,7 +677,6 @@ def delete_violated_task(task_id):
         p.save()
         for md_id in md_id_list:
             MaterialDict.objects.get(id=md_id).delete()
-        qid_list = [q.id for q in p.question_list.all()]
         for q in p.question_list.all():
             p.question_list.remove(q)
             if q.question_type == CHOICE_QUESTION:
@@ -699,8 +686,6 @@ def delete_violated_task(task_id):
             elif q.question_type == SELECT_FRAME_QUESTION:
                 FrameSelectionQuestion.objects.get(question_ptr_id=q.id).delete()
         p.save()
-        # for qid in qid_list:
-        #     Question.objects.get(id=qid).delete()
         t.problem_list.remove(p)
     t.save()
     for pid in pid_list:

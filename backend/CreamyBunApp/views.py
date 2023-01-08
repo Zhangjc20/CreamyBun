@@ -5,10 +5,8 @@ import time
 from wsgiref.util import FileWrapper
 
 from django.http import StreamingHttpResponse
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout
 
 from .function.databaseOperations import *
 from .variables.globalConstants import *
@@ -51,7 +49,7 @@ def log_up(request):
             return HttpResponse(json.dumps({'status': 'wrong', 'type': 'sameEmail'}), content_type='application/json')
         verify_code = send_email(email)
         return HttpResponse(json.dumps({'status': 'ok', 'verifyCode': verify_code}), content_type='application/json')
-        # return HttpResponse(json.dumps({'status':'ok'}), content_type='application/json')
+
     # 如果是点击注册
     elif type == 'logUp':
         # 判断是否重名
@@ -107,7 +105,6 @@ def log_in(request):
         return_jwt = orjwt[0:20]
     else:
         return_jwt = orjwt
-    # add_user_jwt(username,return_jwt)
     return HttpResponse(json.dumps({'status': 'ok', 'type': 'normalUser', 'jwt': return_jwt}), content_type='application/json')
 
 # 退出登录
@@ -116,7 +113,6 @@ def log_in(request):
 def log_out(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
-    # remove_user_jwt(username)
     return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
 
 # 获取用户名对应用户头像
@@ -270,7 +266,6 @@ def get_user_activity_info(request):
     query_dict = request.GET
     username = query_dict.get("username", "")
     u = get_a_user_data(username)
-    # print(u.finished_task_number)
     activity_info = {
         'status': 'ok',
         'continueSignInDays': u.continue_sign_in_days,
@@ -362,7 +357,7 @@ def set_admin_username_and_password(request):
     return HttpResponse(json.dumps(ret), content_type='application/json')
 
 
-# 获得已领取任务信息
+# 获得待审核任务信息
 # 任务信息(包括其id)通过列表传送,列表的每一项是一个字典
 def get_examining_tasks(request):
     query_dict = request.GET
@@ -595,7 +590,6 @@ def withdraw_money(request):
 def get_material_zip(request):
     if request.method == "POST":  # 判断接收的值是否为POST
         query_dict = request.POST
-        print(query_dict)
         username = query_dict.get("username", "")
         file_type = query_dict.get("fileType", "")
         shard_index = eval(query_dict.get("shardIndex", ""))
@@ -609,7 +603,6 @@ def get_material_zip(request):
             os.makedirs(path)
         path_name = os.path.join(path, "uploadPackage." + file_type)
         handle_uploaded_file(file, path_name)
-        print(shard_index, shard_total, query_dict)
         if shard_index == shard_total - 1:  # 此时要解压了
             unzip_file(path_name, path)
             os.remove(path_name)
@@ -619,12 +612,11 @@ def get_material_zip(request):
     return HttpResponse(json.dumps({'status': 'next'}), content_type='application/json')
 
 
-# 处理前端对列表的操作（目前能想到的只有删除
+# 处理前端对列表的操作（目前能想到的只有删除）
 @csrf_exempt
 def handle_release_action(request):
     if request.method == "POST":  # 判断接收的值是否为POST
         request_body = json.loads(request.body)
-        print(request_body)
         act = request_body['act']
         msg_list = request_body['msgList']
         if act == 'delete':
@@ -637,7 +629,6 @@ def handle_release_action(request):
 @csrf_exempt
 def release_task(request):
     request_type = request.META['CONTENT_TYPE']
-    print("request_type", request_type)
 
     if request_type == 'application/json':
         request_body = json.loads(request.body)
@@ -676,8 +667,6 @@ def perform_basic_info(request):
     task_id = query_dict.get("taskId", "")
     type = query_dict.get("type", "")
     jmp_target = eval(query_dict.get("jmpTarget", ""))
-    # print("perform_basic_info", username)
-    print("perform_basic_info", type)
     material_list, question_list, is_test, current_problem_index, \
         current_total_problem_number, problem_state_list, answer_list = \
         get_current_problem(username, task_id, type, jmp_target)
@@ -702,7 +691,6 @@ def submit_answer(request):
     username = request_body["username"]
     task_id = request_body["taskId"]
     answer_list = request_body["ansList"]
-    print('answer_list', answer_list)
     # 提交答案的反馈，是字典
     test_correct_rate, pass_test, task_over = submit_current_answer(
         username, task_id, answer_list)
@@ -795,24 +783,16 @@ def perform_problem_material(request):
         return HttpResponse(json.dumps({'status': 'ok', }), content_type='application/json')
     return HttpResponse(json.dumps({'status': 'ok', }), content_type='application/json')
 
-
+# 将视频文件以流媒体的方式响应
 def stream_video(request, path):
-    """将视频文件以流媒体的方式响应"""
-    query_dict = request.GET
     path = path.replace('<', '/')
-    print("path", path)
-    # file_type = eval(query_dict.get("fileType"))
-    # path = query_dict.get("filePath", "")
-    # path = "./media/task_materials\\ZDandsomSP_20221120152607\\list3\\视频 (5).mp4"
     range_header = request.META.get('HTTP_RANGE', '').strip()
     range_re = re.compile(r'bytes\s*=\s*(\d+)\s*-\s*(\d*)', re.I)
     range_match = range_re.match(range_header)
     size = os.path.getsize(path)
-    content_type, encoding = mimetypes.guess_type(path)
+    content_type, _ = mimetypes.guess_type(path)
     content_type = content_type or 'application/octet-stream'
-    print("stream_video")
     if range_match:
-        print("if range_match:")
         first_byte, last_byte = range_match.groups()
         first_byte = int(first_byte) if first_byte else 0
         last_byte = first_byte + 1024 * 1024 * 8  # 8M 每片,响应体最大体积
@@ -825,7 +805,6 @@ def stream_video(request, path):
         resp['Content-Range'] = 'bytes %s-%s/%s' % (
             first_byte, last_byte, size)
     else:
-        print("if range_match:")
         # 不是以视频流方式的获取时，以生成器方式返回整个文件，节省内存
         resp = StreamingHttpResponse(FileWrapper(
             open(path, 'rb')), content_type=content_type)
@@ -846,7 +825,6 @@ def submit_feedback(request):
     file_format = image_url.name
     path_name = os.path.join(path, file_format)
     handle_uploaded_file(image_url, path_name)
-    print(image_url)
     if create_feedback:
         return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
     else:
@@ -921,10 +899,6 @@ def get_feedback(request):
             feedback_list_dict[i]['feedback_type'] = "产品bug"
         else:
             feedback_list_dict[i]['feedback_type'] = "其他问题"
-    # print(feedback_list[].advice)
-    # for i in range(len(feedback_list)):
-    # feedback_list[i] =  feedback_list[i].__dict__
-    print(feedback_list)
     if feedback_list:
         return HttpResponse(json.dumps({'feedback_list': feedback_list_dict}), content_type='application/json')
     else:
@@ -965,7 +939,6 @@ def receive_task(request):
     if flag:
         return HttpResponse(json.dumps({'status': 'ok', 'type': 'success'}), content_type='application/json')
     else:
-        print(fail_type)
         # failType有'hasReceived'或者'lowRank'或者'noProblemLeft'
         return HttpResponse(json.dumps({'status': 'ok', 'type': 'fail', 'failType': fail_type}), content_type='application/json')
 
@@ -976,11 +949,6 @@ def download_task_answer(request):
     excel_data = download_task_answer_byid(task_id)
     temp = [{}]
     temp[0]['excel_data'] = bytes.decode(excel_data)
-    # path_name = './task_answer.xlsx'
-    # with open(path_name, 'rb') as f:
-    #         data = f.read()
-    #         temp[0]['excel_data'] = bytes.decode(base64.b64encode(data))
-    # print(temp[0]['excel_data'])
     return HttpResponse(json.dumps({'status': 'ok', 'task_answer_excel': temp}), content_type='application/json')
 
 # 发布者中断当前任务
