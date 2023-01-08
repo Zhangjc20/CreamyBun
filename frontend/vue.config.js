@@ -4,7 +4,7 @@ module.exports = defineConfig({
   transpileDependencies: true,
   devServer: {
     open: true,           // 是否自动打开项目
-    host: '101.42.118.80',      // 制定域名
+    host: 'localhost',      // 制定域名
     port: 8081,           // 端口号
     proxy: { //配置跨域interrupt_task
       '/give_up_task':{

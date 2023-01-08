@@ -8,9 +8,9 @@ from ..classDefination.reportInfoClass import *
 from ..variables.globalVariables import *
 from ..variables.globalConstants import *
 from ..models import *
+from .timelyUpdate import *
 import math
 import datetime
-import random
 
 def delete_reported_task_invalid(task_id):
     ReportInfo.objects.filter(task_id=task_id).delete()
@@ -199,6 +199,8 @@ def reward_user(u:User,t:Task,common_problem_number):
     # 加甜甜圈代币
     get_donut_num = t.single_bonus*common_problem_number
     add_donut_for_user(u,get_donut_num)
+    u.finished_task_number += 1
+    u.save()
     return is_upgrade, now_credit_rank, exp_by_task_rank[t.star_rank - 1], get_donut_num
     
 # 向某个小题写入答案
@@ -290,6 +292,19 @@ def match_username_with_password(username, password):
     cur_user = get_a_user_data(username)
     return cur_user.validate_password(password)
 
+def update_user_info(u:User):
+    now_time = datetime.datetime.now().strftime('%Y-%m-%d')
+    last_enter_time = u.last_enter_activity_center_time
+    now_date = datetime.datetime.strptime(now_time, "%Y-%m-%d")
+    last_enter_date = datetime.datetime.strptime(last_enter_time, "%Y-%m-%d")
+    gap_days = (now_date - last_enter_date).days
+    if gap_days == 1:
+        daily_update(u, now_time, True)
+    elif gap_days > 1:
+        daily_update(u, now_time, False)
+    else:
+        pass
+
 # 让用户签到
 def update_clock_in_info(username):
     u = get_a_user_data(username)
@@ -299,6 +314,17 @@ def update_clock_in_info(username):
         u.continue_sign_in_days += 1
         u.save()
     return u.is_today_sign_in, u.continue_sign_in_days
+
+# 用户领取每日任务奖励
+def update_daily_task_info(username,index):
+    u = get_a_user_data(username)
+    u.donut_number += finish_task_donut[index]
+    if index == 0:
+        u.finish_task_one = True
+    else:
+        u.finish_task_two = True
+    u.save()
+    return u.finish_task_one, u.finish_task_two
 
 # 修改指定用户的手机号
 def update_mobile_number_of_a_user(username, mobile_number):
@@ -446,15 +472,6 @@ def add_task_to_user(username, task_id, state_for_user, state_for_task):
                                  task_status_for_itself=state_for_task)
     u.task_info_list.add(td)
 
-# 添加一个问题反馈到问题反馈列表中
-def add_a_feedback(feedback_type, description, image_url, inform_email):
-    try:
-        FeedbackInfo.objects.create(feedback_type=feedback_type, description=description, image_url=image_url,
-                                    inform_email=inform_email)
-        return True
-    except:
-        return False
-
 # 获得指定用户当前正在做的指定任务的大题信息
 def get_current_problem(username, task_id, type, jmp_target):
     u = get_a_user_data(username)
@@ -593,9 +610,10 @@ def get_current_problem(username, task_id, type, jmp_target):
             current_total_problem_number, problem_state_list, ans_li
 
 # 添加一个问题反馈到问题反馈列表中
-def add_a_feedback(feedback_type,description,image_url,inform_email):
+def add_a_feedback(feedback_type, description, image_url, inform_email):
     try:
-        FeedbackInfo.objects.create(feedback_type=feedback_type,description=description,image_url=image_url,inform_email=inform_email)
+        FeedbackInfo.objects.create(feedback_type=feedback_type, description=description, image_url=image_url,
+                                    inform_email=inform_email)
         return True
     except:
         return False
@@ -659,7 +677,6 @@ def delete_violated_task(task_id):
         p.save()
         for md_id in md_id_list:
             MaterialDict.objects.get(id=md_id).delete()
-        qid_list = [q.id for q in p.question_list.all()]
         for q in p.question_list.all():
             p.question_list.remove(q)
             if q.question_type == CHOICE_QUESTION:
@@ -669,8 +686,6 @@ def delete_violated_task(task_id):
             elif q.question_type == SELECT_FRAME_QUESTION:
                 FrameSelectionQuestion.objects.get(question_ptr_id=q.id).delete()
         p.save()
-        # for qid in qid_list:
-        #     Question.objects.get(id=qid).delete()
         t.problem_list.remove(p)
     t.save()
     for pid in pid_list:

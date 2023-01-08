@@ -28,17 +28,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['101.42.118.80']
 
-# auth module
-# AUTH_USER_MODEL = 'CreamyBunApp.User'
-
-# LOGIN_URL = '/no_log/'
-
-
 # Application definition
 
 INSTALLED_APPS = [
     'corsheaders',
-    # 'django_crontab',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -83,20 +76,13 @@ WSGI_APPLICATION = 'CreamyBun.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'backend',
         'USER': 'dbuser',
         'PASSWORD' : 'password',
-        'HOST': 'db', #部署的时候估计得改
+        'HOST': 'db', 
         'PORT': 3306,
     }
 }
@@ -174,8 +160,3 @@ EMAIL_HOST_PASSWORD = "dtleopfoucyfigbi"     # 授权码
 EMAIL_USE_TLS = True       # 一般都为False
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 EMAIL_FROM = "奶黄包数据标注平台运营方"      # 邮箱来自
-
-# 定时器设置
-# CRONJOBS = [
-#     ('0 4 * * *', 'CreamyBunApp.timelyUpdate.daily_update')
-# ]

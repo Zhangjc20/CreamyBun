@@ -1,18 +1,18 @@
 <template>
   <div class="wrapper">
     <input
-        type="file"
-        ref="file"
-        @change="loadImage($event)"
-        accept="image/*"
-        class="file-input"
-      />
+      type="file"
+      ref="file"
+      @change="loadImage($event)"
+      accept="image/*"
+      class="file-input"
+    />
     <vue-final-modal
       v-model="showModal"
       classes="modal-container"
       content-class="modal-content"
     >
-        <div class="modal-title">图片裁剪</div>
+      <div class="modal-title">图片裁剪</div>
       <image-cropper
         ref="cropper"
         class="cropper"
@@ -27,8 +27,8 @@
         image-restriction="stencil"
       />
       <div class="button-area">
-      <CustomButton title="确认" @click="handleConfirm" marginRight="30px"/>
-      <CustomButton title="取消" @click="showModal = false"/>
+        <CustomButton title="确认" @click="handleConfirm" marginRight="30px" />
+        <CustomButton title="取消" @click="showModal = false" />
       </div>
     </vue-final-modal>
     <image-preview
@@ -40,14 +40,21 @@
       v-if="uploaded"
       class="preview"
     />
-    <el-upload action="#" :disabled="true" list-type="picture-card" :auto-upload="false" @click="inputClick" v-else>
-        <el-icon><Plus /></el-icon>
+    <el-upload
+      action="#"
+      :disabled="true"
+      list-type="picture-card"
+      :auto-upload="false"
+      @click="inputClick"
+      v-else
+    >
+      <el-icon><Plus /></el-icon>
     </el-upload>
   </div>
 </template>
 
 <script>
-import CustomButton from './CustomButton.vue';
+import CustomButton from "./CustomButton.vue";
 function getMimeType(file, fallback = null) {
   const byteArray = new Uint8Array(file).subarray(0, 4);
   let header = "";
@@ -72,8 +79,8 @@ function getMimeType(file, fallback = null) {
 
 export default {
   name: "UploadCropper",
-  components:{
-    CustomButton
+  components: {
+    CustomButton,
   },
   data() {
     return {
@@ -93,15 +100,15 @@ export default {
     blobToFile(blob, fileName, mimeType) {
       return new File([blob], fileName, { type: mimeType });
     },
-    uploadImage(){
+    uploadImage() {
       this.$refs.file.click();
     },
-    handleConfirm(){
-        this.showModal = false;
-        this.crop();
+    handleConfirm() {
+      this.showModal = false;
+      this.crop();
     },
-    inputClick(){
-        this.$refs.file.click();
+    inputClick() {
+      this.$refs.file.click();
     },
     onChange({ coordinates, image }) {
       this.result = {
@@ -113,9 +120,15 @@ export default {
       const { canvas } = this.$refs.cropper.getResult();
       canvas.toBlob((blob) => {
         // 可以上传blob
-      console.log("crop上传",this.blobToFile(blob, this.image.type.split("/")[1], this.image.type))
-        this.$emit("getImage",this.blobToFile(blob, this.image.type.split("/")[1], this.image.type))
-        this.$refs.file.value="";
+        console.log(
+          "crop上传",
+          this.blobToFile(blob, this.image.type.split("/")[1], this.image.type)
+        );
+        this.$emit(
+          "getImage",
+          this.blobToFile(blob, this.image.type.split("/")[1], this.image.type)
+        );
+        this.$refs.file.value = "";
       }, this.image.type);
     },
     reset() {
@@ -165,22 +178,22 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-.preview{
+.preview {
   cursor: pointer;
 }
 .wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .button-area {
-    display: flex;
-    justify-content: center;
-    margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
 }
 .modal-title {
-    color:#ffffff;
-    font-size:18px;
+  color: #ffffff;
+  font-size: 18px;
 }
 :deep .modal-container {
   display: flex;

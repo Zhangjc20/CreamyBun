@@ -13,7 +13,30 @@
           height: 180px;
           box-shadow: 3px 3px 12px 0 rgba(0, 0, 0, 0.315);
         "
-      ></el-image>
+      >
+        <template #placeholder>
+          <div class="image-slot">
+            <el-image
+              style="width: 84px; height: 75px"
+              fit="cover"
+              :src="require('@/assets/images/logo_small.png')"
+              class="jump-logo"
+            ></el-image>
+            <div class="jump-shadow">封面加载中~</div>
+          </div>
+        </template>
+        <template #error>
+          <div class="image-slot">
+            <el-image
+              style="width: 84px; height: 75px"
+              fit="cover"
+              :src="require('@/assets/images/logo_small.png')"
+              class="jump-logo-err"
+            ></el-image>
+            <div class="jump-shadow">封面加载失败</div>
+          </div>
+        </template>
+      </el-image>
       <div class="color-bg-box">
         <div class="title-font">{{ props.taskName }}</div>
         <el-row class="donut-font">
@@ -58,7 +81,8 @@ export default {
       src: this.props.src
         ? this.props.src
         : require("@/assets/images/recognize.jpeg"),
-      hasOver: this.props.taskStatus == 3 || this.props.taskStatus == 5? true : false,
+      hasOver:
+        this.props.taskStatus == 3 || this.props.taskStatus == 5 ? true : false,
     };
   },
   methods: {},
@@ -68,7 +92,8 @@ export default {
     this.src = this.props.src
       ? this.props.src
       : require("@/assets/images/recognize.jpeg");
-    this.hasOver = this.props.taskStatus == 3 || this.props.taskStatus == 5? true : false;
+    this.hasOver =
+      this.props.taskStatus == 3 || this.props.taskStatus == 5 ? true : false;
   },
 };
 </script>
@@ -76,6 +101,16 @@ export default {
 <style scoped>
 .type-container {
   text-align: center;
+}
+.image-slot {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  color: var(--el-text-color-secondary);
+  font-size: 18px;
 }
 .task-container {
   display: flex;
@@ -142,6 +177,7 @@ export default {
   top: 0;
 }
 .over-box {
+  margin-bottom: 80px;
   border: 3px solid #fbe484;
   width: 110px;
   height: 32px;
@@ -150,5 +186,33 @@ export default {
   font-size: 28px;
   color: #ffeda7;
   font-family: YouSheRound;
+}
+.jump-logo {
+  z-index: 2;
+  animation: jump-logo 1s infinite;
+  animation-timing-function: ease;
+  position: absolute;
+}
+.jump-logo-err {
+  z-index: 2;
+  position: absolute;
+  bottom: 60px;
+}
+.jump-shadow {
+  position: absolute;
+  bottom: 30px;
+}
+@keyframes jump-logo {
+  0% {
+    bottom: 60px;
+  }
+
+  50% {
+    bottom: 80px;
+  }
+
+  100% {
+    bottom: 60px;
+  }
 }
 </style>

@@ -4,7 +4,9 @@
     <div class="donut-rate-box">
       <div class="rate-title">汇率调整</div>
       <div class="donut-rate-box-inner">
-        <div style="font-family:YouSheBlack;font-size:25px;margin-bottom: 20px;">
+        <div
+          style="font-family: YouSheBlack; font-size: 25px; margin-bottom: 20px"
+        >
           当前汇率: {{ donutToMoney }}
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#icon-tiantianquan"></use>
@@ -56,7 +58,7 @@
 <script>
 import CustomButton from "./CustomButton.vue";
 import axios from "axios";
-import { ElMessage} from 'element-plus';
+import { ElMessage } from "element-plus";
 export default {
   name: "ChangeParams",
   components: {
@@ -69,8 +71,8 @@ export default {
         donutToMoney: "",
         moneyToDonut: "",
       },
-      donutToMoney:0,
-      moneyToDonut:0,
+      donutToMoney: 0,
+      moneyToDonut: 0,
     };
   },
   methods: {
@@ -78,17 +80,17 @@ export default {
       axios
         .get("http://101.42.118.80:8000/change_current_rate_info/", {
           params: {
-            adminToken:localStorage.getItem('adminToken'),
+            adminToken: localStorage.getItem("adminToken"),
             type: "donutToMoney",
             donutToMoney: this.form.donutToMoney,
           },
         })
         .then((res) => {
           ElMessage({
-            type: 'success',
-            message: '汇率修改成功',
+            type: "success",
+            message: "汇率修改成功",
           });
-          this.donutToMoney = res.data['donutToMoney'];
+          this.donutToMoney = res.data["donutToMoney"];
         })
         .catch((err) => {
           console.log(err);
@@ -98,15 +100,15 @@ export default {
       axios
         .get("http://101.42.118.80:8000/change_current_rate_info/", {
           params: {
-            adminToken:localStorage.getItem('adminToken'),
+            adminToken: localStorage.getItem("adminToken"),
             type: "moneyToDonut",
             moneyToDonut: this.form.moneyToDonut,
           },
         })
         .then((res) => {
           ElMessage({
-            type: 'success',
-            message: '汇率修改成功',
+            type: "success",
+            message: "汇率修改成功",
           });
           this.moneyToDonut = res.data["moneyToDonut"];
         })
@@ -119,18 +121,17 @@ export default {
     axios
       .get("http://101.42.118.80:8000/get_current_rate_info/", {
         params: {
-          adminToken:localStorage.getItem('adminToken')
+          adminToken: localStorage.getItem("adminToken"),
         },
       })
       .then((res) => {
-        if(res.data['status']=='wrong'){
+        if (res.data["status"] == "wrong") {
           ElMessage({
-            type:'error',
-            message:"权限不足"
-          })
+            type: "error",
+            message: "权限不足",
+          });
           return;
-        }
-        else if(res.data['status']=='ok'){
+        } else if (res.data["status"] == "ok") {
           this.donutToMoney = res.data["donutToMoney"];
           this.moneyToDonut = res.data["moneyToDonut"];
         }

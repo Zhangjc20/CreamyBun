@@ -14,13 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-
+from django.urls import path,re_path
+from django.views.static import serve
 from CreamyBunApp import views
+from . import settings
+
+
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
-    path('no_log/',views.no_log),
+    re_path(r'media/(?P<path>.*)$',serve,{'document_root':settings.MEDIA_ROOT}),
+    path(r'^media/(?P<path>.*)', serve, {"document_root": settings.MEDIA_ROOT}),
     path('log_up/', views.log_up),
     path('log_in/', views.log_in),
     path('log_out/', views.log_out),
@@ -49,7 +52,6 @@ urlpatterns = [
     path('get_admin_username_and_password/', views.get_admin_username_and_password),
     path('set_admin_username_and_password/', views.set_admin_username_and_password),
     path('perform_problem_material/', views.perform_problem_material),
-    path('submit_feedback/', views.submit_feedback),
     path('final_submit/', views.final_submit),
     path('get_feedback/', views.get_feedback),
     path('stream_video/<path>/', views.stream_video),
@@ -73,4 +75,9 @@ urlpatterns = [
     path('give_up_task/',views.give_up_task),
     path('post_task_immediately/',views.post_task_immediately),
     path('delete_task/',views.delete_task),
+    path('fake_log_up/',views.fake_log_up),
+    path('finish_daily_task/',views.finish_daily_task),
 ]
+
+
+

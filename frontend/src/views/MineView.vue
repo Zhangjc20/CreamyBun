@@ -9,7 +9,7 @@
       ></NavBar>
     </el-header>
     <el-container>
-      <el-aside class="left-menu-area">
+      <el-aside class="left-menu-area" id="left-menu">
         <el-menu
           active-text-color="#FBE484"
           background-color="#FFFFFF"
@@ -42,37 +42,218 @@
             <span>设置</span>
           </el-menu-item>
         </el-menu>
-        <div style="position: fixed; bottom: 0px;left: 20px;width: 250px;height: 250px;">
-          <div style="position: absolute; bottom: 20px;left: 0px;width: 20px;height: 150px;">
-            <div style="position: absolute; bottom: 0px;border-top: 20px solid #5EABBF;border-left: 20px solid transparent;"></div>
-            <div style="background-color:#5EABBF;position: absolute; bottom: 20px;width: 20px;height: 110px;"></div>
-            <div style="position: absolute; bottom: 130px;border-bottom: 20px solid #5EABBF;border-left: 20px solid transparent;"></div>
+        <div class="jump-active">
+          <div
+            style="
+              position: absolute;
+              bottom: 20px;
+              left: 0px;
+              width: 20px;
+              height: 150px;
+            "
+          >
+            <div
+              style="
+                position: absolute;
+                bottom: 0px;
+                border-top: 20px solid #5eabbf;
+                border-left: 20px solid transparent;
+              "
+            ></div>
+            <div
+              style="
+                background-color: #5eabbf;
+                position: absolute;
+                bottom: 20px;
+                width: 20px;
+                height: 110px;
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                bottom: 130px;
+                border-bottom: 20px solid #5eabbf;
+                border-left: 20px solid transparent;
+              "
+            ></div>
           </div>
-          <div style="position: absolute; bottom: 10px;left: 40px;width: 25px;height: 200px;">
-            <div style="position: absolute; bottom: 0px;border-top: 25px solid #FBE484;border-right: 25px solid transparent;"></div>
-            <div style="background-color:#FBE484;position: absolute; bottom: 25px;width: 25px;height: 150px;"></div>
-            <div style="position: absolute; bottom: 175px;border-bottom: 25px solid #FBE484;border-right: 25px solid transparent;"></div>
+          <div
+            style="
+              position: absolute;
+              bottom: 10px;
+              left: 40px;
+              width: 25px;
+              height: 200px;
+            "
+          >
+            <div
+              style="
+                position: absolute;
+                bottom: 0px;
+                border-top: 25px solid #fbe484;
+                border-right: 25px solid transparent;
+              "
+            ></div>
+            <div
+              style="
+                background-color: #fbe484;
+                position: absolute;
+                bottom: 25px;
+                width: 25px;
+                height: 150px;
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                bottom: 175px;
+                border-bottom: 25px solid #fbe484;
+                border-right: 25px solid transparent;
+              "
+            ></div>
           </div>
-          <div style="position: absolute; bottom: 65px;left: 200px;width: 10px;height: 80px;">
-            <div style="position: absolute; bottom: 0px;border-top: 10px solid #5EABBF;border-right: 10px solid transparent;"></div>
-            <div style="background-color:#5EABBF;position: absolute; bottom: 10px;width: 10px; height: 60px;"></div>
-            <div style="position: absolute; bottom: 70px;border-bottom: 10px solid #5EABBF;border-right: 10px solid transparent;"></div>
+          <div
+            style="
+              position: absolute;
+              bottom: 65px;
+              left: 200px;
+              width: 10px;
+              height: 80px;
+            "
+          >
+            <div
+              style="
+                position: absolute;
+                bottom: 0px;
+                border-top: 10px solid #5eabbf;
+                border-right: 10px solid transparent;
+              "
+            ></div>
+            <div
+              style="
+                background-color: #5eabbf;
+                position: absolute;
+                bottom: 10px;
+                width: 10px;
+                height: 60px;
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                bottom: 70px;
+                border-bottom: 10px solid #5eabbf;
+                border-right: 10px solid transparent;
+              "
+            ></div>
           </div>
-          <div style="position: absolute; bottom: 20px;left: 230px;width: 20px;height: 150px;">
-            <div style="position: absolute; bottom: 0px;border-top: 20px solid #FBE484;border-left: 20px solid transparent;"></div>
-            <div style="background-color:#FBE484;position: absolute; bottom: 20px;width: 20px;height: 110px;"></div>
-            <div style="position: absolute; bottom: 130px;border-bottom: 20px solid #FBE484;border-left: 20px solid transparent;"></div>
+          <div
+            style="
+              position: absolute;
+              bottom: 20px;
+              left: 230px;
+              width: 20px;
+              height: 150px;
+            "
+          >
+            <div
+              style="
+                position: absolute;
+                bottom: 0px;
+                border-top: 20px solid #fbe484;
+                border-left: 20px solid transparent;
+              "
+            ></div>
+            <div
+              style="
+                background-color: #fbe484;
+                position: absolute;
+                bottom: 20px;
+                width: 20px;
+                height: 110px;
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                bottom: 130px;
+                border-bottom: 20px solid #fbe484;
+                border-left: 20px solid transparent;
+              "
+            ></div>
           </div>
-          <div style="position: absolute; bottom: 140px;left: 170px;width: 15px;height: 30px;">
-            <div style="position: absolute; bottom: 0px;border-top: 15px solid #FBE484;border-left: 15px solid transparent;"></div>
-            <div style="position: absolute; bottom: 15px;border-bottom: 15px solid #FBE484;border-left: 15px solid transparent;"></div>
+          <div
+            style="
+              position: absolute;
+              bottom: 140px;
+              left: 170px;
+              width: 15px;
+              height: 30px;
+            "
+          >
+            <div
+              style="
+                position: absolute;
+                bottom: 0px;
+                border-top: 15px solid #fbe484;
+                border-left: 15px solid transparent;
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                bottom: 15px;
+                border-bottom: 15px solid #fbe484;
+                border-left: 15px solid transparent;
+              "
+            ></div>
           </div>
-          <div style="position: absolute; bottom: 150px;left: 90px;width: 15px;height: 30px;">
-            <div style="position: absolute; bottom: 0px;border-top: 15px solid #5EABBF;border-right: 15px solid transparent;"></div>
-            <div style="position: absolute; bottom: 15px;border-bottom: 15px solid #5EABBF;border-right: 15px solid transparent;"></div>
+          <div
+            style="
+              position: absolute;
+              bottom: 150px;
+              left: 90px;
+              width: 15px;
+              height: 30px;
+            "
+          >
+            <div
+              style="
+                position: absolute;
+                bottom: 0px;
+                border-top: 15px solid #5eabbf;
+                border-right: 15px solid transparent;
+              "
+            ></div>
+            <div
+              style="
+                position: absolute;
+                bottom: 15px;
+                border-bottom: 15px solid #5eabbf;
+                border-right: 15px solid transparent;
+              "
+            ></div>
           </div>
-          <div style="position: absolute; bottom: 20px;left: 90px;width: 250px;height: 250px;">
-            <div style="flex-direction: column;position:absolute;bottom: 0px;margin-left: auto;margin-right: auto;text-align:center ">
+          <div
+            style="
+              position: absolute;
+              bottom: 20px;
+              left: 90px;
+              width: 250px;
+              height: 250px;
+            "
+          >
+            <div
+              style="
+                flex-direction: column;
+                position: absolute;
+                bottom: 0px;
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+              "
+            >
               <el-image
                 style="width: 88px; height: 80px"
                 fit="cover"
@@ -85,6 +266,21 @@
         </div>
       </el-aside>
       <el-main class="main-style">
+        <div style="position: absolute" @click="changeShow" class="show-icon">
+          <span v-if="showLeft"
+            ><el-icon><Hide /></el-icon
+            ><span style="font-size: 0.8rem; margin-left: 0.2rem"
+              >隐藏侧边栏</span
+            ></span
+          >
+          <span v-else
+            ><el-icon><View /></el-icon
+            ><span style="font-size: 0.8rem; margin-left: 0.2rem"
+              >显示侧边栏</span
+            ></span
+          >
+        </div>
+        <div class="right-part">
           <component
             :is="showContent"
             :key="showContent"
@@ -95,6 +291,7 @@
             @changeUsername="changeUsername"
             @changeAvatar="changeAvatar"
           ></component>
+        </div>
       </el-main>
     </el-container>
   </el-container>
@@ -119,20 +316,45 @@ export default {
     ActivityCenter,
   },
   data() {
-    const choices = ['MineInfoView','TaskPage','TaskPage','GiftCenter','ActivityCenter','SettingView'];
+    const choices = [
+      "MineInfoView",
+      "TaskPage",
+      "TaskPage",
+      "GiftCenter",
+      "ActivityCenter",
+      "SettingView",
+    ];
     return {
       image: {
         src: "",
         type: "",
       },
-      showContent: localStorage.getItem('defaultMine')?choices[Number(localStorage.getItem('defaultMine'))-1]:choices[0],
+      showLeft: true,
+      showContent: localStorage.getItem("defaultMine")
+        ? choices[Number(localStorage.getItem("defaultMine")) - 1]
+        : choices[0],
       total: 4,
-      showTaskType:localStorage.getItem('defaultMine')=='2'?1:2,
+      showTaskType: localStorage.getItem("defaultMine") == "2" ? 1 : 2,
       username: "",
-      defaultActive:localStorage.getItem('defaultMine')?localStorage.getItem('defaultMine'):"1",
+      defaultActive: localStorage.getItem("defaultMine")
+        ? localStorage.getItem("defaultMine")
+        : "1",
     };
   },
   methods: {
+    changeShow() {
+      if (this.showLeft) {
+        let item = document.getElementById("left-menu");
+        item.style.left = "-" + String(item.offsetWidth) + "px";
+        item.style.opacity = "0";
+        item.style.position = "absolute";
+      } else {
+        let item = document.getElementById("left-menu");
+        item.style.opacity = "1";
+        item.style.position = "static";
+      }
+      this.showLeft = !this.showLeft;
+    },
     changeAvatar(src) {
       this.image.src = src;
     },
@@ -166,26 +388,26 @@ export default {
     },
   },
   mounted() {
-    if (localStorage.getItem('username')) {
-      this.username = localStorage.getItem('username');
+    if (localStorage.getItem("username")) {
+      this.username = localStorage.getItem("username");
     }
-    if(!localStorage.getItem('avatar')){
-      axios.get('http://101.42.118.80:8000/get_avatar/',{
-        params:{
-          username:this.username
-        }
-      })
-      .then((res)=>{
-        if(res.data['status']==='ok'){
-          if(res.data['avatar']){
+    if (!localStorage.getItem("avatar")) {
+      axios
+        .get("http://101.42.118.80:8000/get_avatar/", {
+          params: {
+            username: this.username,
+          },
+        })
+        .then((res) => {
+          if (res.data["status"] === "ok") {
+            if (res.data["avatar"]) {
               this.image.src = "data:image/png;base64," + res.data["avatar"];
               localStorage.setItem("avatar", this.image.src);
             }
-        }
-      })
-    }
-    else{
-      this.image.src = localStorage.getItem('avatar');
+          }
+        });
+    } else {
+      this.image.src = localStorage.getItem("avatar");
     }
     if (this.$route.query.defaultActive) {
       this.defaultActive = this.$route.query.defaultActive;
@@ -196,6 +418,38 @@ export default {
 </script>
 
 <style scoped>
+@media (min-width: 0px) and (max-width: 768px) {
+  .el-aside {
+    width: 50%;
+  }
+  .jump-active {
+    display: none;
+  }
+  .main-style {
+    background-color: transparent;
+  }
+  .right-part {
+    width: 1000px;
+  }
+}
+@media (min-width: 768px) {
+  .jump-active {
+    position: fixed;
+    bottom: 0px;
+    left: 20px;
+    width: 250px;
+    height: 250px;
+  }
+  .main-style {
+    background-color: transparent;
+  }
+  .show-icon {
+    display: none;
+  }
+}
+.show-icon:hover {
+  opacity: 0.5;
+}
 .container {
   margin: 0;
   height: 100%;
@@ -204,6 +458,7 @@ export default {
   padding-top: 100px;
   padding-left: 10px;
   padding-right: 10px;
+  transition: all 0.8s ease 0ms;
 }
 .el-aside .el-menu {
   border-right: 0;
@@ -263,9 +518,7 @@ export default {
   margin-top: 10px;
   display: flex;
 }
-.main-style {
-  background-color: transparent;
-}
+
 .el-nav-menu {
   width: 480px;
   padding-left: 46px;

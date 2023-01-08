@@ -317,19 +317,6 @@ export default {
     }
   },
   methods: {
-
-    // clickAddOption(){
-    //   var tempOption = {}
-    //   var len = this.optionList.length
-    //   if(len < 26){
-    //     tempOption['index'] = len
-    //     tempOption['name'] = this.idRef[len]
-    //     tempOption['content'] = ''
-    //     this.optionList.push(tempOption)
-    //     console.log(this.optionList)
-    //   }
-
-    // },
     onInput() {
       this.$forceUpdate();
     },
@@ -398,11 +385,8 @@ export default {
       // 开始切割
 
       let packet = file.slice(start, end)
-      console.log("生成块", file)
-      console.log("生成块", start, end, packet)
       let formData = new FormData()
 
-      console.log("我是个jb", packet)
       formData.append("file", packet)
       formData.append("fileName", name)
       formData.append("size", size)
@@ -410,8 +394,6 @@ export default {
       formData.append("shardSize", shardSize)
       formData.append("shardTotal", shardTotal)
       formData.append("materialType", this.localMaterialType)
-
-      console.log("shardTotal", shardTotal)
 
       formData.append("currentTime", this.currentTime)
       formData.append("username", this.username)
@@ -425,8 +407,6 @@ export default {
       if (shardIndex < shardTotal) {
         // 进度条保留两位小数展示
         this.progress = ((shardIndex / shardTotal) * 100).toFixed(2) * 1
-        console.log("当前进度", this.progress)
-        console.log("开始上传", formData)
         axios({
           method: "Post",
           url: 'http://101.42.118.80:8000/get_material_zip/',
@@ -437,8 +417,6 @@ export default {
           data: formData
         })
           .then(res => {
-            console.log("成功上传块：" + shardIndex, res)
-            console.log(res.code)
             if (res.status !== 200) {
               this.$message.error(res.msg)
               this.progress = 0
@@ -446,7 +424,6 @@ export default {
             }
             if (res.data['status'] == 'done') {
               // 这里为所有切片上传成功后进行的操作
-              console.log("已成功上传", res.data['list'])
 
               this.fullList = []
               this.listList = []
@@ -454,7 +431,6 @@ export default {
               this.showingList = []
               this.testList = []
               this.handleMaterialList = []
-              console.log("jcggcw", this.listList)
               this.fullList = res.data['fullList']
               this.listList = res.data['listList']
               if (this.fullList.length == 0 || this.listList.length == 0) {
@@ -486,9 +462,6 @@ export default {
       this.currentShowingName = this.listList[this.currentShowingSubList]['listName']
       this.fileList = this.fullList[0]
       this.updateShowingList()
-      console.log("this.fullList", this.fullList)
-      console.log("this.listList.", this.listList)
-      console.log("this.fileList.", this.fileList)
 
 
       let tempHandleList = []
@@ -501,7 +474,6 @@ export default {
           tempHandleList.push({ 'index': itemMaterial['index'], 'selected': 0 })
         }
         this.handleMaterialList.push(tempHandleList)
-        console.log("subList", subList)
       }
       let tempLen = this.fileList.length
       for (var subList of this.fullList) {
@@ -513,20 +485,15 @@ export default {
           break;
         }
       }
-      console.log("handleMaterialList", this.handleMaterialList)
       this.listNum = this.listList.length
       this.pagerCount = Math.trunc(this.fileList.length / this.pageSize)
     },
     updateSelect() {//翻页后更新列表
       this.$nextTick(() => {
         let table = this.showingList;
-        // console.log(this.handleMaterialList)
         table.forEach(row => {
-          // console.log("正在遍历：", row,row['index'] - 1, this.handleMaterialList[this.currentShowingSubList][row['index'] - 1]['selected'])
           if (this.handleMaterialList[this.currentShowingSubList][row['index'] - 1]['selected'] == 1) {
             this.$refs.materialShowingTable.toggleRowSelection(row, true);
-            //这一行不管用！！！！！
-            // console.log("更新了一个！", row, this.handleMaterialList[this.currentShowingSubList][row['index'] - 1]['selected'])
           }
         });
       })
@@ -546,7 +513,6 @@ export default {
       this.showingList = this.fileList.slice((this.page - 1) * this.pageSize, this.page * this.pageSize)
     },
     rowClick(row, column) {
-      console.log("showingList", this.showingList)
       this.currentShowingSubList = row.index - 1
       this.fileList = this.fullList[this.currentShowingSubList]
       this.currentShowingName = this.listList[this.currentShowingSubList]['listName']
@@ -554,32 +520,13 @@ export default {
       this.updateSelect()
       if (column.label == "注释") {
         this.currentEditingSubList = row.index
-        console.log(row, column)
       }
-      // else if(column.label == "删除"){//删除特定行的内容
-      //   var deleteTarget = row.index
-      //   console.log(deleteTarget)
-      //   this.optionList.forEach(function (item,index,arr){
-      //       if (item.index == deleteTarget) {
-      //           arr.splice(index,1);
-      //       }
-      //   });
-      //   for(let i = 0; i<this.optionList.length;i++){
-      //     this.optionList[i]['index'] = i
-      //     this.optionList[i]['name'] = this.idRef[i]
-      //   }
-      //   console.log(row,column)
-      // }
     },
-    // beforeUpload(file, fileList){
-
-    // }
     setTest(row, index) {
       //转换为实际index
       index = this.getActualIndex(index)
       this.currentSelectedMaterialIndex = index
       this.isEditingTestAns = false
-      console.log(this.questionList)
       //深复制数组
       this.currentTestAnsList = JSON.parse(JSON.stringify(this.questionList))
       if (this.currentTestAnsList.length === 0) {
@@ -605,7 +552,6 @@ export default {
     rowClickTestSetDialog(row, column) {
       if (column.label == "答案") {
         this.currentTestSetDialogList = row.index
-        console.log(row, column)
       }
     },
     strSort(line) {
@@ -656,7 +602,6 @@ export default {
           }
           this.currentTestAnsList[i]['questionAns'] = this.strSort(this.currentTestAnsList[i]['questionAns'])
           tempAns = this.currentTestAnsList[i]['questionAns']
-          console.log("'A'.charCodeAt() + this.currentTestAnsList[i]['optionList'].length - 1",'A'.charCodeAt() + this.currentTestAnsList[i]['optionList'].length - 1,tempAns[tempAns.length - 1].charCodeAt())
           if(tempAns[0].charCodeAt() < 'A'.charCodeAt() || tempAns[tempAns.length - 1].charCodeAt() > 'A'.charCodeAt() + this.currentTestAnsList[i]['optionList'].length - 1){
             this.$message({
               message: '您第' + (i + 1) + '题选择题的答案不合法',
@@ -710,7 +655,6 @@ export default {
     },
     deleteQAA(row, index) {
       var deleteTarget = index + 1
-      console.log(deleteTarget)
       this.testList.forEach(function (item, index, arr) {
         if (item.index == deleteTarget) {
           arr.splice(index, 1);
@@ -727,23 +671,6 @@ export default {
     getActualIndex(index) {
       return this.pageSize * (this.page - 1) + index
     },
-    // //处理单个选中
-    // handleSelectedMaterial(selection, row){
-
-    //   let index = this.getActualIndex(row.index - 1)
-    //   console.log("单个选中！",this.currentShowingSubList,selection, row.index,this.handleMaterialList)
-    //   this.handleMaterialList[this.currentShowingSubList][index]['selected'] = selection
-    //   console.log("handleMaterialList",this.handleMaterialList)
-    // },
-    // handleAllMaterial(selection){
-    //   //改变所有选中状态
-    //   for(var subList of this.handleMaterialList){
-    //     for(var item of subList){
-    //       item['selected'] = selection
-    //     }
-    //   }
-    //   console.log("handleMaterialList",this.handleMaterialList)
-    // },
     initSelected() {
       for (var subList of this.handleMaterialList) {
         for (var item of subList) {
@@ -753,28 +680,20 @@ export default {
     },
     handleMaterial(selection) {
       //改变所有选中状态
-      //   updateShowingList(){
-      //   this.showingList = this.fileList.slice((this.page - 1) * this.pageSize, this.page * this.pageSize)
-      // },
       let tempTable = this.handleMaterialList[this.currentShowingSubList].slice((this.page - 1) * this.pageSize, this.page * this.pageSize)
       for (var item of tempTable) {
         item['selected'] = 0
       }
       for (var item of selection) {
         this.handleMaterialList[this.currentShowingSubList][item['index'] - 1]['selected'] = 1
-        console.log("修改了！！！", this.handleMaterialList[this.currentShowingSubList][item['index'] - 1])
       }
-      console.log("handleMaterialList", selection, this.handleMaterialList)
     },
     deleteMaterialSingle(row, index) {
-      console.log(row, index)
       this.handleMaterialList[this.currentShowingSubList][row['index'] - 1]['selected'] = 1
       this.deleteMaterialMultiple(row, index)
-      console.log("handleMaterialList", this.handleMaterialList)
     },
     getActionMsg(act) {
       let msgList = []
-      console.log("getActionMsg", this.fullList, act)
       for (let i = 0; i < this.handleMaterialList.length; i++) {
         var subList = this.handleMaterialList[i]
         for (var item of subList) {
@@ -791,20 +710,18 @@ export default {
         for (let j = this.fullList[i].length - 1; j >= 0; j--) {
           if (this.fullList[i][j]['index'] < 0) {
             this.fullList[i].splice(j, 1)
-            console.log("删除坐标：", i, j)
           }
         }
         for (let j = 0; j < this.fullList[i].length; j++) {
           this.fullList[i][j]['index'] = j + 1
         }
       }
-      console.log("刚修改完啦啦啦啦啦啦啦啦啦啦", this.fullList)
       return msgList
     },
 
     deleteMaterialMultiple(row, index) {
       let act = 'delete'
-      console.log(row, index)
+      console.log(row, index);
       let msgList = this.getActionMsg(act)
       axios.post("http://101.42.118.80:8000/handle_release_action/",
         {
@@ -843,7 +760,6 @@ export default {
         return
       }
       this.movingMaterialTarget--
-      console.log("被移动：index", index, "目标：movingMaterialTarget", this.movingMaterialTarget)
       let moveData = this.fullList[this.currentShowingSubList][index]
       this.fullList[this.currentShowingSubList].splice(index, 1);
       this.fullList[this.currentShowingSubList].splice(this.movingMaterialTarget, 0, moveData);
@@ -867,7 +783,6 @@ export default {
         return
       }
       this.movingMaterialTarget--
-      console.log("被移动：index", index, "目标：movingMaterialTarget", this.movingMaterialTarget)
       let moveData = this.fullList[this.currentShowingSubList][index]
       let targetData = this.fullList[this.currentShowingSubList][this.movingMaterialTarget]
       this.fullList[this.currentShowingSubList][index] = targetData
@@ -881,13 +796,7 @@ export default {
         type: 'success'
       });
       this.movingMaterialTarget = '';
-      this.isMovingMaterial = false
-
-      // this.currentShowingSubList = row.index - 1
-      // this.fileList = this.fullList[this.currentShowingSubList]
-      // this.currentShowingName = this.listList[this.currentShowingSubList]['listName']
-      // this.updateShowingList()
-      // this.updateSelect()
+      this.isMovingMaterial = false;
     }
   }
 }

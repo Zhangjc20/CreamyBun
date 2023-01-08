@@ -16,9 +16,6 @@ from .databaseOperations import *
 from ..variables.globalVariables import *
 
 
-# 获取系统当前时间，为datetime相关类型
-# 可通过成员变量获取年月日时分秒等属性，通过strftime转成字符串返回
-# 参考https://www.cnblogs.com/jszfy/p/11143048.html
 def get_base64_image(url):
     if not os.path.exists(url):
         return ""
@@ -27,6 +24,9 @@ def get_base64_image(url):
             data = f.read()
             return 'data:image/png;base64,' + bytes.decode(base64.b64encode(data))
 
+# 获取系统当前时间，为datetime相关类型
+# 可通过成员变量获取年月日时分秒等属性，通过strftime转成字符串返回
+# 参考https://www.cnblogs.com/jszfy/p/11143048.html
 def get_now_time():
     return datetime.datetime.now()
 
@@ -148,7 +148,7 @@ def get_task_info_list(username, state, page_number, sort_choice):
     if sort_choice != 0:
         if state == HAS_RECEIVED:
             needed_task_to_state_list = [x for x in needed_task_to_state_list if
-                                        x.task_status_for_itself == sort_choice]
+                                        x.task_status_for_itself == sort_choice + 3]
         else:
             needed_task_to_state_list = [x for i,x in enumerate(needed_task_to_state_list) if
                                         t_status_list[i] == sort_choice]
@@ -183,7 +183,7 @@ def get_task_info_list(username, state, page_number, sort_choice):
             'problemType': ANSWER_TYPE_DICT[t.answer_type],
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
-            'src': get_base64_image(t.cover_url),
+            'src': 'http://101.42.118.80:8000' + t.cover_url[1:],
             'taskStatus':task_status if state == HAS_POSTED else td.task_status_for_itself,
         }
         t_info.setdefault('index', i)
@@ -200,7 +200,6 @@ def get_task_info_list(username, state, page_number, sort_choice):
             task_info_list.append(t_info)
 
     # 返回 总页数（int），任务信息列表（列表，成员为字典）
-
     return total_number, task_info_list
 
 
@@ -325,7 +324,6 @@ def walk_file(file, material_type):
                     file_path = os.path.join(root, f)
 
                     if file_type not in TYPE_SET[material_type]:
-                        print(TYPE_SET[material_type], "删除了：", file_path)
                         os.remove(file_path)
                         continue
                     # 防止混合类型
@@ -483,7 +481,7 @@ def sorted_and_selected_tasks(username, seach_content, only_level, \
             'problemType': ANSWER_TYPE_DICT[t.answer_type],
             'startTime': t.begin_time.split(" ")[0],
             'endTime': t.end_time.split(" ")[0],
-            'src':get_base64_image(t.cover_url),
+            'src':'http://101.42.118.80:8000' + t.cover_url[1:],
             'taskStatus':t.task_status, 
         }
         t_info.setdefault('index', i)
@@ -524,7 +522,7 @@ def txt_to_str(path):
 
 
 def read_material_str(path, suffix):
-    output = '这是一个临时的字符串'
+    output = ' '
     if suffix == 'doc' or suffix == 'docx':
         output = word_to_str(path)
     elif suffix == 'txt':
@@ -669,11 +667,9 @@ def submit_current_answer(username,task_id,answer_list):
 
             # 存答案
             if len(x.user_answer.all()) == 0: # 如果这是第一次做
-                print(1)
                 for ans in answer_list:
                     x.user_answer.add(Str.objects.create(str_content=ans))
             else: # 如果原来已经做过了，那么是覆盖原来的答案
-                print(2)
                 for i,xans in enumerate(x.user_answer.all()):
                     xans.str_content = answer_list[i]
                     xans.save()
@@ -804,7 +800,6 @@ def download_task_answer_byid(task_id):
             ans_temp.append(q.answer)
         ans.append(ans_temp)
 
-    #ans = [['腾讯', '北京'], ['阿里巴巴', '杭州'], ['字节跳动', '北京', '南京']]
     df = pd.DataFrame(ans)
     df.to_excel("task_answer.xlsx", index=False)
     with open("task_answer.xlsx", 'rb') as f:

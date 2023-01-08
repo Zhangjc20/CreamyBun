@@ -275,7 +275,11 @@
         ></CustomButton
       ></el-col>
       <el-col :span="8" style="display: flex; justify-content: center"
-        ><CustomButton title="放弃当前任务" :isRound="true" @click="giveUpThisTask"></CustomButton
+        ><CustomButton
+          title="放弃当前任务"
+          :isRound="true"
+          @click="giveUpThisTask"
+        ></CustomButton
       ></el-col>
       <el-col :span="6"> </el-col>
     </el-row>
@@ -293,11 +297,9 @@
 </template>
 
 <script>
-// import axios from "axios";
 import CustomButton from "@/components/CustomButton.vue";
 import axios from "axios";
 import { ElMessage, ElMessageBox } from "element-plus";
-// import { ElMessage } from "element-plus";
 export default {
   name: "TaskCheck",
   components: {
@@ -347,20 +349,20 @@ export default {
   },
   mounted() {},
   methods: {
-    giveUpThisTask(){
+    giveUpThisTask() {
       axios
         .get("http://101.42.118.80:8000/give_up_task/", {
           params: {
-            username: localStorage.getItem('username'),
+            username: localStorage.getItem("username"),
             taskId: this.id,
           },
         })
         .then((res) => {
           if (res.data["status"] === "ok") {
-            this.$emit('giveUpTask');
+            this.$emit("giveUpTask");
             ElMessage({
               type: "success",
-              message: "成功放弃该任务"
+              message: "成功放弃该任务",
             });
           }
         })
@@ -399,18 +401,23 @@ export default {
         })
         .then((res) => {
           if (res.data["status"] === "ok") {
-            if(res.data['isSucceed']){
-              this.$emit('postTaskImmediately');
+            if (res.data["isSucceed"]) {
+              this.$emit("postTaskImmediately");
               ElMessage({
                 type: "success",
-                message: "成功发布该任务，您当前的甜甜圈余额为"+String(res.data['leftDonutNum'])
+                message:
+                  "成功发布该任务，您当前的甜甜圈余额为" +
+                  String(res.data["leftDonutNum"]),
               });
-            }
-            else{
+            } else {
               ElMessage({
                 type: "error",
-                message: "您的余额不足，发布任务需要"+String(res.data['needDonutNum'])+"，您的余额为"+String(res.data['leftDonutNum'])
-              }); 
+                message:
+                  "您的余额不足，发布任务需要" +
+                  String(res.data["needDonutNum"]) +
+                  "，您的余额为" +
+                  String(res.data["leftDonutNum"]),
+              });
             }
           }
         })
@@ -444,7 +451,6 @@ export default {
       });
     },
     clickDownload() {
-      //todo数据下载
       let formData = new FormData();
       formData.append("hello", "hello");
       formData.append("id", this.id);
@@ -524,7 +530,6 @@ export default {
             }
             if (this.mode == 1) {
               this.receiveStatus = res.data["taskStatus"];
-              console.log(this.receiveStatus)
             } else if (this.mode == 2) {
               this.postStatus = res.data["taskStatus"];
             }

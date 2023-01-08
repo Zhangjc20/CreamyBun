@@ -1,6 +1,6 @@
 # 需要在根目录使用（即包含frontend、backend...的目录）
 # 运行sh ./compose.sh start指令
-git pull origin dev
+git pull origin master
 docker stop $(docker ps -q)
 cd ./frontend
 sudo rm -rf ./dist/

@@ -17,25 +17,40 @@ class User(models.Model):
     current_exp = models.IntegerField(default=0)
     dark_mode = models.BooleanField(default=False)
     today_violation = models.IntegerField(default=0)  # 该用户当天已违规次数
+    finished_task_number = models.IntegerField(default=0)  # 该用户当天已完成任务个数
+    finish_task_one = models.BooleanField(default=False)  # 该用户是否领取第一个每日任务奖励
+    finish_task_two = models.BooleanField(default=False)  # 该用户是否领取第二个每日任务奖励
     is_today_sign_in = models.BooleanField(default=False)  # 用户当天是否已经签到
     continue_sign_in_days = models.IntegerField(default=0)  # 用户当前连续签到天数
 
-    # 该用户所拥有的所有任务信息，该列表增加的成员为字典类型，表示{任务id:任务状态（已领取或已发布）}
-    # 该列表在数据库中的存储格式为字典，如“{1:HAS_POSTED} {2:HAS_RECEIVED}”
+    # 用户最后一次进入活动中心的时间，用于刷新
+    last_enter_activity_center_time = models.CharField(
+        max_length=MAX_TIME_STRING_LENGTH, default="2023-01-05")
+
+    # 该用户所拥有的所有任务信息，该列表增加的成员类型见相关类定义
     # 新增二级检索常量，包括发布状态或者完成状态
     task_info_list = models.ManyToManyField(TaskDict)
 
     # 定时重置签到数据接口
-    def reset_clock_in_info(self):
-        if self.is_today_sign_in == False or self.continue_sign_in_days == CLOCK_IN_CYCLE:
+    def reset_clock_in_info(self, is_next_day: bool):
+        if is_next_day:
+            if self.is_today_sign_in == False or self.continue_sign_in_days == CLOCK_IN_CYCLE:
+                self.continue_sign_in_days = 0
+        else:
             self.continue_sign_in_days = 0
-            self.save()
         self.is_today_sign_in = False
         self.save()
 
     # 定时重置当天违规次数接口
     def reset_violation(self):
         self.today_violation = 0
+        self.save()
+
+    # 定时重置每日完成任务数量
+    def reset_finished_task_number(self):
+        self.finished_task_number = 0
+        self.finish_task_two = False
+        self.finish_task_one = False
         self.save()
 
     # 检验密码是否匹配
@@ -57,16 +72,17 @@ class User(models.Model):
             self.current_exp -= sub_exp
             if self.current_exp < 0:
                 self.credit_rank -= 1
-                self.current_exp = exp_for_upgrade[self.credit_rank] - sub_exp +temp_exp
+                self.current_exp = exp_for_upgrade[self.credit_rank] - \
+                    sub_exp + temp_exp
                 if self.credit_rank == 0:
                     self.credit_rank = 1
                     self.current_exp = 0
         self.save()
         return flag, self.today_violation
 
-    def add_exp_and_upgrade(self,exp_number):
+    def add_exp_and_upgrade(self, exp_number):
         is_upgrade = False
-        credit_rank = -1 # 没升级是-1，升级了是当前等级
+        credit_rank = -1  # 没升级是-1，升级了是当前等级
         self.current_exp += exp_number
 
         # 如果升级了
@@ -75,6 +91,6 @@ class User(models.Model):
             self.current_exp -= exp_for_upgrade[self.credit_rank]
             self.credit_rank += 1
             credit_rank = self.credit_rank
-        
+
         self.save()
         return is_upgrade, credit_rank

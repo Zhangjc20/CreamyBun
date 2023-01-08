@@ -119,7 +119,7 @@ export default {
       if (value === "") {
         this.passwordRight = false;
         callback(new Error("密码不能为空"));
-      } else if (value.search(/[a-zA-Z\d]{6,18}/g) == -1) {
+      } else if (value.search(/^[a-zA-Z\d]{6,18}$/g) == -1) {
         this.passwordRight = false;
         callback(new Error("请输入6-18位字母和数字的组合"));
       } else {
@@ -138,7 +138,9 @@ export default {
     };
     const validateEmail = (rule, value, callback) => {
       if (
-        value.match(/[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+/g)
+        value.match(
+          /[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+/g
+        )
       ) {
         this.emailRight = true;
         callback();
@@ -292,7 +294,7 @@ export default {
         });
         return;
       }
-      if(this.form.email != this.codeEmail){
+      if (this.form.email != this.codeEmail) {
         ElMessage({
           type: "warning",
           message: "填写邮箱与发送验证码时对应邮箱不匹配",
@@ -330,7 +332,7 @@ export default {
             });
             return;
           } else {
-            console.log(res)
+            console.log(res);
             if (res.data["type"] === "sameName") {
               ElMessage({
                 type: "error",
@@ -348,8 +350,50 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.el-form-item {
-  margin-bottom: 26px;
+@media (min-width: 0px) and (max-width: 768px) {
+  .logup-box {
+    width: 90%;
+    height: 30rem;
+    margin-left: 5%;
+    margin-top: 20%;
+    border-radius: 20px;
+    background-color: #ffffff;
+  }
+  .logup-title {
+    margin-top: 8%;
+    padding: 10px;
+    padding-right: 20px;
+    height: 30px;
+    margin-bottom: 8%;
+  }
+}
+@media (min-width: 768px) {
+  .logup-box {
+    width: 36%;
+    height: 64%;
+    margin-left: 32%;
+    margin-top: 10%;
+    border-radius: 20px;
+    background-color: #ffffff;
+  }
+  .logup-title {
+    margin-top: 8%;
+    padding: 10px;
+    padding-right: 20px;
+    height: 30px;
+    margin-bottom: 4%;
+  }
+  .el-form-item {
+    margin-bottom: 6%;
+  }
+}
+@media (max-height: 600px) {
+  .el-form-item {
+    margin-bottom: 3%;
+  }
+}
+:deep .el-form-item__content {
+  margin-left: 20% !important;
 }
 .logup-button {
   color: #ffffff;
@@ -408,32 +452,15 @@ export default {
   font-family: YouSheBlack;
 }
 .form-box {
-  padding-right: 70px;
+  padding-right: 16%;
   padding-left: 0px;
 }
-.logup-title {
-  margin-top: 40px;
-  padding: 10px;
-  padding-right: 20px;
-  height: 30px;
-  margin-bottom: 30px;
-}
-.logup-box {
-  width: 36%;
-  height: 64%;
-  margin-left: 32%;
-  margin-top: 8%;
-  border-radius: 20px;
-  background-color: #ffffff;
-}
+
 .logup {
   width: 100%;
   height: 100%;
   position: absolute;
   background: url(@/assets/images/background.png);
   background-size: 100% 100%;
-}
-:deep .el-form-item__content {
-  margin-left: 86px !important;
 }
 </style>
