@@ -78,27 +78,11 @@
       <video style="width: 100%" controls>
         <source :src="streamSrc" type="video/mp4" />
       </video>
-      <!-- <video-player style="width: 100%;" class="video-player vjs-big-play-centered"
-          :sources="sources" crossorigin="anonymous"
-          playsinline controls fluid="true" :volume="0.6" :playback-rates="[0.7, 1.0, 1.5, 2.0]"
-          @mounted="handleMounted" @ready="handleEvent($event)" @play="handleEvent($event)" @pause="handleEvent($event)"
-          @ended="handleEvent($event)" @loadeddata="handleEvent($event)" @waiting="handleEvent($event)"
-          @playing="handleEvent($event)" @canplay="handleEvent($event)" @canplaythrough="handleEvent($event)"
-          @timeupdate="handleEvent(player?.currentTime())" >
-        </video-player> -->
     </el-main>
     <el-main v-if="type == 3" style="height: 110px">
       <audio style="width: 100%" controls>
         <source :src="streamSrc" :type="audioSuffix" />
       </audio>
-      <!-- <video-player style="width: 100%;" class="video-player vjs-big-play-centered"
-          :sources="sources" crossorigin="anonymous"
-          playsinline controls fluid="true" :volume="0.6" :playback-rates="[0.7, 1.0, 1.5, 2.0]"
-          @mounted="handleMounted" @ready="handleEvent($event)" @play="handleEvent($event)" @pause="handleEvent($event)"
-          @ended="handleEvent($event)" @loadeddata="handleEvent($event)" @waiting="handleEvent($event)"
-          @playing="handleEvent($event)" @canplay="handleEvent($event)" @canplaythrough="handleEvent($event)"
-          @timeupdate="handleEvent(player?.currentTime())" >
-        </video-player> -->
     </el-main>
   </el-container>
 </template>
